@@ -1,0 +1,225 @@
+WILLIAM B. NORRIS IV 
+will@biohack.net
++1 415 355 4225
+
+EMPLOYMENT 
+================================================================================
+
+TechOps: Senior Engineer
+Disney Interactive, Palo Alto and Glendale, CA, 2011-2014
+[also Systems Administrator]
+------------------------------------------------------------------------
+* Create and maintain puppet infrastructure, from servers to code base
+* Provid training for remote teams in India
+* Perform load testing backend services for Disney's Infinity console game
+
+
+Website Development Consultant
+Freelance Programmer, San Francisco, CA, USA / Guadalajara, JA, MEX, Nov 2007-2011
+------------------------------------------------------------------------
+* Major contributor to Foswiki development; root administrator for foswiki.org servers
+* Maintain existing healthcare-related websites
+* Develop new healthcare-related websites
+* Perform routine system administration maintenance
+* Sites developed used PostgreSQL, Oracle, mod_perl/apache, Class:DBI, Mason, proxy
+
+
+Senior Perl Programmer for Marketing and Analytics
+FriendFinder, Inc., Palo Alto, CA, 2006-2007
+[also Custommer Communications Programmer, Infrastructure Programmer]
+------------------------------------------------------------------------
+* Maintain and enhanced CUPIDS--a parallelized, distributed email sending program 
+for sending over 8 million personalized emails daily 
+* Maintain traffic and processing flow for affiliate program
+* Help coordinate new ab test development and analysis; Implemented email ab tests
+* Work with Project Managers to produce design and implementation specifications
+* Implemented nagios monitor system for site health monitor from analytics perspective
+* Implemented (and introduced the concept of) unit tests for infrastructure tools
+
+
+Web Programmer 
+Freelance Programmer, Tijuana, BC, Mexico, 2005-2006
+------------------------------------------------------------------------
+* Support programming for Authoring Tool for movie and radio web 
+surveys using AJAX, mod_perl, and Mason 
+* TWiki Consultant [Installation, Custom Programming] 
+* Major contributor to TWiki development of the time
+
+
+Embedded Linux Consultant 
+Independent Contractor, Redding, CA, 2003-2004 
+------------------------------------------------------------------------
+* Created and maintained a customized Linux distribution derived from 
+RedHat 9 for the Russound Smart Media Server 
+* Interfaced various open source components [e.g., PostgreSQL, 
+Apache, ImageMagick, MPlayer, customized FireFox, SSH, yum, 
+Samba, FTP, etc.] 
+* Created and maintained the build system for daily automated testing, 
+production of the Gold Master, combined with a self-booting installer 
+CD, later upgraded to create a LAN installer farm 
+* Interfaced with technical and licensing requirements for Gracenote 
+[CDDB] and Muze [album cover artwork] 
+
+
+Math Instructor 
+Sylvan Learning Center [Avondale and Orange Park, FL], 2001-2002 
+------------------------------------------------------------------------
+* Taught K-12 math students "counting to calculus" 
+* Taught math portion of the Sylvan SAT prep course 
+* Increased center revenue by providing expanded math coverage with 
+special one-on-one tutoring for remedial adult CLAST and AP math 
+
+
+Student Tutor 
+FCCJ [Florida Community College at Jacksonville] - Learning Center, 1999-2001 
+------------------------------------------------------------------------
+Provided one-on-one tutoring in the following departments: 
+* Mathematics [Beginning Math, Algebra, Trigonometry, Calculus, 
+Differential Equations, Linear Algebra] 
+* Sciences [Biology, Chemistry, Physics] 
+* Humanities [English Composition, French] 
+
+
+President / Senior Software Engineer 
+Cave Logic Studios, Ltd., San Francisco, CA, 1994-1998 
+------------------------------------------------------------------------
+* Met with publishers and other clients; negotiated game programming, 
+artwork, and other support contracts 
+* Generated additional revenue streams by licensing World Foundry 
+tools and libraries 
+* Trained artists and level designers 
+* Created sample levels using algorithmic generation techniques for 
+promotional material for Channel 3D, using an updated version of 
+World Foundry for stereoscopic glasses 
+* World Foundry architecture and development, one of the two main 
+programmers, scripting language compiler and runtime byte-code 
+interpreter 
+* World Foundry enabled Cyclone Studios [3DO], PF.Magic, 
+Hasbro, and Virgin Games to provide a rapid prototyping 
+environment for game designers, artists, and level designers 
+* Development of PlugIns for 3DS R4, designed and coded other 
+tools required for conversion of assets from commercial packages 
+to internal runtime game formats 
+* Ported Ballz 3D: The Director's Cut from SNES to 3DO 
+* Coordinated all programming and art production, management and 
+scheduling, interfacing to publisher for Ballz 3D [SNES] project; one 
+of the two programmers 
+
+
+Senior Software Engineer / Team Lead 
+Alexandria [Oddworld Inhabitants], Los Osos, CA, 1993 
+------------------------------------------------------------------------
+* Responsible for development of OO core runtime library code for 
+game engine used in several titles on both the Genesis and SNES 
+* Art production pipeline specification; developed many tools and 
+utilities to automate artist and production build tasks 
+
+
+Software Engineer / Project Manager 
+Developer Resources, Mountain View, CA, 1992-1994 
+------------------------------------------------------------------------
+* Coded The Great Waldo Search, trained new artists for tile-based 
+assets production 
+* Coded Game Genie OO firmware and supporting encryptions tools 
+* SNES Art Downloader [PC connected to a custom SNES cartridge 
+with parallel port; artist hits "PrintScrn" button and image is 
+transferred to SNES and displayed on the TV] 
+* SNES Development System tools, including OO multiscreen 
+windowed debugger, assembler, profiler [under DOS 4/GW 32-bit 
+DOS Extender] 
+
+
+Software Engineer 
+Equilibrium, San Rafael, CA, 1991-1992 
+------------------------------------------------------------------------
+* Developed production tools for GameBoy development 
+* Provided training to artists 
+
+
+Software Engineer 
+Brian A. Rice, Inc., Darien, IL, 1990-1991 
+------------------------------------------------------------------------
+* Ported Trump Castle II from MS-DOS to Amiga 
+* Developed Penthouse Jigsaw 
+* OO Code Architecture and programming on Super Soccer 
+* Support programming for Shanghai II and Mission to Mars 
+
+
+Software Engineer / Assistant External Producer 
+Polarware [Merit Software], Batavia, IL, 1988-1990 
+------------------------------------------------------------------------
+* Enabled Polarware to increase sales and profits by providing Amiga 
+versions of their product lineup 
+* Ported and enhanced Electric Crayon series for the Amiga 
+* Implemented Transylvania III on Amiga and IBM PC 
+* External assistant producer, interfaced with outside developers 
+* Brian A. Rice, Inc., for new Electric Crayon series titles 
+* Coordinated development of Transylvania III for the Apple II GS 
+
+PRODUCTS 
+================================================================================
+* Russound Media Server [Embedded Linux]
+* World Foundry Game Engine [PlayStation,Windows, Linux] 
+* Ballz: The Director's Cut [3DO] 
+* Ballz [SNES] 
+* Developer Resources/Alexandria 2D Platformer Engine 
+** Izzy's Olympic Quest [SNES & Genesis]
+** Demolition Man [SNES & Genesis] 
+** Sylvester & Tweety in Cagey Capers [Genesis]
+** Road Runner [Genesis]
+* 16-bit Development System [SNES & Genesis] 
+* Artist Workstation [SNES] 
+* Game Genie [SNES] 
+* The Great Waldo Search [SNES] 
+* Penthouse Jigsaw [IBM PC & Amiga] 
+* Trump Castle II [Amiga] 
+* Transylvania III [IBM PC & Amiga] 
+* Talking Electric Crayon: All Dogs Go To Heaven [CDTV] 
+* Super Soccer [Atari Lynx] 
+* Electric Crayon Deluxe [Amiga]
+** All Dogs Go To Heaven 
+** Teenage Mutant Ninja Turtles 
+** At the Zoo 
+** Sesame Street Letters for You 
+** Sesame Street Numbers Count 
+** Sesame Street Opposites Attract 
+** Dinosaurs are Forever 
+
+SKILLS 
+================================================================================
+* Languages 
+** Perl 
+** Python * Django
+** Ruby
+** JavaScript * jQuery
+** C * C++
+** Lua 
+** TeX 
+** flex * bison 
+** 6502/65816 * 80x86 
+** 680x0 * MIPS Rx000 
+
+* Game Consoles & Embedded Systems 
+** Sony PlayStation 
+** Super Nintendo 
+** GameBoy 
+** Sega Saturn 
+** Sega Genesis * Sega-CD 
+** Commodore CDTV 
+** Atari Lynx 
+** PalmOS 
+
+* Computer Platforms Development 
+** GNU/Linux [Debian, Red Hat, custom] 
+** 32-bit MS-DOS 
+** Commodore Amiga 
+
+* Plugins Development 
+** Maya 
+** 3D Studio MAX 
+** 3D Studio R4 
+** Adobe Photoshop 
+** Adobe Premiere 
+** The Nebula Device 
+** Foswiki (TWiki)
+** Bugzilla
