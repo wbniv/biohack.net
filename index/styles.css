@@ -1,0 +1,283 @@
+/* Copyright 2007 Will Norris. All Rights Reserved. */
+/*==========================
+Resets
+==========================*/
+body { padding:0; margin:0; }	
+a img { border:0 }
+textarea { border: 0; padding: 0; }
+
+/*==========================
+Layout (positioning)
+==========================*/
+.clear { clear:both; }
+
+#container {width:566px; margin-left: 140px;}
+
+#menu {position:absolute;left:40px;top:55px;width:140px;height:200px; }
+
+body > div#menu { position: fixed; }
+
+
+/*==========================
+Style
+==========================*/
+body {
+	text-align: left;
+	background: url(bg.png) repeat-x; background-attachment: fixed;
+}
+
+p {
+	margin-top: 2px;
+}
+		
+.work {
+	margin-top: 2px;
+	padding: 7px;
+}
+
+.bio ul {
+	padding-left: 0;
+	list-style: none;
+}
+			
+.footer {
+	padding: 10px 0px 10px 0px;
+}			
+
+.work_holder {
+	width:500px;
+	margin: 10px 0px 0px 0px;
+	background: url(holder_bg.png) top left no-repeat;
+}
+				
+				
+.work_holder_footer {
+	width: 500px;
+	height: 0px;
+	background: url(holder_bg.png) bottom left no-repeat;
+}
+
+				
+.list_holder {
+	width: 540px;
+	padding: 0px;
+	margin: 10px 0px 0px 0px;	
+}
+
+.projectlist {
+	width: 220px;
+	float: left;
+	display: block;
+}
+	
+.bio {
+	margin-left: 125px;
+	top: 0px;
+}
+        
+img.NAME{
+	margin-right: 20px;
+	float:left;			
+}
+
+#bio {
+	top:0px;
+	left:0px;
+	position:absolute;
+}
+
+.section {
+	width: 470px;
+	left: 35px;
+	position: relative;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+		    
+/*==========================
+==========================*/
+
+ul.navigation { /* show to IE */
+	_line-height: 23px;
+	list-style-type: none;
+	_margin-top: 0px; 
+	_margin-left: 27px; 
+}
+
+html>body ul.navigation { /* show to FF and Good Gecko Browsers */
+	line-height: 25px;
+	list-style-type: none;
+	margin-left: -10px;
+}
+
+ul.arrow {
+	list-style-image: url(arrow.png);
+}
+		
+h1 {
+	font-size: 15px;
+}
+		
+h1,
+span h1  {
+	border-bottom: 1px dashed #ccc;
+	margin: 0px 0px 1em 0px;
+}
+				
+h2 {
+	font-size: 1.1em;
+	letter-spacing: .1em;
+	margin: 0px;
+}
+
+#menu li {
+	font-size:1.4em;
+}
+
+a:link, a:visited, a:active, a:hover {
+	text-decoration: none;
+}
+
+a   { font-weight: bold; }
+a.text   { font-size: 12px; letter-spacing: .1em; } 
+a.text, a.text:link, a.text:visited { text-decoration: none; } 
+
+/*----------------*/
+
+form span {
+	display: block;
+	padding: 1px;
+	border: 1px solid #DFDFDF;
+	width: 340px;
+}
+
+form span input,
+form span textarea,
+form span select {
+	border: 0;
+	font-size: 10px;
+	line-height: 1.2em;
+	width: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+label {
+	font-size: 9px;
+}
+
+.projectlist li {
+	margin-top: 4px;
+}
+
+.button {
+	border: 1px solid transparent;
+}
+.button:hover { 
+	border: 1px dotted #ddddff;
+}
+
+/*==========================
+Fonts
+==========================*/
+body { font-size: 11px; line-height:15px; }
+body,
+h1,
+a
+{
+	font-family: 'Trebuchet MS', Trebuchet, helvetica, sans-serif;
+}
+
+.work {
+	font-family: Tahoma, Arial, sans-serif;
+}
+
+a.text,
+form span input, form span textarea, form span select,
+INPUT, TEXTAREA,
+label
+{ 
+	font-family: Geneva, Verdana, Arial, sans-serif;
+} 
+
+
+#menu #logo {
+	width:125px;
+	height:115px;
+	background: url(logo.png);
+}
+
+#header {
+	width:500px;
+	height:350px;
+	margin-bottom:2em;
+	background: url(header.jpg);
+}
+
+/*==========================
+Palette
+==========================*/
+
+body, #container {
+	background-color: #FFF;
+}
+
+body, #container, p, .work {
+	color: #000000;
+}
+		
+h2, h3 {
+	color: #333;
+}
+
+#menu a:link, #menu a:visited, #menu a:active {
+	color: #ffffff;
+}
+a.text:hover { 
+	color: #333; 
+}
+
+form span input,
+form span textarea,
+form span select {
+	border-top-color: #7C7C7C;
+	border-bottom-color: #DDD;
+	background-color: #eee;
+}
+
+#menu a:hover,
+h1, a:hover, a.text, a
+{
+	color: #83a7e8;
+}
+form span input:focus,
+form span textarea:focus,
+form span select:focus,
+Xform input
+{
+	background-color: #83a7e8;
+	color: #eee;
+}
+
+form span input:hover,
+form span textarea:hover,
+form span select:hover {
+	color:#338;
+	background-color: #ddddff;
+}
+
+label {
+	background: #FFFFFF;
+	color: #535353;
+}
+
+.section a:hover
+{
+	color: #002299;
+}
+
+::-moz-selection,
+::selection {
+	color:#FFF;
+	background:#000;
+}

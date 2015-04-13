@@ -1,0 +1,55 @@
+/* Copyright 2007 Will Norris. All Rights Reserved. */
+
+/*==========================
+Style
+==========================*/
+body {
+	background-image: url(bg.png);
+}
+
+ul.arrow {
+	list-style-image: url(../arrow.png);
+}
+		
+#menu #logo {
+	width:125px;
+	height:115px;
+	background: url(logo.png);
+}
+
+#header {
+	width:500px;
+	height:356px;
+	margin-bottom:2em;	
+	background: url(header.jpg);
+	}
+
+/*==========================
+Palette
+==========================*/
+
+#menu a:hover,
+.section a:hover
+{
+	color: #f1656e;
+}
+
+h1, a:hover, a.text, a
+{
+	color: #ecca00;
+}
+form span input:focus,
+form span textarea:focus,
+form span select:focus,
+Xform input
+{
+	background-color: #ecca00;
+}
+
+form span input:hover,
+form span textarea:hover,
+form span select:hover {
+	color:#383;
+	background-color: #;
+}
+

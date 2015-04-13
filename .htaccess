@@ -1,0 +1,11 @@
+#IF you can, you should enable this - it _will_ improve your foswiki experience, even if you set it to under one day.
+#LoadModule expires_module libexec/httpd/mod_expires.so
+#AddModule mod_expires.c
+#<ifmodule mod_expires.c="">
+  <filesmatch "favicon\.(ico|gif|png)$">
+       ExpiresActive on
+       ExpiresDefault "access plus 11 days"
+#       ExpiresDefault "access plus 1 day"
+	FileETag MTime Size
+   </filesmatch>
+#</ifmodule>
