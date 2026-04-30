@@ -1,0 +1,13 @@
+version: '3'
+
+includes:
+  shared:
+    taskfile: ../python-tui-lib/Taskfile.shared.yml
+    optional: true
+    flatten: true
+
+tasks:
+  serve:
+    desc: Serve the site locally
+    cmds:
+      - python3 -m http.server 8080

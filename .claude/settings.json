@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash ../python-tui-lib/hooks/transcript-logger.sh", "timeout": 5 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "bash ../python-tui-lib/hooks/md-preview.sh", "timeout": 30 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash ../python-tui-lib/hooks/todo-reminder.sh", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}
