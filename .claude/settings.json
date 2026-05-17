@@ -3,7 +3,7 @@
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "bash ${SRC_ROOT:-$HOME/SRC}/python-tui-lib/hooks/transcript-logger.sh", "timeout": 5 }
+          { "type": "command", "command": "bash $HOME/python-tui-lib/hooks/transcript-logger.sh", "timeout": 5 }
         ]
       }
     ],
@@ -11,14 +11,14 @@
       {
         "matcher": "Write|Edit",
         "hooks": [
-          { "type": "command", "command": "bash ${SRC_ROOT:-$HOME/SRC}/python-tui-lib/hooks/md-preview.sh", "timeout": 30 }
+          { "type": "command", "command": "bash $HOME/python-tui-lib/hooks/md-preview.sh", "timeout": 30 }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "bash ${SRC_ROOT:-$HOME/SRC}/python-tui-lib/hooks/todo-reminder.sh", "timeout": 5 }
+          { "type": "command", "command": "bash $HOME/python-tui-lib/hooks/todo-reminder.sh", "timeout": 5 }
         ]
       }
     ]
