@@ -1,6 +1,6 @@
 # Memory Index
 
-<!-- Add memory entries here as they are created. -->
+- [Dreamhost import contains attacker-planted artifacts](project_dreamhost_import_compromise.md) — compromised/COMPROMISED trees, rx.php, and unreadable `.htpasswd` under logs/ are planted, not user data
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 
@@ -24,9 +24,5 @@
 - [feedback_seed_dont_clone.md](feedback_seed_dont_clone.md) — Seeding a new site from an existing one + swapping wordmark/color isn't enough — the source's visual fingerprint carries through. Ship distinctive elements with the seed, not after.
 - [feedback_prefer_proper_fix.md](feedback_prefer_proper_fix.md) — When offering fix-scope options, default to the proper/architectural one. Don't lead with the minimal fix as "recommended."
 - [feedback_public_vs_internal_surfaces.md](feedback_public_vs_internal_surfaces.md) — Public marketing pages (colophon, homepage) describe visible craft — never internal infra (repo URLs, predecessor projects, deploy pipeline, IaC paths).
-
-## Projects (inherited from ~)
-
-- [project_finding_your_way.md](project_finding_your_way.md) — Parmenides hypertext port to Astro+MD+AWS at ~/SRC/finding-your-way/ (author-commissioned)
 
 <!-- END GLOBAL MEMORY -->
