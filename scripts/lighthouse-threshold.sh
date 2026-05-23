@@ -43,8 +43,11 @@ for f in "${reports[@]}"; do
      (.categories.accessibility.score * 100 | round),
      (.categories["best-practices"].score * 100 | round),
      (.categories.seo.score * 100 | round)] | @tsv' "$f")
+  # SEO excluded from the gate — biohack.net sets robots=none on purpose,
+  # which Lighthouse interprets as "don't index" and tanks the score.
+  # Keep SEO in the table for visibility, just don't fail the build on it.
   status="✓"
-  for score in "$perf" "$a11y" "$bp" "$seo"; do
+  for score in "$perf" "$a11y" "$bp"; do
     if [ "$score" -lt "$THRESHOLD" ]; then
       status="✗"
       violations=$((violations + 1))
