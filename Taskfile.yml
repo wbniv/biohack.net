@@ -90,6 +90,21 @@ tasks:
           printf "  %-30s  %d\n" "$SLUG" "$MED"
         done
 
+  bundle:
+    desc: 'Build site and zip dist/ → dist/biohack-net.zip — ready to upload to Claude Design'
+    deps: [build]
+    cmds:
+      - |
+        set -euo pipefail
+        OUT=dist/biohack-net.zip
+        rm -f "$OUT"
+        # Zip everything *under* dist/ (not the dist/ dir itself), excluding the zip we're writing.
+        (cd dist && zip -qr -X "../$OUT" . -x "$(basename "$OUT")")
+        printf 'wrote %s (%s, %d files)\n' \
+          "$OUT" \
+          "$(du -h "$OUT" | cut -f1)" \
+          "$(unzip -l "$OUT" | tail -1 | awk '{print $2}')"
+
   publish:
     desc: 'Tag and push to trigger deploy (usage: task publish TAG=v1.2.3)'
     vars:
