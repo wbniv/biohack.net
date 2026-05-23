@@ -3,8 +3,27 @@ import Base from '../layouts/Base.astro';
 ---
 <Base>
   <style>
-    #projects ul { list-style-type: '•  '; }
-    #projects li { padding-left: .25rem; }
+    #projects ul {
+      list-style: none;
+      padding-left: 0;
+      margin-left: 0;
+    }
+    #projects li {
+      position: relative;
+      padding-left: 1.6rem;
+    }
+    #projects li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: .5em;
+      width: 16px;
+      height: 16px;
+      background-image: url('/favicon/e2c1eb0e54c1.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      transform: translateY(-50%);
+    }
 
     .columns {
       display: grid;
@@ -13,9 +32,6 @@ import Base from '../layouts/Base.astro';
       align-items: start;
     }
     .columns ul { margin: 0; }
-    @media (max-width: 540px) {
-      .columns { grid-template-columns: 1fr; gap: 1rem; }
-    }
   </style>
   <header id="site-header">
     <h1>bioHACK <strong>•</strong> NET</h1>
