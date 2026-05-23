@@ -19,6 +19,25 @@ import Base from '../layouts/Base.astro';
       --accent:   #C96442;
     }
 
+    /* ── Back link ──────────────────────────────────────── */
+    .back-link {
+      display: inline-block;
+      font-size: 0.8125rem;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      padding: 0.35rem 0.65rem 0.35rem 0.55rem;
+      border: 1px solid rgba(201, 100, 66, 0.35);
+      border-radius: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .back-link:hover {
+      background: rgba(201, 100, 66, 0.08);
+      border-color: var(--accent);
+      color: #B05535;
+    }
+    .back-link .arrow { margin-right: 0.4rem; }
+
     /* ── Header ─────────────────────────────────────────── */
     .page header { margin-bottom: 3rem; }
 
@@ -162,6 +181,8 @@ import Base from '../layouts/Base.astro';
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" slot="head" />
 
   <div class="page">
+    <a class="back-link" href="/"><span class="arrow">←</span>biohack.net</a>
+
     <header>
       <svg class="logomark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect width="36" height="36" rx="8" fill="#C96442"/>
