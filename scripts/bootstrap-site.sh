@@ -131,10 +131,22 @@ if ! $DRY_RUN; then
         info "CF_ACCOUNT_ID: $CF_ACCOUNT_ID"
     fi
 
+    # Preflight: check all required permissions before doing anything destructive.
+    FAILED_PERMS=()
+    DNS_HTTP=$(cf_api_status GET "/zones/${CF_ZONE_ID:-$(cf_api GET "/zones?name=${CUSTOM_DOMAIN}" | jq -r '.result[0].id')}/dns_records?per_page=1")
+    [[ "$DNS_HTTP" == "403" ]] && FAILED_PERMS+=("Zone | DNS | Edit  (all zones)")
+    PAGERULES_HTTP=$(cf_api_status GET "/zones/${CF_ZONE_ID}/pagerules?per_page=1")
+    [[ "$PAGERULES_HTTP" == "403" ]] && FAILED_PERMS+=("Zone | Page Rules | Edit  (all zones)")
     PAGES_HTTP=$(cf_api_status GET "/accounts/${CF_ACCOUNT_ID}/pages/projects?per_page=1")
-    if [[ "$PAGES_HTTP" == "403" ]]; then
-        err "CF_API_TOKEN lacks Cloudflare Pages permission."
-        err "Add 'Account | Cloudflare Pages | Edit' to your token and re-run."
+    [[ "$PAGES_HTTP" == "403" ]] && FAILED_PERMS+=("Account | Cloudflare Pages | Edit")
+
+    if [[ ${#FAILED_PERMS[@]} -gt 0 ]]; then
+        err "Token is missing permissions. Edit it at:"
+        err "  https://dash.cloudflare.com/profile/api-tokens → biohack-operator → Edit"
+        err "Add:"
+        for p in "${FAILED_PERMS[@]}"; do err "  $p"; done
+        CF_API_TOKEN=""
+        cache_set CF_API_TOKEN ""
         exit 1
     fi
 fi
@@ -177,9 +189,9 @@ else
         ok "[0] No www-redirect Page Rules found"
     fi
 
-    # Also check Redirect Rules (newer ruleset-based)
+    # Also check Redirect Rules (newer ruleset-based) — 403 = no rulesets permission, skip silently
     REDIRECT_RS_ID=$(cf_api GET "/zones/${CF_ZONE_ID}/rulesets" \
-        | jq -r '.result[] | select(.phase == "http_request_dynamic_redirect") | .id' || true)
+        2>/dev/null | jq -r '.result[] | select(.phase == "http_request_dynamic_redirect") | .id' || true)
     if [[ -n "$REDIRECT_RS_ID" ]]; then
         www_rules=$(cf_api GET "/zones/${CF_ZONE_ID}/rulesets/${REDIRECT_RS_ID}" \
             | jq -r '.result.rules[]? | select(.action_parameters.from_value.target_url.value // "" | test("www\\.")) | .id' || true)
