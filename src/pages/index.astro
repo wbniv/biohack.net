@@ -2,6 +2,18 @@
 import Base from '../layouts/Base.astro';
 ---
 <Base>
+  <style>
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .columns ul { margin: 0; }
+    @media (max-width: 540px) {
+      .columns { grid-template-columns: 1fr; gap: 1rem; }
+    }
+  </style>
   <header id="site-header">
     <h1>bioHACK <strong>•</strong> NET</h1>
   </header>
