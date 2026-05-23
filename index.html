@@ -1,275 +1,94 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><!--[if gte IE 5.5]>
-		<![if lt IE 7]>
-			<link rel="stylesheet" type="text/css" href="index/default-ie.css" />
-		<![endif]>
-	<![endif]-->
-<!--==========================================================================================-->
-	<title>bioHACK dot NET</title>
-	<link rel="stylesheet" type="text/css" href="index/styles.css" media="all" />
-<script language="JavaScript" type="text/javascript" >
-<!--
-function gup( name )
-{
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
-    return undefined;
-  else
-    return results[1];
-}
-
-var display = gup( 'css' );
-if ( display == undefined ) {
-	var NUM_STYLES = 7;
-	var now = new Date();
-	var minFromMidnight = (now.getHours() * 60) + now.getMinutes();
-	display = Math.floor( minFromMidnight / (60*24/NUM_STYLES) ) + 1;
-	display = (minFromMidnight % NUM_STYLES) + 1;
-	display = (now.getDay() % NUM_STYLES) + 1;
-}
-	document.write( '<' + 'link rel="stylesheet" type="text/css" href="index/' + display + '/styles.css" \/' + '>' );
-
-	document.write( '<' + 'link rel="icon" href="index/' + display + '/favicon.ico" type="image/x-icon" \/' + '>' );
-	document.write( '<' + 'link rel="shortcut icon" href="index/' + display + '/favicon.ico" type="image/x-icon" \/' + '>' );
-//-->
-</script>
-	<link rel="author" href="" />
-    <meta name="robots" content="none" />
-	<meta name="description" content="will norris" />
-	<meta name="keywords" content="will norris" />
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<script type="text/javascript" src="index/prototype_002.js"></script>
-	<script type="text/javascript" src="index/moo.js"></script>
-	<script language="JavaScript" type="text/javascript">
-	<!--
-	function noSpam(user,domain) {
-		locationstring = 'mailto:' + user + '@' + domain;
-		window.location = locationstring;
-		}
-	//-->
-	</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bioHACK dot NET — Will Norris</title>
+  <meta name="description" content="Will Norris — hacker, developer, game engineer">
+  <meta name="robots" content="none">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #222;
+      max-width: 680px;
+      margin: 3rem auto;
+      padding: 0 1.5rem 4rem;
+    }
+    h1 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: .1em; margin: 2.5rem 0 .75rem; border-bottom: 1px solid #ddd; padding-bottom: .4rem; }
+    h2 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: .25rem; }
+    p  { margin-bottom: .75rem; }
+    ul { margin: .5rem 0 .75rem 1.25rem; }
+    li { margin-bottom: .2rem; }
+    a  { color: #222; }
+    a:hover { text-decoration: none; }
+    blockquote { border-left: 3px solid #ddd; padding-left: 1rem; color: #555; margin: 1.5rem 0; font-style: italic; }
+    blockquote cite { display: block; margin-top: .5rem; font-size: .9rem; font-style: normal; }
+    #site-header { margin-bottom: 2rem; }
+    #site-header h1 { border: none; margin: 0; font-size: 1.4rem; letter-spacing: .15em; }
+    nav { margin-top: .5rem; font-size: .9rem; font-family: monospace; }
+    nav a { margin-right: 1.2rem; text-decoration: none; color: #555; }
+    nav a:hover { color: #222; }
+  </style>
 </head>
 <body>
-<!--==========================================================================================-->
-	<div id="container">
-		<a id="topofpage"></a>
-		<div class="section">
-<!--==========================================================================================-->
-<div id="header"></div>
 
-<h1>Welcome</h1>
+<header id="site-header">
+  <h1>bioHACK dot NET</h1>
+  <nav>
+    <a href="#projects">projects</a>
+    <a href="#work">work</a>
+    <a href="#profile">profile</a>
+    <a href="claude/">claude</a>
+  </nav>
+</header>
 
-<p>
-<!--
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla lobortis commodo est. 
-Ut mollis tortor et purus interdum varius. Maecenas vitae sapien quis augue congue hendrerit. 
-Quisque dui est, lacinia non, tincidunt sit amet, viverra a, ligula. Mauris vel augue. In hac habitasse platea dictumst. 
-Nunc tempor sapien fringilla libero. Sed dui.
-Praesent dictum, nisl ut bibendum scelerisque, quam nisl iaculis tortor, vitae feugiat arcu pede sit amet velit. 
--->
-</p>
+<blockquote>
+  The sign of a first-rate intelligence is the ability to hold
+  two opposing ideas in the mind at the same time
+  and still retain the ability to function.
+  <cite>— F. Scott Fitzgerald</cite>
+</blockquote>
 
-<!--
-<center><span style="font-size:120%;">
-Have the confidence to be who you are&mdash;most people don't.
-</span><br/>
-<cite style="text-align:right"></cite></center>
--->
+<section id="projects">
+  <h1>Highlighted Projects</h1>
 
-<center><span style="font-size:120%;">
-The sign of a first-rate intelligence is the ability to hold <br/>
-two opposing ideas in the mind at the same time <br/>
-and still retain the ability to function.
-</span><br/>
-<cite style="text-align:right">&mdash; F. Scott Fitzgerald</cite></center>
+  <p>I have shipped over a dozen titles on systems ranging from the Amiga and CDTV, MS-DOS, Atari Lynx, Super Nintendo, Genesis, 3DO, and PlayStation. These are some of the accomplishments I am most proud of:</p>
 
-<!--
-<center><span style="font-size:120%;">The computer world is like a great big toy store.<br/>But all the toys are broken.</span><br/>
-<cite style="text-align:right">&mdash; Steve Witham</cite></center>
--->
+  <ul>
+    <li><a href="http://en.wikipedia.org/wiki/Ballz">Ballz</a> — the only 3D fighting game for the Super Nintendo</li>
+    <li><a href="http://en.wikipedia.org/wiki/Game_Genie">Game Genie</a> for the Super Nintendo</li>
+    <li><a href="http://www.ohloh.net/p/drdevtools">SNES &amp; Genesis Development Systems</a> — including ISA card</li>
+    <li>DRAW — custom cartridge-based Artist Workstation for Genesis &amp; Super Nintendo</li>
+    <li><a href="wf/index.html">World Foundry 3D Game Engine</a> and Production Pathway</li>
+    <li><a href="http://russound.com/product_detail.php?i=3241">Russound SMS-3</a> Media Server</li>
+    <li><a href="http://foswiki.org/">Foswiki</a> — successor to TWiki</li>
+    <li><a href="claude/">Claude Code plugins</a> — personal marketplace of techops, design, and productivity skills</li>
+  </ul>
+</section>
 
-</div>
-<!--==========================================================================================-->
-		<br/>
-		<a id="projects"></a>
-		<div class="section">
-<!--==========================================================================================-->
-<h1>Highlighted Projects</h1>
+<section id="work">
+  <h1>Work</h1>
+  <p><a href="cv/">View Will's résumé</a></p>
+</section>
 
-<p>
-I have shipped over a dozen titles on systems ranging from the Amiga and CDTV [sigh], MS-DOS, Atari Lynx [sigh], Super Nintendo, Genesis, 3DO, and Playstation.  These are some of the accomplishments that I am most proud of:
-</p>
+<section id="profile">
+  <h1>Profile</h1>
 
-	<div class="list_holder">
-		<div class="projectlist">
-			<ul class="arrow">
-				<li><a href="http://foswiki.org/">Foswiki</a> development - the successor to TWiki<sup>&trade;</sup></li>
-				<li><a href="http://en.wikipedia.org/wiki/Ballz">Ballz</a> - the only 3D fighting game for the Super Nintendo</li>
-				<li><a href="http://en.wikipedia.org/wiki/Game_Genie">Game Genie</a> for the Super Nintendo</li>
-				<li><a href="http://russound.com/product_detail.php?i=3241">Russound SMS-3</a> Media Server</li>
-			</ul>
-		</div>
-		<div class="projectlist">
-			<ul class="arrow">
-				<li><a href="http://www.ohloh.net/p/drdevtools">SNES &amp; Genesis Development Systems</a> - including ISA card</li>
-				<li>DRAW - custom-made cartridge-based Artist Workstation for Genesis &amp; Super Nintendo</li>
-				<li><a href="wf/index.html">World Foundry 3D Game Engine</a> and Production Pathway</li>
-				<li><a href="claude/">Claude Code plugins</a> - personal marketplace of techops, design, and productivity skills</li>
-			</ul>
-		</div>
-	</div><div class="clear">
+  <p>Will is a hacker and professional software developer with a profound interest in wiki and social collaboration, process management, realtime simulation, and data visualization.</p>
 
-	</div>
+  <ul>
+    <li><a href="http://www.linkedin.com/in/w1lln0rr15">LinkedIn</a></li>
+    <li><a href="http://github.com/wbniv">GitHub</a></li>
+    <li><a href="http://www.biohack.net/WillNorris.vcf">vCard</a></li>
+  </ul>
+</section>
 
-</div>
-<!--==========================================================================================-->		
-		<br/>
-		<a id="work"></a>
-		<div class="section">
-<!--==========================================================================================-->
-
-<h1>Work</h1>
-
-<!--
-<p>
-until recently, i was responsible for all outgoing emails, ... 
-nowadays, I'm part of the web analytics group
-for an extremely large websites ... in the alexis 100 
-
-before that,
-
-before that, 13 years of games and games development tools
-</p>
-
-<p>
-I am <b>currently looking for a system administrator position</b> in the San Francisco Bay Area.
-</p>
--->
-
-<p>
-<a href="cv/" class="text"><img src="index/resume.gif" alt="View Will's resum&eacute;" width="16" height="16" /> View Will's resum&eacute; </a>
-</p>
-
-</div>
-<!--==========================================================================================-->
-	<br/>
-	<a id="profile"></a>
-	<div class="section">
-<!--==========================================================================================-->
-
-<h1>Profile</h1>
-
-<div class="work_holder">
-<div class="work">
-
-<img src="index/photo.jpg" class="NAME" alt="will photo" />
-
-<div class="bio">
-<h2>Will</h2>
-<p>
-<!--
-Will is a founding member of WikiRing.<br/>
--->
-Will is a hacker and professional software developer with a profound interest in wiki and social collaboration, process management, realtime simulation, and data visualization.
-</p>
-<ul>
-<li><a href="http://wiki.biohack.net/bin/view/Main/WillNorris/" class="text"><img src="index/foswiki-icon.png" alt="Foswiki icon" /> Explore Will's wiki and blog</a></li>
-<li><a href="http://www.biohack.net/WillNorris.vcf" class="text"><img src="index/vcard.png" alt="vcard icon" /> Grab Will's vCard</a></li>
-<li><a href="http://www.linkedin.com/in/w1lln0rr15" class="text"><img src="index/linkedin.png" alt="linked in icon" /> Will's LinkedIn profile</a></li>
-<li><a href="http://twitter.com/wbniv" class="text"><img src="index/twitter.png" alt="twitter" width="16" height="16" /> Twitter</a></li>
-<li><a href="http://del.icio.us/wbniv" class="text"><img src="index/del.icio.us.png" alt="" /> del.icio.us 'marks</a></li>
-</ul>
-
-<!--
-<p>NAME's other projects include:<br/>
-<a href="http://www.worldfoundry.org/" class="text" target="_blank"> &gt;&gt; World Foundry 3D Game Engine</a><br/>
-<a href="http://foswiki.org/" class="text" target="_blank"> &gt;&gt; Foswiki (Corporate and Structured Wiki)</a><br/>
--->
-<!-- <a href="http://tenetti.org/cgi-bin/twiki/view.cgi/DrDevTools/WebHome" class="text" target="_blank"> &gt;&gt; Developer Resources SNES/Genesis Development System & Tools</a> -->
-<!-- </p> -->
-</div>
-</div>
-<div class="work_holder_footer"></div>  
-</div>
-
-</div>
-<!--==========================================================================================-->
-	<br/>
-	<a id="contact"></a>
-	<div class="section">
-<!--==========================================================================================-->
-
-<!--
-<h1>Contact</h1>
-
-<p>
-email: <a href="javascript:noSpam('will','biohack.net')" onfocus="this.blur();" class="text">will[at]biohack.net</a>
-</p>
-
-<form action="index/contact.cgi" method="post" onkeypress="return event.keyCode!=13" >
-   <table>
-
-	   <tbody><tr>
-		   <td>
-			   <label>name</label><span><input name="name" size="25" type="text" /></span>
-		   </td>
-		</tr><tr>
-		   <td>
-			   <label>email</label><span><input name="email" size="25" type="text" /></span>
-		   </td>
-	   </tr><tr>
-		   <td>
-			   <label>url</label><span><input name="siteurl" size="25" type="text" /></span>
-		   </td>
-	   </tr><tr>
-		   <td>
-			   <label>subject</label><span><input name="subject" size="25" type="text" /></span>
-		   </td>
-	   </tr><tr>
-		   <td colspan="2">
-			   <label>what's up?</label><br/><span><textarea rows="10" cols="45" name="comments"></textarea></span>
-		   <br/>
-				<input src="index/btn-send.png" alt="Send message" class="button" type="image" />
-			<br/>
-		  	</td>
-	   </tr>
-   </tbody></table>
-</form>
--->
-
-<!--==========================================================================================-->
-<div class="footer">Copyright &copy; 2007, 2010, 2015 Will Norris. All Rights Reserved.</div>
-<!--==========================================================================================-->
-
-	</div>
-</div>
-
-<!--==========================================================================================-->
-<div id="menu">
-	<div id="logo"><a href="#topofpage" style="width:125px; height:115px"></a></div>
-	<ul class="navigation">
-		<li><a href="#topofpage">About</a></li>
-		<li><a href="#projects">Projects</a></li>
-		<li><a href="#work">Work</a></li>
-		<li><a href="#profile">Profile</a></li>
-<!--
-		<li><a href="#contact">Contact</a></li>
--->
-	</ul>
-</div>
-<!--==========================================================================================-->
-
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-var pageTracker = _gat._getTracker("UA-5322854-1");
-pageTracker._trackPageview();
-</script>
+<footer style="margin-top:3rem; font-size:.85rem; color:#999;">
+  Copyright &copy; 2007&ndash;2026 Will Norris. All rights reserved.
+</footer>
 
 </body>
 </html>
