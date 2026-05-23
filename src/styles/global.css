@@ -1,0 +1,84 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* TODO: replace placeholder palette with brand colors */
+@theme {
+  --color-bg:         #ffffff;
+  --color-fg:         #222222;
+  --color-fg-muted:   #555555;
+  --color-accent:     #222222;
+  --color-border:     #dddddd;
+
+  --font-body:        Georgia, serif;
+  --font-mono:        monospace;
+
+  --container-max:    680px;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-fg);
+    background: var(--color-bg);
+    max-width: var(--container-max);
+    margin: 3rem auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin: 2.5rem 0 .75rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: .4rem;
+  }
+
+  h2 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: .25rem; }
+  p  { margin-bottom: .75rem; }
+  ul { margin: .5rem 0 .75rem 1.25rem; }
+  li { margin-bottom: .2rem; }
+
+  a { color: var(--color-accent); }
+  a:hover { text-decoration: none; }
+
+  blockquote {
+    border-left: 3px solid var(--color-border);
+    padding-left: 1rem;
+    color: var(--color-fg-muted);
+    margin: 1.5rem 0;
+    font-style: italic;
+  }
+  blockquote cite {
+    display: block;
+    margin-top: .5rem;
+    font-size: .9rem;
+    font-style: normal;
+  }
+
+  footer {
+    margin-top: 3rem;
+    font-size: .85rem;
+    color: var(--color-fg-muted);
+  }
+
+  #site-header { margin-bottom: 2rem; }
+  #site-header h1 {
+    border: none;
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: .15em;
+  }
+
+  nav { margin-top: .5rem; font-size: .9rem; font-family: var(--font-mono); }
+  nav a {
+    margin-right: 1.2rem;
+    text-decoration: none;
+    color: var(--color-fg-muted);
+  }
+  nav a:hover { color: var(--color-fg); }
+}

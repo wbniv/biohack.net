@@ -5,3 +5,13 @@
 
 # Nested repo (own remote)
 rapid-raccoon-site/
+
+# Node / Astro
+node_modules/
+dist/
+.astro/
+
+# Local-only working data
+.claude/
+preflight-out/
+from-dreamhost/

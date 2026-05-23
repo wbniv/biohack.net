@@ -2,10 +2,8 @@
 // Link-check gate: verify every <a href> in built site/*.html resolves.
 // Usage: node scripts/check-links.js [--skip-external]
 
-'use strict';
-
-const { readFileSync, existsSync, appendFileSync, readdirSync } = require('node:fs');
-const { join, resolve } = require('node:path');
+import { readFileSync, existsSync, appendFileSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 const SKIP_EXTERNAL = process.argv.includes('--skip-external');
 const dirArg = (() => {
