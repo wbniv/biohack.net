@@ -206,6 +206,13 @@ import Base from '../layouts/Base.astro';
     .page footer { margin-top: 4rem; font-size: 0.775rem; color: var(--muted); }
     .page footer a { color: var(--muted); }
     .page footer a:hover { color: #1A1714; }
+
+    /* ── Narrow / phone tweaks ──────────────────────────── */
+    @media (max-width: 600px) {
+      .byline { margin-bottom: 0.75rem; }
+      .page header { margin-bottom: 1rem; }
+      .category:first-of-type { margin-top: 0.5rem; }
+    }
   </style>
 
   <!-- load Inter for this page only -->
