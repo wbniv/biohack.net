@@ -38,3 +38,87 @@ jobs:
           apiToken: ${{ secrets.CF_PAGES_API_TOKEN }}
           accountId: ${{ secrets.CF_PAGES_ACCOUNT_ID }}
           command: pages deploy dist --project-name biohack-net --branch master
+
+      # Lighthouse audit against prod after deploy. Informational —
+      # continue-on-error: true so a Lighthouse failure never blocks a
+      # ship. RUNS=1 in CI; devtools throttling has near-zero run-to-run
+      # variance, so a single run is statistically equivalent to a 3-run
+      # median and saves Actions budget.
+      - uses: arduino/setup-task@v2
+        with:
+          version: '3.x'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for Cloudflare propagation
+        run: sleep 30
+
+      - name: Lighthouse audit
+        id: lh
+        continue-on-error: true
+        env:
+          RUNS: '1'
+        run: task lighthouse
+
+      - name: Stage Lighthouse artifacts
+        if: steps.lh.outcome == 'success'
+        run: |
+          mkdir -p lighthouse-bundle
+          cp /tmp/lh/latest/*.json lighthouse-bundle/
+
+      - name: Upload Lighthouse bundle
+        if: steps.lh.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-${{ github.ref_name }}
+          path: lighthouse-bundle/*.json
+          retention-days: 90
+
+      - name: Lighthouse summary
+        if: steps.lh.outcome == 'success'
+        run: |
+          {
+            echo "## Lighthouse — ${{ github.ref_name }}"
+            echo
+            echo "| Page | Perf | FCP | LCP | TBT | CLS |"
+            echo "|---|---:|---:|---:|---:|---:|"
+            for f in lighthouse-bundle/*.run-1.report.json; do
+              slug=$(basename "$f" .run-1.report.json)
+              jq -r --arg slug "$slug" '
+                "| \($slug) | \((.categories.performance.score*100)|round) | \(.audits["first-contentful-paint"].displayValue) | \(.audits["largest-contentful-paint"].displayValue) | \(.audits["total-blocking-time"].displayValue) | \(.audits["cumulative-layout-shift"].displayValue) |"
+              ' "$f"
+            done
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: CLS budget check
+        if: steps.lh.outcome == 'success'
+        continue-on-error: true
+        env:
+          CLS_BUDGET: '0.05'
+        run: |
+          set -euo pipefail
+          violations=0
+          {
+            echo
+            echo "### CLS budget: ≤ ${CLS_BUDGET}"
+            echo
+            echo "| Page | CLS | Status |"
+            echo "|---|---:|:---:|"
+            for f in /tmp/lh/latest/*.run-1.report.json; do
+              SLUG=$(basename "$f" .run-1.report.json)
+              CLS=$(jq -r '.audits["cumulative-layout-shift"].numericValue' "$f")
+              STATUS=$(awk -v c="$CLS" -v b="$CLS_BUDGET" \
+                'BEGIN { print (c+0 <= b+0) ? "✓ OK" : "⚠️ OVER" }')
+              printf "| %s | %.4f | %s |\n" "$SLUG" "$CLS" "$STATUS"
+              if [ "${STATUS#⚠️}" != "$STATUS" ]; then
+                violations=$((violations + 1))
+              fi
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$violations" -gt 0 ]; then
+            echo "::warning::$violations page(s) over CLS budget ${CLS_BUDGET}; see job summary."
+            exit 1
+          fi
+
+      - name: Threshold check
+        if: steps.lh.outcome == 'success'
+        run: ./scripts/lighthouse-threshold.sh
