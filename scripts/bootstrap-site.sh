@@ -11,11 +11,13 @@
 
 set -euo pipefail
 
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 GH_REPO="wbniv/biohack.net"
 PAGES_PROJECT="biohack-net"
 CUSTOM_DOMAIN="biohack.net"
 CI_TOKEN_NAME="biohack-site-ci"
-BOOTSTRAP_CACHE="${BASH_SOURCE[0]%/scripts/*}/.creds/bootstrap.env"
+BOOTSTRAP_CACHE="${REPO_ROOT}/.creds/bootstrap.env"
 
 DRY_RUN=false
 
