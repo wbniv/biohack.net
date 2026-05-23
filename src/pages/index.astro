@@ -83,11 +83,12 @@ import Base from '../layouts/Base.astro';
       border: 1px solid var(--rule);
       background: var(--bg-soft);
       aspect-ratio: 1 / 1;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
     .columns ul li:hover {
-      background: var(--accent-bg);
-      border-color: #e8a47a;
+      background: rgba(125,211,252,0.05);
+      border-color: #7dd3fc;
+      box-shadow: 0 0 20px rgba(125,211,252,0.5), 0 0 40px rgba(125,211,252,0.2);
     }
     .columns ul li::before {
       content: '';
