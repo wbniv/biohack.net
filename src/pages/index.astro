@@ -177,43 +177,84 @@ import Base from '../layouts/Base.astro';
       .narrow-only { display: inline; }
     }
 
-    /* ── Blockquote ──────────────────────────────────────── */
+    /* ── Blockquote — Blade Runner treatment ─────────────── */
     blockquote {
       margin: 56px 0 0;
-      padding: 24px 24px 22px;
-      border: 1px solid var(--rule);
-      border-left: 3px solid #00e5ff;
+      padding: 36px 36px 28px;
+      border: 1px solid rgba(255,140,0,0.15);
       font-size: 18px;
-      line-height: 1.5;
+      line-height: 1.6;
       font-style: italic;
       color: var(--ink);
       position: relative;
       overflow: hidden;
       background: linear-gradient(
-        135deg,
-        color-mix(in oklab, #00e5ff 18%, var(--bg-soft)) 0%,
-        var(--bg-soft) 60%
+        160deg,
+        rgba(255,100,0,0.06) 0%,
+        rgba(20,12,4,0.5) 60%
       );
+      box-shadow: 0 0 24px rgba(255,120,0,0.1), inset 0 0 40px rgba(255,80,0,0.03);
     }
+    /* corner reticles — top-left, top-right, bottom-left, bottom-right */
+    blockquote::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        /* scanlines */
+        repeating-linear-gradient(
+          0deg,
+          transparent, transparent 3px,
+          rgba(0,0,0,0.14) 3px, rgba(0,0,0,0.14) 4px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+    blockquote > * { position: relative; z-index: 1; }
+    /* neon quote character */
     blockquote::after {
       content: '\201C';
       position: absolute;
-      top: -46px; right: -8px;
+      top: -24px; left: 18px;
       font-family: Georgia, serif;
-      font-size: 220px;
+      font-size: 140px;
       line-height: 1;
-      color: color-mix(in oklab, #00e5ff 22%, transparent);
-      pointer-events: none;
       font-style: normal;
+      color: #ff8c00;
+      text-shadow:
+        0 0 8px rgba(255,140,0,0.9),
+        0 0 20px rgba(255,100,0,0.6),
+        0 0 50px rgba(255,60,0,0.3);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
     }
+    /* corner bracket decoration via outline divs — using box-shadow trick on blockquote corners */
+    blockquote .corner-tl, blockquote .corner-tr,
+    blockquote .corner-bl, blockquote .corner-br {
+      position: absolute;
+      width: 18px; height: 18px;
+      z-index: 2;
+    }
+    blockquote .corner-tl { display: none; }
+    blockquote .corner-tr { top: 0; right: 0;
+      border-top: 2px solid #7dd3fc; border-right: 2px solid #7dd3fc;
+      box-shadow: 2px -2px 8px rgba(125,211,252,0.5); }
+    blockquote .corner-bl { bottom: 0; left: 0;
+      border-bottom: 2px solid #7dd3fc; border-left: 2px solid #7dd3fc;
+      box-shadow: -2px 2px 8px rgba(125,211,252,0.5); }
+    blockquote .corner-br { display: none; }
     blockquote cite {
       display: block;
-      margin-top: 14px;
+      margin-top: 16px;
       font-style: normal;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      color: var(--ink-dim);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #ff8c00;
+      font-family: 'JetBrains Mono', monospace;
+      opacity: 0.75;
     }
 
     /* ── Prompt ──────────────────────────────────────────── */
@@ -280,6 +321,8 @@ import Base from '../layouts/Base.astro';
   </section>
 
   <blockquote>
+    <span class="corner-tl"></span><span class="corner-tr"></span>
+    <span class="corner-bl"></span><span class="corner-br"></span>
     The sign of a first-rate intelligence is the ability to hold two opposing ideas in the mind at the same time and still retain the ability to function.
     <cite>— F. Scott Fitzgerald</cite>
   </blockquote>
