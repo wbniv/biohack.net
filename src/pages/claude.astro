@@ -87,11 +87,9 @@ import Base from '../layouts/Base.astro';
       color: #1A1714;
     }
 
-    /* ── Divider ────────────────────────────────────────── */
-    .page hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
-
     /* ── Categories ─────────────────────────────────────── */
-    .category { margin-bottom: 2.75rem; }
+    .category { margin-bottom: 2.25rem; }
+    .category:first-of-type { margin-top: 1.75rem; }
 
     .page h2 {
       font-size: 0.675rem;
@@ -140,6 +138,33 @@ import Base from '../layouts/Base.astro';
       border-radius: 4px;
       padding: 0.15rem 0.5rem;
       margin-bottom: 0.65rem;
+    }
+
+    /* ── Featured: header row with icon + name ──────────── */
+    .featured-head {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin: 0 0 0.35rem;
+    }
+    .featured-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      flex-shrink: 0;
+      display: block;
+    }
+    .featured-head .plugin-name { margin: 0; }
+
+    .featured-screenshot {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      margin: 0 0 1rem;
+      background: #FFFFFF;
     }
 
     .plugin-name {
@@ -201,14 +226,16 @@ import Base from '../layouts/Base.astro';
       </div>
     </header>
 
-    <hr />
-
     <section class="category" id="featured">
       <div class="plugin-grid">
         <div class="plugin featured">
           <span class="featured-flag">Featured</span>
-          <p class="plugin-name">Claude Usage Indicator</p>
+          <div class="featured-head">
+            <img class="featured-icon" src="/claude/usage-icon.png" alt="" aria-hidden="true" width="64" height="64" />
+            <p class="plugin-name">Claude Usage Indicator</p>
+          </div>
           <p class="plugin-desc">Shows your Claude.ai weekly usage % in the GNOME top panel and dock. Live indicator — never wonder where you stand against your quota again.</p>
+          <img class="featured-screenshot" src="/claude/usage-popup.png" alt="Claude Usage Indicator popup showing current session and weekly quota usage" width="1200" height="380" loading="lazy" />
           <pre>/plugin install install-gnome-usage@biohack-claude</pre>
         </div>
       </div>

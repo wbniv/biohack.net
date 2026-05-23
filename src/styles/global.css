@@ -33,7 +33,7 @@
     font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: .1em;
-    margin: 2.5rem 0 .75rem;
+    margin: 1.75rem 0 .75rem;
     border-bottom: 1px solid var(--color-border);
     padding-bottom: .4rem;
   }
@@ -50,8 +50,20 @@
     border-left: 3px solid var(--color-border);
     padding-left: 1rem;
     color: var(--color-fg-muted);
-    margin: 1.5rem 0;
+    margin: 2.75rem 0 1.5rem;
     font-style: italic;
+  }
+
+  #profile .columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem 2rem;
+    align-items: start;
+  }
+  #profile .columns > p { margin-bottom: 0; }
+  #profile .columns ul  { margin: 0 0 0 1.25rem; }
+  @media (min-width: 560px) {
+    #profile .columns { grid-template-columns: 1.4fr 1fr; }
   }
   blockquote cite {
     display: block;
@@ -83,6 +95,7 @@
   nav a:hover { color: var(--color-fg); }
 
   svg.icon {
+    display: inline-block;
     width: 1em;
     height: 1em;
     vertical-align: -0.15em;
