@@ -2,7 +2,6 @@
 *~
 .DS_Store
 .creds/
-.claude/
 
 # Nested repo (own remote)
 rapid-raccoon-site/
