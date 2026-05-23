@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Not found — bioHACK • NET">
+  <style>
+    .nope {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding-top: 3rem;
+    }
+    .nope-code {
+      font-size: 4.5rem;
+      font-weight: 600;
+      letter-spacing: -.04em;
+      line-height: 1;
+      color: var(--color-fg);
+      margin: 0;
+    }
+    .nope-headline {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: .4rem;
+      margin: 0;
+      align-self: stretch;
+    }
+    .nope-body { color: var(--color-fg-muted); margin: 0; }
+    .nope-home {
+      display: inline-block;
+      font-size: 0.8125rem;
+      text-decoration: none;
+      color: var(--color-fg);
+      padding: 0.4rem 0.75rem 0.4rem 0.6rem;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      margin-top: .5rem;
+    }
+    .nope-home:hover { border-color: var(--color-fg); }
+    .nope-home .arrow { margin-right: 0.4rem; }
+  </style>
+
+  <section class="nope">
+    <p class="nope-code">404</p>
+    <h1 class="nope-headline">Page not found</h1>
+    <p class="nope-body">The page you're looking for doesn't exist — or maybe it never did.</p>
+    <a class="nope-home" href="/"><span class="arrow">←</span>bioHACK <strong>•</strong> NET</a>
+  </section>
+</Base>
