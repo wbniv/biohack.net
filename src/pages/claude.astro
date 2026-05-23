@@ -209,6 +209,8 @@ import Base from '../layouts/Base.astro';
 
     /* ── Narrow / phone tweaks ──────────────────────────── */
     @media (max-width: 600px) {
+      :global(body) { margin-top: 0.25rem; }
+      .back-link { margin-bottom: 1rem; }
       .byline { margin-bottom: 0.75rem; }
       .page header { margin-bottom: 1rem; }
       .category:first-of-type { margin-top: 0.5rem; }
