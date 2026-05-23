@@ -1,54 +1,37 @@
 ---
+import Base from '../layouts/Base.astro';
 ---
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Claude plugins — biohack.net</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<Base title="Claude plugins — biohack.net">
   <style>
-    :root {
-      --bg:       #0F0E0D;
-      --surface:  #1A1816;
-      --surface2: #222020;
-      --border:   #2D2B29;
-      --border2:  #3A3835;
-      --text:     #EAE6E1;
-      --muted:    #7B7670;
-      --accent:   #C96442;
-      --accent-l: #DC7A59;
-      --code-bg:  #15141A;
-      --code-txt: #C0BAB3;
+    /* page-scoped overrides — Inter + wider canvas */
+    :global(body) {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #F7F4F0;
+      max-width: 800px;
     }
 
-    *, *::before, *::after { box-sizing: border-box; }
-
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 3.5rem 1.5rem 5rem;
-      line-height: 1.6;
+    /* ── CSS custom props ───────────────────────────────── */
+    .page {
+      --surface:  #FFFFFF;
+      --border:   #E3DDD8;
+      --border2:  #CEC8C2;
+      --muted:    #6B6560;
+      --accent:   #C96442;
     }
 
     /* ── Header ─────────────────────────────────────────── */
-    header { margin-bottom: 3rem; }
+    .page header { margin-bottom: 3rem; }
 
-    .logomark {
-      width: 36px; height: 36px;
-      margin-bottom: 1.5rem;
-      display: block;
-    }
+    .logomark { width: 36px; height: 36px; margin-bottom: 1.5rem; display: block; }
 
-    h1 {
+    .page h1 {
       font-size: 1.625rem;
       font-weight: 600;
       letter-spacing: -0.025em;
+      border: none;
+      text-transform: none;
       margin: 0 0 0.5rem;
+      padding: 0;
     }
 
     .byline {
@@ -56,9 +39,8 @@
       font-size: 0.875rem;
       margin: 0 0 1.75rem;
     }
-
-    .byline a { color: var(--accent-l); text-decoration: none; }
-    .byline a:hover { text-decoration: underline; }
+    .byline a { color: var(--accent); text-decoration: none; }
+    .byline a:hover { color: #B05535; text-decoration: underline; }
 
     /* ── Global install ─────────────────────────────────── */
     .global-install {
@@ -68,7 +50,6 @@
       padding: 1rem 1.25rem;
       display: inline-block;
     }
-
     .global-install .label {
       font-size: 0.675rem;
       text-transform: uppercase;
@@ -76,31 +57,28 @@
       color: var(--muted);
       margin-bottom: 0.4rem;
     }
-
     .global-install pre {
       margin: 0;
-      font-family: 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
+      font-family: 'SF Mono', 'JetBrains Mono', monospace;
       font-size: 0.8rem;
-      color: var(--text);
+      color: #1A1714;
     }
 
     /* ── Divider ────────────────────────────────────────── */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 2.5rem 0;
-    }
+    .page hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 
     /* ── Categories ─────────────────────────────────────── */
     .category { margin-bottom: 2.75rem; }
 
-    .category-label {
+    .page h2 {
       font-size: 0.675rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--muted);
       font-weight: 500;
+      border: none;
       margin: 0 0 1rem;
+      padding: 0;
     }
 
     /* ── Plugin cards ───────────────────────────────────── */
@@ -111,20 +89,41 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 1.125rem 1.375rem 1.25rem;
-      transition: border-color 0.15s ease, background 0.15s ease;
+      transition: border-color 0.15s ease;
     }
+    .plugin:hover { border-color: var(--border2); }
 
-    .plugin:hover {
-      border-color: var(--border2);
-      background: var(--surface2);
+    .plugin.featured {
+      border-color: var(--accent);
+      background: linear-gradient(180deg, rgba(201, 100, 66, 0.06), var(--surface));
+      padding: 1.5rem 1.5rem 1.625rem;
+    }
+    .plugin.featured:hover {
+      border-color: #B05535;
+      background: linear-gradient(180deg, rgba(201, 100, 66, 0.10), var(--surface));
+    }
+    .plugin.featured .plugin-name { color: var(--accent); }
+
+    .featured-flag {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(201, 100, 66, 0.10);
+      border: 1px solid rgba(201, 100, 66, 0.35);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      margin-bottom: 0.65rem;
     }
 
     .plugin-name {
       font-size: 0.9rem;
       font-weight: 600;
       margin: 0 0 0.35rem;
-      color: var(--text);
       font-family: 'SF Mono', 'JetBrains Mono', monospace;
+      color: #1A1714;
     }
 
     .plugin-desc {
@@ -135,145 +134,140 @@
     }
 
     .plugin pre {
-      background: var(--code-bg);
+      background: #F0EDE9;
       border: 1px solid var(--border);
       border-radius: 7px;
       padding: 0.6rem 0.9rem;
       overflow-x: auto;
-      font-family: 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
+      font-family: 'SF Mono', 'JetBrains Mono', monospace;
       font-size: 0.775rem;
-      color: var(--code-txt);
+      color: #3A3530;
       margin: 0;
       line-height: 1.65;
     }
 
     /* ── Footer ─────────────────────────────────────────── */
-    footer {
-      margin-top: 4rem;
-      font-size: 0.775rem;
-      color: var(--muted);
-    }
-
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--text); }
+    .page footer { margin-top: 4rem; font-size: 0.775rem; color: var(--muted); }
+    .page footer a { color: var(--muted); }
+    .page footer a:hover { color: #1A1714; }
   </style>
-</head>
-<body>
 
-  <header>
-    <svg class="logomark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="36" height="36" rx="8" fill="#C96442"/>
-      <path d="M11 25L18 11L25 25M14 21H22" stroke="#FDEEE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+  <!-- load Inter for this page only -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" slot="head" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" slot="head" />
 
-    <h1>Claude plugins</h1>
-    <p class="byline">
-      Will's personal <a href="https://github.com/wbniv/biohack-claude">Claude Code marketplace</a>
-      — skills, hooks, and extensions for daily use.
-    </p>
+  <div class="page">
+    <header>
+      <svg class="logomark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="36" height="36" rx="8" fill="#C96442"/>
+        <path d="M11 25L18 11L25 25M14 21H22" stroke="#FFF8F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
 
-    <div class="global-install">
-      <div class="label">Add marketplace</div>
-      <pre>/plugin marketplace add wbniv/biohack-claude</pre>
-    </div>
-  </header>
+      <h1>Claude plugins</h1>
+      <p class="byline">
+        Will's personal <a href="https://github.com/wbniv/biohack-claude">Claude Code marketplace</a>
+        — skills, hooks, and extensions for daily use.
+      </p>
 
-  <hr class="divider">
-
-  <section class="category" id="techops">
-    <p class="category-label">⚒ techops</p>
-    <div class="plugin-grid">
-
-      <div class="plugin">
-        <p class="plugin-name">cf-static-site</p>
-        <p class="plugin-desc">Set up a new static site on Cloudflare — Workers + Terraform + GH Actions, or plain Pages. Two paths: full Astro stack or plain HTML.</p>
-        <pre>/plugin install cf-static-site@biohack-claude</pre>
+      <div class="global-install">
+        <div class="label">Add marketplace</div>
+        <pre>/plugin marketplace add wbniv/biohack-claude</pre>
       </div>
+    </header>
 
-      <div class="plugin">
-        <p class="plugin-name">new-web-apt-repo</p>
-        <p class="plugin-desc">Provision a web-hosted signed APT repo on Cloudflare R2, backed by aptly + GitHub Actions.</p>
-        <pre>/plugin install new-web-apt-repo@biohack-claude</pre>
-      </div>
+    <hr />
 
-      <div class="plugin">
-        <p class="plugin-name">claude-housekeeping</p>
-        <p class="plugin-desc">Audit Claude Code artifacts for drift — skills, hooks, memories, settings, and plans — across global ~/.claude and every project.</p>
-        <pre>/plugin install claude-housekeeping@biohack-claude</pre>
-      </div>
-
-      <div class="plugin">
-        <p class="plugin-name">package</p>
-        <p class="plugin-desc">Package a program as a Debian-policy-compliant .deb for a foundry-style apt repo. Handles binaries, scripts, and source packages.</p>
-        <pre>/plugin install package@biohack-claude</pre>
-      </div>
-
-      <div class="plugin">
-        <p class="plugin-name">iam-bootstrap</p>
-        <p class="plugin-desc">Set up AWS IAM credentials for a new project — Terraform user, state backend, and self-narrowing permissions.</p>
-        <pre>/plugin install iam-bootstrap@biohack-claude</pre>
-      </div>
-
-      <div class="plugin">
-        <p class="plugin-name">cf-domain-setup</p>
-        <p class="plugin-desc">Add a domain to Cloudflare on the free plan — scoped API token, zone creation, and activation polling via curl.</p>
-        <pre>/plugin install cf-domain-setup@biohack-claude</pre>
-      </div>
-
-      <div class="plugin">
-        <p class="plugin-name">aws-billing-tags</p>
-        <p class="plugin-desc">Set up AWS cost tracking, billing tags, budget alerts, and Cost Explorer for a project.</p>
-        <pre>/plugin install aws-billing-tags@biohack-claude</pre>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="category" id="design">
-    <p class="category-label">✦ design</p>
-    <div class="plugin-grid">
-
-      <div class="plugin">
-        <p class="plugin-name">import-claude-design</p>
-        <p class="plugin-desc">Import a Claude Design export zip into site/ and deploy via tag-triggered CI.</p>
-        <pre>/plugin install import-claude-design@biohack-claude</pre>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="category" id="personal">
-    <p class="category-label">◆ personal</p>
-    <div class="plugin-grid">
-
-      <div class="plugin">
-        <p class="plugin-name">biohack-shell</p>
-        <p class="plugin-desc">Tab colour hooks (session-start / stop / prompt-submit) and productivity slash commands from Will's personal Claude Code setup.</p>
-        <pre>/plugin install biohack-shell@biohack-claude</pre>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="category" id="gnome">
-    <p class="category-label">🐚 GNOME extensions</p>
-    <div class="plugin-grid">
-
-      <div class="plugin">
-        <p class="plugin-name">Claude Usage Indicator</p>
-        <p class="plugin-desc">Shows your Claude.ai weekly usage % in the GNOME top panel and dock.</p>
-        <pre>git clone https://github.com/wbniv/claude-usage
+    <section class="category" id="featured">
+      <div class="plugin-grid">
+        <div class="plugin featured">
+          <span class="featured-flag">Featured</span>
+          <p class="plugin-name">Claude Usage Indicator</p>
+          <p class="plugin-desc">Shows your Claude.ai weekly usage % in the GNOME top panel and dock. Live indicator — never wonder where you stand against your quota again.</p>
+          <pre>git clone https://github.com/wbniv/claude-usage
 ln -s $PWD/claude-usage/gnome-extension \
   ~/.local/share/gnome-shell/extensions/claude-usage@indri.studio
 gnome-extensions enable claude-usage@indri.studio</pre>
+        </div>
       </div>
+    </section>
 
-    </div>
-  </section>
+    <section class="category" id="techops">
+      <h2>⚒ techops</h2>
+      <div class="plugin-grid">
 
-  <footer>
-    <a href="https://biohack.net">biohack.net</a>
-  </footer>
+        <div class="plugin">
+          <p class="plugin-name">cf-static-site</p>
+          <p class="plugin-desc">Set up a new static site on Cloudflare — Workers + Terraform + GH Actions, or plain Pages. Two paths: full Astro stack or plain HTML.</p>
+          <pre>/plugin install cf-static-site@biohack-claude</pre>
+        </div>
 
-</body>
-</html>
+        <div class="plugin">
+          <p class="plugin-name">new-web-apt-repo</p>
+          <p class="plugin-desc">Provision a web-hosted signed APT repo on Cloudflare R2, backed by aptly + GitHub Actions.</p>
+          <pre>/plugin install new-web-apt-repo@biohack-claude</pre>
+        </div>
+
+        <div class="plugin">
+          <p class="plugin-name">claude-housekeeping</p>
+          <p class="plugin-desc">Audit Claude Code artifacts for drift — skills, hooks, memories, settings, and plans — across global ~/.claude and every project.</p>
+          <pre>/plugin install claude-housekeeping@biohack-claude</pre>
+        </div>
+
+        <div class="plugin">
+          <p class="plugin-name">package</p>
+          <p class="plugin-desc">Package a program as a Debian-policy-compliant .deb for a foundry-style apt repo. Handles binaries, scripts, and source packages.</p>
+          <pre>/plugin install package@biohack-claude</pre>
+        </div>
+
+        <div class="plugin">
+          <p class="plugin-name">iam-bootstrap</p>
+          <p class="plugin-desc">Set up AWS IAM credentials for a new project — Terraform user, state backend, and self-narrowing permissions.</p>
+          <pre>/plugin install iam-bootstrap@biohack-claude</pre>
+        </div>
+
+        <div class="plugin">
+          <p class="plugin-name">cf-domain-setup</p>
+          <p class="plugin-desc">Add a domain to Cloudflare on the free plan — scoped API token, zone creation, and activation polling via curl.</p>
+          <pre>/plugin install cf-domain-setup@biohack-claude</pre>
+        </div>
+
+        <div class="plugin">
+          <p class="plugin-name">aws-billing-tags</p>
+          <p class="plugin-desc">Set up AWS cost tracking, billing tags, budget alerts, and Cost Explorer for a project.</p>
+          <pre>/plugin install aws-billing-tags@biohack-claude</pre>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="category" id="design">
+      <h2>✦ design</h2>
+      <div class="plugin-grid">
+
+        <div class="plugin">
+          <p class="plugin-name">import-claude-design</p>
+          <p class="plugin-desc">Import a Claude Design export zip into site/ and deploy via tag-triggered CI.</p>
+          <pre>/plugin install import-claude-design@biohack-claude</pre>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="category" id="personal">
+      <h2>◆ personal</h2>
+      <div class="plugin-grid">
+
+        <div class="plugin">
+          <p class="plugin-name">biohack-shell</p>
+          <p class="plugin-desc">Tab colour hooks (session-start / stop / prompt-submit) and productivity slash commands from Will's personal Claude Code setup.</p>
+          <pre>/plugin install biohack-shell@biohack-claude</pre>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://biohack.net">biohack.net</a>
+    </footer>
+  </div>
+</Base>

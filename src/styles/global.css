@@ -9,8 +9,8 @@
   --color-accent:     #222222;
   --color-border:     #dddddd;
 
-  --font-body:        Georgia, serif;
-  --font-mono:        monospace;
+  --font-body:        'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:        'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
 
   --container-max:    680px;
 }
