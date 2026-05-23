@@ -81,4 +81,17 @@
     color: var(--color-fg-muted);
   }
   nav a:hover { color: var(--color-fg); }
+
+  svg.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.15em;
+    margin-right: 0.5em;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--color-fg-muted);
+  }
 }
