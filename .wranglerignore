@@ -1,0 +1,7 @@
+.claude/
+.creds/
+docs/
+scripts/
+from-dreamhost/
+preflight-diff.sh
+preflight-out/
