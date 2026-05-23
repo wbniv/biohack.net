@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude plugins — biohack.net</title>
+  <style>
+    body { font-family: monospace; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    h1 { font-size: 1.4rem; border-bottom: 1px solid #ccc; padding-bottom: .5rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; color: #555; }
+    h3 { font-size: 1rem; margin-bottom: .25rem; }
+    .plugin { margin: 1.5rem 0; padding-left: 1rem; border-left: 3px solid #eee; }
+    pre.install { background: #f5f5f5; padding: .75rem 1rem; border-radius: 4px; overflow-x: auto; margin-top: .5rem; }
+    pre.install code { font-size: .85rem; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+  <h1>Claude plugins</h1>
+  <p>
+    Will's personal <a href="https://github.com/wbniv/biohack-claude">Claude Code marketplace</a>.
+    Install via:
+  </p>
+  <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude</code></pre>
+  
+    <section class="category" id="techops">
+      <h2>⚒ techops</h2>
+      
+      <div class="plugin">
+        <h3>cf-static-site</h3>
+        <p>Set up a new static site on Cloudflare — Workers + Terraform + GH Actions, or plain Pages. Two paths: full Astro stack or plain HTML.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install cf-static-site@biohack-claude</code></pre>
+      </div>
+      <div class="plugin">
+        <h3>new-web-apt-repo</h3>
+        <p>Provision a web-hosted signed APT repo on Cloudflare R2, backed by aptly + GitHub Actions.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install new-web-apt-repo@biohack-claude</code></pre>
+      </div>
+      <div class="plugin">
+        <h3>claude-housekeeping</h3>
+        <p>Audit Claude Code artifacts for drift — skills, hooks, memories, settings, and plans — across global ~/.claude and every project.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install claude-housekeeping@biohack-claude</code></pre>
+      </div>
+      <div class="plugin">
+        <h3>package</h3>
+        <p>Package a program as a Debian-policy-compliant .deb for a foundry-style apt repo. Handles binaries, scripts, and source packages.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install package@biohack-claude</code></pre>
+      </div>
+      <div class="plugin">
+        <h3>iam-bootstrap</h3>
+        <p>Set up AWS IAM credentials for a new project — Terraform user, state backend, and self-narrowing permissions.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install iam-bootstrap@biohack-claude</code></pre>
+      </div>
+      <div class="plugin">
+        <h3>cf-domain-setup</h3>
+        <p>Add a domain to Cloudflare on the free plan — scoped API token, zone creation, and activation polling via curl.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install cf-domain-setup@biohack-claude</code></pre>
+      </div>
+      <div class="plugin">
+        <h3>aws-billing-tags</h3>
+        <p>Set up AWS cost tracking, billing tags, budget alerts, and Cost Explorer for a project.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install aws-billing-tags@biohack-claude</code></pre>
+      </div>
+    </section>
+    <section class="category" id="design">
+      <h2>✦ design</h2>
+      
+      <div class="plugin">
+        <h3>import-claude-design</h3>
+        <p>Import a Claude Design export zip into site/ and deploy via tag-triggered CI.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install import-claude-design@biohack-claude</code></pre>
+      </div>
+    </section>
+    <section class="category" id="personal">
+      <h2>◆ personal</h2>
+      
+      <div class="plugin">
+        <h3>biohack-shell</h3>
+        <p>Tab colour hooks (session-start / stop / prompt-submit) and productivity slash commands from Will&#x27;s personal Claude Code setup.</p>
+        <pre class="install"><code>/plugin marketplace add wbniv/biohack-claude
+/plugin install biohack-shell@biohack-claude</code></pre>
+      </div>
+    </section>
+  
+    <section class="category" id="gnome">
+      <h2>🐚 GNOME extensions</h2>
+      
+      <div class="plugin">
+        <h3>Claude Usage Indicator</h3>
+        <p>Shows your Claude.ai weekly usage % in the GNOME top panel and dock.</p>
+        <pre class="install"><code>git clone https://github.com/wbniv/claude-usage
+ln -s $PWD/claude-usage/gnome-extension   ~/.local/share/gnome-shell/extensions/claude-usage@indri.studio
+gnome-extensions enable claude-usage@indri.studio</code></pre>
+      </div>
+    </section>
+</body>
+</html>
