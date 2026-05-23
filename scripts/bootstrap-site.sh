@@ -15,7 +15,7 @@ GH_REPO="wbniv/biohack.net"
 PAGES_PROJECT="biohack-net"
 CUSTOM_DOMAIN="biohack.net"
 CI_TOKEN_NAME="biohack-site-ci"
-BOOTSTRAP_CACHE="/tmp/biohack-bootstrap.env"
+BOOTSTRAP_CACHE="${BASH_SOURCE[0]%/scripts/*}/.creds/bootstrap.env"
 
 DRY_RUN=false
 
@@ -67,6 +67,8 @@ for arg in "$@"; do
 done
 
 # ── load / validate credentials ──────────────────────────────────────────────
+
+mkdir -p "$(dirname "$BOOTSTRAP_CACHE")"
 
 if [[ -f "$BOOTSTRAP_CACHE" ]]; then
     # shellcheck source=/dev/null
