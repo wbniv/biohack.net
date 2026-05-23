@@ -28,6 +28,12 @@ import Base from '../layouts/Base.astro';
       background-image: url('/favicon/5948fa3e42ae.png');
     }
 
+    .narrow-only { display: none; }
+    @media (max-width: 600px) {
+      .wide-only { display: none; }
+      .narrow-only { display: inline; }
+    }
+
     .columns {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -85,7 +91,7 @@ import Base from '../layouts/Base.astro';
     <h1>Highlighted Projects</h1>
     <p>I have shipped over a dozen titles on systems ranging from the Amiga and CDTV, MS-DOS, Atari Lynx, Super Nintendo, Genesis, 3DO, and PlayStation. These are some of the accomplishments I am most proud of:</p>
     <ul>
-      <li><a href="http://en.wikipedia.org/wiki/Ballz">Ballz</a> — the only 3D fighting game for the Super Nintendo</li>
+      <li><a href="http://en.wikipedia.org/wiki/Ballz">Ballz</a> — the only 3D fighting game for the <span class="wide-only">Super Nintendo</span><span class="narrow-only">SNES</span></li>
       <li><a href="http://en.wikipedia.org/wiki/Game_Genie">Game Genie</a> for the Super Nintendo</li>
       <li>SNES &amp; Genesis Development Systems (ISA card) — <a href="https://sourceforge.net/projects/drdevtools/">SourceForge</a>, <a href="https://www.openhub.net/p/drdevtools">OpenHub</a></li>
       <li>DRAW — custom cartridge-based Artist Workstation for Genesis &amp; Super Nintendo</li>
