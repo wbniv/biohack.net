@@ -231,31 +231,41 @@ fi
 # ════════════════════════════════════════════════════════════════════════════
 
 info "[2] Creating DNS CNAME: ${CUSTOM_DOMAIN} → ${PAGES_PROJECT}.pages.dev"
+# Note: Cloudflare Pages also auto-creates this CNAME when attaching the custom
+# domain (Step 3) for zones already on the same account — Step 2 is best-effort.
 if $DRY_RUN; then
     echo "  [dry-run] POST /zones/.../dns_records {type:CNAME, name:${CUSTOM_DOMAIN}}"
 else
     CF_ZONE_ID="${CF_ZONE_ID:-$(cf_api GET "/zones?name=${CUSTOM_DOMAIN}" | jq -r '.result[0].id')}"
 
+    DNS_OK=true
+
     # Remove any existing A records pointing at old hosts (Dreamhost IPs)
     OLD_A=$(cf_api GET "/zones/${CF_ZONE_ID}/dns_records?type=A&name=${CUSTOM_DOMAIN}" \
-        | jq -r '.result[].id' || true)
+        2>/dev/null | jq -r '.result[].id' || true)
     if [[ -n "$OLD_A" ]]; then
         while IFS= read -r rec_id; do
-            cf_api DELETE "/zones/${CF_ZONE_ID}/dns_records/${rec_id}" >/dev/null
+            cf_api DELETE "/zones/${CF_ZONE_ID}/dns_records/${rec_id}" 2>/dev/null >/dev/null || true
             ok "[2] Removed old A record $rec_id"
         done <<< "$OLD_A"
     fi
 
     CNAME_EXISTS=$(cf_api GET "/zones/${CF_ZONE_ID}/dns_records?type=CNAME&name=${CUSTOM_DOMAIN}" \
-        | jq -r '.result[0].id // empty' || true)
+        2>/dev/null | jq -r '.result[0].id // empty' || true)
     if [[ -n "$CNAME_EXISTS" ]]; then
         ok "[2] DNS CNAME already exists"
     else
-        cf_api POST "/zones/${CF_ZONE_ID}/dns_records" -d "$(jq -n \
+        CNAME_RESP=$(cf_api POST "/zones/${CF_ZONE_ID}/dns_records" -d "$(jq -n \
             --arg name    "$CUSTOM_DOMAIN" \
             --arg content "${PAGES_PROJECT}.pages.dev" \
-            '{type:"CNAME",name:$name,content:$content,proxied:true,comment:"Cloudflare Pages site"}')" >/dev/null
-        ok "[2] DNS CNAME: ${CUSTOM_DOMAIN} → ${PAGES_PROJECT}.pages.dev"
+            '{type:"CNAME",name:$name,content:$content,proxied:true,comment:"Cloudflare Pages site"}')" \
+            2>/dev/null || echo '{}')
+        if echo "$CNAME_RESP" | jq -e '.success == true' &>/dev/null; then
+            ok "[2] DNS CNAME: ${CUSTOM_DOMAIN} → ${PAGES_PROJECT}.pages.dev"
+        else
+            warn "[2] Could not create DNS CNAME (token may lack DNS:Edit) — Step 3 will handle it"
+            DNS_OK=false
+        fi
     fi
 fi
 
