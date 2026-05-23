@@ -31,8 +31,7 @@ const canonical = new URL(Astro.url.pathname, 'https://biohack.net').toString();
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <slot name="head" />
   </head>
   <body>
     <slot />

@@ -1,111 +1,84 @@
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
-
-/* TODO: replace placeholder palette with brand colors */
-@theme {
-  --color-bg:         #ffffff;
-  --color-fg:         #222222;
-  --color-fg-muted:   #555555;
-  --color-accent:     #222222;
-  --color-border:     #dddddd;
-
-  --font-body:        'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono:        'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
-
-  --container-max:    680px;
+/* ── Self-hosted fonts ──────────────────────────────── */
+@font-face {
+  font-family: 'Audiowide';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/audiowide-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+                 U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-@layer base {
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+                 U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-  body {
-    font-family: var(--font-body);
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--color-fg);
-    background: var(--color-bg);
-    max-width: var(--container-max);
-    margin: 3rem auto;
-    padding: 0 1.5rem 4rem;
-  }
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+                 U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+                 U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-  h1 {
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    margin: 1.75rem 0 .75rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: .4rem;
-  }
+/* ── Design tokens ──────────────────────────────────── */
+:root {
+  --bg:         #16171a;
+  --bg-soft:    #1f2125;
+  --ink:        #e8e6e0;
+  --ink-dim:    #8a857a;
+  --rule:       #2c2e33;
+  --accent:     #c2410c;
+  --accent-soft:#6b2407;
+  --accent-bg:  rgba(194,65,12,0.14);
 
-  h2 { font-size: 1rem; margin-top: 1.25rem; margin-bottom: .25rem; }
-  p  { margin-bottom: .75rem; }
-  ul { margin: .5rem 0 .75rem 1.25rem; }
-  li { margin-bottom: .2rem; }
+  /* Aliases used by 404.astro */
+  --color-fg:       var(--ink);
+  --color-bg:       var(--bg);
+  --color-fg-muted: var(--ink-dim);
+  --color-accent:   var(--accent);
+  --color-border:   var(--rule);
 
-  a { color: var(--color-accent); }
-  a:hover { text-decoration: none; }
+  --font-body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
+}
 
-  blockquote {
-    border-left: 3px solid var(--color-border);
-    padding-left: 1rem;
-    color: var(--color-fg-muted);
-    margin: 2.75rem 0 1.5rem;
-    font-style: italic;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  #profile .columns {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem 2rem;
-    align-items: start;
-  }
-  #profile .columns > p { margin-bottom: 0; }
-  #profile .columns ul  { margin: 0 0 0 1.25rem; }
-  @media (min-width: 560px) {
-    #profile .columns { grid-template-columns: 1.4fr 1fr; }
-  }
-  blockquote cite {
-    display: block;
-    margin-top: .5rem;
-    font-size: .9rem;
-    font-style: normal;
-  }
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 22px 80px;
+}
 
-  footer {
-    margin-top: 3rem;
-    font-size: .85rem;
-    color: var(--color-fg-muted);
-  }
+a { color: var(--accent); }
+a:hover { text-decoration: none; }
 
-  #site-header { margin-bottom: 2rem; }
-  #site-header h1 {
-    border: none;
-    margin: 0;
-    font-size: 1.4rem;
-    letter-spacing: .15em;
-    word-spacing: -.3em;
-  }
-
-  nav { margin-top: .5rem; font-size: .9rem; font-family: var(--font-mono); }
-  nav a {
-    margin-right: 1.2rem;
-    text-decoration: none;
-    color: var(--color-fg-muted);
-  }
-  nav a:hover { color: var(--color-fg); }
-
-  svg.icon {
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    vertical-align: -0.15em;
-    margin-right: 0.5em;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    color: var(--color-fg-muted);
-  }
+svg.icon {
+  display: inline-block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
