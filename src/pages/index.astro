@@ -32,6 +32,14 @@ import Base from '../layouts/Base.astro';
       align-items: start;
     }
     .columns ul { margin: 0; }
+
+    @media (max-width: 600px) {
+      :global(body) { margin-top: 1rem; }
+      #site-header { margin-bottom: 0; }
+      #projects > h1,
+      #profile > h1 { display: none; }
+      #projects { margin-top: 1rem; }
+    }
   </style>
   <header id="site-header">
     <h1>bioHACK <strong>•</strong> NET</h1>
