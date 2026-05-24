@@ -28,6 +28,11 @@ tasks:
     cmds:
       - node scripts/check-links.js --skip-external --dir dist
 
+  check-source-links:
+    desc: Verify all GitHub source-link hrefs in claude.astro resolve (HTTP 200)
+    cmds:
+      - bash scripts/check-source-links.sh
+
   lighthouse:
     desc: "Run Lighthouse against every routable prod page, RUNS=${RUNS:-3} runs each, devtools throttling. CI passes RUNS=1. Reports under /tmp/lh/latest/."
     cmds:
