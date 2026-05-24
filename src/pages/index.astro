@@ -176,11 +176,13 @@ import Base from '../layouts/Base.astro';
       line-height: 1.6;
       opacity: 0;
       animation: proj-in 0.5s ease forwards;
-      transition: padding-left 0.15s;
+      transition: padding-left 0.15s, background 0.15s;
+      border-radius: 4px;
     }
     #projects ul li:hover,
     #projects ul li:active {
       padding-left: 30px;
+      background: rgba(255,255,255,0.04);
     }
     #projects ul li:nth-child(1) { animation-delay: 0.05s; }
     #projects ul li:nth-child(2) { animation-delay: 0.15s; }
@@ -201,7 +203,7 @@ import Base from '../layouts/Base.astro';
       border-radius: 50%;
       background: #7dd3fc;
       box-shadow: 0 0 6px rgba(125,211,252,0.9);
-      left: 4px; top: 15px;
+      left: var(--proj-bullet-left, 13px); top: var(--proj-bullet-top, 21px);
       animation: proj-orbit 2s linear infinite;
       transform-origin: -4px 2px;
     }
@@ -370,7 +372,7 @@ import Base from '../layouts/Base.astro';
       <li class="wf"><a href="https://worldfoundry.org/v1-levels/">World Foundry</a> 3D Game Engine<br class="narrow-only"> and Production Pathway</li>
       <li><a href="http://russound.com/product_detail.php?i=3241">Russound SMS-3</a> Media Server</li>
       <li><a href="http://foswiki.org/">Foswiki</a> — successor to TWiki</li>
-      <li><a href="/claude/">Claude Code plugins</a> — personal marketplace of techops, design, and productivity skills</li>
+      <li><a href="/claude/">Claude Code plugins</a> — personal marketplace of techops and productivity skills</li>
     </ul>
   </section>
 
@@ -530,6 +532,14 @@ import Base from '../layouts/Base.astro';
     panel.appendChild(mkSlider('p → list gap', -16, 24, -4, v => {
       const p = document.querySelector('#projects > p');
       if (p) p.style.setProperty('margin-bottom', v + 'px', 'important');
+    }));
+
+    panel.appendChild(mkSlider('bullet vpos', 8, 24, 21, v => {
+      document.documentElement.style.setProperty('--proj-bullet-top', v + 'px');
+    }));
+
+    panel.appendChild(mkSlider('bullet hpos', 0, 20, 13, v => {
+      document.documentElement.style.setProperty('--proj-bullet-left', v + 'px');
     }));
 
     document.body.appendChild(panel);
