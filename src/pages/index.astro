@@ -40,6 +40,7 @@ import Base from '../layouts/Base.astro';
 
     /* ── Section heads ───────────────────────────────────── */
     section { margin-top: 48px; }
+    #profile { margin-top: 10px; }
     @media (max-width: 600px) {
       #site-header { margin-top: 16px; padding-bottom: 0; }
       #profile { margin-top: 20px; }
@@ -306,6 +307,9 @@ import Base from '../layouts/Base.astro';
     }
     @keyframes blink { 50% { opacity: 0; } }
 
+    /* ── Terminal spacer (scroll prompt to top) ─────────── */
+    .terminal-spacer { display: block; height: 100vh; }
+
     /* ── Radar ping ──────────────────────────────────────── */
     #radar-svg {
       position: fixed;
@@ -376,6 +380,7 @@ import Base from '../layouts/Base.astro';
   </blockquote>
 
   <div class="prompt">~/biohack $<span class="blink"></span></div>
+  <div class="terminal-spacer"></div>
 
   <script is:inline>
   (function () {
