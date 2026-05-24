@@ -40,6 +40,11 @@ import Base from '../layouts/Base.astro';
 
     /* ── Section heads ───────────────────────────────────── */
     section { margin-top: 48px; }
+    @media (max-width: 600px) {
+      #site-header { margin-top: 16px; padding-bottom: 0; }
+      #profile { margin-top: 20px; }
+      #projects { margin-top: 20px; }
+    }
     section > h1 {
       margin: 0 0 22px;
       font-weight: 600;
@@ -161,16 +166,50 @@ import Base from '../layouts/Base.astro';
       margin: 0;
     }
     #projects ul li {
-      padding: 9px 0 9px 16px;
+      position: relative;
+      padding: 9px 0 9px 26px;
       font-size: 17px;
       line-height: 1.6;
-      border-left: 2px solid transparent;
-      transition: border-color 0.15s, padding-left 0.15s;
+      opacity: 0;
+      animation: proj-in 0.5s ease forwards;
+      transition: padding-left 0.15s;
     }
-    #projects ul li:hover {
-      border-left-color: #7dd3fc;
-      padding-left: 20px;
+    #projects ul li:hover,
+    #projects ul li:active {
+      padding-left: 30px;
     }
+    #projects ul li:nth-child(1) { animation-delay: 0.05s; }
+    #projects ul li:nth-child(2) { animation-delay: 0.15s; }
+    #projects ul li:nth-child(3) { animation-delay: 0.25s; }
+    #projects ul li:nth-child(4) { animation-delay: 0.35s; }
+    #projects ul li:nth-child(5) { animation-delay: 0.45s; }
+    #projects ul li:nth-child(6) { animation-delay: 0.55s; }
+    #projects ul li:nth-child(7) { animation-delay: 0.65s; }
+    #projects ul li:nth-child(8) { animation-delay: 0.75s; }
+    @keyframes proj-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: none; }
+    }
+    #projects ul li::before {
+      content: '';
+      position: absolute;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #7dd3fc;
+      box-shadow: 0 0 6px rgba(125,211,252,0.9);
+      left: 4px; top: 15px;
+      animation: proj-orbit 2s linear infinite;
+      transform-origin: -4px 2px;
+    }
+    #projects ul li:nth-child(1)::before { animation-delay:  0s; }
+    #projects ul li:nth-child(2)::before { animation-delay: -0.25s; }
+    #projects ul li:nth-child(3)::before { animation-delay: -0.5s; }
+    #projects ul li:nth-child(4)::before { animation-delay: -0.75s; }
+    #projects ul li:nth-child(5)::before { animation-delay: -1.0s; }
+    #projects ul li:nth-child(6)::before { animation-delay: -1.25s; }
+    #projects ul li:nth-child(7)::before { animation-delay: -1.5s; }
+    #projects ul li:nth-child(8)::before { animation-delay: -1.75s; }
+    @keyframes proj-orbit { to { transform: rotate(360deg); } }
     #projects a {
       color: var(--accent);
       text-decoration: none;
@@ -194,7 +233,7 @@ import Base from '../layouts/Base.astro';
       margin: 56px 0 0;
       padding: 36px 36px 28px;
       border: none;
-      font-size: 18px;
+      font-size: 1.1em;
       line-height: 1.6;
       font-style: italic;
       color: var(--ink);
@@ -381,6 +420,53 @@ import Base from '../layouts/Base.astro';
     }
 
     setTimeout(fire, 4000 + Math.random() * 6000);
+  })();
+
+  /* ── Project bullet ring ─────────────────────────────── */
+  (function () {
+    const svg = document.getElementById('radar-svg');
+    const list = document.querySelector('#projects ul');
+    if (!svg || !list) return;
+
+    function fireRing() {
+      const items = list.querySelectorAll('li');
+      const li = items[Math.floor(Math.random() * items.length)];
+      const rect = li.getBoundingClientRect();
+      const cx = rect.left + 4;
+      const cy = rect.top + 15;
+      const maxR = Math.hypot(
+        Math.max(cx, window.innerWidth - cx),
+        Math.max(cy, window.innerHeight - cy)
+      ) * 1.3;
+
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('fill', 'none');
+      c.setAttribute('stroke', 'rgba(125,211,252,0.65)');
+      c.setAttribute('stroke-width', '1.5');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', '0');
+      svg.appendChild(c);
+
+      const t0 = performance.now();
+      const DUR = 2600;
+
+      (function frame(now) {
+        const t = Math.min((now - t0) / DUR, 1);
+        const ease = t * t * t * t * t;
+        c.setAttribute('r', ease * maxR);
+        const fadeT = Math.max(0, (t - 0.55) / 0.45);
+        c.setAttribute('opacity', (1 - fadeT) * 0.7);
+        if (t < 1) requestAnimationFrame(frame);
+        else { c.remove(); scheduleRing(); }
+      })(t0);
+    }
+
+    function scheduleRing() {
+      setTimeout(fireRing, 5000 + Math.random() * 10000);
+    }
+
+    setTimeout(fireRing, 6000 + Math.random() * 8000);
   })();
   </script>
 </Base>
