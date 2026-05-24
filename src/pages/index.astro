@@ -308,7 +308,7 @@ import Base from '../layouts/Base.astro';
     @keyframes blink { 50% { opacity: 0; } }
 
     /* ── Terminal spacer (scroll prompt to top) ─────────── */
-    .terminal-spacer { display: block; height: 100vh; }
+    .terminal-spacer { display: block; height: calc(100vh - 80px); }
 
     /* ── Radar ping ──────────────────────────────────────── */
     #radar-svg {
