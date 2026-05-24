@@ -1,6 +1,7 @@
 # Memory Index
 
 - [Dreamhost import contains attacker-planted artifacts](project_dreamhost_import_compromise.md) — compromised/COMPROMISED trees, rx.php, and unreadable `.htpasswd` under logs/ are planted, not user data
+- [Deploy requires v* tag](project_deploy_requires_tag.md) — CI only triggers on `v*` tags, not branch pushes; must tag + push tag to publish
 
 <!-- BEGIN GLOBAL MEMORY (managed by claude-housekeeping; do not edit) -->
 
