@@ -45,7 +45,8 @@ import Base from '../layouts/Base.astro';
       #site-header { margin-top: 16px; padding-bottom: 0; }
       #profile { margin-top: 20px; }
       #projects { margin-top: 20px; }
-      #projects > p { margin-bottom: -8px !important; }
+      section > h2 { margin-bottom: 2px !important; }
+      #projects > p { margin-bottom: 6px !important; }
       #projects ul li:first-child { padding-top: 0; }
     }
     section > h2 {
@@ -493,5 +494,45 @@ import Base from '../layouts/Base.astro';
 
     setTimeout(fireRing, 6000 + Math.random() * 8000);
   })();
+  </script>
+
+  <script>
+  if (location.search.includes('tweaks')) {
+    const panel = document.createElement('div');
+    panel.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:99999;background:#1f2125;border:1px solid #3a3d42;border-radius:8px;padding:14px 16px;font-family:JetBrains Mono,monospace;font-size:11px;color:#e8e6e0;min-width:220px;box-shadow:0 4px 24px rgba(0,0,0,.6)';
+
+    function mkSlider(label, min, max, val, onChange) {
+      const wrap = document.createElement('div');
+      wrap.style.marginBottom = '12px';
+      const lbl = document.createElement('div');
+      lbl.style.cssText = 'color:#7dd3fc;margin-bottom:4px;display:flex;justify-content:space-between';
+      const valSpan = document.createElement('span');
+      valSpan.textContent = val + 'px';
+      lbl.appendChild(Object.assign(document.createElement('span'), {textContent: label}));
+      lbl.appendChild(valSpan);
+      const inp = document.createElement('input');
+      Object.assign(inp, {type:'range', min, max, value:val});
+      inp.style.cssText = 'width:100%;accent-color:#7dd3fc';
+      inp.addEventListener('input', () => { valSpan.textContent = inp.value + 'px'; onChange(+inp.value); });
+      wrap.appendChild(lbl);
+      wrap.appendChild(inp);
+      return wrap;
+    }
+
+    const title = Object.assign(document.createElement('div'), {textContent:'TWEAKS'});
+    title.style.cssText = 'font-size:9px;letter-spacing:.2em;color:#8a857a;margin-bottom:12px';
+    panel.appendChild(title);
+
+    panel.appendChild(mkSlider('section h2 gap', 0, 48, 22, v => {
+      document.querySelectorAll('section > h2').forEach(el => el.style.marginBottom = v + 'px');
+    }));
+
+    panel.appendChild(mkSlider('p → list gap', -16, 24, -4, v => {
+      const p = document.querySelector('#projects > p');
+      if (p) p.style.setProperty('margin-bottom', v + 'px', 'important');
+    }));
+
+    document.body.appendChild(panel);
+  }
   </script>
 </Base>
