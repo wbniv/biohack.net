@@ -159,27 +159,17 @@ import Base from '../layouts/Base.astro';
       list-style: none;
       padding: 0;
       margin: 0;
-      counter-reset: proj;
     }
     #projects ul li {
-      position: relative;
-      padding: 12px 0 12px 44px;
+      padding: 9px 0 9px 16px;
       font-size: 17px;
       line-height: 1.6;
-      counter-increment: proj;
+      border-left: 2px solid transparent;
+      transition: border-color 0.15s, padding-left 0.15s;
     }
-    #projects ul li::before {
-      content: counter(proj, decimal-leading-zero);
-      position: absolute;
-      left: 0; top: 15px;
-      font-size: 11px;
-      color: #7dd3fc;
-      letter-spacing: 0.1em;
-      font-weight: 600;
-      padding: 2px 8px;
-      border: 1px solid rgba(125,211,252,0.45);
-      border-radius: 2px;
-      background: rgba(125,211,252,0.10);
+    #projects ul li:hover {
+      border-left-color: #7dd3fc;
+      padding-left: 20px;
     }
     #projects a {
       color: var(--accent);
