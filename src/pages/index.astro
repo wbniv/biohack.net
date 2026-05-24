@@ -49,7 +49,16 @@ import Base from '../layouts/Base.astro';
       color: #7dd3fc;
       border: none;
       padding: 0;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    section > h1::before,
+    section > h1::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(125,211,252,0.25);
     }
 
     /* ── Profile ─────────────────────────────────────────── */
