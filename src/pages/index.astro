@@ -45,7 +45,8 @@ import Base from '../layouts/Base.astro';
       #site-header { margin-top: 16px; padding-bottom: 0; }
       #profile { margin-top: 20px; }
       #projects { margin-top: 20px; }
-      #projects > p { margin-bottom: 0; }
+      #projects > p { margin-bottom: -8px !important; }
+      #projects ul li:first-child { padding-top: 0; }
     }
     section > h2 {
       margin: 0 0 22px;
@@ -156,7 +157,7 @@ import Base from '../layouts/Base.astro';
 
     /* ── Projects ────────────────────────────────────────── */
     #projects > p {
-      margin: 0 0 22px;
+      margin: 0;
       font-size: 15px;
       line-height: 1.7;
       color: var(--ink);
