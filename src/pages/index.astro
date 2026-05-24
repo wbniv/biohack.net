@@ -308,7 +308,7 @@ import Base from '../layouts/Base.astro';
     @keyframes blink { 50% { opacity: 0; } }
 
     /* ── Terminal spacer (scroll prompt to top) ─────────── */
-    .terminal-spacer { display: block; height: calc(100vh - 80px); }
+    .terminal-spacer { display: block; }
 
     /* ── Radar ping ──────────────────────────────────────── */
     #radar-svg {
@@ -425,6 +425,24 @@ import Base from '../layouts/Base.astro';
     }
 
     setTimeout(fire, 4000 + Math.random() * 6000);
+  })();
+
+  /* ── Terminal spacer — size so prompt lands at top on max scroll ── */
+  (function () {
+    const prompt = document.querySelector('.prompt');
+    const spacer = document.querySelector('.terminal-spacer');
+    if (!prompt || !spacer) return;
+    function size() {
+      spacer.style.height = '0';
+      requestAnimationFrame(function () {
+        const bodyPad = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+        const h = window.innerHeight - prompt.getBoundingClientRect().height - bodyPad - 16; /* 16px undershoot */
+        spacer.style.height = Math.max(0, h) + 'px';
+      });
+    }
+    window.addEventListener('load', size);
+    window.addEventListener('resize', size);
+    size();
   })();
 
   /* ── Project bullet ring ─────────────────────────────── */
