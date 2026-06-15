@@ -5,13 +5,34 @@ will@biohack.net
 EMPLOYMENT 
 ================================================================================
 
+Platform Engineer
+Hyatt Hotels, Remote, Jan 2021-Aug 2024
+------------------------------------------------------------------------
+* Platform engineering in support of the Datadog observability platform
+
+
+DevOps / LiveOps / SRE
+Comscore, Portland, OR (remote), Feb 2018-Jun 2020
+------------------------------------------------------------------------
+* Dedicated DevOps/LiveOps/SRE for the Proximic division (https://www.proximic.com/)
+* Later owned the entire company AWS account--budget and governance--for the whole organization
+
+
+Software Engineer (Contract)
+Independent Contractor, 2015
+------------------------------------------------------------------------
+* Developed control systems for Buzz Lightyear Planet Rescue at Shanghai Disneyland
+  (https://www.youtube.com/watch?v=3LfvRtfS3iE)
+
+
 TechOps: Senior Engineer
 Disney Interactive, Palo Alto and Glendale, CA, 2011-2014
 [also Systems Administrator]
 ------------------------------------------------------------------------
+* Principal engineer building Disney Interactive's private cloud using CloudStack
 * Create and maintain puppet infrastructure, from servers to code base
 * Provid training for remote teams in India
-* Perform load testing backend services for Disney's Infinity console game
+* Perform load testing backend services for Disney's Infinity console game; backup manager for the Load Testing lab
 
 
 Website Development Consultant
