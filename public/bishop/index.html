@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1410">
+<title>Bishop VP Tracker — Dominion</title>
+<style>
+  :root {
+    --bg:        #15110d;
+    --panel:     #221a12;
+    --panel-2:   #2c2217;
+    --line:      #3d3020;
+    --gold:      #e8c878;
+    --gold-dim:  #b8954a;
+    --ink:       #f3ead7;
+    --muted:     #a8987a;
+    --red:       #d77a6a;
+    --shadow:    0 6px 22px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #2a2013 0%, transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+    min-height: 100vh;
+    padding: env(safe-area-inset-top) 14px calc(env(safe-area-inset-bottom) + 24px);
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  header { text-align: center; padding: 22px 0 10px; }
+  header .mitre { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5)); }
+  header h1 {
+    font-size: clamp(20px, 5vw, 28px);
+    margin: 6px 0 2px;
+    letter-spacing: .5px;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  header code { color: var(--gold-dim); background: rgba(232,200,120,.08); padding: 0 5px; border-radius: 4px; }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel) 0%, #1d160f 100%);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    margin: 14px 0;
+    box-shadow: var(--shadow);
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold-dim);
+    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* Players */
+  .players { display: flex; flex-direction: column; gap: 10px; }
+  .player {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .player.leader { background: linear-gradient(180deg, #2f2415 0%, #261c10 100%); border-color: var(--gold-dim); }
+  .p-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .p-crown { font-size: 16px; flex: none; }
+  .p-name {
+    font-weight: 600; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    cursor: text; padding: 2px 6px; margin: -2px -6px; border-radius: 6px; border: 1px solid transparent;
+  }
+  .p-name:hover { background: rgba(232,200,120,.08); border-color: var(--line); }
+  .p-name::after { content: " ✎"; color: var(--muted); font-size: 12px; opacity: 0; transition: opacity .12s; }
+  .p-name:hover::after { opacity: .7; }
+  .name-input {
+    font-family: inherit; font-weight: 600; font-size: 17px; color: var(--ink);
+    background: var(--bg); border: 1px solid var(--gold); border-radius: 6px;
+    padding: 2px 6px; margin: -3px 0; width: 100%; max-width: 320px; min-width: 0;
+  }
+  .name-input:focus { outline: none; }
+  .p-vp { display: flex; align-items: baseline; gap: 6px; }
+  .p-vp .num {
+    font-size: 30px; font-weight: 800; color: var(--gold);
+    font-variant-numeric: tabular-nums; min-width: 1.4em; text-align: right;
+  }
+  .p-vp .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .p-controls { display: flex; align-items: center; gap: 6px; margin-left: 4px; }
+
+  /* Buttons */
+  button { font-family: inherit; cursor: pointer; border: none; border-radius: 9px; transition: filter .12s, transform .05s; }
+  button:active { transform: translateY(1px); }
+  .btn {
+    background: var(--panel-2); color: var(--ink); border: 1px solid var(--line);
+    padding: 9px 14px; font-size: 14px; font-weight: 600;
+  }
+  .btn:hover { filter: brightness(1.15); }
+  .btn-gold {
+    background: linear-gradient(180deg, #f0d488 0%, #d2a64e 100%);
+    color: #2a1d08; font-weight: 800; border: none;
+    box-shadow: 0 3px 0 #8f6f2a, 0 4px 10px rgba(0,0,0,.4);
+  }
+  .btn-gold:active { box-shadow: 0 1px 0 #8f6f2a; }
+  .icon-btn {
+    width: 38px; height: 38px; font-size: 20px; font-weight: 700;
+    background: var(--panel); color: var(--gold); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .icon-btn.danger { color: var(--red); font-size: 18px; }
+  .icon-btn:hover { filter: brightness(1.2); }
+
+  .add-row { display: flex; gap: 8px; margin-top: 12px; }
+  input[type=text] {
+    flex: 1; background: var(--bg); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 9px; padding: 10px 12px; font-size: 15px; font-family: inherit; min-width: 0;
+  }
+  input[type=text]:focus { outline: none; border-color: var(--gold); }
+
+  .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; }
+  .footer-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+  .link-btn { background: none; border: none; color: var(--muted); font-size: 13px; text-decoration: underline; padding: 6px; }
+  .link-btn:hover { color: var(--red); }
+  .hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="mitre">♗</div>
+    <h1>Bishop VP Tracker</h1>
+    <p><code>+$1, +1 VP. Trash a card → +VP equal to ½ its cost, rounded down.</code></p>
+  </header>
+
+  <section class="card">
+    <h2>👑 Players</h2>
+    <div class="players" id="players"></div>
+    <div class="add-row">
+      <input type="text" id="newName" placeholder="Add a player…" maxlength="24" autocomplete="off">
+      <button class="btn btn-gold" id="addBtn">Add</button>
+    </div>
+    <div class="footer-actions">
+      <button class="link-btn" id="resetBtn">Reset scores</button>
+    </div>
+  </section>
+
+  <p class="hint">Tap a name to rename · tap + / − to adjust a player's VP.</p>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const KEY = "bishop-vp-tracker-v2";
+  const OLD = "bishop-vp-tracker-v1";
+
+  // ---- State: { players: [{id, name, vp}] } ----
+  let state = load();
+  let editingId = null;   // transient: id of the player whose name is being edited
+
+  function load() {
+    try {
+      const v2 = JSON.parse(localStorage.getItem(KEY));
+      if (v2 && Array.isArray(v2.players)) return v2;
+    } catch {}
+    // Migrate the old (history-based) format so existing totals carry over.
+    try {
+      const v1 = JSON.parse(localStorage.getItem(OLD));
+      if (v1 && Array.isArray(v1.players)) {
+        const sum = id => (v1.history || []).reduce((s, h) => s + (h.playerId === id ? (h.vp || 0) : 0), 0);
+        return { players: v1.players.map(p => ({ id: p.id, name: p.name, vp: sum(p.id) })) };
+      }
+    } catch {}
+    return { players: [{ id: uid(), name: "Player 1", vp: 0 }, { id: uid(), name: "Player 2", vp: 0 }] };
+  }
+  function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+  function uid() { return Math.random().toString(36).slice(2, 9); }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  const $ = id => document.getElementById(id);
+  const elPlayers = $("players");
+
+  // ---- Render ----
+  function render() {
+    const maxVP = Math.max(0, ...state.players.map(p => p.vp));
+    elPlayers.innerHTML = "";
+    if (state.players.length === 0) {
+      elPlayers.innerHTML = `<div class="empty">No players yet — add someone below.</div>`;
+    }
+    state.players.forEach(p => {
+      const isLeader = p.vp === maxVP && maxVP > 0;
+      const editing = editingId === p.id;
+      const row = document.createElement("div");
+      row.className = "player" + (isLeader ? " leader" : "");
+      const nameCell = editing
+        ? `<input class="name-input" data-edit="${p.id}" value="${esc(p.name)}" maxlength="24">`
+        : `<span class="p-name" data-rename="${p.id}" title="Click to rename">${esc(p.name)}</span>`;
+      row.innerHTML = `
+        <div class="p-main">
+          ${isLeader ? '<span class="p-crown">👑</span>' : ''}
+          ${nameCell}
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="p-vp"><span class="num">${p.vp}</span><span class="lbl">VP</span></div>
+          <div class="p-controls">
+            <button class="icon-btn" data-adj="${p.id}" data-d="1" title="+1 VP">+</button>
+            <button class="icon-btn" data-adj="${p.id}" data-d="-1" title="−1 VP">−</button>
+            <button class="icon-btn danger" data-del="${p.id}" title="Remove player">×</button>
+          </div>
+        </div>`;
+      elPlayers.appendChild(row);
+    });
+    save();
+
+    // Focus the active name editor, if any.
+    if (editingId) {
+      const inp = elPlayers.querySelector(`[data-edit="${editingId}"]`);
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  }
+
+  // ---- Actions ----
+  function addPlayer(name) {
+    name = name.trim();
+    if (!name) return;
+    state.players.push({ id: uid(), name, vp: 0 });
+    render();
+  }
+  function adjust(id, d) {
+    const p = state.players.find(pp => pp.id === id);
+    if (p) { p.vp += d; render(); }
+  }
+  function deletePlayer(id) {
+    const p = state.players.find(pp => pp.id === id);
+    if (p && p.vp !== 0 && !confirm(`Remove ${p.name}?`)) return;
+    state.players = state.players.filter(pp => pp.id !== id);
+    render();
+  }
+  function startRename(id) { editingId = id; render(); }
+  function commitRename(id, value) {
+    const p = state.players.find(pp => pp.id === id);
+    const name = (value || "").trim();
+    if (p && name) p.name = name;   // ignore empty -> keep old name
+    editingId = null;
+    render();
+  }
+  function cancelRename() { editingId = null; render(); }
+
+  // ---- Events ----
+  $("addBtn").onclick = () => { addPlayer($("newName").value); $("newName").value = ""; $("newName").focus(); };
+  $("newName").addEventListener("keydown", e => { if (e.key === "Enter") $("addBtn").click(); });
+
+  elPlayers.addEventListener("click", e => {
+    const adj = e.target.closest("[data-adj]");
+    const del = e.target.closest("[data-del]");
+    const ren = e.target.closest("[data-rename]");
+    if (del) return deletePlayer(del.dataset.del);
+    if (adj) return adjust(adj.dataset.adj, parseInt(adj.dataset.d, 10));
+    if (ren) return startRename(ren.dataset.rename);
+  });
+
+  // Name-editor keyboard + blur handling (delegated; inputs are recreated each render).
+  elPlayers.addEventListener("keydown", e => {
+    const inp = e.target.closest("[data-edit]");
+    if (!inp) return;
+    if (e.key === "Enter") { e.preventDefault(); commitRename(inp.dataset.edit, inp.value); }
+    else if (e.key === "Escape") { e.preventDefault(); cancelRename(); }
+  });
+  elPlayers.addEventListener("focusout", e => {
+    const inp = e.target.closest("[data-edit]");
+    if (inp && editingId === inp.dataset.edit) commitRename(inp.dataset.edit, inp.value);
+  });
+
+  $("resetBtn").onclick = () => {
+    if (confirm("Reset all VP to 0? (Players are kept.)")) {
+      state.players.forEach(p => p.vp = 0);
+      render();
+    }
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
