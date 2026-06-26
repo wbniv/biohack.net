@@ -11,6 +11,17 @@
         "frames": 3000,
         "label": "gate grid hash (corpus @ WRAM 0x54)"
       }
+    },
+    {
+      "id": "space-invaders",
+      "title": "Space Invaders",
+      "selfcheck": {
+        "off": "0x25",
+        "len": 2,
+        "want": "0x3DAC",
+        "frames": 680,
+        "label": "attract CRC host==MAME==bsnes-jg"
+      }
     }
   ]
 }
