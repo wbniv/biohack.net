@@ -18,8 +18,8 @@
       "selfcheck": {
         "off": "0x25",
         "len": 2,
-        "want": "0x3DAC",
-        "frames": 680,
+        "want": "0x9D57",
+        "frames": 1400,
         "label": "attract CRC host==MAME==bsnes-jg"
       }
     }

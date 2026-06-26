@@ -36,7 +36,7 @@ const controls = [
       <h1 class="rp-title">Space Invaders</h1>
       <p class="rp-lede">
         The arcade classic, running live on the Super Nintendo — a marching fleet of three alien
-        kinds, bombs, a bonus UFO, written in C on a small
+        kinds, falling bombs, destructible bunkers, a bonus UFO and a score/lives HUD, written in C on a small
         <strong>object-oriented rendering library</strong> (<code>snesgfx</code>) and compiled to a
         real <code>.sfc</code> ROM with the
         <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain. Sprites are
@@ -83,7 +83,7 @@ const controls = [
         The whole game logic is a portable, deterministic simulation shared between the SNES ROM and a
         host program. The demo plays a fixed scripted run and folds the evolving game state into a
         CRC. <strong>Verify fidelity</strong> reruns that here in your tab and checks the CRC equals
-        <code>0x3DAC</code> — the same value asserted on the host and on two emulators (MAME and
+        <code>0x9D57</code> — the same value asserted on the host and on two emulators (MAME and
         bsnes-jg) across all three compiler modes in the build gate. Press it to reproduce the
         differential check live.
       </p>
