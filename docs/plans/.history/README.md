@@ -1,9 +1,15 @@
 | Date | Change |
 |------|--------|
+| [2026-06-27](https://github.com/wbniv/biohack.net/commit/353b652) | docs(plans): add #14 double-pendulum to plan index README |
 | [2026-06-27](https://github.com/wbniv/biohack.net/commit/b26e6ff) | docs(plans): verify snes-gallery plan — all 5 steps PASS; update plan index |
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+353b652	author	Will Norris
+353b652	added	2
+353b652	deleted	1
+353b652	files	1
+353b652	body	Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 b26e6ff	author	Will Norris
 b26e6ff	added	1
 b26e6ff	deleted	0
