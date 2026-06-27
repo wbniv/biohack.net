@@ -66,6 +66,17 @@
         "frames": 500,
         "label": "chaos gate CRC"
       }
+    },
+    {
+      "id": "1d-ca",
+      "title": "Rule 90 / Rule 110 \u2014 1-D Cellular Automaton",
+      "selfcheck": {
+        "off": "0x514",
+        "len": 2,
+        "want": "0xAB2C",
+        "frames": 400,
+        "label": "1d-ca gate"
+      }
     }
   ]
 }

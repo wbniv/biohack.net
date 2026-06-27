@@ -1,0 +1,199 @@
+---
+// /1d-ca — playable in-browser Rule 90/110 1-D Cellular Automaton (SNES) + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/1d-ca.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/1d-ca.sfc', 'preview/1d-ca.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const controls = [
+  ['X', 'Toggle Rule 90 ↔ Rule 110'],
+  ['Enter', 'Reset (restart from seed)'],
+];
+
+const stressItems = [
+  ['Bit-packed CA', '256 cells stored as uint8_t[32] (1 bit/cell); each generation unpacks 3-bit neighbourhoods via shifts+masks, looks up the rule bit, and repacks — pure shift+boolean with no multiply or divide'],
+  ['Sliding window', 'Inner loop uses win >>= 1 / mask <<= 1 (constant-1 shifts only) — eliminates variable-shift loops that cost 20–40 cycles each on the 65816 barrel-shifter-free architecture'],
+  ['No mul/div', 'ca_step contains zero __mulsi3 / __divsi3 calls; the disasm gate asserts shifts ≥ 1, booleans ≥ 1, bad_mul = 0, bad_div = 0'],
+  ['5-way gate', 'host == default@MAME == +mos-a16@MAME == +mos-xy16@MAME == +mos-a16@bsnes-jg (gate CRC 0xAB2C, 32 Rule-90 + 32 Rule-110 gens)'],
+];
+---
+
+<Base title="Rule 90 / Rule 110 — 1-D CA — bioHACK•NET" description="Rule 90 draws the Sierpinski triangle; Rule 110 is Turing-complete chaos. Both run live on a Super Nintendo — one pixel row per generation, scrolling down so the screen IS the computation. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">1-D Cellular Automaton</h1>
+      <p class="rp-lede">
+        Rule 90 draws the <em>Sierpinski triangle</em>. Rule 110 is <em>Turing-complete chaos</em>.
+        Both run live on a Super Nintendo — one pixel row generated per frame, scrolling down so
+        the entire screen is the computation's history. Written in C and compiled to a real
+        <code>.sfc</code> ROM with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>, 16-bit accumulator mode). Press <kbd>X</kbd> to flip between rules.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Rule 90/110 1-D Cellular Automaton">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+      </div>
+      <p class="rp-keys"><b>X</b> toggle rule &nbsp;·&nbsp; <b>Enter</b> reset</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then play. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>Controls</h2>
+      <table class="rp-table">
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          {controls.map(([k, a]) => (<tr><td><kbd>{k}</kbd></td><td>{a}</td></tr>))}
+        </tbody>
+      </table>
+
+      <h2>What it is</h2>
+      <p>
+        A <b>1-D elementary cellular automaton</b> (Wolfram, 1983) has 256 cells in a ring. Each
+        generation, every cell looks at its left neighbour, itself, and its right neighbour — a
+        3-bit pattern — and maps that pattern to a new value via an 8-bit lookup table called the
+        <em>rule number</em>. The SNES renders each generation as one pixel row scrolling downward,
+        so the entire visible screen is the last 224 generations of history.
+      </p>
+      <p>
+        <b>Rule 90</b> (binary <code>01011010</code>) ignores the center cell: new = left XOR right.
+        Starting from a single live center cell, it produces the <b>Sierpinski triangle</b> — a
+        perfect fractal that fills the screen as generations accumulate.
+      </p>
+      <p>
+        <b>Rule 110</b> (binary <code>01101110</code>) is one of the simplest known
+        <b>Turing-complete</b> systems. Its patterns are aperiodic and provably capable of universal
+        computation via colliding gliders. It starts from the same center-cell seed and immediately
+        diverges into complex, non-repeating stripes.
+      </p>
+
+      <h2>Display architecture</h2>
+      <p>
+        The SNES BG3 layer is set up as a <b>32×32 tile ring</b> in 2bpp mode (256 px tall). Each
+        CA generation writes its 256 cells — bitpacked into 32 bytes — into the current pixel row
+        of the current tile-row in VRAM. Every 8 generations a 512-byte DMA fires during v-blank,
+        flushing the completed tile-row. <code>BG3VOFS</code> is updated each frame so the newest
+        row always sits at the bottom of the 224-pixel visible window — the ring scrolls seamlessly
+        with no tilemap rewrites, ever.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{stressItems.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+      <p>
+        The CA kernel (<code>examples/65816/ca1d.h</code>) is a portable C99 header included by the
+        SNES ROM, a host oracle, and the corpus slice. The gate runs 32 Rule-90 + 32 Rule-110
+        generations from a single-cell seed and folds every output row into a CRC-16; the assert
+        is <code>corpus_result == 0xAB2C</code> on all five build variants — five-way differential.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against two
+        emulators (MAME + bsnes-jg). The player above is that exact cycle-accurate core — hit
+        <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (gate CRC
+        <code>0xAB2C</code>) live in this tab. No far pointers → five-way bar:
+        host == default == <code>+mos-a16</code> == <code>+mos-xy16</code> == bsnes-jg.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = '1d-ca';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede kbd { font: 600 .88em ui-monospace, monospace; border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+                 border-radius: 4px; padding: .05em .4em; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); }
+  .rp-keys b { color: var(--ink); font-weight: 600; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 42rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-doc kbd { font: 600 .82em ui-monospace, monospace; border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+                border-radius: 4px; padding: .05em .4em; }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
