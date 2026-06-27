@@ -55,6 +55,17 @@
         "frames": 500,
         "label": "pi gate CRC"
       }
+    },
+    {
+      "id": "double-pendulum",
+      "title": "Double Pendulum (Chaos)",
+      "selfcheck": {
+        "off": "0x12DA",
+        "len": 2,
+        "want": "0xE859",
+        "frames": 500,
+        "label": "chaos gate CRC"
+      }
     }
   ]
 }

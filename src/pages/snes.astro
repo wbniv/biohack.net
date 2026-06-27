@@ -33,17 +33,23 @@ const demos = [
     desc: 'Two π algorithms running simultaneously on the SNES: the Rabinowitz-Wagon spigot streams decimal digits via a 676-cell carry chain (32-bit div+mod per cell), while Monte-Carlo darts accumulate in the right panel. Self-running.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'double-pendulum',
+    title: 'Double Pendulum (Chaos)',
+    desc: 'Two double pendulums with nearly-identical starting angles swing from a shared pivot. Their mass-2 paths trace white and cyan trails into a bitmap canvas — diverging exponentially, the visual signature of chaos. Compiler stress-test #14.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Five in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, and π Spigot + Monte-Carlo. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Six in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, and Double Pendulum (Chaos). Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
       <a class="gl-back" href="/">← biohack.net</a>
       <h1 class="gl-title">SNES Demos</h1>
       <p class="gl-lede">
-        Five Super Nintendo programs compiled from C with an
+        Six Super Nintendo programs compiled from C with an
         <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
         — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
         ROM verified against MAME and bsnes-jg. Click any card to play.
