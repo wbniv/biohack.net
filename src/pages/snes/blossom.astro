@@ -5,7 +5,7 @@
 //
 // Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
 // so the edge caches immutably yet a re-synced asset still gets a fresh URL.
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
@@ -56,6 +56,7 @@ const presets = [
         <span id="status" class="rp-status">loading core…</span>
         <span id="checkresult" class="rp-badge"></span>
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">
         <b>← ↑ ↓ →</b> pan · <b>Q</b>/<b>W</b> zoom · <b>X</b>/<b>A</b> attractor ·

@@ -3,7 +3,7 @@
 // Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/3d-wireframe.sfc.
 // Spins a tetrahedron / cube / octahedron / icosahedron into a 2bpp bitmap canvas —
 // SNES demo #16 of the llvm-mos-65816 compiler stress-test battery.
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
@@ -60,6 +60,7 @@ const solids = [
         <span id="status" class="rp-status">loading core…</span>
         <span id="checkresult" class="rp-badge"></span>
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">
         <b>↑</b>/<b>↓</b> spin X · <b>←</b>/<b>→</b> spin Y · <b>Q</b>/<b>W</b> dolly ·

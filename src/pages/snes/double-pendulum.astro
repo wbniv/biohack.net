@@ -3,7 +3,7 @@
 // Boots the shared bsnes-jg WASM player on roms/double-pendulum.sfc. Two pendulums with
 // nearly-identical initial angles swing from a shared pivot; their mass-2 traces diverge
 // exponentially, showing chaos on a 1990 games console. Compiler stress-test #14.
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
@@ -49,6 +49,7 @@ const notes = [
         <span id="status" class="rp-status">loading core…</span>
         <span id="checkresult" class="rp-badge"></span>
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">Self-running — trails build up automatically. White = pendulum A, cyan = pendulum B.</p>
       <p id="banner" class="rp-banner"></p>
