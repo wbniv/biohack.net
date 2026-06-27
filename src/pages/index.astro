@@ -193,6 +193,7 @@ import Base from '../layouts/Base.astro';
     #projects ul li:nth-child(6) { animation-delay: 0.55s; }
     #projects ul li:nth-child(7) { animation-delay: 0.65s; }
     #projects ul li:nth-child(8) { animation-delay: 0.75s; }
+    #projects ul li:nth-child(9) { animation-delay: 0.85s; }
     @keyframes proj-in {
       from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: none; }
@@ -216,6 +217,7 @@ import Base from '../layouts/Base.astro';
     #projects ul li:nth-child(6)::before { animation-delay: -1.25s; }
     #projects ul li:nth-child(7)::before { animation-delay: -1.5s; }
     #projects ul li:nth-child(8)::before { animation-delay: -1.75s; }
+    #projects ul li:nth-child(9)::before { animation-delay: -2.0s; }
     @keyframes proj-orbit { to { transform: rotate(360deg); } }
     #projects a {
       color: var(--accent);
@@ -374,6 +376,7 @@ import Base from '../layouts/Base.astro';
       <li><a href="http://russound.com/product_detail.php?i=3241">Russound SMS-3</a> Media Server</li>
       <li><a href="http://foswiki.org/">Foswiki</a> — successor to TWiki</li>
       <li><a href="/claude/">Claude Code plugins</a> — personal marketplace of techops and productivity skills</li>
+      <li><a href="https://indri.studio/apps/llvm-mos-65816/">llvm-mos-65816</a> — open-source optimizing C compiler for the WDC 65816 &amp; Super Nintendo, via LLVM; <a href="/snes/">four playable SNES demos</a></li>
     </ul>
   </section>
 

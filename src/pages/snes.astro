@@ -1,0 +1,232 @@
+---
+// /snes — gallery of in-browser SNES demos compiled with the llvm-mos-65816 toolchain.
+import Base from '../layouts/Base.astro';
+
+const demos = [
+  {
+    slug: 'blossom',
+    title: 'Blossom',
+    desc: "Barry Martin's Hopalong strange attractor rendered live on SNES and flown around with the joypad. Accumulates into a hit-count grid in WRAM, displayed through Mode 7 with an HDMA colour split.",
+    keys: '← ↑ ↓ → pan · Q/W zoom · X/A attractor · Shift colour',
+  },
+  {
+    slug: 'space-invaders',
+    title: 'Space Invaders',
+    desc: 'The arcade classic on Super Nintendo — marching aliens, falling bombs, destructible bunkers, bonus UFO. Written in C on an OOP rendering library; boots into a self-playing attract demo.',
+    keys: '← → move · Z/X/A fire · Enter play · Shift attract',
+  },
+  {
+    slug: 'spirograph',
+    title: 'Spirograph',
+    desc: 'Interactive hypotrochoid curves: four curve families (hypotrochoid, epitrochoid, rose, Lissajous) bloom live into a bitmap canvas with real-time parameter control from the joypad.',
+    keys: '↑ ↓ ring · ← → wheel · Q/W pen · X/A family · Shift preset',
+  },
+  {
+    slug: '3d-wireframe',
+    title: 'Wireframe 3-D Solid',
+    desc: 'A spinning polyhedron (tetrahedron → cube → octahedron → icosahedron). Each frame: 3×3 rotation matrix, perspective divide, and integer Bresenham lines into a 2bpp bitmap canvas. Compiler stress-test #16.',
+    keys: '↑ ↓ spin X · ← → spin Y · Q/W dolly · Z/X solid · A palette · Shift mode',
+  },
+];
+---
+
+<Base title="SNES Demos — bioHACK•NET" description="Four in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, and Wireframe 3-D Solid. Play them in your browser.">
+  <main class="gl-wrap">
+
+    <header class="gl-hero">
+      <a class="gl-back" href="/">← biohack.net</a>
+      <h1 class="gl-title">SNES Demos</h1>
+      <p class="gl-lede">
+        Four Super Nintendo programs compiled from C with an
+        <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
+        — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
+        ROM verified against MAME and bsnes-jg. Click any card to play.
+      </p>
+    </header>
+
+    <ul class="gl-grid" role="list">
+      {demos.map(({ slug, title, desc, keys }) => (
+        <li class="gl-card">
+          <a href={`/${slug}/`} class="gl-card-link" aria-label={`Play ${title}`}>
+            <div class="gl-thumb-wrap">
+              <img
+                class="gl-thumb"
+                src={`/play/preview/${slug}.png`}
+                alt={`${title} running on SNES`}
+                width="256"
+                height="224"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="gl-play-overlay" aria-hidden="true">▶</div>
+            </div>
+            <div class="gl-card-body">
+              <h2 class="gl-card-title">{title}</h2>
+              <p class="gl-card-desc">{desc}</p>
+              <p class="gl-card-keys">{keys}</p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="gl-foot">
+      Each ROM boots in the bsnes-jg WASM core — no install, no plugin. Hit
+      <b>Verify fidelity</b> on any demo page to replay the CI gate live in the browser.
+    </p>
+
+  </main>
+</Base>
+
+<style>
+  .gl-wrap {
+    max-width: 900px;
+    margin-inline: auto;
+    padding: 2.5rem 1.25rem 5rem;
+  }
+
+  /* ── back link ──────────────────────────────────────── */
+  .gl-back {
+    display: inline-block;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: color 0.15s;
+  }
+  .gl-back:hover { color: var(--accent); }
+
+  /* ── hero ───────────────────────────────────────────── */
+  .gl-hero { max-width: 42rem; margin-bottom: 2.75rem; }
+  .gl-title {
+    font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 9vw, 3.2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--ink);
+    margin: 0 0 1rem;
+  }
+  .gl-lede {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    opacity: 0.85;
+    margin: 0;
+  }
+  .gl-lede a { color: var(--accent); text-decoration: none; }
+  .gl-lede a:hover { text-decoration: underline; }
+
+  /* ── card grid ──────────────────────────────────────── */
+  .gl-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 520px) {
+    .gl-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── card ───────────────────────────────────────────── */
+  .gl-card {
+    border: 1px solid var(--rule);
+    background: var(--bg-soft);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .gl-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px rgba(194, 65, 12, 0.3), 0 0 48px rgba(194, 65, 12, 0.12);
+  }
+  .gl-card-link {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  /* ── thumbnail ──────────────────────────────────────── */
+  .gl-thumb-wrap {
+    position: relative;
+    background: #000;
+    line-height: 0;
+    overflow: hidden;
+  }
+  .gl-thumb {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 256 / 224;
+    image-rendering: pixelated;
+    object-fit: cover;
+    transition: opacity 0.2s;
+  }
+  .gl-card:hover .gl-thumb { opacity: 0.82; }
+  .gl-play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 20px rgba(194, 65, 12, 0.9), 0 0 4px rgba(0,0,0,0.8);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .gl-card:hover .gl-play-overlay { opacity: 1; }
+
+  /* ── card body ──────────────────────────────────────── */
+  .gl-card-body {
+    padding: 0.9rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+  }
+  .gl-card-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .gl-card:hover .gl-card-title { color: var(--accent); }
+  .gl-card-desc {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    flex: 1;
+  }
+  .gl-card-keys {
+    margin: 0;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim);
+    opacity: 0.65;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── footer note ────────────────────────────────────── */
+  .gl-foot {
+    margin-top: 2.25rem;
+    font-size: 13px;
+    color: var(--ink-dim);
+    line-height: 1.65;
+    max-width: 42rem;
+  }
+  .gl-foot b { color: var(--ink); }
+</style>
