@@ -1,5 +1,5 @@
 {
-  "_comment": "Demo ROMs + their in-browser fidelity self-checks for the bsnes-jg WASM player. A selfcheck powers on, runs `frames` frames, reads `len` LE bytes of WRAM at `off`, and asserts == `want` \u2014 matching the headless gate proves this wasm build is the trusted core.",
+  "_comment": "Demo ROMs + their in-browser fidelity self-checks for the bsnes-jg WASM player. A selfcheck powers on, runs `frames` frames, reads `len` LE bytes of WRAM at `off`, and asserts == `want` — matching the headless gate proves this wasm build is the trusted core.",
   "roms": [
     {
       "id": "blossom",
@@ -47,9 +47,9 @@
     },
     {
       "id": "spigot",
-      "title": "\u03c0 Spigot + Monte-Carlo",
+      "title": "π Spigot + Monte-Carlo",
       "selfcheck": {
-        "off": "0x1B41",
+        "off": "0x1691",
         "len": 2,
         "want": "0x7711",
         "frames": 500,
@@ -69,7 +69,7 @@
     },
     {
       "id": "1d-ca",
-      "title": "Rule 90 / Rule 110 \u2014 1-D Cellular Automaton",
+      "title": "Rule 90 / Rule 110 — 1-D Cellular Automaton",
       "selfcheck": {
         "off": "0x514",
         "len": 2,

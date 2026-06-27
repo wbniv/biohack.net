@@ -5,7 +5,7 @@
 //
 // Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
 // so the edge caches immutably yet a re-synced asset still gets a fresh URL.
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
@@ -22,7 +22,7 @@ const appV = bust['app.js'] ?? '';
 
 // No joypad input — demo runs fully automatically.
 const notes = [
-  ['Algorithm', 'Rabinowitz-Wagon π spigot (1995) — right-to-left carry sweep across a 676-element uint16 array with uint32 intermediates; one 32-bit divide + multiply per element per digit'],
+  ['Algorithm', 'Rabinowitz-Wagon π spigot (1995) — right-to-left carry sweep across a 76-element uint16 array with uint32 intermediates; one 32-bit divide + multiply per element per digit'],
   ['Monte-Carlo', 'Scatter darts uniformly in a square, count hits inside the quarter-circle; ratio × 4 ≈ π'],
   ['Compiler stress', '__udivmodsi4 (combined 32÷32 div+mod) + __mulsi3 (32×32) called in every inner loop; rep/sep mode-switch brackets mark 16-bit sections'],
 ];
@@ -35,7 +35,7 @@ const notes = [
       <h1 class="rp-title">π Spigot</h1>
       <p class="rp-lede">
         Two algorithms running simultaneously on a real Super Nintendo. The left panel streams
-        decimal digits of π via the <em>Rabinowitz-Wagon spigot</em> — a carry sweep across 676 16-bit
+        decimal digits of π via the <em>Rabinowitz-Wagon spigot</em> — a carry sweep across 76 16-bit
         cells. The right panel throws random darts at a square and accumulates hits inside the
         quarter-circle to estimate π by Monte-Carlo. Written in C and compiled to a real
         <code>.sfc</code> ROM with the
@@ -51,6 +51,7 @@ const notes = [
         <span id="status" class="rp-status">loading core…</span>
         <span id="checkresult" class="rp-badge"></span>
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">Self-running demo — digits tick in and darts accumulate automatically.</p>
       <p id="banner" class="rp-banner"></p>
@@ -63,7 +64,7 @@ const notes = [
       <p>
         The <b>π spigot</b> (Rabinowitz &amp; Wagon, 1995) produces decimal digits of π one at a time
         using only integer arithmetic — no floating point, no precomputed lookup. Each digit requires
-        one full right-to-left pass through an array of 676 sixteen-bit cells:
+        one full right-to-left pass through an array of 76 sixteen-bit cells:
       </p>
       <pre class="rp-code">x = a[i]×10 + q×i
 a[i] = x mod (2i−1)
@@ -97,7 +98,7 @@ q    = x div (2i−1)</pre>
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against two
         emulators (MAME + bsnes-jg). The player above is that exact cycle-accurate core — hit
         <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (gate CRC
-        <code>0x771D</code>) live in this tab. No far pointers, so the same binary is checked five
+        <code>0x7711</code>) live in this tab. No far pointers, so the same binary is checked five
         ways: host == default == <code>+mos-a16</code> == <code>+mos-xy16</code> == bsnes-jg.</p>
     </section>
 

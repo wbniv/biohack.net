@@ -1,6 +1,6 @@
 ---
 // /snes — gallery of in-browser SNES demos compiled with the llvm-mos-65816 toolchain.
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 
 const demos = [
   {
@@ -30,7 +30,7 @@ const demos = [
   {
     slug: 'spigot',
     title: 'π Spigot + Monte-Carlo',
-    desc: 'Two π algorithms running simultaneously on the SNES: the Rabinowitz-Wagon spigot streams decimal digits via a 676-cell carry chain (32-bit div+mod per cell), while Monte-Carlo darts accumulate in the right panel. Self-running.',
+    desc: 'Two π algorithms running simultaneously on the SNES: the Rabinowitz-Wagon spigot streams decimal digits via a 76-cell carry chain (32-bit div+mod per cell), while Monte-Carlo darts accumulate in the right panel. Self-running.',
     keys: 'Self-running — no controls',
   },
   {
@@ -71,7 +71,7 @@ const demos = [
     <ul class="gl-grid" role="list">
       {demos.map(({ slug, title, desc, keys }) => (
         <li class="gl-card">
-          <a href={`/${slug}/`} class="gl-card-link" aria-label={`Play ${title}`}>
+          <a href={`/snes/${slug}/`} class="gl-card-link" aria-label={`Play ${title}`}>
             <div class="gl-thumb-wrap">
               <img
                 class="gl-thumb"
