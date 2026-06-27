@@ -1,0 +1,185 @@
+---
+// /spirograph — playable in-browser Spirograph (hypotrochoid) SNES demo + instructions.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/spirograph.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/spirograph.sfc', 'preview/spirograph.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+// In-browser keys (fixed by the player) -> Spirograph actions.
+const controls = [
+  ['↑ / ↓', 'Ring radius R  + / −'],
+  ['← / →', 'Wheel radius r  − / +'],
+  ['Q / W', 'Pen offset d  − / +'],
+  ['X / A', 'Next / previous curve family'],
+  ['Shift', 'Cycle gear preset'],
+  ['Enter', 'Reset'],
+];
+const families = [
+  ['HYPOTROCHOID', 'pen inside the wheel as it rolls inside the ring — the classic rosette'],
+  ['EPITROCHOID', 'wheel rolls outside the ring — a ring of interlocking loops'],
+  ['ROSE', 'rhodonea ρ = cos(kθ) — a k-petalled flower'],
+  ['LISSAJOUS', 'x = sin(aθ+δ), y = sin(bθ) — the crossing-wave figure'],
+];
+---
+
+<Base title="Spirograph — bioHACK•NET" description="An interactive hypotrochoid spirograph rendered live on the Super Nintendo in C — four curve families bloom into a bitmap canvas. Play it in your browser.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Spirograph</h1>
+      <p class="rp-lede">
+        The curve a pen traces through a hole in a small gear rolling inside a ring — a
+        <em>hypotrochoid</em> — drawn live on the Super Nintendo and driven with the joypad. Written in C
+        and compiled to a real <code>.sfc</code> ROM with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain (16-bit
+        accumulator, <code>+mos-a16</code>). Each point is a sin/cos lookup plus two fixed-point
+        multiplies; the figure <b>blooms</b> stroke-by-stroke into a bitmap canvas in WRAM. Cycle through
+        four curve families — hypotrochoid, epitrochoid, rose and Lissajous.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Spirograph">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+      </div>
+      <p class="rp-keys">
+        <b>↑</b>/<b>↓</b> ring · <b>←</b>/<b>→</b> wheel · <b>Q</b>/<b>W</b> pen ·
+        <b>X</b>/<b>A</b> family · <b>Shift</b> preset · <b>Enter</b> reset
+      </p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen, then play. The rose draws itself in over a second or two; change a dial and it re-blooms — tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>Controls</h2>
+      <table class="rp-table">
+        <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+        <tbody>{controls.map(([k, a]) => (<tr><td><kbd>{k}</kbd></td><td>{a}</td></tr>))}</tbody>
+      </table>
+
+      <h2>The four curve families</h2>
+      <p>Cycle them with <kbd>X</kbd> (next) / <kbd>A</kbd> (previous) — each re-blooms the canvas.
+        The on-screen HUD shows the live <code>R</code> (ring), <code>W</code> (wheel), <code>D</code>
+        (pen) and the petal count.</p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Family</th><th>What it is</th></tr></thead>
+        <tbody>{families.map(([n, d]) => (
+          <tr><td class="rp-mono">{n}</td><td>{d}</td></tr>
+        ))}</tbody>
+      </table>
+
+      <h2>Tips</h2>
+      <ul>
+        <li><b>The bloom is the point.</b> Each new sample is line-connected to the last, so the figure
+          draws itself; nudging <kbd>↑↓</kbd>/<kbd>←→</kbd>/<kbd>Q</kbd><kbd>W</kbd> changes the gear and
+          re-blooms a fresh curve.</li>
+        <li><b>Gear presets</b> (<kbd>Shift</kbd>) jump between classic Spirograph wheel/ring sets — each
+          a different petal count (ring ÷ gcd of ring and wheel).</li>
+        <li><b>It's a compiler stress-test.</b> The whole point is the sin/cos-LUT + fixed-point-multiply
+          inner loop and the gear-ratio divide — exercising the 65816 16-bit-accumulator codegen.</li>
+      </ul>
+
+      <p class="rp-foot">Written in C with an LLVM/65816 SNES toolchain and verified pixel-for-pixel
+        against two emulators (MAME + bsnes-jg). The player above is that exact cycle-accurate core — hit
+        <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (curve-math hash
+        <code>0x32D4</code>) live in this tab. No far pointers, so the same program is checked five ways:
+        host == default == <code>+mos-a16</code> == <code>+mos-xy16</code>.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'spirograph';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  /* NATURAL aspect, no overflow:hidden / object-fit (which would shave the top scanline). */
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); }
+  .rp-keys b { color: var(--ink); font-weight: 600; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc ul { margin: .4rem 0; padding-left: 1.2rem; }
+  .rp-doc li { margin: .35rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 34rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-doc kbd { font: 600 .82em 'JetBrains Mono', ui-monospace, monospace; color: var(--ink);
+                border: 1px solid var(--rule); border-radius: 4px; padding: .05em .4em; background: var(--bg-soft); }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

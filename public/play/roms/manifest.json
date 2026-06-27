@@ -22,6 +22,17 @@
         "frames": 1400,
         "label": "attract CRC host==MAME==bsnes-jg"
       }
+    },
+    {
+      "id": "spirograph",
+      "title": "Spirograph",
+      "selfcheck": {
+        "off": "0x137a",
+        "len": 2,
+        "want": "0x32D4",
+        "frames": 500,
+        "label": "curve-math hash"
+      }
     }
   ]
 }
