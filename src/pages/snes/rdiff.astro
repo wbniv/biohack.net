@@ -1,0 +1,182 @@
+---
+// /snes/rdiff — playable in-browser Gray-Scott reaction-diffusion SNES demo.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/rdiff.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/rdiff.sfc', 'preview/rdiff.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+// Self-running demo — no joypad input.
+const notes = [
+  ['Activator', 'U (activator) diffuses fast (DU=102), grows where both U and V are present'],
+  ['Inhibitor', 'V (inhibitor) diffuses slowly (DV=10), suppresses U via the U×V² reaction term'],
+  ['Parameters', 'Feed F=14, kill K=16 — a "worm/coral" morphology region of the Gray-Scott parameter space'],
+  ['Compiler stress', '3 × __mulsi3 per grid cell per step (U×V, UV×V, DU×Laplacian); rep/sep mode-switch brackets mark 16-bit sections'],
+];
+---
+
+<Base title="Gray-Scott Reaction-Diffusion — bioHACK•NET" description="Gray-Scott reaction-diffusion running live on a Super Nintendo — an activator-inhibitor PDE that grows Turing-instability patterns from a tiny 2×2 seed on a 32×28 grid. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Reaction-Diffusion</h1>
+      <p class="rp-lede">
+        Gray-Scott reaction-diffusion running live on a Super Nintendo.
+        Two chemical species — activator U and inhibitor V — evolve on a 32×28 toroidal grid
+        via the equation <em>∂U/∂t = DU∇²U − UV² + F(1−U)</em>, seeded from a 2×2 spot.
+        Turing instability spontaneously grows organic worm and coral patterns. Written in C
+        and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based
+        65816 toolchain (<code>+mos-a16</code>, 16-bit accumulator). Runs automatically.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Gray-Scott reaction-diffusion">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — patterns grow automatically from a 2×2 seed.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The <b>Gray-Scott model</b> (1984) is a pair of reaction-diffusion PDEs that replicate
+        biological pattern formation. Two chemical species compete on a grid:
+      </p>
+      <pre class="rp-code">∂U/∂t = DU·∇²U − U·V² + F·(1 − U)
+∂V/∂t = DV·∇²V + U·V² − (F+k)·V</pre>
+      <p>
+        U is the <em>activator</em> (fast diffuser), V is the <em>inhibitor</em> (slow diffuser).
+        The nonlinear <code>U·V²</code> term creates Turing instability: a uniform field is
+        unstable, so tiny fluctuations amplify into spots, stripes, worms, or coral depending
+        on the feed (F) and kill (k) rates. This demo uses F=14, k=16 — a "worm" regime —
+        seeded from a 2×2 central block of V=128 on a background of U=255.
+      </p>
+
+      <h2>Fixed-point arithmetic on 8-bit hardware</h2>
+      <p>
+        All values are scaled by 256 (S ≡ 1.0) and stored as <code>uint8_t</code> with
+        16-bit intermediates. Each cell per step requires three 32-bit multiplications
+        (<code>__mulsi3</code>): U×V for the reaction product, then UV×V for the cubic
+        term, then DU×Laplacian for diffusion. The hot path runs 64 cells × 2 steps per
+        frame = 128 × 3 = 384 32-bit multiplies per frame.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        A separate 8×8 gate grid runs 8 steps and folds V into a rotating-XOR CRC. The gate
+        asserts <code>corpus_result</code> (0x8484) is identical on host, default 8-bit SNES,
+        <code>+mos-a16</code>, and <code>+mos-xy16</code> — five-way differential. The
+        <b>Verify fidelity</b> button above reproduces that gate live in this tab via the
+        same cycle-accurate bsnes-jg core used in CI.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        two emulators (MAME + bsnes-jg). Hit <b>Verify fidelity</b> to reproduce the build
+        gate's WRAM assert (<code>corpus_result = 0x8484</code>) live in this tab. No far
+        pointers — same binary checked five ways: host == default == <code>+mos-a16</code>
+        == <code>+mos-xy16</code> == bsnes-jg.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'rdiff';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 38rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
