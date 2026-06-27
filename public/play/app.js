@@ -330,6 +330,39 @@
     });
     var verifyEl = document.getElementById("verify");
     if (verifyEl) verifyEl.addEventListener("click", verify);
+
+    // Fullscreen button — targets the .rp-screen wrapper so the black background fills the
+    // viewport and the canvas stays pixel-perfect centred. Hidden on browsers without support.
+    (function () {
+      var fsEl = document.getElementById("fullscreen");
+      if (!fsEl) return;
+      var enabled = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+      if (!enabled) { fsEl.style.display = "none"; return; }
+      var wrap = canvas && canvas.parentElement;  // .rp-screen div
+      fsEl.addEventListener("click", function () {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        } else {
+          var target = wrap || canvas;
+          var req = target.requestFullscreen || target.webkitRequestFullscreen;
+          if (req) req.call(target);
+        }
+      });
+      function onFsChange() {
+        var active = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        fsEl.textContent = active ? "Exit full" : "Fullscreen";
+      }
+      document.addEventListener("fullscreenchange", onFsChange);
+      document.addEventListener("webkitfullscreenchange", onFsChange);
+      var s = document.createElement("style");
+      s.textContent =
+        ".rp-screen:-webkit-full-screen{display:flex;align-items:center;justify-content:center;background:#000;width:100vw;height:100vh;}" +
+        ".rp-screen:fullscreen{display:flex;align-items:center;justify-content:center;background:#000;width:100vw;height:100vh;}" +
+        ".rp-screen:-webkit-full-screen canvas{width:auto;height:100%;max-width:100vw;image-rendering:pixelated;}" +
+        ".rp-screen:fullscreen canvas{width:auto;height:100%;max-width:100vw;image-rendering:pixelated;}";
+      document.head.appendChild(s);
+    }());
+
     window.addEventListener("keydown", onKey(true));
     window.addEventListener("keyup", onKey(false));
     var game = document.getElementById("game");
