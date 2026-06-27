@@ -110,6 +110,17 @@
         "frames": 500,
         "label": "factorial"
       }
+    },
+    {
+      "id": "newton",
+      "title": "Newton's Fractal",
+      "selfcheck": {
+        "off": "0x908",
+        "len": 2,
+        "want": "0x4D8B",
+        "frames": 500,
+        "label": "newton"
+      }
     }
   ]
 }

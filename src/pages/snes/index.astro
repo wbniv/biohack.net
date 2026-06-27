@@ -63,17 +63,23 @@ const demos = [
     desc: 'n! computed live in base-10000 bignum arithmetic — 700 uint16 cells, schoolbook carry-mul. The growing decimal number fills 27 rows as n climbs toward 1000. Stresses __mulsi3 + __udivmodsi4. Compiler stress-test #20.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'newton',
+    title: "Newton's Fractal",
+    desc: "Newton's method on z³−1 colours the complex plane into three basins of attraction — one per cube root of unity — shaded by convergence speed. One full complex division per tile. Compiler stress-test #2.",
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Nine in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, and Reaction-Diffusion. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Ten in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, and Newton's Fractal. Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
       <a class="gl-back" href="/">← biohack.net</a>
       <h1 class="gl-title">SNES Demos</h1>
       <p class="gl-lede">
-        Nine Super Nintendo programs compiled from C with an
+        Ten Super Nintendo programs compiled from C with an
         <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
         — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
         ROM verified against MAME and bsnes-jg. Click any card to play.
