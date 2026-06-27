@@ -27,17 +27,23 @@ const demos = [
     desc: 'A spinning polyhedron (tetrahedron → cube → octahedron → icosahedron). Each frame: 3×3 rotation matrix, perspective divide, and integer Bresenham lines into a 2bpp bitmap canvas. Compiler stress-test #16.',
     keys: '↑ ↓ spin X · ← → spin Y · Q/W dolly · Z/X solid · A palette · Shift mode',
   },
+  {
+    slug: 'spigot',
+    title: 'π Spigot + Monte-Carlo',
+    desc: 'Two π algorithms running simultaneously on the SNES: the Rabinowitz-Wagon spigot streams decimal digits via a 676-cell carry chain (32-bit div+mod per cell), while Monte-Carlo darts accumulate in the right panel. Self-running.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Four in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, and Wireframe 3-D Solid. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Five in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, and π Spigot + Monte-Carlo. Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
       <a class="gl-back" href="/">← biohack.net</a>
       <h1 class="gl-title">SNES Demos</h1>
       <p class="gl-lede">
-        Four Super Nintendo programs compiled from C with an
+        Five Super Nintendo programs compiled from C with an
         <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
         — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
         ROM verified against MAME and bsnes-jg. Click any card to play.

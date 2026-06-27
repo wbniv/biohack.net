@@ -44,6 +44,17 @@
         "frames": 300,
         "label": "3-D math hash"
       }
+    },
+    {
+      "id": "spigot",
+      "title": "\u03c0 Spigot + Monte-Carlo",
+      "selfcheck": {
+        "off": "0x1B41",
+        "len": 2,
+        "want": "0x771D",
+        "frames": 500,
+        "label": "pi gate CRC"
+      }
     }
   ]
 }

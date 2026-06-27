@@ -1,0 +1,178 @@
+---
+// /spigot — playable in-browser π Spigot + Monte-Carlo SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/spigot.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/spigot.sfc', 'preview/spigot.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+// No joypad input — demo runs fully automatically.
+const notes = [
+  ['Algorithm', 'Rabinowitz-Wagon π spigot (1995) — right-to-left carry sweep across a 676-element uint16 array with uint32 intermediates; one 32-bit divide + multiply per element per digit'],
+  ['Monte-Carlo', 'Scatter darts uniformly in a square, count hits inside the quarter-circle; ratio × 4 ≈ π'],
+  ['Compiler stress', '__udivmodsi4 (combined 32÷32 div+mod) + __mulsi3 (32×32) called in every inner loop; rep/sep mode-switch brackets mark 16-bit sections'],
+];
+---
+
+<Base title="π Spigot + Monte-Carlo — bioHACK•NET" description="The Rabinowitz-Wagon π spigot algorithm running live on a Super Nintendo — streaming digits into the left panel while Monte-Carlo darts accumulate in the right. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">π Spigot</h1>
+      <p class="rp-lede">
+        Two algorithms running simultaneously on a real Super Nintendo. The left panel streams
+        decimal digits of π via the <em>Rabinowitz-Wagon spigot</em> — a carry sweep across 676 16-bit
+        cells. The right panel throws random darts at a square and accumulates hits inside the
+        quarter-circle to estimate π by Monte-Carlo. Written in C and compiled to a real
+        <code>.sfc</code> ROM with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>, 16-bit accumulator mode). Runs automatically — no joypad needed.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running π Spigot + Monte-Carlo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+      </div>
+      <p class="rp-keys">Self-running demo — digits tick in and darts accumulate automatically.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The <b>π spigot</b> (Rabinowitz &amp; Wagon, 1995) produces decimal digits of π one at a time
+        using only integer arithmetic — no floating point, no precomputed lookup. Each digit requires
+        one full right-to-left pass through an array of 676 sixteen-bit cells:
+      </p>
+      <pre class="rp-code">x = a[i]×10 + q×i
+a[i] = x mod (2i−1)
+q    = x div (2i−1)</pre>
+      <p>
+        The carry <code>q</code> propagates left; when it reaches cell zero the algorithm resolves
+        one output digit. The heavy operations — a 32-bit multiply and a combined 32÷32 divide+mod
+        per cell — are what the compiler is being tested on.
+      </p>
+
+      <h2>Monte-Carlo</h2>
+      <p>
+        The right panel uses a simple probability argument: if you throw darts uniformly at a
+        1×1 square, the fraction that land inside the quarter-circle of radius 1 is exactly π/4.
+        Each dart is a pair of xorshift16 pseudo-random 16-bit integers; the inside test is
+        x²+y² ≤ r² (a 16×16→32 multiply, another codegen stress).
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+      <p>
+        Both algorithms run as a portable C header (<code>examples/65816/pi_spigot.h</code>) linked
+        into the SNES ROM and separately into a host oracle; the gate asserts <code>corpus_result</code>
+        (a 16-bit CRC of the first digit pass + 256 MC throws) is identical on host, default 8-bit
+        SNES, <code>+mos-a16</code>, and <code>+mos-xy16</code> — five-way differential.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against two
+        emulators (MAME + bsnes-jg). The player above is that exact cycle-accurate core — hit
+        <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (gate CRC
+        <code>0x771D</code>) live in this tab. No far pointers, so the same binary is checked five
+        ways: host == default == <code>+mos-a16</code> == <code>+mos-xy16</code> == bsnes-jg.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'spigot';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 38rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
