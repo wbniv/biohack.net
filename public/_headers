@@ -1,9 +1,8 @@
 # Cloudflare Pages cache rules.
-# HTML pages: always revalidate — fresh ETags after each deploy, no stale page state.
-# /play/* assets: immutable — app.js bust() always appends ?v=<sha>, so bare URLs are never
-# used in practice; safe to cache forever and avoids 304 round-trips for the 4 MB WASM core.
-/*
-  Cache-Control: public, max-age=0, must-revalidate
-
+# /play/* assets: permanently cached — app.js bust() always uses ?v=<sha> URLs, so a changed
+# file gets a new URL and the old cached version is never served. The bare URL (no query param)
+# is never requested by the app. Avoids 304 round-trips for the 4 MB WASM core on repeat visits.
+# HTML pages use Cloudflare Pages' built-in default (max-age=0, must-revalidate) — no rule here,
+# so the /* rule doesn't bleed must-revalidate into the immutable /play/* entries.
 /play/*
   Cache-Control: public, max-age=31536000, immutable

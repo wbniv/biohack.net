@@ -79,7 +79,7 @@
       }
     },
     {
-      "id": "nbody",
+      "id": "n-body",
       "title": "N-body Orbits",
       "selfcheck": {
         "off": "0x14FA",

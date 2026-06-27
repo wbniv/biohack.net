@@ -1,16 +1,16 @@
 ---
-// /nbody — playable in-browser N-body Orbits SNES demo + notes.
+// /snes/n-body — playable in-browser N-body Orbits SNES demo + notes.
 // Three bodies (Sun + Earth + Jupiter) under Newtonian gravity integrated by Symplectic
 // Euler. Orbital trails accumulate into a 128×128 2bpp bitmap canvas; the trail brightness
 // fades via CGRAM palette dimming. Compiler stress-test #13.
-import Base from '../layouts/Base.astro';
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/nbody.sfc', 'preview/nbody.png',
+  'roms/manifest.json', 'roms/n-body.sfc', 'preview/n-body.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -48,6 +48,7 @@ const codegen = [
         <span id="status" class="rp-status">loading core…</span>
         <span id="checkresult" class="rp-badge"></span>
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">Self-running — orbits build up automatically. Trails fade every ~4 seconds.</p>
       <p id="banner" class="rp-banner"></p>
@@ -123,7 +124,7 @@ x += v × dt</pre>
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'nbody';
+    window.BJG_DEFAULT_ROM = 'n-body';
     window.BJG_BUST = bust;
     window.BsnesJg = undefined;
     window.__bjg = undefined;
