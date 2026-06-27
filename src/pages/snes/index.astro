@@ -57,6 +57,12 @@ const demos = [
     desc: 'Gray-Scott activator-inhibitor PDE growing Turing-instability worm patterns from a 2×2 seed on a 32×28 toroidal grid. 384 32-bit multiplies per frame. Compiler stress-test #8.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'factorial',
+    title: 'Bignum Factorial',
+    desc: 'n! computed live in base-10000 bignum arithmetic — 700 uint16 cells, schoolbook carry-mul. The growing decimal number fills 27 rows as n climbs toward 1000. Stresses __mulsi3 + __udivmodsi4. Compiler stress-test #20.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

@@ -99,6 +99,17 @@
         "frames": 500,
         "label": "Gray-Scott gate hash"
       }
+    },
+    {
+      "id": "factorial",
+      "title": "Bignum Factorial",
+      "selfcheck": {
+        "off": "0x7E0F46",
+        "len": 2,
+        "want": "0x772F",
+        "frames": 500,
+        "label": "factorial"
+      }
     }
   ]
 }
