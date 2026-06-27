@@ -13,6 +13,7 @@ rows on commit.*
 | [Review of `/home/will/SRC/biohack.net/from-dreamhost/err`](2026-04-23-rsync-error-log-review.md) | Triage 2,600 rsync permission errors from DreamHost import; conclude all are ignorable | [`4f20fa9`](https://github.com/wbniv/biohack.net/commit/4f20fa9) | Investigation |
 | [Plan — Cloudflare Pages hosting for biohack.net](2026-05-23-cloudflare-pages-hosting.md) | Deploy biohack.net static site to Cloudflare Pages with GitHub Actions tag-driven deploys | [`4f20fa9`](https://github.com/wbniv/biohack.net/commit/4f20fa9) | Infra |
 | [Plan: `cloudflare-redirect` skill + willnorris.me → biohack.net/cv/](2026-06-13-cloudflare-redirect-skill-willnorris-me-biohack-ne.md) | Build reusable cloudflare-redirect skill and redirect willnorris.me to biohack.net/cv/ | [`cf44ec0`](https://github.com/wbniv/biohack.net/commit/cf44ec0) | Tooling |
+| [SNES Gallery Page + 65816 Compiler Project Entry](2026-06-27-snes-gallery-and-65816-project.md) | Add /snes gallery landing page for all four SNES demos and llvm-mos-65816 to the homepage Highlighted Projects | [`3b33de1`](https://github.com/wbniv/biohack.net/commit/3b33de1) | Feature |
 
 ---
 

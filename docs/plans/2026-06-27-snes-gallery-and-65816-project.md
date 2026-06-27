@@ -39,7 +39,37 @@
 ## Verification
 
 1. `task build` exits 0.
-2. `task dev` — `/snes` renders a 2×2 card grid with correct preview images and links.
+
+   ```
+   09:39:11 ✓ Completed in 59ms.
+   09:39:11 [build] 8 page(s) built in 1.26s
+   09:39:11 [build] Complete!
+   ```
+   PASS
+
+2. `/snes` renders a 2×2 card grid with correct preview images and links.
+
+   Verified via headless screenshot at 1000 px — 2-column card grid, all four preview
+   images populated (Blossom / Space Invaders / Spirograph / Wireframe 3-D Solid),
+   titles and descriptions present, `← biohack.net` back-link visible.
+   PASS
+
 3. Each card click navigates to the correct demo page and the emulator boots.
+
+   Links verified in built HTML: `/blossom/`, `/space-invaders/`, `/spirograph/`,
+   `/3d-wireframe/` — all resolved to existing pages in the build. Emulator boot
+   confirmed in prior per-page test cycles; card links use the same `/<slug>/` pattern.
+   PASS
+
 4. `/` homepage shows the new 65816 project item with correct link.
+
+   Verified via headless screenshot — 9th bullet reads "llvm-mos-65816 — open-source
+   optimizing C compiler for the WDC 65816 & Super Nintendo, via LLVM; four playable
+   SNES demos" with both links rendered in accent orange.
+   PASS
+
 5. Mobile (≤520 px): `/snes` grid collapses to 1 column.
+
+   Verified via headless screenshot at 480 px width — single-column layout, cards
+   full-width, Blossom card visible at top.
+   PASS
