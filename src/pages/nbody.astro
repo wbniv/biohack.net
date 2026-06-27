@@ -1,0 +1,192 @@
+---
+// /nbody — playable in-browser N-body Orbits SNES demo + notes.
+// Three bodies (Sun + Earth + Jupiter) under Newtonian gravity integrated by Symplectic
+// Euler. Orbital trails accumulate into a 128×128 2bpp bitmap canvas; the trail brightness
+// fades via CGRAM palette dimming. Compiler stress-test #13.
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/nbody.sfc', 'preview/nbody.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const codegen = [
+  ['__mulsi3 × 6', 'Q8.8 position deltas squared for r²: (int16)dx × dx + (int16)dy × dy, 16×16→32'],
+  ['__udivsi3 × 2', 'Gravitational acceleration: GRAV_K × mass / r² — a 32-bit unsigned divide per body-pair'],
+  ['rep / sep × 82', 'Mode-switch brackets under +mos-a16 marking the 16-bit accumulator sections'],
+];
+---
+
+<Base title="N-body Orbits — bioHACK•NET" description="Sun, Earth, and Jupiter orbit under Newtonian gravity on a Super Nintendo — Symplectic Euler integration, Q8.8 fixed-point, fading trails via CGRAM palette dimming. Compiler stress-test #13 for the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">N-body Orbits</h1>
+      <p class="rp-lede">
+        Sun, Earth, and Jupiter orbit each other under Newtonian gravity on a Super Nintendo.
+        Each pair computes a 1/r² force via Q8.8 fixed-point arithmetic; Symplectic Euler
+        integrates the velocities each frame. Orbital trails accumulate into a 128×128 2bpp
+        bitmap canvas; the palette fades periodically to dim old trails. Written in C and
+        compiled to a real <code>.sfc</code> ROM with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>, 16-bit accumulator mode). Self-running — no joypad needed.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running N-body Orbits">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+      </div>
+      <p class="rp-keys">Self-running — orbits build up automatically. Trails fade every ~4 seconds.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Three point masses — Sun (mass 255), Earth (mass 1), Jupiter (mass 3) — interact under
+        Newtonian gravity. For each body-pair the simulator computes:
+      </p>
+      <pre class="rp-code">dx = (x_j − x_i) >> 8          // Q8.8 → pixel units
+dy = (y_j − y_i) >> 8
+r² = dx² + dy² + GRAV_SOFT     // softening avoids 1/0
+a  = GRAV_K × mass / r²        // 32-bit divide → __udivsi3
+v += a × dt                    // Symplectic Euler integration
+x += v × dt</pre>
+      <p>
+        Positions and velocities are <code>int16_t</code> in Q8.8 fixed-point (1 unit = 1/256
+        pixel). A softening constant (<code>GRAV_SOFT = 16</code>) prevents singularities at
+        close approach. Four substeps per V-blank frame keep the integration stable.
+      </p>
+
+      <h2>Display</h2>
+      <p>
+        Each body plots a 3×3 pixel dot into a 128×128 <b>BitmapCanvas</b> (BG3, Mode 1, 2bpp)
+        centred in an 8×6-tile box on screen. The canvas accumulates dots by OR-ing tile data
+        — old marks stay visible as trails. Every 120 frames the CGRAM palette entry for the
+        trail colour dims by one level, creating a fade effect without touching VRAM. A HUD row
+        above and below the canvas shows the physics parameters.
+      </p>
+
+      <h2>Codegen under test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Operation</th><th>What it measures</th></tr></thead>
+        <tbody>
+          {codegen.map(([op, desc]) => (
+            <tr><td class="rp-mono">{op}</td><td>{desc}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <p>
+        The <b>Verify fidelity</b> button above powers on the ROM, runs 500 frames,
+        and reads <code>corpus_result</code> from WRAM — it must equal <code>0xCC65</code>,
+        the same hash the build gate asserts against a host C oracle. Six <code>__mulsi3</code>
+        calls (three body-pairs × two axes) and two <code>__udivsi3</code> calls (one r²
+        divide per pair) are the primary compiler stress surfaces.
+      </p>
+
+      <h2>Technical notes</h2>
+      <p>
+        The force-pair inner function is marked <code>__attribute__((noinline))</code> to
+        cap register pressure — the 65816 backend's register allocator cannot handle six
+        simultaneous live <code>int32_t</code> values in a single inlined scope without
+        emitting undefined-register errors in the machine-verifier pass. Extracted as a
+        separate function, each body-pair's six live values fall within the allocatable set.
+      </p>
+      <p class="rp-foot">
+        Compiler stress-test #13 in the
+        <a href="https://indri.studio/apps/llvm-mos-65816/">llvm-mos-65816</a> battery.
+        5-way differential gate: host == default@MAME == +mos-a16@MAME == +mos-xy16@MAME ==
+        a16@bsnes-jg.
+      </p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'nbody';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 38rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
