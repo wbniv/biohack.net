@@ -33,6 +33,17 @@
         "frames": 500,
         "label": "curve-math hash"
       }
+    },
+    {
+      "id": "3d-wireframe",
+      "title": "Wireframe 3-D Solid",
+      "selfcheck": {
+        "off": "0x136a",
+        "len": 2,
+        "want": "0xEF8E",
+        "frames": 300,
+        "label": "3-D math hash"
+      }
     }
   ]
 }
