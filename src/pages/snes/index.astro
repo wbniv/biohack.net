@@ -133,6 +133,12 @@ const demos = [
     desc: 'A Wolfenstein-style grid raycaster: a first-person camera auto-walks a 16×16 maze, one DDA-cast ray per column with a per-column 1/distance divide. The battery’s division member — three __udivsi3 per column. Compiler stress-test #15.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'burning-ship',
+    title: 'Burning Ship Fractal',
+    desc: 'The Mandelbrot’s folded cousin — z = (|Re z| + i|Im z|)² + c — rendered as escape-time colour bands with the iconic black ship silhouette. Three multiplies per iteration plus the abs fold; multiply-only. Compiler stress-test #3.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

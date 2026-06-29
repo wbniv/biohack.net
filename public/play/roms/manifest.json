@@ -220,6 +220,17 @@
         "frames": 500,
         "label": "RAY"
       }
+    },
+    {
+      "id": "burning-ship",
+      "title": "Burning Ship Fractal",
+      "selfcheck": {
+        "off": "0x580",
+        "len": 2,
+        "want": "0x6F2D",
+        "frames": 1500,
+        "label": "SHIP"
+      }
     }
   ]
 }
