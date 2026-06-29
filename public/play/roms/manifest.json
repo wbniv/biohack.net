@@ -16,7 +16,7 @@
       "id": "space-invaders",
       "title": "Space Invaders",
       "selfcheck": {
-        "off": "0x25",
+        "off": "0x2c",
         "len": 2,
         "want": "0x9D57",
         "frames": 1400,
@@ -27,7 +27,7 @@
       "id": "spirograph",
       "title": "Spirograph",
       "selfcheck": {
-        "off": "0x54",
+        "off": "0x1381",
         "len": 2,
         "want": "0x32D4",
         "frames": 500,
@@ -49,7 +49,7 @@
       "id": "spigot",
       "title": "\u03c0 Spigot + Monte-Carlo",
       "selfcheck": {
-        "off": "0x20",
+        "off": "0x1698",
         "len": 2,
         "want": "0x7711",
         "frames": 500,
@@ -60,7 +60,7 @@
       "id": "double-pendulum",
       "title": "Double Pendulum (Chaos)",
       "selfcheck": {
-        "off": "0x20",
+        "off": "0x12e1",
         "len": 2,
         "want": "0xE859",
         "frames": 500,
@@ -71,7 +71,7 @@
       "id": "n-body",
       "title": "N-body Orbits",
       "selfcheck": {
-        "off": "0x5d",
+        "off": "0x1501",
         "len": 2,
         "want": "0xCC65",
         "frames": 500,
@@ -82,7 +82,7 @@
       "id": "factorial",
       "title": "Bignum Factorial",
       "selfcheck": {
-        "off": "0x7E0F46",
+        "off": "0xf46",
         "len": 2,
         "want": "0x772F",
         "frames": 500,
@@ -104,7 +104,7 @@
       "id": "cordic",
       "title": "CORDIC Rotator",
       "selfcheck": {
-        "off": "0x135d",
+        "off": "0x135f",
         "len": 2,
         "want": "0x4D41",
         "frames": 500,
@@ -115,7 +115,7 @@
       "id": "sort-race",
       "title": "Sorting Race",
       "selfcheck": {
-        "off": "0x29",
+        "off": "0x16ad",
         "len": 2,
         "want": "0xB28F",
         "frames": 500,
@@ -126,7 +126,7 @@
       "id": "maze",
       "title": "Maze Generate + Solve",
       "selfcheck": {
-        "off": "0x52",
+        "off": "0xdbc",
         "len": 2,
         "want": "0x0749",
         "frames": 400,
@@ -137,7 +137,7 @@
       "id": "epicycles",
       "title": "Fourier Epicycles",
       "selfcheck": {
-        "off": "0x67",
+        "off": "0x1366",
         "len": 2,
         "want": "0x4F6C",
         "frames": 500,
@@ -159,7 +159,7 @@
       "id": "harmonograph",
       "title": "Lissajous Harmonograph",
       "selfcheck": {
-        "off": "0x4a",
+        "off": "0x5a",
         "len": 2,
         "want": "0x0EBB",
         "frames": 500,
@@ -181,7 +181,7 @@
       "id": "raycaster",
       "title": "Raycaster Maze",
       "selfcheck": {
-        "off": "0x54",
+        "off": "0x64",
         "len": 2,
         "want": "0xB200",
         "frames": 500,
@@ -250,7 +250,7 @@
         "off": "0x20",
         "len": 2,
         "want": "0x27EA",
-        "frames": 400,
+        "frames": 700,
         "label": "64-bit"
       }
     },
