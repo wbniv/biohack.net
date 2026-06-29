@@ -154,6 +154,28 @@
         "frames": 500,
         "label": "race CRC host==bsnes-jg (corpus @ WRAM 0x16ad)"
       }
+    },
+    {
+      "id": "maze",
+      "title": "Maze Generate + Solve",
+      "selfcheck": {
+        "off": "0xdbc",
+        "len": 2,
+        "want": "0x0749",
+        "frames": 400,
+        "label": "maze gen+solve gate CRC"
+      }
+    },
+    {
+      "id": "epicycles",
+      "title": "Fourier Epicycles",
+      "selfcheck": {
+        "off": "0x1366",
+        "len": 2,
+        "want": "0x4F6C",
+        "frames": 500,
+        "label": "epicycle-math gate CRC"
+      }
     }
   ]
 }

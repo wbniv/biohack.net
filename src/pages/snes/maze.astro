@@ -1,0 +1,186 @@
+---
+// /snes/maze — playable in-browser Maze Generate + Solve SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/maze.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/maze.sfc', 'preview/maze.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Genuine recursion', 'The carve is a recursive-division function that calls itself — the soft-stack frame ABI + JSR/RTS codegen under test. The disasm gate asserts a real self-call (a JSR whose target is maze_divide)'],
+  ['256-byte stack ceiling', 'A recursive-backtracker DFS is infeasible here: 65816 return addresses live on the 256-byte hardware stack, and ~6 bytes/level means a DFS’s O(N) depth (≈190 for a 16×15 grid) overflows it. Recursive division is ~log depth, so it fits'],
+  ['Indexed binary heap', 'A* uses a binary min-heap priority queue with decrease-key via an hpos[] position map — the sift-up/down array indexing (i≫1 / i≪1, parallel arrays, pos-map write-back) is the data-structure stress'],
+  ['No 32-bit libcalls', 'Deliberately multiply/divide-free (grid indexing is shift/mask) — a different shape from the __mulsi3 / __udivmodsi4 demos. The gate object contains none'],
+  ['rep/sep', 'Native 16-bit accumulator brackets under +mos-a16; 227 occurrences across the carve, the heap, and the A* relaxation (the values route through the Imag16 zero-page pair as int16)'],
+];
+---
+
+<Base title="Maze Generate + Solve — bioHACK•NET" description="A maze carved by recursive division (genuine recursion) then solved by A* with an indexed binary-heap priority queue, on a Super Nintendo. Recursion + a heap data structure, no multiply or divide. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Maze Generate + Solve</h1>
+      <p class="rp-lede">
+        A maze <em>carved</em> by <a href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_division_method">recursive
+        division</a> — a function that calls itself — then <em>solved</em> by
+        <a href="https://en.wikipedia.org/wiki/A*_search_algorithm">A*</a> with an indexed binary-heap
+        priority queue. Watch the search explore (dim cells) and the shortest path light up (yellow), then
+        it builds a fresh maze and does it again. Runs automatically; no joypad needed. Written in C and
+        compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>, 16-bit accumulator mode).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Maze Generate + Solve">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — carve, solve, repeat.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Two classic algorithms, back to back. <em>Recursive division</em> starts from an open room and
+        recursively splits each sub-rectangle with a wall that has one random gap — every split keeps the
+        maze fully connected. Then <em>A*</em> finds the shortest path from the top-left to the bottom-right
+        cell, expanding the most promising frontier cell first (lowest <code>g + Manhattan&nbsp;heuristic</code>)
+        using a binary min-heap:
+      </p>
+      <pre class="rp-code">divide(x, y, w, h):                 // genuine recursion
+    if w &lt;= 1 or h &lt;= 1: return
+    add a wall across the longer side, with one gap
+    divide(left half) ; divide(right half)
+
+solve:  push start into a binary min-heap keyed by g + h
+        pop the best cell ; relax its 4 neighbours (decrease-key)
+        stop when the goal is popped ; walk came[] back for the path</pre>
+      <p>
+        On screen: cyan walls, the A* frontier dimming cells as it explores, and the recovered shortest
+        path lit bright. The bottom HUD counts cells <code>EXPLORED</code> and the final <code>PATH</code>
+        length.
+      </p>
+
+      <h2>Compiler stress-test #18 — recursion + a data structure</h2>
+      <p>
+        Most demos in this gallery lean on the 32-bit math libcalls. This one is the
+        <em>recursion + heap</em> member: no multiply, no divide — instead it stresses the soft-stack frame
+        ABI (a self-recursive call) and a real priority-queue data structure (the binary heap's array
+        indexing). And it surfaced a genuine platform limit:
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The maze logic is a portable C header (<code>examples/65816/maze.h</code>) linked into the SNES ROM
+        and a host oracle alike. The gate asserts <code>corpus_result</code> — a 16-bit rotate-XOR CRC over
+        the carved walls, the A* path, and the heap operation counts — is identical on host and target.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x0749</code>) live in this tab — the same
+        hash the host oracle and the cycle-accurate bsnes-jg core agree on, across the default 8-bit, the
+        <code>+mos-a16</code>, and the <code>+mos-xy16</code> builds.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'maze';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

@@ -97,6 +97,18 @@ const demos = [
     desc: 'Quicksort vs heapsort vs mergesort race to sort three bar arrays in real time. The two recursive sorts stress the 65816 soft stack / frame ABI; heapsort is the iterative contrast. Compiler stress-test #17.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'maze',
+    title: 'Maze Generate + Solve',
+    desc: 'A maze carved by recursive division then solved by A* with an indexed binary-heap priority queue. Stresses genuine recursion (soft-stack frame ABI) + a heap data structure; multiply/divide-free. Compiler stress-test #18.',
+    keys: 'Self-running — no controls',
+  },
+  {
+    slug: 'epicycles',
+    title: 'Fourier Epicycles',
+    desc: 'A chain of rotating vectors (the Fourier series of a 5-pointed star) draws the star outline live. The many-multiply member: four 16×16→32 multiplies per harmonic, no divide. Compiler stress-test #10.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
