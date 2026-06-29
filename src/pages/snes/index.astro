@@ -69,17 +69,23 @@ const demos = [
     desc: "Newton's method on z³−1 colours the complex plane into three basins of attraction — one per cube root of unity — shaded by convergence speed. One full complex division per tile. Compiler stress-test #2.",
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'cordic',
+    title: 'CORDIC Rotator',
+    desc: 'sin/cos/atan computed with CORDIC — shift-and-add only, no multiply and no divide. A rotating hand sweeps a vector field while a live atan2 reads its angle back. The multiply-free compiler stress-test #12.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Eleven in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, and Newton's Fractal. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Twelve in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, and the CORDIC Rotator. Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
       <a class="gl-back" href="/">← biohack.net</a>
       <h1 class="gl-title">SNES Demos</h1>
       <p class="gl-lede">
-        Eleven Super Nintendo programs compiled from C with an
+        Twelve Super Nintendo programs compiled from C with an
         <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
         — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
         ROM verified against MAME and bsnes-jg. Click any card to play.

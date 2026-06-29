@@ -1,0 +1,185 @@
+---
+// /snes/cordic — playable in-browser CORDIC Rotator SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/cordic.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/cordic.sfc', 'preview/cordic.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['No __mulsi3', 'CORDIC is shift-and-add only — there is NO multiply in the sin/cos/atan core. The disasm gate asserts ZERO __mulsi3 (every other demo asserts its presence)'],
+  ['No __divsi3', 'No divide either: each microrotation is x ± (y >> i), a constant-shift add. Zero __divsi3 / __udivmodsi4 / variable-shift libcalls in the whole gate object'],
+  ['Constant-folded tables', 'The 15 unrolled rotations have compile-time-constant indices, so each atan(2⁻ⁱ) table entry folds into an immediate adc/sbc operand — no rodata table even appears'],
+  ['rep/sep', 'Native 16-bit accumulator brackets under +mos-a16; 252 occurrences across the unrolled rotation + vectoring sweeps (the values route through the Imag16 zero-page pair as int16)'],
+  ['Q2.14 fixed-point', 'Every angle/value is a raw int16 (value = raw / 16384), kept inside int16 the whole way so host (32-bit int) and target (16-bit int) compute bit-identical results'],
+];
+---
+
+<Base title="CORDIC Rotator — bioHACK•NET" description="sin/cos/atan computed on a Super Nintendo with CORDIC — shift-and-add only, no multiply and no divide. A rotating hand sweeps a CORDIC-computed vector field while a live atan2 self-check recovers its angle. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">CORDIC Rotator</h1>
+      <p class="rp-lede">
+        <em>sin</em>, <em>cos</em> and <em>atan</em> computed on a Super Nintendo with
+        <a href="https://en.wikipedia.org/wiki/CORDIC">CORDIC</a> — <em>shift-and-add only</em>, no
+        multiply and no divide. A rotating hand sweeps a ring of CORDIC-computed unit vectors, and a
+        live <code>atan2</code> reads its angle straight back. Runs automatically; no joypad needed.
+        Written in C and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based
+        65816 toolchain (<code>+mos-a16</code>, 16-bit accumulator mode).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running CORDIC Rotator">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the hand rotates automatically.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        CORDIC (COordinate Rotation DIgital Computer) rotates a vector toward a target angle using
+        nothing but <em>shifts, adds and a small table of pre-computed angles</em> — the classic way to
+        do trigonometry on hardware with no multiplier. Each iteration rotates by <code>±atan(2⁻ⁱ)</code>,
+        which is just <code>x ± (y &gt;&gt; i)</code>; after 15 unrolled steps the vector has converged
+        and its coordinates <em>are</em> the cosine and sine of the angle:
+      </p>
+      <pre class="rp-code">x = 1/An ; y = 0 ; z = angle           // rotation mode (sin/cos)
+for i in 0..15:
+    if z &gt;= 0: x -= y&gt;&gt;i ; y += x&gt;&gt;i ; z -= atan[i]
+    else:      x += y&gt;&gt;i ; y -= x&gt;&gt;i ; z += atan[i]
+// (cos, sin) = (x, y)            — no × and no ÷ anywhere</pre>
+      <p>
+        The hand sweeps a full circle by folding the angle into one quadrant (sign-and-swap, still no
+        multiply), and the bottom HUD runs the <em>vectoring</em> form of the same engine —
+        <code>atan2</code> — to recover the hand's angle from its <code>(cos, sin)</code> and prints it
+        back (<code>ANGLE&nbsp;137 / ATAN2&nbsp;137&nbsp;OK</code>).
+      </p>
+
+      <h2>Compiler stress-test #12 — the multiply-free one</h2>
+      <p>
+        Every other demo in this gallery leans on the 32-bit math libcalls (<code>__mulsi3</code>,
+        <code>__udivmodsi4</code>). This one is the deliberate opposite: its gate is <em>inverted</em> —
+        it asserts those libcalls are <em>absent</em>. That's a genuinely different shape of code for the
+        compiler to get right.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The CORDIC core is a portable C header (<code>examples/65816/cordic16.h</code>) linked into the
+        SNES ROM and a host oracle alike. The gate asserts <code>corpus_result</code> — a 16-bit
+        rotate-XOR CRC over a full-circle sweep of both the rotation (sin/cos) and vectoring (atan2)
+        paths — is identical on host and target.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x4D41</code>) live in this tab — the
+        same hash the host oracle and the cycle-accurate bsnes-jg core agree on. The disasm gate proves
+        the shape: <code>__mulsi3 = __divsi3 = 0</code>, <code>rep/sep = 252</code>,
+        <code>adc/sbc = 143</code> — shift-add only, no arithmetic libcalls.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'cordic';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
