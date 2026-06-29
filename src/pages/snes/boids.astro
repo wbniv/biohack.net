@@ -1,0 +1,195 @@
+---
+// /snes/boids — playable in-browser Boids Flock SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/boids.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/boids.sfc', 'preview/boids.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Struct passed/returned by value', 'The whole kernel is a vec2 {int16_t x,y} VALUE type. v2_add/v2_sub/v2_scale and the three Reynolds rules (separation/alignment/cohesion) each TAKE and RETURN a vec2 by value, and the composition chains those returns: v2_add(v2_add(sep, ali), coh). No other demo on the site passes an aggregate by value'],
+  ['The aggregate-return ABI', 'A 4-byte struct return forces the compiler to pick its aggregate-return convention — a small-struct register pair vs. an sret hidden pointer — and the steering composition exercises it O(N²) times per frame. That ABI path is otherwise untested by the battery'],
+  ['noinline so the ABI survives -Os', 'The vec functions are __attribute__((noinline)) on purpose: at -Os the optimiser would inline the whole kernel and the ABI would never run. The disasm gate asserts the by-value calls are still there (497 call sites in the slice)'],
+  ['Bit-exact differential', 'All math is integer fixed-point (Q12.4; int16_t components, products widened to int32_t → __mulsi3, neighbour-count divides → __divsi3). Exact integer ops ⇒ host x86 == console bit-for-bit. Verified host == default-8bit == +mos-a16 == +mos-xy16 == gate CRC 0xA8AB — any returned-struct miscompile diverges it'],
+  ['The picture IS the proof', 'A correct ABI yields a coherent flock — dots clump, align into streams (each boid coloured by its heading octant, so aligned birds share a hue) and avoid collisions. A returned-struct miscompile would scatter the flock into noise or freeze the gate CRC'],
+];
+---
+
+<Base title="Boids Flock — bioHACK•NET" description="Reynolds boids flocking on a Super Nintendo, built on a vec2 struct passed and returned BY VALUE. On the 16-bit 65816 that forces the compiler's aggregate-return ABI (register pair vs sret), run thousands of times a frame — and the coherent, heading-coloured flock is bit-for-bit identical to host x86. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Boids Flock</h1>
+      <p class="rp-lede">
+        <a href="https://en.wikipedia.org/wiki/Boids">Reynolds boids</a> flocking, computed live on a
+        Super Nintendo — and built entirely on a <code>vec2 {'{'} int16_t x, y {'}'}</code> struct that
+        the steering kernel <em>passes and returns by value</em>. On the 16-bit 65816 a 4-byte aggregate
+        return forces the compiler's <em>aggregate-return ABI</em> — a small-struct register pair versus
+        an <a href="https://en.wikipedia.org/wiki/Return_value">sret</a> hidden pointer — and the three
+        rules (<em>separation</em>, <em>alignment</em>, <em>cohesion</em>) chain those returns
+        <em>O(N²)</em> times a frame. A <em>correct</em> ABI paints a coherent flock: dots clump, align
+        into <em>streams</em> (each boid coloured by its heading, so aligned birds share a hue) and dodge
+        each other. Get the returned struct wrong and the flock scatters into noise. The picture is the
+        proof — and it is <em>bit-for-bit identical</em> to host x86. Runs automatically; no joypad
+        needed. Written in C and compiled with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Boids Flock">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the flock swirls and the heading colours flow. <em>(A title
+        card shows first; the flock fades in after it.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each dot is a <em>boid</em> — a simple agent steered by three rules over its neighbours:
+        <em>separation</em> (don't crowd), <em>alignment</em> (match the flock's heading) and
+        <em>cohesion</em> (drift toward the flock's centre). Run them on a few dozen agents and a
+        lifelike flock emerges. The twist here is purely about the compiler: the velocity and position
+        of every boid is a <code>vec2</code> <em>struct</em>, and every steering helper takes and returns
+        that struct <em>by value</em>:
+      </p>
+      <pre class="rp-code">typedef struct {'{'} int16_t x, y; {'}'} vec2;            // a 4-byte aggregate
+
+vec2 v2_add(vec2 a, vec2 b);                  // by-value in, by-value out
+vec2 separation(const Boid *f, ...);          // each rule RETURNS a vec2
+vec2 acc = v2_add(v2_add(sep, ali), coh);     // chained aggregate returns</pre>
+      <p>
+        On a register-rich CPU that is free. On the 65816 a returned <code>vec2</code> must travel by the
+        ABI's <em>aggregate-return</em> path — a register pair if it fits, otherwise an <em>sret</em>
+        hidden pointer the caller allocates — and the steering composition hits that path thousands of
+        times per frame. The flock lives in bank-0 WRAM (no far pointers), so the same kernel compiles
+        and runs <em>five ways</em>, all asserted equal.
+      </p>
+
+      <h2>Compiler stress-test #26 — struct by value</h2>
+      <p>
+        A <em>Round 2</em> demo — each Round-2 entry targets a codegen corner the first twenty never
+        execute. Here it is the <em>aggregate / by-value struct ABI</em>: structs exist in earlier demos
+        (a heap, arrays) but are always reached through <em>pointers</em>. This is the first to
+        <em>pass and return</em> a struct by value, on a hot path, so the register-pair-vs-sret return
+        convention is genuinely exercised.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The flocking kernel is a portable C header (<code>examples/65816/boids.h</code>) linked into the
+        SNES ROM, a host oracle, and the corpus differential slice alike. The gate runs a small seeded
+        flock a fixed number of steps through the by-value kernel and folds every boid's position and
+        velocity into <code>corpus_result</code>. Because the math is exact integer fixed-point, that
+        16-bit hash must be identical on host x86 and on the console — and it is, across <em>every</em>
+        target codegen mode (default 8-bit, <code>+mos-a16</code>, <code>+mos-xy16</code>).
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0xA8AB</code>) live in this tab — the same
+        hash the host oracle and the cycle-accurate bsnes-jg core agree on, bit for bit. The disasm gate
+        proves the shape: <code>by-value calls = 497</code>, <code>__mulsi3 = 6</code>,
+        <code>__divsi3 = 4</code>, <code>rep/sep = 103</code> — the struct-return ABI in native-16 mode,
+        the aggregate-return path surviving <code>-Os</code> exactly as intended.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'boids';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede sup { font-size: .7em; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

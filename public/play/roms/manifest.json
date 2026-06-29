@@ -264,6 +264,17 @@
         "frames": 400,
         "label": "64-bit"
       }
+    },
+    {
+      "id": "boids",
+      "title": "Boids Flock",
+      "selfcheck": {
+        "off": "0x38",
+        "len": 2,
+        "want": "0xA8AB",
+        "frames": 1400,
+        "label": "struct-abi"
+      }
     }
   ]
 }

@@ -157,6 +157,12 @@ const demos = [
     desc: 'A 64-bit splitmix64 hash visualised as an avalanche matrix — cell (i,j) = output bit j of hash64(seed^(1<<i)). On a 16-bit CPU every op is a multi-limb libcall (__muldi3/__udivdi3/64-bit shifts); a correct mixer gives a ~50%-dense rainbow field, bit-for-bit identical to host x86. Compiler stress-test #22.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'boids',
+    title: 'Boids Flock',
+    desc: 'Reynolds flocking built on a vec2 struct passed and returned BY VALUE — on the 16-bit 65816 that forces the aggregate-return ABI (register pair vs sret), run O(N²) per frame. The coherent, heading-coloured flock is bit-for-bit identical to host x86. Compiler stress-test #26.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
