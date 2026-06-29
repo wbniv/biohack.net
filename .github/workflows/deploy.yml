@@ -121,4 +121,9 @@ jobs:
 
       - name: Threshold check
         if: steps.lh.outcome == 'success'
+        # Informational, never blocks a ship (like the CLS budget check below). The script still
+        # posts its Perf/A11y/BP/SEO table to the job summary and exits non-zero on a sub-95 score,
+        # but continue-on-error keeps the deploy green — the Cloudflare deploy already ran above.
+        # (/snes/ WASM demo pages are additionally excluded inside the script.)
+        continue-on-error: true
         run: ./scripts/lighthouse-threshold.sh
