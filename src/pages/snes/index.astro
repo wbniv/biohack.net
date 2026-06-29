@@ -85,17 +85,23 @@ const demos = [
     desc: 'sin/cos/atan computed with CORDIC — shift-and-add only, no multiply and no divide. A rotating hand sweeps a vector field while a live atan2 reads its angle back. The multiply-free compiler stress-test #12.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'doom-fire',
+    title: 'Doom Fire',
+    desc: 'The classic PSX-Doom fire effect: a 32×28 heat field rises and flickers from a max-heat source row through a 16-colour ramp. Deliberately multiply-free — stresses indexed 8-bit array sweep + a 16-bit xorshift PRNG. Compiler stress-test #7.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Twelve in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, and the CORDIC Rotator. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Thirteen in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, the CORDIC Rotator, and Doom Fire. Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
       <a class="gl-back" href="/">← biohack.net</a>
       <h1 class="gl-title">SNES Demos</h1>
       <p class="gl-lede">
-        Twelve Super Nintendo programs compiled from C with an
+        Thirteen Super Nintendo programs compiled from C with an
         <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
         — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
         ROM verified against MAME and bsnes-jg. Click any card to play.
