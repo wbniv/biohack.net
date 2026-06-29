@@ -163,6 +163,12 @@ const demos = [
     desc: 'Reynolds flocking built on a vec2 struct passed and returned BY VALUE — on the 16-bit 65816 that forces the aggregate-return ABI (register pair vs sret), run O(N²) per frame. The coherent, heading-coloured flock is bit-for-bit identical to host x86. Compiler stress-test #26.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'turtle-vm',
+    title: 'Bytecode-VM Turtle',
+    desc: 'A stack-machine bytecode interpreter drawing LOGO turtle graphics — its switch(op) compiles to a JMP (abs,X) jump table and its ALU ops dispatch through a function-pointer opcode table (indirect/computed control flow no other demo runs). The woven rosette is bit-for-bit identical to host x86. Compiler stress-test #29a.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
