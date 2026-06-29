@@ -211,17 +211,6 @@
       }
     },
     {
-      "id": "mandel-float",
-      "title": "Soft-Float Mandelbrot (IEEE-754)",
-      "selfcheck": {
-        "off": "0x200",
-        "len": 2,
-        "want": "0x4169",
-        "frames": 1700,
-        "label": "soft-float"
-      }
-    },
-    {
       "id": "doom-fire",
       "title": "Doom Fire",
       "selfcheck": {
@@ -274,6 +263,17 @@
         "want": "0xA8AB",
         "frames": 1400,
         "label": "struct-abi"
+      }
+    },
+    {
+      "id": "mandel-float",
+      "title": "Soft-Float Mandelbrot (IEEE-754)",
+      "selfcheck": {
+        "off": "0x200",
+        "len": 2,
+        "want": "0x4169",
+        "frames": 1700,
+        "label": "soft-float"
       }
     }
   ]
