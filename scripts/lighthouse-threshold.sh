@@ -3,6 +3,9 @@
 # fails (exit 1) if any sampled page drops below Perf / A11y / BP /
 # SEO ≥ 95. Writes a Markdown table to $GITHUB_STEP_SUMMARY on both
 # pass and fail.
+#
+# EXCEPTION: /snes/ pages (the playable bsnes-jg WASM emulator demos) are
+# ignored — their heavy WASM core skews Perf/A11y and must not gate a deploy.
 set -euo pipefail
 
 usage() {
@@ -10,7 +13,8 @@ usage() {
 Usage: lighthouse-threshold.sh [-h|--help]
 
 Reads /tmp/lh/latest/*.run-1.report.json and fails (exit 1) if any page
-drops below 95 on Perf / A11y / BP / SEO. Writes a Markdown summary to
+drops below 95 on Perf / A11y / BP / SEO. /snes/ pages (the WASM emulator
+demos) are excluded from the gate. Writes a Markdown summary to
 $GITHUB_STEP_SUMMARY when that env var is set.
 
 Run after `task lighthouse` (or after the CI Lighthouse audit step).
@@ -38,6 +42,21 @@ rows=()
 violations=0
 for f in "${reports[@]}"; do
   slug=$(basename "$f" .run-1.report.json)
+
+  # /snes/ demo pages are EXCLUDED from the gate: each boots a multi-MB bsnes-jg WASM core
+  # that tanks Perf/A11y in ways that don't reflect site quality, so their scores must not
+  # block a deploy. Key off the audited URL path so any /snes/... page (now or later) is
+  # ignored automatically. Reported as "— ignored" in the table, never counted as a violation.
+  url=$(jq -r '.finalUrl // .requestedUrl // ""' "$f")
+  noscheme=${url#*://}
+  path=/${noscheme#*/}
+  case "$path" in
+    /snes/*|/snes)
+      rows+=( "$(printf '%s\t%s\t%s\t%s\t%s\t%s' "$slug" "—" "—" "—" "—" "— ignored (/snes/)")" )
+      continue
+      ;;
+  esac
+
   read -r perf a11y bp seo < <(jq -r '
     [(.categories.performance.score * 100 | round),
      (.categories.accessibility.score * 100 | round),

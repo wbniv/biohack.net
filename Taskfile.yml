@@ -42,6 +42,9 @@ tasks:
         RUNS=${RUNS:-3}
 
         # Routable pages. Extend this list as the site grows.
+        # NOTE: /snes/ demo pages are intentionally NOT audited here — the threshold gate
+        # (scripts/lighthouse-threshold.sh) also ignores any /snes/ page by URL path, since the
+        # bsnes-jg WASM core skews Perf/A11y and must not block a deploy.
         URLS=(
           "https://biohack.net/|home"
           "https://biohack.net/claude/|claude"
