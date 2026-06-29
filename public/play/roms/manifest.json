@@ -258,7 +258,7 @@
       "id": "avalanche",
       "title": "64-Bit Avalanche",
       "selfcheck": {
-        "off": "0x200",
+        "off": "0x20",
         "len": 2,
         "want": "0x27EA",
         "frames": 400,
