@@ -145,6 +145,12 @@ const demos = [
     desc: 'The Mandelbrot’s folded cousin — z = (|Re z| + i|Im z|)² + c — rendered as escape-time colour bands with the iconic black ship silhouette. Three multiplies per iteration plus the abs fold; multiply-only. Compiler stress-test #3.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'mandel-float',
+    title: 'Soft-Float Mandelbrot',
+    desc: 'The Mandelbrot set in IEEE-754 single-precision float — on a CPU with no FPU, so every multiply, add and compare is a software-float libcall. The chunky image grinds in because each fat pixel is hundreds of __mulsf3/__addsf3; bit-for-bit identical to host x86. Compiler stress-test #21.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

@@ -242,6 +242,17 @@
         "frames": 6000,
         "label": "gate grid hash (corpus @ WRAM 0x22)"
       }
+    },
+    {
+      "id": "mandel-float",
+      "title": "Soft-Float Mandelbrot (IEEE-754)",
+      "selfcheck": {
+        "off": "0x200",
+        "len": 2,
+        "want": "0x4169",
+        "frames": 1700,
+        "label": "soft-float"
+      }
     }
   ]
 }
