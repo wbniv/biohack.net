@@ -187,6 +187,17 @@
         "frames": 500,
         "label": "LIFE"
       }
+    },
+    {
+      "id": "harmonograph",
+      "title": "Lissajous Harmonograph",
+      "selfcheck": {
+        "off": "0x1399",
+        "len": 2,
+        "want": "0x0EBB",
+        "frames": 500,
+        "label": "HARMO"
+      }
     }
   ]
 }

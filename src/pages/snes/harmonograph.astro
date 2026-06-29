@@ -1,0 +1,186 @@
+---
+// /snes/harmonograph — playable in-browser Lissajous / Harmonograph SNES demo.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/harmonograph.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/harmonograph.sfc', 'preview/harmonograph.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+// Self-running demo — no joypad input.
+const notes = [
+  ['Sine LUT', 'Four phase accumulators index a 256-entry signed Q8.8 sine table each sample — the same sin/cos-LUT inner loop the spirograph uses, here driving four independent oscillators'],
+  ['Amplitude product', 'Each oscillator’s sample is sin·env — a 16×16→32 __mulsi3 scaling the sine by the pendulum’s current amplitude; four per sample, then summed per axis'],
+  ['Exponential damping', 'The new stress vs the spirograph: each amplitude is a running envelope decayed every sample by env = (env·decay) >> 15 — a sustained fixed-point multiply + accumulation, four more __mulsi3'],
+  ['Multiply-only', 'Eight __mulsi3 per sample and NO divide — the damping is a multiply by a Q15 constant < 1, so the disasm gate asserts zero __udivsi3/__udivmodsi4'],
+];
+---
+
+<Base title="Lissajous Harmonograph — bioHACK•NET" description="A Victorian harmonograph running live on a Super Nintendo — four damped pendulums trace a Lissajous figure that precesses and spirals inward as the exponential damping decays. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Harmonograph</h1>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/Harmonograph">harmonograph</a> — the Victorian
+        pendulum-driven drawing machine — running live on a Super Nintendo. Four damped pendulums (two
+        per axis, slightly <b>detuned</b>) each trace a decaying sinusoid; their sum is a
+        <b>Lissajous</b> figure that slowly <b>precesses</b> and spirals inward as the exponential
+        damping bleeds off energy. When a figure settles, the next of four presets blooms. Written in C
+        and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816
+        toolchain (<code>+mos-a16</code>, 16-bit accumulator). Runs automatically.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Harmonograph">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the curve draws, decays, and the next figure blooms.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        A real harmonograph hangs a pen and the paper from independent pendulums; as they swing and
+        slowly lose energy to friction, the pen traces a Lissajous curve whose amplitude shrinks — a
+        figure that spirals gracefully into its own centre. This is the digital version: four
+        oscillators, two driving the x-coordinate and two the y, each a damped sine
+      </p>
+      <pre class="rp-code">{`x(t) = A0·sin(f0·t + p0)·e^(−d0·t) + A1·sin(f1·t + p1)·e^(−d1·t)
+y(t) = A2·sin(f2·t + p2)·e^(−d2·t) + A3·sin(f3·t + p3)·e^(−d3·t)`}</pre>
+      <p>
+        The two oscillators on each axis sit at a near-integer frequency ratio with a tiny detune
+        (<code>f1 ≈ f0·(1+ε)</code>), so the figure does not close — it <b>precesses</b>, drawing the
+        characteristic nested, slowly-rotating loops. The exponential envelope
+        <code>e^(−d·t)</code> is computed incrementally as a multiply by a constant just under 1 each
+        sample, so the whole curve decays into a point and the next preset takes over.
+      </p>
+
+      <h2>Why it stresses the compiler</h2>
+      <p>
+        This is the damped sibling of the <a href="/snes/spirograph/">spirograph</a>. Where the
+        spirograph plots a constant-amplitude curve, every term here carries a <b>running envelope</b>
+        that is itself state, decayed each sample. The hot loop issues <b>eight</b> 16/32-bit
+        multiplies per point — four amplitude products <code>sin·env</code> and four
+        envelope-decay products <code>env·decay</code> — a sustained fixed-point <code>__mulsi3</code> +
+        accumulation profile, under <code>+mos-a16</code> <code>rep</code>/<code>sep</code> brackets,
+        and <b>multiply-only</b> (the damping needs no divide).
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The gate folds 256 samples of preset 0 into a rotating-XOR hash and asserts
+        <code>corpus_result</code> (0x0EBB) is identical on host, default 8-bit SNES,
+        <code>+mos-a16</code>, and <code>+mos-xy16</code>. The <b>Verify fidelity</b> button above
+        reproduces that gate live in this tab via the same cycle-accurate bsnes-jg core used in CI.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b>
+        to reproduce the build gate's WRAM assert (<code>corpus_result = 0x0EBB</code>) live in
+        this tab. No far pointers — the same logic checked four ways: host == default ==
+        <code>+mos-a16</code> == <code>+mos-xy16</code>, with bsnes-jg as the in-browser
+        confirmation.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'harmonograph';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 38rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

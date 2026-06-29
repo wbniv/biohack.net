@@ -115,6 +115,12 @@ const demos = [
     desc: 'A Gosper glider gun fires gliders into a settling random soup on a 128×112 bit-packed grid. Neighbour counts are summed bit-parallel (SWAR half-adders) — multiply-free boolean logic. Compiler stress-test #5.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'harmonograph',
+    title: 'Lissajous Harmonograph',
+    desc: 'Four damped pendulums trace a Lissajous figure that precesses and spirals inward as the exponential damping decays. Eight fixed-point multiplies per sample (sin·env + env·decay), no divide. Compiler stress-test #9.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
