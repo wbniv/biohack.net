@@ -121,6 +121,12 @@ const demos = [
     desc: 'Four damped pendulums trace a Lissajous figure that precesses and spirals inward as the exponential damping decays. Eight fixed-point multiplies per sample (sin·env + env·decay), no divide. Compiler stress-test #9.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'julia',
+    title: 'Julia Set Explorer',
+    desc: 'A morphing Julia fractal — z² + c in Q5.10 fixed point, three 32-bit multiplies per iteration, far-stored into high WRAM and drawn through Mode 7 as c orbits a path. The affine matrix spins it while the multiply grind morphs it. Compiler stress-test #1.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

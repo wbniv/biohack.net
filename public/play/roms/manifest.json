@@ -198,6 +198,17 @@
         "frames": 500,
         "label": "HARMO"
       }
+    },
+    {
+      "id": "julia",
+      "title": "Julia Set Explorer",
+      "selfcheck": {
+        "off": "0x200",
+        "len": 2,
+        "want": "0x3490",
+        "frames": 300,
+        "label": "Julia z^2+c"
+      }
     }
   ]
 }

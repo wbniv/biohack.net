@@ -1,0 +1,196 @@
+---
+// /snes/julia — playable in-browser Julia Set Explorer SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/julia.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/julia.sfc', 'preview/julia.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Q5.10 complex multiply', 'The hot loop is z = z² + c in signed Q5.10 fixed point — three 16×16→32 multiplies per iteration (zr², zi², zr·zi), each a __mulsi3 libcall, with zr/zi held live across the loop'],
+  ['Far high-WRAM framebuffer', 'The 64×56 escape image lives at $7E2000 — high WRAM reachable only by 24-bit addressing. Filling it is the #320 far-store path (sta [dp]); reading it back to VRAM is far loads (lda [dp]). a16-only'],
+  ['rep/sep', 'Native 16-bit accumulator brackets under +mos-a16: the int16 values route through the Imag16 zero-page pair, entered/left with rep #$20 / sep #$20 around each native-16 op (46 in the gate object)'],
+  ['z₀ = pixel, c = constant', 'The Julia twist on the same kernel as the Mandelbrot demo: there c is per-pixel and z₀=0; here z₀ is the pixel and c is one constant per frame, swept along the 0.7885·e^{iθ} orbit so the set morphs'],
+  ['Grind is the morph, matrix is the motion', "A full 64×56 escape-time recompute is ~22 s on the 65816, so the set is re-ground one coarse row per spin frame in the background; Mode 7's hardware affine transform does the rotation/zoom at 60 fps"],
+];
+---
+
+<Base title="Julia Set Explorer — bioHACK•NET" description="A morphing Julia-set fractal computed on a Super Nintendo: z² + c in Q5.10 fixed point, the complex multiply far-stored into high WRAM and drawn through Mode 7, with c orbiting a path so the set continuously morphs. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Julia Set Explorer</h1>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/Julia_set">Julia set</a> — <em>z² + c</em> iterated to
+        escape — computed live on a Super Nintendo in <em>Q5.10 fixed point</em>. The constant
+        <code>c</code> orbits the classic <code>0.7885·e<sup>iθ</sup></code> path, so the fractal
+        continuously <em>morphs</em> between connected blobs and scattered dust, while Mode 7 spins and
+        zoom-breathes it and the palette cycles. Runs automatically; no joypad needed. Written in C and
+        compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816
+        toolchain (<code>+mos-a16</code>, 16-bit accumulator mode).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Julia Set Explorer">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the set morphs and spins automatically. <em>(Boot takes a
+        few seconds to grind the first frame.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        A <em>Julia set</em> is the escape-time picture of iterating <code>z ← z² + c</code> for a
+        <em>fixed</em> complex constant <code>c</code>, colouring each starting point by how fast it
+        flies to infinity. It is the close cousin of the Mandelbrot set: Mandelbrot fixes
+        <code>z₀ = 0</code> and varies <code>c</code> per pixel; Julia fixes <code>c</code> for the whole
+        image and lets <em>the pixel</em> be <code>z₀</code>. Slide <code>c</code> and the set transforms
+        — that slide is the animation here:
+      </p>
+      <pre class="rp-code">z = (zr, zi) = pixel        // Q5.10 fixed point, 1.0 == 1024
+for n in 0..maxiter:
+    zr2 = (zr*zr) &gt;&gt; 10 ;  zi2 = (zi*zi) &gt;&gt; 10     // two __mulsi3
+    if zr2 + zi2 &gt; 4.0: break                       // escaped
+    zi = 2*((zr*zi) &gt;&gt; 10) + ci                     // one __mulsi3
+    zr =   zr2 - zi2      + cr
+// escape count n = pixel colour ;  c sweeps 0.7885·e^iθ</pre>
+      <p>
+        Each frame the 65816 grinds that loop over the image and <em>far-stores</em> every pixel into a
+        high-WRAM buffer at <code>$7E2000</code> — memory only reachable through 24-bit addressing, the
+        <a href="https://github.com/llvm-mos/llvm-mos/issues/320">#320</a> far-pointer path
+        (<code>sta [dp]</code>) — then far-loads it back into Mode 7 character VRAM. Because a full
+        recompute is seconds of fixed-point multiply, the set is re-ground a row at a time in the
+        background while the <a href="https://en.wikipedia.org/wiki/Super_Nintendo_Entertainment_System#Video">Mode 7</a>
+        affine matrix spins and zoom-breathes it at 60 fps: the multiply is the morph, the hardware is
+        the motion.
+      </p>
+
+      <h2>Compiler stress-test #1 — complex multiply + the far framebuffer</h2>
+      <p>
+        Every iteration issues three 32-bit multiplies and the whole image lives in far high WRAM, so
+        this demo leans on exactly the two things <code>+mos-a16</code> exists for: the
+        <code>__mulsi3</code> 16×16→32 multiply in native-16 mode, and the 24-bit far store/load path.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The Julia kernel is a portable C header (<code>examples/65816/julia.h</code>) linked into the
+        SNES ROM, a host oracle, and the corpus differential slice alike. The gate folds the escape
+        buffers of four keyframe <code>c</code> values into <code>corpus_result</code>, a 16-bit
+        rotate-XOR CRC that must be identical on host (32-bit <code>int</code>) and target (16-bit
+        <code>int</code>) — which holds only because every product is forced through
+        <code>int32_t</code> and every narrowing is an explicit fixed-width cast.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x3490</code>) live in this tab — the
+        same hash the host oracle and the cycle-accurate bsnes-jg core agree on. The disasm gate proves
+        the shape: <code>__mulsi3 = 3</code> (the three Q5.10 products), <code>rep/sep = 46</code> —
+        native 16-bit complex multiply.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'julia';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede sup { font-size: .7em; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
