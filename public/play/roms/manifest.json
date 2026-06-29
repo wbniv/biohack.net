@@ -176,6 +176,17 @@
         "frames": 500,
         "label": "epicycle-math gate CRC"
       }
+    },
+    {
+      "id": "life",
+      "title": "Conway's Game of Life",
+      "selfcheck": {
+        "off": "0x1386",
+        "len": 2,
+        "want": "0xDDF1",
+        "frames": 500,
+        "label": "LIFE"
+      }
     }
   ]
 }

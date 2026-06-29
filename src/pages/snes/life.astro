@@ -1,0 +1,193 @@
+---
+// /snes/life — playable in-browser Conway's Game of Life SNES demo.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/life.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/life.sfc', 'preview/life.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+// Self-running demo — no joypad input.
+const notes = [
+  ['Bit-packed grid', 'The 128×112 field stores 8 cells per byte — a packed byte is also a 2bpp bitplane byte, so the renderer copies grid bytes straight into tile memory with no conversion'],
+  ['SWAR neighbour sums', 'Each byte’s eight neighbour bit-vectors are added bit-parallel into a 4-bit-per-cell count with a ripple of half-adders (carry = a & b; sum = a ^ b) — pure and/eor/ora, no per-cell branch'],
+  ['Cross-byte shifts', 'Left/right neighbours come from (m >> 1) | (Lbit << 7) and (m << 1) | Rbit, pulling the boundary bit from the adjacent byte — constant-1 asl/lsr + ora'],
+  ['Two-buffer swap', 'A classic double-buffer ping-pong (use_a ^= 1) reads one grid and writes the other, then swaps — no per-generation copy'],
+];
+---
+
+<Base title="Conway's Game of Life — bioHACK•NET" description="Conway's Game of Life running live on a Super Nintendo — a 128×112 bit-packed grid where a Gosper glider gun fires gliders into a settling random soup, evolved by bit-parallel neighbour sums. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Game of Life</h1>
+      <p class="rp-lede">
+        <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>
+        running live on a Super Nintendo. A 128×112 grid of cells evolves by the
+        <b>B3/S23</b> rule — a cell is born with exactly 3 live neighbours and survives with 2 or 3.
+        A <b>Gosper glider gun</b> in the top-left fires a glider every 30 generations down into a
+        random soup that settles into still-lifes and blinkers. The cells are <b>bit-packed</b> (8 per
+        byte) and their neighbour counts are computed <b>bit-parallel</b> — no multiplies, no divides.
+        Written in C and compiled with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>, 16-bit accumulator). Runs automatically.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Conway's Game of Life">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the gun fires automatically; watch gliders cross the field.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        John Conway's <b>Game of Life</b> (1970) is the most famous cellular automaton: a grid of
+        cells that live or die each generation by counting their eight neighbours. From those two
+        rules emerge gliders, oscillators, and — in <b>Bill Gosper's glider gun</b> — patterns that
+        grow without bound, firing a stream of gliders forever. The whole step is one pass over the
+        grid:
+      </p>
+      <pre class="rp-code">{`for each cell:
+    n = count of live cells among the 8 neighbours
+    next = (n == 3) or (alive and n == 2)`}</pre>
+      <p>
+        The trick on an 8-bit CPU is to do all eight cells of a byte <i>at once</i>. Each of the eight
+        neighbour directions is a packed byte (after a cross-byte shift to align it); the eight bytes
+        are summed <b>bit-parallel</b> into a 4-bit-per-cell count held across four bitplanes
+        (<code>c0</code>=1s … <code>c3</code>=8s) with a ripple of half-adders. The rule then becomes a
+        handful of boolean selects: <code>count==3</code> is
+        <code>~c3 &amp; ~c2 &amp; c1 &amp; c0</code>, <code>count==2</code> is
+        <code>~c3 &amp; ~c2 &amp; c1 &amp; ~c0</code>.
+      </p>
+
+      <h2>Why it stresses the compiler</h2>
+      <p>
+        Most demos in this battery lean on 32-bit multiply/divide libcalls. Life is the opposite — it
+        is deliberately <b>multiply- and divide-free</b>, so it exercises the parts of the backend the
+        arithmetic demos don't: dense <b>boolean logic</b> (<code>and</code>/<code>eor</code>/
+        <code>ora</code> across the SWAR full-adder), constant-amount <b>shifts</b>
+        (<code>asl</code>/<code>lsr</code> for the cross-byte neighbour alignment), <b>indexed array
+        traffic</b> over three row pointers, and the <b>two-buffer ping-pong</b> swap. It is the
+        2-D companion to the 1-D <a href="/snes/1d-ca/">Rule 90/110</a> automaton.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        A separate 64×48 gate grid seeded with the glider gun runs 32 generations and folds every
+        output row into a CRC-16 after each one. The gate asserts <code>corpus_result</code>
+        (0xDDF1) is identical on host, default 8-bit SNES, <code>+mos-a16</code>, and
+        <code>+mos-xy16</code>. The <b>Verify fidelity</b> button above reproduces that gate live in
+        this tab via the same cycle-accurate bsnes-jg core used in CI.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b>
+        to reproduce the build gate's WRAM assert (<code>corpus_result = 0xDDF1</code>) live in
+        this tab. No far pointers — the same logic checked four ways: host == default ==
+        <code>+mos-a16</code> == <code>+mos-xy16</code>, with bsnes-jg as the in-browser
+        confirmation.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'life';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 38rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
