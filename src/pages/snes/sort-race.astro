@@ -1,0 +1,195 @@
+---
+// /snes/sort-race — playable in-browser Sorting Race SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/sort-race.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/sort-race.sfc', 'preview/sort-race.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Recursion', 'Quicksort and mergesort are genuinely recursive — each call frame holds a pointer into the array that must stay live across the self-call. That forces the backend\'s reentrant soft-stack spill path, the exact corner this demo exists to exercise'],
+  ['Soft stack / frame ABI', 'The 65816 has a 256-byte hardware stack, so the toolchain spills reentrant locals to a software stack in WRAM. A mid-pivot quicksort + top-down mergesort on 32 elements keeps depth shallow (O(log N)) — deep enough to prove the path, safe against overflow'],
+  ['Iterative contrast', 'Heapsort uses a loop-based sift-down — no recursion at all. Racing it against the two recursive sorts puts the recursive and iterative shapes side by side in one program'],
+  ['Op-log record/replay', 'Each sort runs to completion writing a log of (position := value) stores; the screen replays one store per algorithm per frame. So the REAL recursive sort is the compiler stress — the animation never rewrites it into an explicit-stack loop'],
+  ['Three-way self-check', 'The gate sorts the same shuffle three ways and asserts all three produce the identical 0..31 order before folding the hash — a miscompiled sort that reorders wrongly is caught, not just hashed over'],
+  ['rep/sep', 'Native 16-bit accumulator brackets under +mos-a16 — 233 occurrences across the compare-heavy inner loops and array indexing. No 32-bit math libcalls: this demo is about control flow, not wide arithmetic'],
+];
+---
+
+<Base title="Sorting Race — bioHACK•NET" description="Quicksort vs heapsort vs mergesort race to sort three bar arrays on a Super Nintendo, in real time. The two recursive sorts stress the 65816 soft stack / frame ABI; heapsort is the iterative contrast. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Sorting Race</h1>
+      <p class="rp-lede">
+        <em>Quicksort</em>, <em>heapsort</em> and <em>mergesort</em> race to sort the same shuffled
+        array of 32 bars on a Super Nintendo — you watch which finishes first. The two recursive sorts
+        push the 65816's <a href="https://en.wikipedia.org/wiki/Call_stack">soft stack / frame ABI</a>;
+        heapsort runs iteratively as the contrast. Runs automatically; no joypad needed. Written in C
+        and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816
+        toolchain (<code>+mos-a16</code>, 16-bit accumulator mode).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Sorting Race">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the three sorts race automatically, then reshuffle.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Three classic comparison sorts run on three copies of the <em>same</em> shuffled array, stacked
+        as three bands — <span class="rp-q">quicksort</span> (red), <span class="rp-h">heapsort</span>
+        (green) and <span class="rp-m">mergesort</span> (blue). Each bar's height is its value; as a sort
+        runs, the bars climb into a clean ascending ramp. The label under each band counts the moves
+        (<code>M</code>) and comparisons (<code>C</code>) and flips to <code>DONE</code> when that sort
+        finishes — and the footer names the winner. Then it reshuffles and races again.
+      </p>
+      <p>
+        Quicksort and mergesort are written as ordinary recursive functions; heapsort is an iterative
+        loop. The animation is <em>record/replay</em>: each sort runs to completion first, logging every
+        element it writes, and the screen replays that log one step per frame:
+      </p>
+      <pre class="rp-code">qsort(a, lo, hi):                  // genuine recursion
+    if lo >= hi: return
+    pivot = a[(lo+hi)/2]
+    partition a around pivot       // swaps -> op-log
+    qsort(a, lo, j)                // the array pointer is
+    qsort(a, i, hi)                //   live across the self-call</pre>
+      <p>
+        That recursive self-call is the point: a pointer into the array stays live across it, so the
+        compiler must spill it to the software stack in WRAM (the 65816's hardware stack is only 256
+        bytes). Keeping recursion in the <em>real</em> sort — instead of rewriting it as an
+        explicit-stack loop for the animation — is what makes this a faithful test of that path.
+      </p>
+
+      <h2>Compiler stress-test #17 — the recursion one</h2>
+      <p>
+        Each demo in this gallery targets one corner of the compiler. This is the
+        <em>recursion / soft-stack / frame-ABI</em> member: no 32-bit multiply or divide at all, just
+        recursive control flow and a lot of compares.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The sort engine is a portable C header (<code>examples/65816/sort-race.h</code>) linked into the
+        SNES ROM and a host oracle alike. The gate folds 8 rounds — each reshuffles, sorts three ways,
+        asserts all three agree on the sorted order, then folds each algorithm's compare/move counts —
+        into a 16-bit CRC that must be identical on host and target.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0xB28F</code>) live in this tab — the
+        same hash the host oracle and the cycle-accurate bsnes-jg core agree on. The disasm gate proves
+        the shape: recursive <code>sr_qsort</code>/<code>sr_msort</code> present, <code>rep/sep = 233</code>,
+        and <em>zero</em> 32-bit arithmetic libcalls.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'sort-race';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-q { color: #ef6b6b; font-weight: 600; }
+  .rp-h { color: #5fcf6f; font-weight: 600; }
+  .rp-m { color: #6f9cef; font-weight: 600; }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

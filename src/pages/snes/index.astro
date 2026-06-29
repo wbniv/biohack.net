@@ -91,10 +91,16 @@ const demos = [
     desc: 'The classic PSX-Doom fire effect: a 32×28 heat field rises and flickers from a max-heat source row through a 16-colour ramp. Deliberately multiply-free — stresses indexed 8-bit array sweep + a 16-bit xorshift PRNG. Compiler stress-test #7.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'sort-race',
+    title: 'Sorting Race',
+    desc: 'Quicksort vs heapsort vs mergesort race to sort three bar arrays in real time. The two recursive sorts stress the 65816 soft stack / frame ABI; heapsort is the iterative contrast. Compiler stress-test #17.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Thirteen in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, the CORDIC Rotator, and Doom Fire. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Fourteen in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, the CORDIC Rotator, Doom Fire, and the Sorting Race. Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
