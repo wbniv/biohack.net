@@ -151,6 +151,12 @@ const demos = [
     desc: 'The Mandelbrot set in IEEE-754 single-precision float — on a CPU with no FPU, so every multiply, add and compare is a software-float libcall. The chunky image grinds in because each fat pixel is hundreds of __mulsf3/__addsf3; bit-for-bit identical to host x86. Compiler stress-test #21.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'avalanche',
+    title: '64-Bit Avalanche',
+    desc: 'A 64-bit splitmix64 hash visualised as an avalanche matrix — cell (i,j) = output bit j of hash64(seed^(1<<i)). On a 16-bit CPU every op is a multi-limb libcall (__muldi3/__udivdi3/64-bit shifts); a correct mixer gives a ~50%-dense rainbow field, bit-for-bit identical to host x86. Compiler stress-test #22.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

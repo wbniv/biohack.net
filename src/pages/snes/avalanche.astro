@@ -1,0 +1,193 @@
+---
+// /snes/avalanche — playable in-browser 64-Bit Avalanche SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/avalanche.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/avalanche.sfc', 'preview/avalanche.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['No 64-bit ALU — every op a libcall', 'The 65816 is a 16-bit machine, so each 64-bit operation is a multi-limb libcall over four 16-bit words: __muldi3 (64×64 multiply), __lshrdi3/__ashldi3 (64-bit shifts), __udivdi3 (64-bit divide), __adddi3 and 64-bit xor. The integer-width family no Round-1 demo touches'],
+  ['Bit-exact differential', '64-bit integer ops are EXACT (no rounding), so a conforming 4-limb implementation must equal host x86 (native uint64_t) bit-for-bit. Verified host == default-8bit == +mos-a16 == +mos-xy16 == gate CRC 0x27EA — any limb-carry / shift / divide miscompile diverges the hash immediately'],
+  ['Both shift regimes + variable counts', 'splitmix64 shifts by 30/27/31 (within a 32-bit limb) plus a >>32 (whole-limb), and the input-bit flip is 1ULL<<i with a RUNTIME count 0..63 — the variable-count __ashldi3 path. The three distinct wide-shift codegen paths a bug tends to hide in'],
+  ['The picture IS the proof', 'cell (i,j) = output bit j of hash64(seed ^ (1<<i)). A good mixer has the avalanche property — flipping ANY one input bit flips ~half the output bits (35 of 64 measured), so the matrix is ~50% dense with NO structure, a shimmering rainbow field. Visible structure would mean a broken 64-bit op'],
+  ['__udivdi3 — the slow one', 'The gate divides the 64-bit accumulator by a runtime divisor (acc / (s|1)) so the compiler must emit the full 64-bit divide routine rather than a constant-folded reciprocal — the least-exercised wide-integer libcall'],
+];
+---
+
+<Base title="64-Bit Avalanche — bioHACK•NET" description="A 64-bit splitmix64 hash visualised on a Super Nintendo: on a 16-bit CPU every 64-bit multiply, shift and divide is a multi-limb libcall, and the avalanche matrix (~50% dense, no structure) is bit-for-bit identical to host x86. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">64-Bit Avalanche</h1>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/Avalanche_effect">hash avalanche</a> computed live on a
+        Super Nintendo in <em>64-bit integers</em>. The 65816 is a <em>16-bit</em> machine with no 64-bit
+        ALU, so every <a href="https://en.wikipedia.org/wiki/Hash_function">hash</a> is a pile of
+        <em>multi-limb libcalls</em> — <code>__muldi3</code>, <code>__lshrdi3</code>,
+        <code>__udivdi3</code> — over four 16-bit words. Each cell <em>(i, j)</em> is output bit
+        <em>j</em> of <code>splitmix64(seed ^ (1&lt;&lt;i))</code>: flip any one input bit and ~half the
+        output bits flip, so a <em>correct</em> 64-bit implementation paints a ~50%-dense field with
+        <em>no structure</em> — this shimmering rainbow. The picture is the proof. And it is
+        <em>bit-for-bit identical</em> to host x86. Runs automatically; no joypad needed. Written in C
+        and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816
+        toolchain (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-Bit Avalanche">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the seed crawls and the matrix re-mixes; the colours cycle
+        down the output-bit axis. <em>(Boot takes a moment to grind the first 64-bit hashes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each column <em>i</em> of the image is a 64-bit <em>splitmix64</em> hash of the seed with input
+        bit <em>i</em> flipped; row <em>j</em> shows output bit <em>j</em> of that hash. So the whole
+        64×56 grid is an <em>avalanche matrix</em> — the canonical way to see whether a mixer is any
+        good. Every Round-1 demo on this site does its arithmetic in 32-bit (or smaller); this one is all
+        <code>uint64_t</code>, which on a 16-bit CPU means software multi-limb routines:
+      </p>
+      <pre class="rp-code">h64_mix(x):                                  // splitmix64 + a high-fold
+  x += 0x9E3779B97F4A7C15                 // __adddi3
+  x = (x ^ (x&gt;&gt;30)) * 0xBF58476D1CE4E5B9   // __muldi3
+  x = (x ^ (x&gt;&gt;27)) * 0x94D049BB133111EB   // __muldi3
+  x ^= x&gt;&gt;31 ;  x ^= x&gt;&gt;32                  // __lshrdi3 (within-limb + whole-limb)
+
+cell(i,j) = bit j of h64_mix(seed ^ (1&lt;&lt;i))   // 1&lt;&lt;i : variable-count __ashldi3</pre>
+      <p>
+        The matrix lives in bank-0 WRAM (no far pointers) and is blitted into
+        <a href="https://en.wikipedia.org/wiki/Super_Nintendo_Entertainment_System#Video">Mode 7</a>
+        character VRAM, framed 4× to fill the screen; the hardware affine matrix drifts it while the
+        palette cycles. The seed crawls by the golden-ratio constant each pass, so the field keeps
+        re-mixing — every frame is a fresh batch of 64-bit multiplies and shifts.
+      </p>
+
+      <h2>Compiler stress-test #22 — 64-bit integers</h2>
+      <p>
+        A <em>Round 2</em> demo — each Round-2 entry targets a codegen corner the first twenty never
+        execute. Here it is the <em>64-bit integer libcall family</em>: <code>__muldi3</code>,
+        <code>__lshrdi3</code>/<code>__ashldi3</code> (including variable counts and the whole-limb
+        <code>&gt;&gt;32</code>), <code>__udivdi3</code>, <code>__adddi3</code> — none of which a
+        32-bit demo ever calls.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The hash kernel is a portable C header (<code>examples/65816/avalanche.h</code>) linked into the
+        SNES ROM, a host oracle, and the corpus differential slice alike. The gate chains 256 splitmix64
+        steps with a runtime 64-bit divide and folds the accumulator into <code>corpus_result</code>.
+        Because 64-bit integer ops are exact, that 16-bit hash must be identical on host x86 (native
+        <code>uint64_t</code>) and on the console (four 16-bit limbs) — and it is, across <em>every</em>
+        target codegen mode (default 8-bit, <code>+mos-a16</code>, <code>+mos-xy16</code>).
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x27EA</code>) live in this tab — the same
+        hash the host oracle and the cycle-accurate bsnes-jg core agree on, bit for bit. The disasm gate
+        proves the shape: <code>__muldi3 = 2</code>, a 64-bit shift, <code>__udivdi3 = 1</code>,
+        <code>rep/sep = 19</code> — 64-bit integers in native-16 mode.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'avalanche';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede sup { font-size: .7em; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
