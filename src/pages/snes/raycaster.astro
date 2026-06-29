@@ -1,0 +1,184 @@
+---
+// /snes/raycaster — playable in-browser Raycaster maze SNES demo.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/raycaster.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+//
+// Cache-busting: hash each play/ asset at build time -> window.BJG_BUST; app.js appends "?v=<sha>"
+// so the edge caches immutably yet a re-synced asset still gets a fresh URL.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/raycaster.sfc', 'preview/raycaster.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+// Self-running demo — no joypad input.
+const notes = [
+  ['DDA grid-cast', 'Each column marches a ray cell-to-cell through a 16×16 wall grid by integer DDA — a tight compare/add loop, no per-step trig — until it hits a wall'],
+  ['1/dist projection', 'The headline divide: wall slice height = screen_height / perpendicular_distance, one __udivsi3 per column — the only division-bound demo in the battery'],
+  ['deltaDist reciprocals', 'The DDA needs |1/rayDirX| and |1/rayDirY| (the per-axis step lengths) — two more __udivsi3 per column, so three divides per ray'],
+  ['Camera basis', 'dir + plane·cameraX from a Q8.8 sine LUT gives the per-column ray (the camera-plane method), so perpendicular distance is fisheye-free'],
+];
+---
+
+<Base title="Raycaster Maze — bioHACK•NET" description="A Wolfenstein-style grid raycaster running live on a Super Nintendo — a first-person camera auto-walks a 16×16 maze, casting one ray per column by integer DDA with a per-column 1/distance divide. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Raycaster Maze</h1>
+      <p class="rp-lede">
+        A <a href="https://lodev.org/cgtutor/raycasting.html">grid raycaster</a> — the technique behind
+        <i>Wolfenstein 3-D</i> — running live on a Super Nintendo. A first-person camera auto-walks a
+        16×16 maze; for each of 64 screen columns a ray is marched cell-to-cell through the wall grid by
+        integer <b>DDA</b>, and the wall slice is drawn at height <b>screen&nbsp;÷&nbsp;distance</b> — a
+        per-column divide. Distance shades each slice, so the corridors read as 3-D. Written in C and
+        compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816
+        toolchain (<code>+mos-a16</code>, 16-bit accumulator). Runs automatically.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Raycaster maze">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the camera wanders the maze automatically.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        A raycaster fakes a 3-D world from a 2-D grid map. From the camera, one ray is cast per screen
+        column; each ray walks the grid until it crosses into a wall cell, and the distance to that wall
+        sets how tall to draw the vertical wall slice — near walls fill the screen, far walls shrink to
+        a sliver. Sweep that across the columns and a flat grid becomes a corridor you can walk down.
+      </p>
+      <p>
+        The walk uses <b>DDA</b> (digital differential analysis): precompute how far the ray travels to
+        cross one cell in x and one in y, then repeatedly step whichever grid line is nearer — a loop of
+        integer compares and adds, no trigonometry inside it. The only trig is one sine-LUT lookup per
+        column to build the ray direction.
+      </p>
+
+      <h2>Why it stresses the compiler</h2>
+      <p>
+        Almost every other demo in this battery is multiply-heavy or multiply-free. This one is the
+        <b>division</b> member — the 65816 has no divide instruction, so each of the three per-column
+        reciprocals (<code>|1/rayDirX|</code>, <code>|1/rayDirY|</code>, and the headline
+        <code>screen_h / dist</code>) lowers to a <code>__udivsi3</code> libcall. Sixty-four columns ×
+        three divides is a sustained exercise of the backend's 32-bit division path that no fractal or
+        accumulator demo reaches.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The gate casts a fixed 64-column fan and folds each ray's wall height + side into a rotating-XOR
+        hash, asserting <code>corpus_result</code> (0xB200) is identical on host, default 8-bit SNES,
+        <code>+mos-a16</code>, and <code>+mos-xy16</code>. (It earned its keep: an early build had a
+        signed-overflow bug in the axis-aligned-ray case that the host and SNES optimised differently —
+        the four-way differential caught it.) The <b>Verify fidelity</b> button reproduces the gate live
+        in this tab via the same cycle-accurate bsnes-jg core used in CI.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b>
+        to reproduce the build gate's WRAM assert (<code>corpus_result = 0xB200</code>) live in
+        this tab. No far pointers — the same logic checked four ways: host == default ==
+        <code>+mos-a16</code> == <code>+mos-xy16</code>, with bsnes-jg as the in-browser
+        confirmation.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'raycaster';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  /* player — CENTRED, capped near 2x native */
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  /* instructions */
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 38rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

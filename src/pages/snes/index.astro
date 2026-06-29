@@ -127,6 +127,12 @@ const demos = [
     desc: 'A morphing Julia fractal — z² + c in Q5.10 fixed point, three 32-bit multiplies per iteration, far-stored into high WRAM and drawn through Mode 7 as c orbits a path. The affine matrix spins it while the multiply grind morphs it. Compiler stress-test #1.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'raycaster',
+    title: 'Raycaster Maze',
+    desc: 'A Wolfenstein-style grid raycaster: a first-person camera auto-walks a 16×16 maze, one DDA-cast ray per column with a per-column 1/distance divide. The battery’s division member — three __udivsi3 per column. Compiler stress-test #15.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

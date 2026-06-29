@@ -209,6 +209,17 @@
         "frames": 300,
         "label": "Julia z^2+c"
       }
+    },
+    {
+      "id": "raycaster",
+      "title": "Raycaster Maze",
+      "selfcheck": {
+        "off": "0x1362",
+        "len": 2,
+        "want": "0xB200",
+        "frames": 500,
+        "label": "RAY"
+      }
     }
   ]
 }
