@@ -16,7 +16,7 @@
       "id": "space-invaders",
       "title": "Space Invaders",
       "selfcheck": {
-        "off": "0x35",
+        "off": "0x25",
         "len": 2,
         "want": "0x9D57",
         "frames": 1400,
@@ -27,7 +27,7 @@
       "id": "spirograph",
       "title": "Spirograph",
       "selfcheck": {
-        "off": "0x64",
+        "off": "0x54",
         "len": 2,
         "want": "0x32D4",
         "frames": 500,
@@ -49,7 +49,7 @@
       "id": "spigot",
       "title": "\u03c0 Spigot + Monte-Carlo",
       "selfcheck": {
-        "off": "0x30",
+        "off": "0x20",
         "len": 2,
         "want": "0x7711",
         "frames": 500,
@@ -60,7 +60,7 @@
       "id": "double-pendulum",
       "title": "Double Pendulum (Chaos)",
       "selfcheck": {
-        "off": "0x30",
+        "off": "0x20",
         "len": 2,
         "want": "0xE859",
         "frames": 500,
@@ -71,7 +71,7 @@
       "id": "n-body",
       "title": "N-body Orbits",
       "selfcheck": {
-        "off": "0x6d",
+        "off": "0x5d",
         "len": 2,
         "want": "0xCC65",
         "frames": 500,
@@ -93,7 +93,7 @@
       "id": "newton",
       "title": "Newton's Fractal",
       "selfcheck": {
-        "off": "0x30",
+        "off": "0x20",
         "len": 2,
         "want": "0x4D8B",
         "frames": 500,
@@ -115,7 +115,7 @@
       "id": "sort-race",
       "title": "Sorting Race",
       "selfcheck": {
-        "off": "0x16a8",
+        "off": "0x29",
         "len": 2,
         "want": "0xB28F",
         "frames": 500,
@@ -126,7 +126,7 @@
       "id": "maze",
       "title": "Maze Generate + Solve",
       "selfcheck": {
-        "off": "0x62",
+        "off": "0x52",
         "len": 2,
         "want": "0x0749",
         "frames": 400,
@@ -137,7 +137,7 @@
       "id": "epicycles",
       "title": "Fourier Epicycles",
       "selfcheck": {
-        "off": "0x77",
+        "off": "0x67",
         "len": 2,
         "want": "0x4F6C",
         "frames": 500,
@@ -159,7 +159,7 @@
       "id": "harmonograph",
       "title": "Lissajous Harmonograph",
       "selfcheck": {
-        "off": "0x5a",
+        "off": "0x4a",
         "len": 2,
         "want": "0x0EBB",
         "frames": 500,
@@ -181,7 +181,7 @@
       "id": "raycaster",
       "title": "Raycaster Maze",
       "selfcheck": {
-        "off": "0x64",
+        "off": "0x54",
         "len": 2,
         "want": "0xB200",
         "frames": 500,
@@ -247,7 +247,7 @@
       "id": "1d-ca",
       "title": "Rule 90 / Rule 110 \u2014 1-D Cellular Automaton",
       "selfcheck": {
-        "off": "0x30",
+        "off": "0x20",
         "len": 2,
         "want": "0xAB2C",
         "frames": 400,
