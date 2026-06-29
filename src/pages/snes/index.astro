@@ -1,6 +1,16 @@
 ---
 // /snes — gallery of in-browser SNES demos compiled with the llvm-mos-65816 toolchain.
 import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+// Cache-bust the card thumbnails: /play/* is served `immutable, max-age=1y`, and these <img> URLs
+// have no ?v= (unlike the app.js-loaded ROM/engine assets), so a regenerated preview at the same
+// path would stay stale in browsers for a year. Hash each PNG at build time -> ?v=<sha>.
+const previewV = (slug: string) => {
+  try { return createHash('sha256').update(readFileSync(`public/play/preview/${slug}.png`)).digest('hex').slice(0, 12); }
+  catch { return ''; }
+};
 
 const demos = [
   {
@@ -99,7 +109,7 @@ const demos = [
             <div class="gl-thumb-wrap">
               <img
                 class="gl-thumb"
-                src={`/play/preview/${slug}.png`}
+                src={`/play/preview/${slug}.png${previewV(slug) ? `?v=${previewV(slug)}` : ''}`}
                 alt={`${title} running on SNES`}
                 width="256"
                 height="224"
