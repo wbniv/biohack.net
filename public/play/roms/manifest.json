@@ -68,17 +68,6 @@
       }
     },
     {
-      "id": "1d-ca",
-      "title": "Rule 90 / Rule 110 \u2014 1-D Cellular Automaton",
-      "selfcheck": {
-        "off": "0x51b",
-        "len": 2,
-        "want": "0xAB2C",
-        "frames": 400,
-        "label": "1d-ca gate"
-      }
-    },
-    {
       "id": "n-body",
       "title": "N-body Orbits",
       "selfcheck": {
@@ -87,17 +76,6 @@
         "want": "0xCC65",
         "frames": 500,
         "label": "N-body (N=3) Symplectic Euler 32 steps hash=0xCC65"
-      }
-    },
-    {
-      "id": "rdiff",
-      "title": "Gray-Scott Reaction-Diffusion",
-      "selfcheck": {
-        "off": "0x1000",
-        "len": 2,
-        "want": "0x5555",
-        "frames": 500,
-        "label": "Gray-Scott gate hash (16-bit fixed-point)"
       }
     },
     {
@@ -131,17 +109,6 @@
         "want": "0x4D41",
         "frames": 500,
         "label": "gate corpus hash (CORDIC sweep)"
-      }
-    },
-    {
-      "id": "doom-fire",
-      "title": "Doom Fire",
-      "selfcheck": {
-        "off": "0x302",
-        "len": 2,
-        "want": "0x3C59",
-        "frames": 500,
-        "label": "doom-fire"
       }
     },
     {
@@ -252,6 +219,39 @@
         "want": "0x4169",
         "frames": 1700,
         "label": "soft-float"
+      }
+    },
+    {
+      "id": "doom-fire",
+      "title": "Doom Fire",
+      "selfcheck": {
+        "off": "0x22",
+        "len": 2,
+        "want": "0x3C59",
+        "frames": 500,
+        "label": "doom-fire"
+      }
+    },
+    {
+      "id": "rdiff",
+      "title": "Gray-Scott Reaction-Diffusion",
+      "selfcheck": {
+        "off": "0x20",
+        "len": 2,
+        "want": "0x5555",
+        "frames": 500,
+        "label": "rdiff gate"
+      }
+    },
+    {
+      "id": "1d-ca",
+      "title": "Rule 90 / Rule 110 \u2014 1-D Cellular Automaton",
+      "selfcheck": {
+        "off": "0x27",
+        "len": 2,
+        "want": "0xAB2C",
+        "frames": 400,
+        "label": "1d-ca gate"
       }
     }
   ]
