@@ -231,6 +231,17 @@
         "frames": 1500,
         "label": "SHIP"
       }
+    },
+    {
+      "id": "buddhabrot",
+      "title": "Buddhabrot",
+      "selfcheck": {
+        "off": "0x22",
+        "len": 2,
+        "want": "0x7C31",
+        "frames": 6000,
+        "label": "gate grid hash (corpus @ WRAM 0x22)"
+      }
     }
   ]
 }

@@ -80,6 +80,12 @@ const demos = [
     keys: 'Self-running — no controls',
   },
   {
+    slug: 'buddhabrot',
+    title: 'Buddhabrot',
+    desc: 'The Mandelbrot set’s ghost: random points iterated z²+c, and every escaping orbit is tallied into a 16 KiB density buffer in high WRAM via far scatter-writes. PRNG + far read-modify-write under +mos-a16. Compiler stress-test #4.',
+    keys: 'Self-running — no controls',
+  },
+  {
     slug: 'cordic',
     title: 'CORDIC Rotator',
     desc: 'sin/cos/atan computed with CORDIC — shift-and-add only, no multiply and no divide. A rotating hand sweeps a vector field while a live atan2 reads its angle back. The multiply-free compiler stress-test #12.',
