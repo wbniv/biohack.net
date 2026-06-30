@@ -38,9 +38,9 @@
       "id": "3d-wireframe",
       "title": "Wireframe 3-D Solid",
       "selfcheck": {
-        "off": "0x136a",
+        "off": "0x55",
         "len": 2,
-        "want": "0xEF8E",
+        "want": "0xE737",
         "frames": 300,
         "label": "3-D math hash"
       }
