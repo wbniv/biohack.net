@@ -313,7 +313,7 @@
       "id": "fn-plot",
       "title": "Function Plotter",
       "selfcheck": {
-        "off": "0x135d",
+        "off": "0x002a",
         "len": 2,
         "want": "0x2EBE",
         "frames": 500,
