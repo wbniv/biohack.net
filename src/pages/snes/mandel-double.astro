@@ -1,0 +1,197 @@
+---
+// /snes/mandel-double — playable in-browser Double-Precision Mandelbrot SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/mandel-double.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/mandel-double.sfc', 'preview/mandel-double.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['No FPU — every op a 64-bit libcall', 'The 65816 has no floating-point unit, so each IEEE-754 double operation is a soft-float library call over a register pair-of-pairs: __muldf3 (z·z, zr·zi), __adddf3/__subdf3 (the z²+c recurrence), __gtdf2 (the |z|²>4 escape test), __floatsidf (pixel index → double). The 64-bit-float family no other demo touches'],
+  ['Bit-exact differential', 'IEEE-754 double +,−,× and the comparisons are correctly rounded (round-to-nearest-even), so a conforming soft-float on the 65816 must equal host x86 double bit-for-bit. FMA contraction is forbidden by construction (one op per statement, no a·b±c), the oracle built -ffp-contract=off. Verified host == default == +mos-a16 == +mos-xy16 == gate CRC 0x0EDF'],
+  ['Double beside a float twin', 'The top half is rendered in 64-bit double, the bottom half in the 32-bit float of demo #21 — the set is symmetric about the real axis, so the two halves join seamlessly. At whole-set scale the precisions agree pixel-for-pixel (the seam is invisible — that IS the result); casting the shared double window to float coords also exercises __truncdfsf2'],
+  ['The precision cliff', 'Float and double only diverge at EXTREME zoom (re_span ~1e-6), where the per-pixel step drops below float’s ~6e-8 epsilon and the float side collapses into chunky blocks while double stays crisp. Resolving that depth needs hundreds of iterations per pixel — tens of thousands of 64-bit libcalls each — so it is far too slow to render live; the gate folds both a double and a float buffer to catch any divergence numerically'],
+  ['A bit-exact orbit witness', 'Beyond the escape buffers, the gate iterates the recurrence at an interior point and folds the RAW 64-bit bits of |z|² each step (a union type-pun) into an FNV accumulator — the sharp “double is fully specified” claim: a single-ULP slip in any __muldf3/__adddf3 would change the hash'],
+];
+---
+
+<Base title="Double-Precision Mandelbrot — bioHACK•NET" description="The Mandelbrot set rendered on a Super Nintendo in 64-bit IEEE-754 double precision (top half) beside a 32-bit float twin (bottom half). The 65816 has no FPU, so every double multiply/add is a soft-float libcall — and the escape buffer is bit-for-bit identical to host x86. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Double-Precision Mandelbrot</h1>
+      <p class="rp-lede">
+        The <a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot set</a> computed live on a
+        Super Nintendo in <em>64-bit</em> <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">IEEE-754 double</a>.
+        The 65816 has <em>no FPU</em>, so every <code>z² + c</code> multiply and add is a
+        <em>soft-float libcall</em> — <code>__muldf3</code>, <code>__adddf3</code>, <code>__gtdf2</code> —
+        over a register pair-of-pairs. The <em>top</em> half is rendered in <code>double</code>; the
+        <em>bottom</em> half in the 32-bit <code>float</code> of <a href="/snes/mandel-float/">demo #21</a>.
+        At whole-set scale the two precisions agree <em>pixel-for-pixel</em> — the set is symmetric about
+        the real axis, so the seam is <em>invisible</em>, and that is exactly the point: the escape buffer
+        is <em>bit-for-bit identical</em> to host x86. Runs automatically; no joypad needed. Written in C
+        and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816
+        toolchain (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Double-Precision Mandelbrot">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the set grinds in top-to-bottom (the double top half is
+        visibly slower than the float bottom), then spins while it re-computes. <em>(Boot takes a moment
+        to grind the first 64-bit floats.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Escape-time <a href="https://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot</a>: for each point
+        <em>c</em>, iterate <code>z ← z² + c</code> from <code>z = 0</code> and colour by how fast
+        <code>|z|</code> escapes. Demo <a href="/snes/mandel-float/">#21</a> does it in 32-bit
+        <code>float</code>; this one does the top half in 64-bit <code>double</code>, which on a CPU with
+        no floating-point hardware means software routines over four 16-bit words:
+      </p>
+      <pre class="rp-code">mandel_cell(cr, ci):           // one op per statement — no FMA to fuse
+  zr = zi = 0
+  repeat:
+    zr2 = zr*zr                 // __muldf3
+    zi2 = zi*zi                 // __muldf3
+    if zr2 + zi2 &gt; 4.0: break   // __adddf3, __gtdf2
+    zr,zi = (zr2 - zi2) + cr,   // __subdf3, __adddf3
+            (zr*zi + zr*zi) + ci // __muldf3, __adddf3</pre>
+      <p>
+        The 64×56 escape buffer lives in <a href="https://en.wikipedia.org/wiki/Super_Nintendo_Entertainment_System#Video">high
+        WRAM</a> (the 24-bit far store/load path, which is why the ROM is <code>+mos-a16</code>-only) and is
+        blitted into Mode 7 character VRAM, framed 4× to fill the screen; the hardware affine matrix spins
+        it while the palette cycles. Each pass re-grinds the set, so every frame is a fresh batch of 64-bit
+        multiplies and adds.
+      </p>
+
+      <h2>Compiler stress-test #33 — 64-bit double soft-float</h2>
+      <p>
+        A <em>Round 3</em> demo — each Round-3 entry targets a codegen corner none of the first 32 execute.
+        Here it is the <em>double-precision soft-float library</em>: <code>__muldf3</code>,
+        <code>__adddf3</code>/<code>__subdf3</code>, <code>__gtdf2</code>, <code>__floatsidf</code> — plus
+        <code>__truncdfsf2</code>/<code>__extendsfdf2</code> for the float twin. That 64-bit-<em>float</em>
+        family is disjoint from <a href="/snes/avalanche/">#22</a>'s 64-bit-<em>integer</em> family
+        (<code>__muldi3</code>/<code>__udivdi3</code>) and is otherwise untested by the battery.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The escape kernel is a portable C header (<code>examples/65816/mandel-double.h</code>) linked into
+        the SNES ROM, a host oracle, and the corpus differential slice alike. The gate folds a small
+        <code>double</code> escape buffer, a <code>float</code> twin buffer, a bit-exact 64-bit orbit
+        witness and a double↔float conversion witness into <code>corpus_result</code>. Because double
+        arithmetic is correctly rounded, that 16-bit hash must be identical on host x86 (native
+        <code>double</code>) and on the console — and it is, across <em>every</em> target codegen mode
+        (default 8-bit, <code>+mos-a16</code>, <code>+mos-xy16</code>), bit for bit.
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x0EDF</code>) live in this tab — the same
+        hash the host oracle and the cycle-accurate bsnes-jg core agree on, bit for bit. The disasm gate
+        proves the shape: <code>__muldf3 = 8</code>, <code>__adddf3/__subdf3 = 12</code>,
+        <code>rep/sep = 31</code> — 64-bit doubles in native-16 mode.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'mandel-double';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede sup { font-size: .7em; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

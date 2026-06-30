@@ -152,6 +152,12 @@ const demos = [
     keys: 'Self-running — no controls',
   },
   {
+    slug: 'mandel-double',
+    title: 'Double-Precision Mandelbrot',
+    desc: 'The Mandelbrot set in 64-bit IEEE-754 double (top half) beside a 32-bit float twin (bottom half). No FPU, so every double op is a soft-float libcall (__muldf3/__adddf3/__gtdf2); the escape buffer is bit-for-bit identical to host x86 across every codegen mode. Compiler stress-test #33.',
+    keys: 'Self-running — no controls',
+  },
+  {
     slug: 'avalanche',
     title: '64-Bit Avalanche',
     desc: 'A 64-bit splitmix64 hash visualised as an avalanche matrix — cell (i,j) = output bit j of hash64(seed^(1<<i)). On a 16-bit CPU every op is a multi-limb libcall (__muldi3/__udivdi3/64-bit shifts); a correct mixer gives a ~50%-dense rainbow field, bit-for-bit identical to host x86. Compiler stress-test #22.',

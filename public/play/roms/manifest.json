@@ -385,6 +385,17 @@
         "frames": 600,
         "label": "lsystem"
       }
+    },
+    {
+      "id": "mandel-double",
+      "title": "Double-Precision Mandelbrot",
+      "selfcheck": {
+        "off": "0x20",
+        "len": 2,
+        "want": "0x0EDF",
+        "frames": 2200,
+        "label": "mandel-double"
+      }
     }
   ]
 }
