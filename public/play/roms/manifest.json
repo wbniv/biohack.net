@@ -330,6 +330,17 @@
         "frames": 500,
         "label": "cardioid"
       }
+    },
+    {
+      "id": "tea",
+      "title": "TEA Cipher Avalanche",
+      "selfcheck": {
+        "off": "0x3b",
+        "len": 2,
+        "want": "0xDF0E",
+        "frames": 500,
+        "label": "tea"
+      }
     }
   ]
 }
