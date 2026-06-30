@@ -286,6 +286,17 @@
         "frames": 600,
         "label": "vm-dispatch"
       }
+    },
+    {
+      "id": "truchet",
+      "title": "Truchet (Packed Bitfields)",
+      "selfcheck": {
+        "off": "0x9a",
+        "len": 2,
+        "want": "0xB3E6",
+        "frames": 800,
+        "label": "bitfields"
+      }
     }
   ]
 }

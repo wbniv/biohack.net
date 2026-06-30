@@ -169,6 +169,12 @@ const demos = [
     desc: 'A stack-machine bytecode interpreter drawing LOGO turtle graphics — its switch(op) compiles to a JMP (abs,X) jump table and its ALU ops dispatch through a function-pointer opcode table (indirect/computed control flow no other demo runs). The woven rosette is bit-for-bit identical to host x86. Compiler stress-test #29a.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'truchet',
+    title: 'Truchet · Packed Bitfields',
+    desc: 'The 10-PRINT / Truchet diagonal maze, but every cell is a 16-bit C bitfield struct (orient/style/hue/phase/mark/energy in one word). A colour wave ripples through, stressing the bitfield insert/extract codegen — and/ora/shift, no libcalls — bit-for-bit identical host vs target. Compiler stress-test #29b.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
