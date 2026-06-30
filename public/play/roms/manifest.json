@@ -101,17 +101,6 @@
       }
     },
     {
-      "id": "cordic",
-      "title": "CORDIC Rotator",
-      "selfcheck": {
-        "off": "0x135f",
-        "len": 2,
-        "want": "0x4D41",
-        "frames": 500,
-        "label": "gate corpus hash (CORDIC sweep)"
-      }
-    },
-    {
       "id": "sort-race",
       "title": "Sorting Race",
       "selfcheck": {
@@ -307,6 +296,17 @@
         "want": "0x79C3",
         "frames": 600,
         "label": "string-rewrite"
+      }
+    },
+    {
+      "id": "cordic",
+      "title": "CORDIC Rotator",
+      "selfcheck": {
+        "off": "0x135f",
+        "len": 2,
+        "want": "0x4D41",
+        "frames": 500,
+        "label": "cordic_gate_crc"
       }
     }
   ]
