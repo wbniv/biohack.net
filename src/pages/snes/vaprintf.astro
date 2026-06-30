@@ -1,0 +1,156 @@
+---
+// /snes/vaprintf — playable in-browser va_arg variadic formatter + Lissajous SNES demo.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/vaprintf.sfc', 'preview/vaprintf.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['va_arg on 65816', 'On the 65816 with llvm-mos, variadic arguments are passed via the soft-stack imaginary-register ABI. va_start() records the argument pointer; va_arg(ap, unsigned int) reads 2 bytes from the soft-stack on target (16-bit int) vs 4 bytes on host (32-bit int). Values ≤ UINT16_MAX are identical in both widths — the gate CRC is bit-exact host == +mos-a16 == +mos-xy16.'],
+  ['mini_sprintf gate', 'The gate calls mini_sprintf 4 times with 2–3 variadic args each (9 va_arg reads total): "123+456", "-7/3", "beef cafe", "999 -1 abcd". The output characters are folded into a rotate-XOR CRC → 0xE1F3. A miscompile of va_arg (wrong offset, wrong width) changes the output string and diverges the CRC. The disasm gate confirmed jsr=7, rep/sep=45.'],
+  ['No prior demo used va_arg', 'All 31 demos before #32 use explicit fixed-parameter functions. The variadic calling convention is a distinct ABI path: the caller must push variadic args in a specific layout; va_arg must advance the pointer by the correct size. A bug in either side diverges any va_arg call. This demo is the first to exercise that path.'],
+  ['Lissajous figure visual', 'The canvas draws a Lissajous curve: x = R·cos(fx·t), y = R·sin(fy·t). Six (fx, fy) pairs cycle automatically (1:2, 2:3, 3:4, 2:5, 4:5, 3:2). Each pair produces a distinct knot-like figure. The curve uses the same SPIRO_SIN_LUT as the spirograph demo. The HUD parameters (FX, FY, pair index, phase) are formatted via mini_sprintf each frame.'],
+];
+---
+
+<Base title="VA_ARG Formatter — bioHACK•NET" description="A Super Nintendo draws Lissajous curves while formatting the HUD parameters through a variadic mini_sprintf — the first demo to exercise the va_arg calling convention on the 65816. Gate CRC 0xE1F3 confirmed host == +mos-a16. Compiled with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">VA_ARG Formatter</h1>
+      <p class="rp-lede">
+        A Super Nintendo draws
+        <a href="https://en.wikipedia.org/wiki/Lissajous_curve">Lissajous curves</a>
+        while formatting the HUD parameters through a variadic
+        <code>mini_sprintf()</code> — the first demo in the battery to exercise the
+        <code>va_arg</code> calling convention on the 65816. Six frequency pairs cycle
+        automatically. The HUD reads <em>"#32 VA ARG  FX=N FY=N"</em>, formatted live
+        via <code>va_arg(ap, unsigned int)</code> on every frame. Compiled with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the va_arg formatter demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — 6 Lissajous figures cycle automatically.
+        <em>(Boot holds while the gate CRC computes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each frame: compute the next Lissajous point, draw it with Bresenham on a
+        128×128 canvas, then call <code>mini_sprintf(line, "#32 VA ARG  FX=%u FY=%u", fx, fy)</code>
+        to format the HUD. After 256 points (one full trace), the figure holds briefly,
+        the canvas clears, and the next (fx, fy) pair begins.
+      </p>
+      <pre class="rp-code">{'// va_arg in the hot path — every frame:\nvoid mini_sprintf(char *buf, const char *fmt, ...) {\n    va_list ap;\n    va_start(ap, fmt);\n    // ...\n    case \'u\': {\n        uint16_t v = (uint16_t)va_arg(ap, unsigned int);\n        // reads 2 bytes on 65816 (16-bit int) — the variadic ABI under test\n        out += va_fmt_u(out, v);\n    }\n    va_end(ap);\n}'}</pre>
+
+      <h2>Compiler stress-test #32 — variadic va_arg calling convention</h2>
+      <p>
+        A <em>Round 2</em> demo targeting the "variadic <code>va_arg</code>" row of the
+        coverage map — the last uncovered ABI corner after #29a (jump-table) and #26
+        (aggregate struct ABI). All 31 prior demos use only fixed-parameter calls.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Corner</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0xE1F3</code>) live in this tab.
+        Disasm gate: <code>jsr=7</code>, <code>rep/sep=45</code>.
+        No compiler bug found — variadic va_arg codegen correct across all modes.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'vaprintf';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; white-space: nowrap; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
