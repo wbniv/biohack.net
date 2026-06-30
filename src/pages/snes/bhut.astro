@@ -1,0 +1,157 @@
+---
+// /snes/bhut — playable in-browser Barnes-Hut quadtree galaxy SNES demo + notes.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/bhut.sfc', 'preview/bhut.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Pointer-chasing tree walk', 'Each step rebuilds a pooled-node quadtree (bh_insert, recursive) then walks it per particle to approximate forces (bh_force, recursive). Both follow bh_pool[node->child[q]] where child[q] is a runtime uint8_t index — generating ZP-indexed indirect loads and a tree-shaped recursive call graph (JSR to self). This is distinct from the flat-array N-body (#13) and the linear/log recursion of the sort-race (#17) and maze (#18). The disasm gate confirmed bh_force self-references and rep/sep=160.'],
+  ['Barnes-Hut approximation', 'The force walk uses the centre-of-mass shortcut: if a tree node is far enough away (its width² < distance²), the whole node contributes via its aggregate COM rather than recursing into children. This is the O(N log N) algorithm that makes large N-body simulations tractable — and the conditional recursion is exactly what stresses the tree-shaped call graph.'],
+  ['Gravity kernel: mul + div', 'Each force evaluation computes dist² = dx² + dy² (__mulsi3), then F = G·mass·d / dist² (__mulsi3 + __divsi3). The centre-of-mass is sum_x / mass (__divsi3). The gate confirmed __mulsi3=5, __divsi3=4 — fusing the multiply-divide corner with the pointer-chasing corner in one demo.'],
+  ['Deliberate heavy grind', 'Eight particles each do a full recursive tree walk with divides every frame — about one simulation step per 25 emulated frames. The galaxy collapse unfolds slowly (watch the amber stars draw cyan trails as they fall together). This pacing IS the stress test: the recursive call graph and divide path run continuously. Gate CRC 0xEF0B; bit-exact host == +mos-a16 == +mos-xy16.'],
+];
+---
+
+<Base title="Barnes-Hut Galaxy — bioHACK•NET" description="A Super Nintendo runs an 8-body gravity simulation using a Barnes-Hut quadtree — recursively building and walking a pooled-node tree through runtime child indices. The first demo to exercise pointer-chasing dynamic trees on the 65816. Compiled with the llvm-mos toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Barnes-Hut Galaxy</h1>
+      <p class="rp-lede">
+        An 8-body gravity simulation on a Super Nintendo using the
+        <a href="https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation">Barnes-Hut</a>
+        algorithm: each step rebuilds a <em>quadtree</em> over the stars and walks it recursively
+        to approximate gravitational forces. The tree lives in a node pool, chased through runtime
+        <code>child[]</code> indices — the first demo in the battery to exercise pointer-chasing
+        dynamic trees. Watch the amber stars draw cyan trails as the galaxy collapses. Compiled
+        with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Barnes-Hut galaxy demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the galaxy collapses slowly (≈1 step per 25 frames; trails build up over ~30 s).
+        <em>(Boot holds while the gate CRC computes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each frame: rebuild the quadtree by inserting all 8 stars (recursive descent into the
+        correct quadrant), then for each star walk the tree to sum gravitational forces (recursive,
+        with the Barnes-Hut centre-of-mass shortcut for distant nodes), then integrate position and
+        velocity. The stars trace trails as they fall toward their common centre of mass.
+      </p>
+      <pre class="rp-code">{'// recursive force walk — pointer-chasing through the node pool:\nvoid bh_force(uint8_t node, int16_t px, int16_t py, int32_t *fx, int32_t *fy) {\n    BhNode *n = &bh_pool[node];          // ZP-indexed pool access\n    uint32_t dist2 = dx*dx + dy*dy + SOFT;   // __mulsi3\n    if (!n->has_child || n->cw*n->cw < dist2) {\n        *fx += G * n->mass * dx / dist2;  // __mulsi3 + __divsi3\n    } else {\n        for (uint8_t q = 0; q < 4; q++)\n            bh_force(n->child[q], px, py, fx, fy);  // JSR via child index\n    }\n}'}</pre>
+
+      <h2>Compiler stress-test #31 — pointer-chasing dynamic trees</h2>
+      <p>
+        A <em>Round 2</em> demo opening the last data-structure corner: a <strong>linked tree</strong>
+        built and walked at runtime, distinct from the flat arrays of #13 (N-body) and #18 (heap).
+        The recursive call graph is tree-shaped (not linear), and every node access chases a runtime
+        index through the pool.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Corner</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0xEF0B</code>) live in this tab.
+        Disasm gate: <code>__mulsi3=5</code>, <code>__divsi3=4</code>, recursive <code>bh_force</code>,
+        <code>rep/sep=160</code>.
+        No compiler bug found — recursive tree-walk codegen correct across all modes.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'bhut';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; white-space: nowrap; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
