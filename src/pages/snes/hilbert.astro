@@ -1,0 +1,160 @@
+---
+// /snes/hilbert — playable in-browser Hilbert space-filling curve SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/hilbert.sfc. Branded to biohack.net.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/hilbert.sfc', 'preview/hilbert.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Variable-count shifts', 'The d2xy loop iterates over bit-position k = 0, 1, 2, 3. Each iteration executes rx << k and ry << k where k is a runtime loop variable — not a compile-time constant. LLVM cannot inline these as fixed ASL chains; at -Os it calls __ashlsi3(rx, k). The gate confirmed __ashlsi3+__lshrsi3=5 calls in the corpus object. This is the codegen corner none of the prior 30 demos exercise.'],
+  ['d2xy / xy2d bijection', 'hil_d2xy(d) → (x, y) and hil_xy2d(x, y) → d are mutual inverses: hil_xy2d(hil_d2xy(d)) == d for all 256 points (verified by the gate). The gate CRC folds both directions so a miscompile in either function diverges the hash. The round-trip property means a visually plausible-looking but wrong curve would still fail the gate.'],
+  ['Space-filling property', 'The order-4 Hilbert curve visits all 256 positions of a 16×16 grid in a single self-similar path with no crossings. Consecutive points are always adjacent (4-connected). The characteristic nested U-shapes appear at each order: 1 U at order 1, 4 Us at order 2, 16 Us at order 3, 64 Us at order 4.'],
+  ['Bit-exact across all modes', 'All arithmetic is uint32_t — no floating point, no data-dependent width. Gate CRC 0x5999; confirmed host == default == +mos-a16 == +mos-xy16 on bsnes-jg. No compiler bug found — variable-count shift codegen correct across all modes.'],
+];
+---
+
+<Base title="Hilbert Curve — bioHACK•NET" description="A Super Nintendo draws an order-4 Hilbert space-filling curve point by point, visiting all 256 positions of a 16×16 grid. The d2xy kernel uses variable-count 32-bit shifts (__ashlsi3) — the codegen corner no prior SNES demo exercises. Compiled with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Hilbert Curve</h1>
+      <p class="rp-lede">
+        An order-4
+        <a href="https://en.wikipedia.org/wiki/Hilbert_curve">Hilbert space-filling curve</a>
+        traced point by point on a Super Nintendo, visiting all 256 positions of a 16×16 grid
+        in a single self-similar path. The <code>d2xy</code> kernel converts a distance index to
+        <em>(x, y)</em> coordinates using a loop variable <code>k</code> that drives
+        variable-count 32-bit shifts — forcing <code>__ashlsi3</code> libcalls rather than
+        inline ASL chains. Compiled with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Hilbert curve demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the curve traces in ~4 s then restarts.
+        <em>(Boot holds while the gate CRC computes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The demo computes <code>hil_d2xy(d)</code> for <code>d = 0..255</code> — converting each
+        Hilbert distance to grid coordinates — then connects consecutive points with Bresenham
+        line segments on a 128×128 BitmapCanvas (4 steps per frame). The path re-traces
+        automatically every 2 seconds.
+      </p>
+      <pre class="rp-code">{'// d2xy hot loop — variable-count shifts force __ashlsi3:\nfor (uint32_t k = 0; k < HILBERT_ORDER; k++) {\n    uint32_t rx = 1u & (d >> 1u);\n    uint32_t ry = 1u & (d ^ rx);\n    if (ry == 0 && rx == 1) {\n        uint32_t s = 1u << k;   // __ashlsi3(1, k) — k is runtime!\n        x = s - 1u - x;  y = s - 1u - y;\n    }\n    if (ry == 0) { swap(x, y); }\n    x += rx << k;  // __ashlsi3(rx, k)\n    y += ry << k;  // __ashlsi3(ry, k)\n    d >>= 2u;\n}'}</pre>
+
+      <h2>Compiler stress-test #28 — variable-count 32-bit shifts</h2>
+      <p>
+        A <em>Round 2</em> demo targeting the "variable-count shifts" row of the coverage map —
+        the corner that TEA #30 was supposed to cover but didn't, because TEA's shifts by
+        constants 4 and 5 get inlined as ASL+ROL chains at <code>-Os</code>. Hilbert's loop
+        variable <code>k</code> is provably non-constant, so the compiler must call
+        <code>__ashlsi3</code>.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Corner</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x5999</code>) live in this tab.
+        Disasm gate: <code>__ashlsi3+__lshrsi3=5</code>, <code>rep/sep=23</code>,
+        <code>__mulsi3=0</code>.
+        No compiler bug found — variable-count 32-bit shift codegen correct across all modes.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'hilbert';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; white-space: nowrap; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

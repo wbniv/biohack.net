@@ -341,6 +341,17 @@
         "frames": 500,
         "label": "tea"
       }
+    },
+    {
+      "id": "hilbert",
+      "title": "Hilbert Curve",
+      "selfcheck": {
+        "off": "0x3a",
+        "len": 2,
+        "want": "0x5999",
+        "frames": 500,
+        "label": "hilbert"
+      }
     }
   ]
 }

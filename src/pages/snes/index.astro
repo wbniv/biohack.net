@@ -188,6 +188,12 @@ const demos = [
     keys: 'Self-running — no controls',
   },
   {
+    slug: 'hilbert',
+    title: 'Hilbert Curve',
+    desc: 'An order-4 Hilbert space-filling curve traces 256 grid positions in one connected path. The d2xy kernel uses variable-count 32-bit shifts (__ashlsi3), the corner TEA #30 missed. Compiler stress-test #28.',
+    keys: 'Self-running — no controls',
+  },
+  {
     slug: 'tea',
     title: 'TEA Cipher Avalanche',
     desc: '32 rounds of the Tiny Encryption Algorithm paint a 16×16 tile grid; 16 key variants each differing by 1 bit demonstrate the avalanche effect live. Hot loop is pure 32-bit shift/add/XOR — no multiply. Compiler stress-test #30.',
@@ -202,14 +208,14 @@ const demos = [
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Fifteen in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, the CORDIC Rotator, Doom Fire, the Sorting Race, and L-System Plant. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description={`${demos.length} in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — each a stress-test for the compiler's 16-bit-accumulator codegen (+mos-a16). Play them in your browser.`}>
   <main class="gl-wrap">
 
     <header class="gl-hero">
       <a class="gl-back" href="/">← biohack.net</a>
       <h1 class="gl-title">SNES Demos</h1>
       <p class="gl-lede">
-        Thirteen Super Nintendo programs compiled from C with an
+        {demos.length} Super Nintendo programs compiled from C with an
         <a href="https://indri.studio/apps/llvm-mos-65816/">LLVM-based 65816 toolchain</a>
         — each a stress-test for the compiler's 16-bit-accumulator codegen and a playable
         ROM verified against MAME and bsnes-jg. Click any card to play.
