@@ -1,0 +1,156 @@
+---
+// /snes/fft — playable in-browser FFT spectrum analyser SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/fft.sfc. Branded to biohack.net.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/fft.sfc', 'preview/fft.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Butterfly twiddle multiply', '4× __mulsi3 per butterfly: t_re = (TW_RE[j*w] * xr[bot] - TW_IM[j*w] * xi[bot]) >> 8 and the imaginary counterpart. Each 16×16→32-bit product is one __mulsi3 libcall. 5 stages × 16 butterflies × 4 __mulsi3 = 320 multiply calls per FFT frame. The disasm gate confirmed __mulsi3=4 (folded by -Os loop optimisation — the hot multiply is the dominant operation).'],
+  ['Bit-reversal permutation', 'Before the butterfly passes, samples are rearranged in bit-reversed index order: sample at index 3 (binary 00011) moves to index 24 (binary 11000). The precomputed FFT_BITREV[32] table drives this swap — a pure bit-manipulation corner distinct from all prior demos.'],
+  ['Q8.8 fixed-point complex multiply', 'Twiddle factors W_32^k = cos(-2πk/32) × 256 + i·sin(-2πk/32) × 256 are stored as int16_t pairs. The butterfly multiplies them by the data words (also int16_t Q8.8), right-shifts 8 to re-normalise. The product range is 256 × 256 = 65536, which fits in int32_t — the multiplication MUST be 32-bit or the result overflows, making this a genuine __mulsi3 workload.'],
+  ['Sweeping tone demonstration', 'The signal is a pure sine at frequency bin cur_bin, generated from the SPIRO_SIN_LUT. cur_bin steps from 1 to 15 every ~1 second. The tallest bar should be at cur_bin; neighbouring bars show FFT windowing leakage. Correct butterfly arithmetic → one tall bar; a miscompile → wrong bar heights or the wrong bin is tallest.'],
+];
+---
+
+<Base title="FFT Spectrum Analyser — bioHACK•NET" description="A Super Nintendo runs a 32-point radix-2 DIT FFT every frame, displaying 16 frequency bars on a 128×128 canvas. The tone sweeps from bin 1 to 15 — the tallest bar tracks it. Butterfly twiddle multiply = 320 __mulsi3 calls per frame. Compiled with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">FFT Spectrum Analyser</h1>
+      <p class="rp-lede">
+        A 32-point
+        <a href="https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm">radix-2 DIT FFT</a>
+        runs every frame on a Super Nintendo, transforming a synthesised sine tone into 16 frequency
+        bars. The tone sweeps from bin 1 to 15 — the tallest bar follows it. Each of 5 butterfly
+        stages runs 16 complex multiplies: 320 <code>__mulsi3</code> calls per frame. Compiled with
+        the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the FFT spectrum demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the tone sweeps through 15 frequency bins automatically.
+        <em>(Boot holds while the gate CRC computes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each frame the demo generates 32 samples of a sine tone, runs the full DIT FFT, computes
+        16 magnitude bars (Manhattan approximation: |re| + |im|), and repaints the canvas.
+        The canvas clears and redraws every frame; the dirty-tile DMA streams the update across
+        ~4 v-blanks, giving smooth progressive animation.
+      </p>
+      <pre class="rp-code">{'// DIT butterfly — 4× __mulsi3 per butterfly:\nint32_t t_re = ((int32_t)TW_RE[j*w] * xr[bot]\n              - (int32_t)TW_IM[j*w] * xi[bot]) >> 8;\nint32_t t_im = ((int32_t)TW_RE[j*w] * xi[bot]\n              + (int32_t)TW_IM[j*w] * xr[bot]) >> 8;\nxr[bot] = xr[top] - t_re;  xi[bot] = xi[top] - t_im;\nxr[top] += t_re;            xi[top] += t_im;'}</pre>
+
+      <h2>Compiler stress-test #25 — FFT butterfly + bit-reversal</h2>
+      <p>
+        A <em>Round 2</em> demo covering two new corners: the <strong>bit-reversal
+        permutation</strong> (index shuffling never seen in prior demos) and the
+        <strong>butterfly complex multiply</strong> — the same <code>__mulsi3</code>
+        corner as Round 1, but in a structurally different context (staged butterfly vs
+        per-pixel iteration) that exercises different register-allocation pressure.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Corner</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x6D7A</code>) live in this tab.
+        Disasm gate: <code>__mulsi3=4</code>, <code>rep/sep=63</code>.
+        No compiler bug found — FFT butterfly codegen correct across all modes.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'fft';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; white-space: nowrap; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

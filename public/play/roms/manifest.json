@@ -352,6 +352,17 @@
         "frames": 500,
         "label": "hilbert"
       }
+    },
+    {
+      "id": "fft",
+      "title": "FFT Spectrum Analyser",
+      "selfcheck": {
+        "off": "0x5c",
+        "len": 2,
+        "want": "0x6D7A",
+        "frames": 500,
+        "label": "fft"
+      }
     }
   ]
 }
