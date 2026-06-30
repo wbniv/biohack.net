@@ -1,0 +1,173 @@
+---
+// /snes/fn-plot — playable in-browser recursive-descent function plotter SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/fn-plot.sfc. Branded to biohack.net.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/fn-plot.sfc', 'preview/fn-plot.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Recursive-descent parsing', 'A real grammar parser runs PER PIXEL: expr = term ((+|-) term)*, term = factor ((*|/) factor)*, factor = (expr) | -factor | x | number. For "x/(x*x+1.0)" that is 7 levels of fn_eval_expr → fn_eval_term → fn_eval_factor → fn_eval_expr recursion. Each recursive call saves a float (4 bytes) and a char** (2 bytes) on the soft stack — thousands of stack frames per second.'],
+  ['Soft-float on every op', 'All arithmetic uses C float — IEEE-754 single precision, implemented in software on the 65816 by the llvm-compiler-rt library. Every x*x is __mulsf3 (~3 000 cycles), every subtraction is __subsf3, and the division in x/(x*x+1.0) is __divsf3. The pixel y-mapping adds __fixsfsi (float→int). The disasm gate confirmed: __mulsf3=5, __divsf3=1, rep/sep=48.'],
+  ['Bit-exact across all modes', 'IEEE-754 single precision is fully specified, so host float and SNES soft-float produce identical bit-patterns — no rounding freedom. The gate evaluates y=x*x-0.5 at 64 x-values and CRCs the lower+upper 16 bits of each result: 0x2EBE. Confirmed host == default == +mos-a16 == +mos-xy16 on bsnes-jg.'],
+  ['Four curves cycle automatically', '"x*x-0.5" (parabola), "x*x*x-x" (cubic, two turning points), "x/(x*x+1.0)" (rational, S-curve), "x*x*x*x-x*x" (quartic W-shape). Each draws left-to-right at one pixel per frame, pauses 4 s, then clears and advances. The parser re-reads the expression string character by character for every pixel — intentional, so the recursive call graph runs the full workload.'],
+];
+---
+
+<Base title="Function Plotter — bioHACK•NET" description="A recursive-descent parser plots math functions on a Super Nintendo using soft-float arithmetic. The parser recurses 7 levels deep per pixel stressing the soft-stack ABI; every float op is a libcall. Written in C with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Function Plotter</h1>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser">recursive-descent parser</a>
+        evaluates math expressions on a Super Nintendo — using
+        <a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE-754</a> <em>soft-float</em> arithmetic
+        (every <code>+</code>, <code>*</code>, <code>/</code> is a software library call, ~3 000 cycles
+        each). For each pixel column the parser recurses up to 7 levels deep through
+        <code>fn_eval_expr → fn_eval_term → fn_eval_factor</code>, folding <code>float</code> results
+        back up the stack. The curve is plotted left-to-right in real time; four expressions cycle
+        automatically. Written in C and compiled with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the function plotter demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — curves draw automatically and cycle every ~6 s.
+        <em>(Boot holds a moment while the gate CRC computes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The demo parses four baked expressions with a textbook recursive-descent grammar and plots each
+        as a white pixel curve on a 128×128 canvas. The key stress is that the parser runs
+        <em>per pixel</em> — re-scanning the expression string and recursing through the full grammar
+        for every column:
+      </p>
+      <pre class="rp-code">// Grammar (four functions of x):
+//   expr   = term  (('+' | '-') term)*
+//   term   = factor (('*' | '/') factor)*
+//   factor = '(' expr ')' | '-' factor | 'x' | number
+//
+//   Deepest call chain for  x/(x*x+1.0):
+//     fn_eval_expr → fn_eval_term → fn_eval_factor →
+//       '(' → fn_eval_expr → fn_eval_term → fn_eval_factor   (7 levels)
+//
+// Every float op is a soft-float libcall on the 65816:
+float yi = fn_eval_expr(&amp;p, xi);   // recursive descent
+int16_t py = (int16_t)((2.0f - yi) * 32.0f);  // __subsf3 + __mulsf3 + __fixsfsi</pre>
+
+      <h2>Compiler stress-test #24 — recursive parser + soft-float</h2>
+      <p>
+        A <em>Round 2</em> demo — each targets a codegen corner the first twenty never execute.
+        #24 opens two new corners: the <em>recursive call graph</em> (soft-stack ABI stress in a
+        non-numeric context) and <em>soft-float on a recursive hot path</em> (distinct from #21's
+        iterative Mandelbrot loop).
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Corner</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x2EBE</code>) live in this tab. The
+        disasm gate shape: <code>__mulsf3=5</code>, <code>__divsf3=1</code>,
+        <code>rep/sep=48</code> — soft-float recursive evaluation in native-16 mode.
+        No compiler bug found — soft-float codegen correct across all modes.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'fn-plot';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; white-space: nowrap; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

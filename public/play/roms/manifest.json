@@ -308,6 +308,17 @@
         "frames": 500,
         "label": "cordic_gate_crc"
       }
+    },
+    {
+      "id": "fn-plot",
+      "title": "Function Plotter",
+      "selfcheck": {
+        "off": "0x135d",
+        "len": 2,
+        "want": "0x2EBE",
+        "frames": 500,
+        "label": "fn-plot"
+      }
     }
   ]
 }

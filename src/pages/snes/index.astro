@@ -181,6 +181,12 @@ const demos = [
     desc: 'An L-system fractal plant grown by string rewriting — five generations of in-place memmove + memcpy + strlen over a 1 700-byte buffer, then a turtle walks the result with a bracket push/pop stack. The first demo in the battery to call the string libcalls. Bit-for-bit identical to host x86. Compiler stress-test #23.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'fn-plot',
+    title: 'Function Plotter',
+    desc: 'A recursive-descent parser evaluates math expressions on the SNES using soft-float arithmetic — every +, *, / is a software libcall (~3 000 cycles). The parser recurses 7 levels deep per pixel, stressing the soft-stack ABI. Four curves cycle automatically. Compiler stress-test #24.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
