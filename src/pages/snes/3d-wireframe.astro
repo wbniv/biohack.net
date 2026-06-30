@@ -20,11 +20,11 @@ const appV = bust['app.js'] ?? '';
 
 // In-browser keys (fixed by the player) -> wireframe 3-D actions.
 const controls = [
-  ['↑ / ↓', 'Speed X-axis  + / −'],
-  ['← / →', 'Speed Y-axis  + / −'],
+  ['↑ / ↓', 'Speed Y-axis  + / −'],
+  ['← / →', 'Speed X-axis  + / −'],
   ['Q / W', 'Dolly distance  − / +'],
-  ['Z / X', 'Previous / next solid (tetra → cube → octa → icosa)'],
-  ['A', 'Cycle palette'],
+  ['A / X', 'Previous / next solid (tetra → cube → octa → icosa)'],
+  ['S', 'Cycle palette'],
   ['Shift', 'Toggle trail / crisp'],
   ['Enter', 'Reset'],
 ];
@@ -63,11 +63,11 @@ const solids = [
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">
-        <b>↑</b>/<b>↓</b> spin X · <b>←</b>/<b>→</b> spin Y · <b>Q</b>/<b>W</b> dolly ·
-        <b>Z</b>/<b>X</b> solid · <b>A</b> palette · <b>Shift</b> trail · <b>Enter</b> reset
+        <b>↑</b>/<b>↓</b> spin Y · <b>←</b>/<b>→</b> spin X · <b>Q</b>/<b>W</b> dolly ·
+        <b>X</b>/<b>A</b> solid · <b>S</b> palette · <b>Shift</b> trail · <b>Enter</b> reset
       </p>
       <p id="banner" class="rp-banner"></p>
-      <p class="rp-hint">Click the screen, then play. Switch solids with <kbd>Z</kbd>/<kbd>X</kbd>; toggle trail mode with <kbd>Shift</kbd>.</p>
+      <p class="rp-hint">Click the screen, then play. Switch solids with <kbd>X</kbd>/<kbd>A</kbd>; toggle trail mode with <kbd>Shift</kbd>.</p>
     </section>
 
     <!-- instructions -->
@@ -79,7 +79,7 @@ const solids = [
       </table>
 
       <h2>The four solids</h2>
-      <p>Cycle them with <kbd>Z</kbd> (previous) / <kbd>X</kbd> (next). Each has its own
+      <p>Cycle them with <kbd>A</kbd> (previous) / <kbd>X</kbd> (next). Each has its own
         vertex count and edge table — the icosahedron has 30 edges to draw per frame.</p>
       <table class="rp-table rp-wide">
         <thead><tr><th>Solid</th><th>What it is</th></tr></thead>
