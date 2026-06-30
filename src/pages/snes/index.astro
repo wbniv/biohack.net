@@ -187,6 +187,12 @@ const demos = [
     desc: 'A recursive-descent parser evaluates math expressions on the SNES using soft-float arithmetic — every +, *, / is a software libcall (~3 000 cycles). The parser recurses 7 levels deep per pixel, stressing the soft-stack ABI. Four curves cycle automatically. Compiler stress-test #24.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'cardioid',
+    title: 'Times-table Cardioid',
+    desc: '200 circle points, chords from i to (k·i) mod N — k animates 2–30 tracing cardioids, nephroids, and epicycloid envelopes. The inner loop runs __mulsi3 + __umodsi3 per chord. Compiler stress-test #27.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 

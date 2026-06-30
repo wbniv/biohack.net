@@ -1,0 +1,161 @@
+---
+// /snes/cardioid — playable in-browser times-table cardioid SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/cardioid.sfc. Branded to biohack.net.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/cardioid.sfc', 'preview/cardioid.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['Times-table trick', 'Place N=200 equally-spaced points on a circle. For multiplier k, draw a chord from point i to point (k·i) mod N. At k=2 the envelope of all 200 chords traces a cardioid; at k=3 a nephroid; higher k produces higher-order epicycloid envelopes. The demo animates k from 2 to 30, clearing and redrawing the full chord set for each value.'],
+  ['__mulsi3 + __umodsi3', 'The inner loop computes j = k × (i + 65536) % N. The +65536 offset makes the second factor exceed UINT16_MAX so LLVM cannot narrow the multiply to 16-bit — the product is genuinely 32-bit, forcing __mulsi3. The 32-bit remainder then goes through __umodsi3 (not the 16-bit __umodhi3 shortcut). Confirmed by the disasm gate: __mulsi3=1, __umodsi3=1, rep/sep=6.'],
+  ['Bit-exact across all modes', 'Integer-only arithmetic means host C (32-bit int) and the 65816 target (16-bit int) agree identically — the explicit uint32_t casts in the hot loop prevent any width-dependent divergence. Gate CRC 0x523B confirmed host == default == +mos-a16 == +mos-xy16 on bsnes-jg.'],
+  ['Circle via SPIRO_SIN_LUT', 'The 200 circle points are precomputed at startup using a 256-entry Q8.8 sine LUT (the same table the spirograph demo uses). The trig is NOT in the gate — only the modular arithmetic is folded into the CRC. Each chord is drawn by Bresenham line into a 128×128 BitmapCanvas; ten chords render per frame during the bloom phase.'],
+];
+---
+
+<Base title="Times-table Cardioid — bioHACK•NET" description="A Super Nintendo draws times-table cardioids: 200 points on a circle, chords from i to (k·i) mod N. k animates 2–30, tracing cardioids, nephroids and epicycloid envelopes. Written in C with the llvm-mos 65816 toolchain; the modulo inner loop stresses __mulsi3 + __umodsi3.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Times-table Cardioid</h1>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/Cardioid#Cardioid_as_envelope_of_a_pencil_of_lines">times-table trick</a>
+        on the Super Nintendo: 200 equally-spaced points circle a canvas; a chord runs from each
+        point&nbsp;<em>i</em> to point <em>(k·i)&nbsp;mod&nbsp;N</em>. At k=2 the envelope of
+        all 200 chords traces a cardioid; k=3 gives a nephroid; higher k gives higher epicycloid
+        envelopes. The multiplier k animates continuously from 2 to 30. Written in C and compiled
+        with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the times-table cardioid demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — chords bloom automatically, k advances every ~0.7 s.
+        <em>(Boot holds a moment while the gate CRC computes.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each figure is drawn by connecting every pair of points (i, j) where j = (k·i) mod 200.
+        The modular arithmetic is the only computation; no trigonometry runs during animation
+        (circle points are precomputed once at startup). Ten chords bloom per frame, so each
+        figure takes about 20 frames to complete; then it holds briefly before k advances and
+        the canvas clears for the next figure.
+      </p>
+      <pre class="rp-code">{'// hot inner loop — forces __mulsi3 + __umodsi3:\nfor (uint16_t i = 0; i < CARD_N; i++) {\n    uint32_t j = (uint32_t)k * ((uint32_t)i + 65536u) % (uint32_t)CARD_N;\n    canvas_line(&canvas, pts_x[i], pts_y[i], pts_x[j], pts_y[j], 2);\n}'}</pre>
+
+      <h2>Compiler stress-test #27 — modulo-heavy inner loop</h2>
+      <p>
+        A <em>Round 2</em> demo targeting the codegen corner that earlier demos skipped: the
+        <code>%</code> operator as the dominant hot operation. Prior demos that used division also
+        consumed the quotient, so the compiler emitted <code>__udivmodsi4</code> (combined
+        divide+remainder). Here only the remainder matters, so the compiler takes the
+        <code>__umodsi3</code> path (32-bit unsigned remainder only).
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Corner</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b> to
+        reproduce the build gate's WRAM assert (gate CRC <code>0x523B</code>) live in this tab. The
+        disasm gate shape: <code>__mulsi3=1</code>, <code>__umodsi3=1</code>,
+        <code>rep/sep=6</code> — 32-bit modulo-heavy loop in native-16 mode.
+        No compiler bug found — modulo codegen correct across all modes.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'cardioid';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; white-space: nowrap; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
