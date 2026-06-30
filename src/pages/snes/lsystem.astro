@@ -1,0 +1,182 @@
+---
+// /snes/lsystem — playable in-browser L-System Plant SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/lsystem.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/lsystem.sfc', 'preview/lsystem.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const notes = [
+  ['String rewriting — the libcall corner', 'Each rewrite generation walks the buffer symbol by symbol; for every symbol that has a rule it shifts the tail right with memmove (overlapping copy), writes the production with memcpy, and measures the production with strlen. These are the three string libcalls no other demo in the battery calls — the stress is building a string dynamically on a 16-bit machine with no heap'],
+  ['In-place memmove', 'The buffer is rewritten IN PLACE (single buffer, no ping-pong). Each production insertion shifts the tail right before writing, so source and destination overlap — a genuine memmove, not a memcpy. Every other demo that copies memory uses memcpy over disjoint regions'],
+  ['Bracket push/pop stack', "The turtle's [ saves the full turtle state (position, heading, depth) and ] restores it, so each frond returns to its branch point. This is the battery's save/restore stack member — the push/pop path no fractal or simulation demo runs"],
+  ['Bit-exact differential', 'String rewriting and turtle interpretation are exact byte/integer operations (position Q8.8 in int32, heading 0..255 indexing the shared SINCOS LUT). Exact ops reproduce bit-for-bit on host x86 and on the console — a memmove or strlen miscompile corrupts the string, a bracket stack bug scrambles the path, and the gate CRC diverges immediately. Verified default == +mos-a16 == +mos-xy16 == 0x79C3'],
+  ['Found a compiler bug', 'The gate caught a +mos-xy16 miscompile: SEP #$10 (inserted by the REP/SEP scheduler for an intervening ldy) zeroed the high byte of the 16-bit index register between the ldx that loaded i and the lda abs,X that read buf[i]. For i ≥ 256 the wrong byte was read. Fixed in MOSInsertREPSEP by cloning the last X-writer instruction after the repair REP'],
+];
+---
+
+<Base title="L-System Plant — bioHACK•NET" description="A Lindenmayer-system fractal plant grown by string rewriting on a Super Nintendo: five generations of in-place memmove + memcpy + strlen, then a turtle walks the string with a bracket push/pop stack. Written in C, bit-for-bit identical to host x86, compiled with the llvm-mos 65816 toolchain.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">L-System Plant</h1>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/L-system">Lindenmayer-system</a> fractal plant grown
+        live on a Super Nintendo. Five generations of <em>string rewriting</em> — in-place
+        <code>memmove</code> + <code>memcpy</code> + <code>strlen</code> over a 1 700-byte buffer
+        — then a <em>turtle interpreter</em> walks the string with a <code>[</code>/<code>]</code>
+        bracket push/pop stack, drawing branch by branch. The picture is the proof: a correct
+        string-rewrite + interpreter grows a coherent fractal; a miscompile scrambles the symbols
+        into noise. <em>Bit-for-bit identical</em> to host x86. Self-running; no joypad needed.
+        Written in C and compiled with the <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>
+        65816 toolchain (<code>+mos-a16</code>).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running L-System Plant">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the fractal plant grows during the title card, then
+        blooms at full brightness. <em>(Rewriting 1 690 symbols takes a moment.)</em></p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The axiom <code>"X"</code> is rewritten 5 generations by two rules:
+      </p>
+      <pre class="rp-code">X → "F-[[X]+X]+F[+FX]-X"   // branch into two sub-fronds
+F → "FF"                    // elongate each segment</pre>
+      <p>
+        After 5 generations the string is 1 690 symbols long. Each <code>F</code> moves the turtle
+        forward one step; <code>+</code>/<code>-</code> turn 25°; <code>[</code> pushes the full
+        turtle state (position, heading, depth) and <code>]</code> restores it. Colour is chosen by
+        bracket depth — dark brown trunk, two greens for inner and outer fronds.
+      </p>
+      <p>
+        The rewriting runs entirely in a single 1 700-byte bank-0 WRAM buffer (<em>in place</em> —
+        no second buffer). Each symbol expansion shifts the buffer tail right with
+        <code>memmove</code>, writes the production with <code>memcpy</code>, and measures its
+        length with <code>strlen</code>.
+      </p>
+
+      <h2>Compiler stress-test #23 — string libcalls + bracket stack</h2>
+      <p>
+        A <em>Round 2</em> entry targeting codegen corners the first twenty-two demos never exercise.
+      </p>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p>
+        The L-system logic lives in a portable C header (<code>examples/65816/lsystem.h</code>)
+        shared by the SNES ROM, a host oracle, and the corpus differential slice. The gate rewrite
+        + interpretation folds every turtle segment (endpoints + depth colour) into a rotate-XOR
+        CRC16 stored in <code>corpus_result</code>. Because the ops are exact, that 16-bit hash must
+        agree on host x86 and on the console — and it does, across <em>every</em> target codegen
+        mode (default 8-bit, <code>+mos-a16</code>, <code>+mos-xy16</code>).
+      </p>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b>
+        to reproduce the build gate's WRAM assert (gate CRC <code>0x79C3</code>) live in this tab —
+        the same hash the host oracle and the cycle-accurate bsnes-jg core agree on, bit for bit.
+        The disasm gate proves the shape: <code>memcpy/memmove = 2</code>, <code>strlen = 1</code>,
+        <code>rep/sep = 87</code> — string libcalls in native-16 mode.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'lsystem';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

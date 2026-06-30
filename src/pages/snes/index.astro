@@ -175,10 +175,16 @@ const demos = [
     desc: 'The 10-PRINT / Truchet diagonal maze, but every cell is a 16-bit C bitfield struct (orient/style/hue/phase/mark/energy in one word). A colour wave ripples through, stressing the bitfield insert/extract codegen — and/ora/shift, no libcalls — bit-for-bit identical host vs target. Compiler stress-test #29b.',
     keys: 'Self-running — no controls',
   },
+  {
+    slug: 'lsystem',
+    title: 'L-System Plant',
+    desc: 'An L-system fractal plant grown by string rewriting — five generations of in-place memmove + memcpy + strlen over a 1 700-byte buffer, then a turtle walks the result with a bracket push/pop stack. The first demo in the battery to call the string libcalls. Bit-for-bit identical to host x86. Compiler stress-test #23.',
+    keys: 'Self-running — no controls',
+  },
 ];
 ---
 
-<Base title="SNES Demos — bioHACK•NET" description="Fourteen in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, the CORDIC Rotator, Doom Fire, and the Sorting Race. Play them in your browser.">
+<Base title="SNES Demos — bioHACK•NET" description="Fifteen in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — Blossom, Space Invaders, Spirograph, Wireframe 3-D Solid, π Spigot + Monte-Carlo, Double Pendulum, 1-D Cellular Automaton, N-body Orbits, Reaction-Diffusion, Bignum Factorial, Newton's Fractal, the CORDIC Rotator, Doom Fire, the Sorting Race, and L-System Plant. Play them in your browser.">
   <main class="gl-wrap">
 
     <header class="gl-hero">
