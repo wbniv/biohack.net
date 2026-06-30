@@ -23,6 +23,7 @@ const notes = [
   ['Bracket push/pop stack', "The turtle's [ saves the full turtle state (position, heading, depth) and ] restores it, so each frond returns to its branch point. This is the battery's save/restore stack member — the push/pop path no fractal or simulation demo runs"],
   ['Bit-exact differential', 'String rewriting and turtle interpretation are exact byte/integer operations (position Q8.8 in int32, heading 0..255 indexing the shared SINCOS LUT). Exact ops reproduce bit-for-bit on host x86 and on the console — a memmove or strlen miscompile corrupts the string, a bracket stack bug scrambles the path, and the gate CRC diverges immediately. Verified default == +mos-a16 == +mos-xy16 == 0x79C3'],
   ['Found a compiler bug', 'The gate caught a +mos-xy16 miscompile: SEP #$10 (inserted by the REP/SEP scheduler for an intervening ldy) zeroed the high byte of the 16-bit index register between the ldx that loaded i and the lda abs,X that read buf[i]. For i ≥ 256 the wrong byte was read. Fixed in MOSInsertREPSEP by cloning the last X-writer instruction after the repair REP'],
+  ['Far-pointer reveal (high WRAM)', "After the string is rewritten, the interpreter records every line segment into a FAR buffer at $7E2000 in the SNES's 128 KiB WRAM — exercising the +mos-a16 24-bit far-pointer STORE path. The main loop then replays a few segments per frame, reading them back from far memory (the far LOAD path), so the plant draws itself stroke by stroke. The far path is display-only (the differential gate stays far-pointer-free), but it adds the high-memory codegen coverage the low-WRAM-only version never touched — and the picture proves it: a far store/load miscompile would scramble the replayed plant"],
 ];
 ---
 
@@ -53,8 +54,8 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running demo — the fractal plant grows during the title card, then
-        blooms at full brightness. <em>(Rewriting 1 690 symbols takes a moment.)</em></p>
+      <p class="rp-keys">Self-running demo — after the title card the plant draws itself stroke by
+        stroke (trunk first, then branch by branch). <em>(Rewriting 1 690 symbols takes a moment.)</em></p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus. Tab away and it pauses.</p>
     </section>

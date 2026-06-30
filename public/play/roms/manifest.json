@@ -288,17 +288,6 @@
       }
     },
     {
-      "id": "lsystem",
-      "title": "L-System Plant",
-      "selfcheck": {
-        "off": "0x20",
-        "len": 2,
-        "want": "0x79C3",
-        "frames": 600,
-        "label": "string-rewrite"
-      }
-    },
-    {
       "id": "cordic",
       "title": "CORDIC Rotator",
       "selfcheck": {
@@ -384,6 +373,17 @@
         "want": "0xEF0B",
         "frames": 500,
         "label": "bhut"
+      }
+    },
+    {
+      "id": "lsystem",
+      "title": "L-System Plant",
+      "selfcheck": {
+        "off": "0x20",
+        "len": 2,
+        "want": "0x79C3",
+        "frames": 600,
+        "label": "lsystem"
       }
     }
   ]
