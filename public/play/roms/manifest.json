@@ -484,6 +484,17 @@
         "frames": 500,
         "label": "poolfx"
       }
+    },
+    {
+      "id": "duff",
+      "title": "Dissolve Transition (Duff's Device)",
+      "selfcheck": {
+        "off": "0x6a",
+        "len": 2,
+        "want": "0x5531",
+        "frames": 500,
+        "label": "duff"
+      }
     }
   ]
 }
