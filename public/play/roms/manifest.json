@@ -726,6 +726,17 @@
         "frames": 500,
         "label": "hull"
       }
+    },
+    {
+      "id": "editdist",
+      "title": "Edit-Distance DP",
+      "selfcheck": {
+        "off": "0x73",
+        "len": 2,
+        "want": "0xFB59",
+        "frames": 500,
+        "label": "editdist"
+      }
     }
   ]
 }
