@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'nrecip',
+    title: 'Newton Reciprocal Floor',
+    desc: 'A scrolling perspective checkerboard floor whose 1/z depth is a multiply-only Newton-Raphson fixed-point reciprocal — no hardware divide, no divide libcall. Compiler stress-test #47.',
+    keys: 'Self-running — the floor scrolls toward the horizon',
+  },
+  {
     slug: 'qsortviz',
     title: 'qsort Sort Visualizer',
     desc: 'Bars reshuffle then re-sort under libc qsort with a rotating function-pointer comparator. Building it caught a real backend crash — an unlegalized G_SCMP three-way compare — since fixed. Compiler stress-test #46.',

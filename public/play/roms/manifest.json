@@ -528,6 +528,17 @@
         "frames": 500,
         "label": "qsortviz"
       }
+    },
+    {
+      "id": "nrecip",
+      "title": "Newton-Raphson Reciprocal Floor",
+      "selfcheck": {
+        "off": "0x6e",
+        "len": 2,
+        "want": "0x044A",
+        "frames": 500,
+        "label": "nrecip"
+      }
     }
   ]
 }
