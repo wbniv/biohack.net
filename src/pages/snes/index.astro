@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'seqvm',
+    title: 'Step-Sequencer VM (Sparse Switch)',
+    desc: 'A tiny register VM runs a looping bytecode song driving an 8-bar equalizer; its opcode dispatch is a sparse switch (14 non-contiguous cases) the compiler must lower to a binary-search comparison tree, not a jump table. Compiler stress-test #37.',
+    keys: 'Self-running — the VM plays its bytecode song on its own',
+  },
+  {
     slug: 'polyfill',
     title: 'Polygon Scanline Fill (VLA)',
     desc: 'A filled star tumbles and morphs its point count while an even-odd scanline fill rasterises it — the per-scanline crossing table is a C99 variable-length array (int16_t xs[nv]), a runtime-sized stack frame (alloca/VLA). Compiler stress-test #36.',

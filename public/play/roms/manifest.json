@@ -440,6 +440,17 @@
         "frames": 700,
         "label": "polyfill"
       }
+    },
+    {
+      "id": "seqvm",
+      "title": "Sparse-Switch Step-Sequencer VM",
+      "selfcheck": {
+        "off": "0x6c",
+        "len": 2,
+        "want": "0xE8C5",
+        "frames": 500,
+        "label": "seqvm"
+      }
     }
   ]
 }
