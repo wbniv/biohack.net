@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'msquares',
+    title: 'Marching Squares',
+    desc: 'Iso-contours of a moving metaball field extracted by marching squares — a 16-case edge lookup indexed by the four corner signs, plus edge-crossing interpolation. Blobs merge and split under a traced outline. Compiler stress-test #71.',
+    keys: 'Self-running — blobs merge and split under a contour',
+  },
+  {
     slug: 'dither',
     title: 'Floyd-Steinberg Dither',
     desc: 'A smooth gradient resolving into a four-level dither by Floyd-Steinberg error diffusion — each pixel\'s signed quantisation residual is spread to its down-right neighbours (7/16, 3/16, 5/16, 1/16). Compiler stress-test #70.',

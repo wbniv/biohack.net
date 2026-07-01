@@ -781,6 +781,17 @@
         "frames": 2000,
         "label": "dither"
       }
+    },
+    {
+      "id": "msquares",
+      "title": "Marching Squares",
+      "selfcheck": {
+        "off": "0x72",
+        "len": 2,
+        "want": "0x86A7",
+        "frames": 1800,
+        "label": "msquares"
+      }
     }
   ]
 }
