@@ -429,6 +429,17 @@
         "frames": 700,
         "label": "iir-scope"
       }
+    },
+    {
+      "id": "polyfill",
+      "title": "Polygon Scanline Fill (VLA)",
+      "selfcheck": {
+        "off": "0x5c",
+        "len": 2,
+        "want": "0x8ED9",
+        "frames": 700,
+        "label": "polyfill"
+      }
     }
   ]
 }

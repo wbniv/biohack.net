@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'polyfill',
+    title: 'Polygon Scanline Fill (VLA)',
+    desc: 'A filled star tumbles and morphs its point count while an even-odd scanline fill rasterises it — the per-scanline crossing table is a C99 variable-length array (int16_t xs[nv]), a runtime-sized stack frame (alloca/VLA). Compiler stress-test #36.',
+    keys: 'Self-running — the star tumbles and morphs on its own',
+  },
+  {
     slug: 'iir-scope',
     title: 'IIR Resonant-Filter Scope',
     desc: 'Four 2-pole IIR resonators plucked into a live oscilloscope — a recursive feedback chain (y[n] from y[n-1], y[n-2]) that, unlike a feed-forward FFT, cannot be reordered. Compiler stress-test #48.',
