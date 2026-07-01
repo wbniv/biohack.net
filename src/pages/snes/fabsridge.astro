@@ -1,0 +1,167 @@
+---
+// /snes/fabsridge — playable in-browser Fabs Ridgeline SNES demo.
+// Compiler stress-test #80: G_FABS via __builtin_fabsf in tent-map iteration.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/fabsridge.sfc', 'preview/fabsridge.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// One tent-map step — each op a separate statement (no FMA fusion)
+float two_x   = 2.0f * x;           // __mulsf3
+float shifted = two_x - 1.0f;       // __subsf3
+float abs_val = __builtin_fabsf(shifted);  // G_FABS → legalizeFAbs inline AND
+float next    = 1.0f - abs_val;     // __subsf3
+
+// legalizeFAbs (MOSLegalizerInfo.cpp:3410) expands to:
+// AND src, 0x7FFFFFFF   ← clear bit 31 (sign bit); zero libcall`;
+
+const notes = [
+  ['G_FABS', 'The float absolute-value operation legalizes through a TARGET-CUSTOM path (MOSLegalizerInfo.cpp:369 → legalizeFAbs at :3410) that emits a single AND instruction, clearing only the sign bit (bit 31 of the 32-bit float representation). No libcall — the SDK has no fabsf symbol because inline sign-clear is cheaper and sufficient.'],
+  ['tent map', 'x → 1 − |2x − 1| is a chaotic map on [0,1] with a V-notch kink at x=0.5. The absolute value of (2x−1) creates the kink; peaks in the terrain profile correspond to seeds that iterate close to x=0.5. Three iterations are enough to produce a varied ridgeline.'],
+  ['distinct from #57 and #45', '#57 medfilt uses integer G_ABS (a different node, different legalizer at :281) on int16_t values — never a float sign-bit operation. #45 metaball type-puns a float to uint32_t and back through the integer ALU — also never G_FABS. This is the first demo that generates the float sign-clear path.'],
+  ['negative-zero edge', 'fabsf(−0.0f) = +0.0f (IEEE 754 negative zero canonicalizes to positive zero). The legalizeFAbs comment at :3420 explicitly guards this: the AND with 0x7FFFFFFF also clears the sign bit of −0.0f → +0.0f, matching host behaviour.'],
+  ['GATE_N = 120', 'With 128 columns and a rotating-XOR accumulator of period 16, a gate of exactly 128 steps reduces to 0 (8 full rotations cancel all contributions). Using 120 steps (a non-multiple of 16) breaks the period and gives a non-trivial CRC 0x161A.'],
+];
+---
+
+<Base title="Fabs Ridgeline — bioHACK•NET" description="An animated terrain ridgeline on a Super Nintendo driven by the tent-map iteration using __builtin_fabsf as the absolute-value core, targeting the backend's inline sign-bit AND path. Compiler stress-test #80.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Fabs Ridgeline</h1>
+      <p class="rp-lede">
+        An animated terrain ridgeline on a Super Nintendo driven by the
+        <a href="https://en.wikipedia.org/wiki/Tent_map">tent map</a>
+        iteration using <code>__builtin_fabsf</code> as the hot absolute-value operation.
+        The kink at x=0.5 creates sharp V-shaped peaks; as the seeds drift each frame the
+        terrain undulates. This is the first demo to fire the LLVM backend's
+        TARGET-CUSTOM <code>legalizeFAbs</code> path — a single inline
+        <code>AND src, 0x7FFFFFFF</code> that clears the float sign bit with no libcall.
+        Compiler stress-test #80 of the battery.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Fabs Ridgeline">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the terrain undulates as the tent-map seeds drift.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The tent map <em>f(x) = 1 − |2x − 1|</em> is a simple chaotic function on [0,1]. The
+        absolute value creates a sharp V-notch: points below x=0.5 reflect up, points above reflect
+        down. After a few iterations from different seeds, the outputs spread across [0,1] in a
+        pattern that depends sensitively on the starting value.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Each of the 16 tile columns gets a height from three tent-map iterations seeded by
+        (column, time). Sky tiles fill above the ridge, a bright cap marks the ridge line, medium
+        and dark tiles fill below. The seeds shift by a small offset each frame so the terrain
+        slowly undulates. The V-notches in the tent map appear as sharp triangular peaks and valleys.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0x161A</code> — a fold of 120 tent-map column heights) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'fabsridge';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x59, len: 2, want: 0x161A, frames: 500, label: 'tent-map CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

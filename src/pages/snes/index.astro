@@ -128,6 +128,12 @@ const demos = [
     keys: 'Self-running — the image scrambles and reassembles',
   },
   {
+    slug: 'fabsridge',
+    title: 'Fabs Ridgeline',
+    desc: 'An animated terrain ridgeline driven by the tent-map iteration using __builtin_fabsf as the hot op, targeting the backend\'s inline sign-bit AND path (legalizeFAbs at :3410). V-notch peaks and valleys drift each frame. Compiler stress-test #80.',
+    keys: 'Self-running — the terrain undulates as seeds drift',
+  },
+  {
     slug: 'funnelkal',
     title: 'Funnel-Shift Kaleidoscope',
     desc: 'An 8-fold kaleidoscope driven by two-source funnel shifts — fshl(A,B,k) and fshr(B,A,k) with A≠B — forcing the LLVM backend\'s "terrible" double-source shift+OR expansion that no prior demo triggered. Compiler stress-test #73.',

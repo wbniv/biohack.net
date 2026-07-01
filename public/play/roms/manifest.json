@@ -814,6 +814,17 @@
         "frames": 500,
         "label": "funnelkal"
       }
+    },
+    {
+      "id": "fabsridge",
+      "title": "Fabs Ridgeline",
+      "selfcheck": {
+        "off": "0x59",
+        "len": 2,
+        "want": "0x161A",
+        "frames": 500,
+        "label": "fabs-ridgeline"
+      }
     }
   ]
 }
