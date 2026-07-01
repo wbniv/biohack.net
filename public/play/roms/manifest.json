@@ -649,6 +649,17 @@
         "frames": 500,
         "label": "domcol"
       }
+    },
+    {
+      "id": "cosmzoom",
+      "title": "Cosmic Zoom Ruler",
+      "selfcheck": {
+        "off": "0x54",
+        "len": 2,
+        "want": "0x502F",
+        "frames": 500,
+        "label": "cosmzoom"
+      }
     }
   ]
 }
