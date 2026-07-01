@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'sodo',
+    title: 'Signed 64-bit Odometer',
+    desc: 'A vast signed odometer ticks through zero, each value split into decimal digits by the v%10 / v/=10 loop — exercising the sign-corrected 64-bit divide+modulo libcall __divmoddi4 on a CPU with no hardware divide. Compiler stress-test #43.',
+    keys: 'Self-running — the odometer tape ticks through zero',
+  },
+  {
     slug: 'duff',
     title: 'Duff Dissolve',
     desc: 'One image dissolves into the next in scattered bursts, each tile copied by the classic Duff\'s device — a switch whose case labels land in the middle of a do/while loop, forming irreducible control flow. Compiler stress-test #42.',

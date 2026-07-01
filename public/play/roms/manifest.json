@@ -495,6 +495,17 @@
         "frames": 500,
         "label": "duff"
       }
+    },
+    {
+      "id": "sodo",
+      "title": "Signed 64-bit Odometer",
+      "selfcheck": {
+        "off": "0x3a",
+        "len": 2,
+        "want": "0xD2A2",
+        "frames": 500,
+        "label": "sodo"
+      }
     }
   ]
 }
