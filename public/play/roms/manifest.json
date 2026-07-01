@@ -748,6 +748,17 @@
         "frames": 500,
         "label": "huffman"
       }
+    },
+    {
+      "id": "perlin",
+      "title": "Perlin Noise",
+      "selfcheck": {
+        "off": "0x73",
+        "len": 2,
+        "want": "0xA72D",
+        "frames": 500,
+        "label": "perlin"
+      }
     }
   ]
 }
