@@ -803,6 +803,17 @@
         "frames": 500,
         "label": "hilbert gate CRC host==bsnes-jg"
       }
+    },
+    {
+      "id": "funnelkal",
+      "title": "Funnel-Shift Kaleidoscope",
+      "selfcheck": {
+        "off": "0x5c",
+        "len": 2,
+        "want": "0xEED4",
+        "frames": 500,
+        "label": "funnelkal"
+      }
     }
   ]
 }

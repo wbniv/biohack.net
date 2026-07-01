@@ -1,0 +1,174 @@
+---
+// /snes/funnelkal — playable in-browser Funnel-Shift Kaleidoscope SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/funnelkal.sfc.
+// Compiler stress-test #73: G_FSHL/G_FSHR two-source funnel shift.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/funnelkal.sfc', 'preview/funnelkal.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Two-source funnel shift: A != B, so the compiler
+// cannot simplify to a rotate.
+A = ox*17 + oy*7  + t*5;          // source 1
+B = ox*11 + oy*13 + t*3 + 0xA5A5; // source 2
+k = (ox + oy*3 + t) & 15;          // shift count [0..15]
+
+L = fshl(A, B, k);  // (A<<k) | (B>>(16-k))
+R = fshr(B, A, k);  // (B<<(16-k)) | (A>>k)
+colour = (L ^ R) >> 12;  // top nibble → palette [0..3]`;
+
+const notes = [
+  ['G_FSHL / G_FSHR', 'Two-source funnel shift: concatenate hi:lo into 32 bits, shift, take the relevant 16-bit slice. When hi==lo the backend can combine it into a single G_ROTL/ROTR. With hi≠lo the combiner refuses and the full double-source shift+OR expansion fires.'],
+  ['the "terrible" lowering', 'LLVM\'s LegalizerHelper at line 317 contains a comment saying the default funnel lowering is "terrible" because it expands to three operations (shift A left, shift B right, OR) each of which may itself expand. On the 65816, variable shifts already invoke a shift loop or libcall — so the funnel produces a sequence the backend has never had to emit before.'],
+  ['why A ≠ B matters', 'matchFunnelShiftToRotate scans for the pattern (x << k) | (x >> (w−k)) with the same operand x on both sides. With independent A and B the scan fails, the rescue path is skipped, and the raw G_FSHL/G_FSHR nodes reach the target legalizer unchanged. No prior demo among the 72 ever triggered this path.'],
+  ['8-fold symmetry', 'Each tile\'s (x,y) coordinates are folded into the first octant (abs then sort) before computing A and B, so the mandala is symmetric under reflection and 90° rotation. The same computation runs for all eight octant reflections — the mandala is a genuine 8-fold kaleidoscope.'],
+  ['integer-exact gate', 'Funnel shift on a fixed-width uint16 is a pure bitwise operation: no rounding, no UB, bit-identical host vs target. The differential gate folds all 256 tiles over one pass; a wrong lowering (e.g. treating A=B when they\'re not) diverges the CRC immediately.'],
+];
+---
+
+<Base title="Funnel-Shift Kaleidoscope — bioHACK•NET" description="An 8-fold kaleidoscope on a Super Nintendo driven by two-source funnel shifts: __builtin_elementwise_fshl(A,B,k) and fshr(B,A,k) with A≠B, forcing the LLVM backend's 'terrible' double-source shift+OR expansion. Compiler stress-test #73.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Funnel-Shift Kaleidoscope</h1>
+      <p class="rp-lede">
+        An 8-fold-symmetric kaleidoscope on a Super Nintendo driven by <em>two-source funnel shifts</em>:
+        <code>__builtin_elementwise_fshl(A,B,k)</code> and <code>fshr(B,A,k)</code> with A&nbsp;≠&nbsp;B.
+        Because the two sources differ, the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> backend cannot fold them into a simple
+        rotate — it must expand each call into a full double-source shift+OR sequence, the "terrible" default
+        lowering the backend source itself warns about. Compiler stress-test #73 of the battery,
+        exercising a code path none of the first 72 demos ever triggered.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Funnel-Shift Kaleidoscope">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the mandala animates as the funnel-shift count sweeps.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        A <a href="https://en.wikipedia.org/wiki/Funnel_shift">funnel shift</a> takes two operands and a
+        count: place hi in the top half and lo in the bottom half of a double-width integer, shift the whole
+        thing, and take the relevant half. When hi and lo are the <em>same</em> value the result is a plain
+        rotation; with different values it's a genuine two-source mix. This demo forces the latter by
+        building A and B from independent linear combinations, then XOR-ing the left and right funnel results
+        to colour each cell of a 16×16 tile mandala with 8-fold symmetry.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        ox/oy are the octant-folded tile coordinates (absolute value then sorted so ox ≤ oy), giving the
+        8-fold symmetry. k is a runtime variable — the compiler can't constant-fold the shift count, so the
+        full funnel expansion must be emitted. The animation tick t changes each frame, morphing the pattern.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (gate CRC <code>0xEED4</code> —
+        a rotating-XOR fold of <code>fk_cell()</code> over all 256 tiles) live in this tab. No far
+        pointers — <code>host == default == +mos-a16 == +mos-xy16</code>, <code>-verify</code> clean.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'funnelkal';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x5c, len: 2, want: 0xEED4, frames: 500, label: 'funnel-shift CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

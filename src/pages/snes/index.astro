@@ -128,6 +128,12 @@ const demos = [
     keys: 'Self-running — the image scrambles and reassembles',
   },
   {
+    slug: 'funnelkal',
+    title: 'Funnel-Shift Kaleidoscope',
+    desc: 'An 8-fold kaleidoscope driven by two-source funnel shifts — fshl(A,B,k) and fshr(B,A,k) with A≠B — forcing the LLVM backend\'s "terrible" double-source shift+OR expansion that no prior demo triggered. Compiler stress-test #73.',
+    keys: 'Self-running — the mandala animates as the shift count sweeps',
+  },
+  {
     slug: 'bitcensus',
     title: 'Bit-Census Field',
     desc: 'Every cell\'s colour is a bit-population count of its coordinates — popcount, count-leading-zeros, count-trailing-zeros, parity — cycling the four __builtin_*ll intrinsics, which inline-lower to SWAR bit-count trees. XOR fractal, magnitude bands, ruler, checker. Compiler stress-test #53.',
