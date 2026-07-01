@@ -506,6 +506,17 @@
         "frames": 500,
         "label": "sodo"
       }
+    },
+    {
+      "id": "metaball",
+      "title": "Union Type-Pun Metaballs",
+      "selfcheck": {
+        "off": "0x6e",
+        "len": 2,
+        "want": "0xAEBE",
+        "frames": 500,
+        "label": "metaball"
+      }
     }
   ]
 }
