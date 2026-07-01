@@ -737,6 +737,17 @@
         "frames": 500,
         "label": "editdist"
       }
+    },
+    {
+      "id": "huffman",
+      "title": "Huffman Decode",
+      "selfcheck": {
+        "off": "0x84",
+        "len": 2,
+        "want": "0xE8E4",
+        "frames": 500,
+        "label": "huffman"
+      }
     }
   ]
 }
