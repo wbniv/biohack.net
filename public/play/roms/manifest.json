@@ -627,6 +627,17 @@
         "frames": 700,
         "label": "rotozoom"
       }
+    },
+    {
+      "id": "medfilt",
+      "title": "Median Denoiser",
+      "selfcheck": {
+        "off": "0x7b",
+        "len": 2,
+        "want": "0x87FE",
+        "frames": 500,
+        "label": "medfilt"
+      }
     }
   ]
 }

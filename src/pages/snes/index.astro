@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'medfilt',
+    title: 'Median Denoiser',
+    desc: 'Salt-and-pepper noise cleaned by a 3x3 median filter, computed as a 19-comparator branchless min/max sorting network (no multiply, no divide). A sweeping wipe shows denoised vs raw. Compiler stress-test #57.',
+    keys: 'Self-running — the wipe sweeps between noisy and clean',
+  },
+  {
     slug: 'rotozoom',
     title: 'Rotozoom',
     desc: 'The demoscene spin-zoom: each cell samples a procedural texture at a Q16.16 rotated/scaled coordinate, using the widening multiply-high (keep the middle of a 64-bit product). On a chip with no multiply, it measures how that lowers. Compiler stress-test #56.',
