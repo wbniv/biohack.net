@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'divclock',
+    title: 'Division Clock + Odometer',
+    desc: 'A sweeping analog clock + rolling odometer, splitting a counter into h:m:s and base-10 digits with compile-time constant divides. A probe for magic-reciprocal strength reduction — with the measured finding that llvm-mos keeps the __udiv libcall on this soft-multiply target. Compiler stress-test #39.',
+    keys: 'Self-running — the clock sweeps and the odometer rolls on their own',
+  },
+  {
     slug: 'seqvm',
     title: 'Step-Sequencer VM (Sparse Switch)',
     desc: 'A tiny register VM runs a looping bytecode song driving an 8-bar equalizer; its opcode dispatch is a sparse switch (14 non-contiguous cases) the compiler must lower to a binary-search comparison tree, not a jump table. Compiler stress-test #37.',
