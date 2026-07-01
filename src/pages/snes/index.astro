@@ -12,458 +12,544 @@ const previewV = (slug: string) => {
   catch { return ''; }
 };
 
+const categories = [
+  { id: 'fractals',   label: 'Fractals' },
+  { id: 'physics',    label: 'Physics & Simulation' },
+  { id: 'cellular',   label: 'Cellular Automata' },
+  { id: 'motion',     label: 'Motion & Curves' },
+  { id: 'algorithms', label: 'Algorithms & Data' },
+  { id: 'rendering',  label: 'Rendering & Graphics' },
+  { id: 'signals',    label: 'Signals & Audio' },
+  { id: 'bignums',    label: 'Big Numbers' },
+  { id: 'ciphers',    label: 'Ciphers & Bit Tricks' },
+  { id: 'classics',   label: 'Games & Classics' },
+];
+
 const demos = [
   {
     slug: 'grid3d',
     title: '3-D Grid Voxel Life',
     desc: 'A 3-D cellular automaton in a true uint8 grid[6][6][6] array, tumbling as a depth-shaded voxel cube — every grid[z][y][x] makes the compiler generate the z*36+y*6+x stride arithmetic. Compiler stress-test #72.',
     keys: 'Self-running — a 3-D automaton tumbles as a voxel cube',
+    category: 'cellular',
   },
   {
     slug: 'msquares',
     title: 'Marching Squares',
     desc: 'Iso-contours of a moving metaball field extracted by marching squares — a 16-case edge lookup indexed by the four corner signs, plus edge-crossing interpolation. Blobs merge and split under a traced outline. Compiler stress-test #71.',
     keys: 'Self-running — blobs merge and split under a contour',
+    category: 'cellular',
   },
   {
     slug: 'dither',
     title: 'Floyd-Steinberg Dither',
     desc: 'A smooth gradient resolving into a four-level dither by Floyd-Steinberg error diffusion — each pixel\'s signed quantisation residual is spread to its down-right neighbours (7/16, 3/16, 5/16, 1/16). Compiler stress-test #70.',
     keys: 'Self-running — the gradient resolves into dither',
+    category: 'rendering',
   },
   {
     slug: 'gouraud',
     title: 'Gouraud Triangle',
     desc: 'A tumbling, smoothly colour-interpolated triangle drawn by barycentric edge-function rasterisation — three signed cross-product edge functions decide inside/outside and their values shade each pixel. Compiler stress-test #69.',
     keys: 'Self-running — the shaded triangle tumbles',
+    category: 'rendering',
   },
   {
     slug: 'perlin',
     title: 'Perlin Noise',
     desc: 'A flowing smoke/marble field coloured by fixed-point Perlin gradient noise — a permutation table, the 6t^5-15t^4+10t^3 fade polynomial, gradient dot products and lerp. Compiler stress-test #68.',
     keys: 'Self-running — the noise field drifts like smoke',
+    category: 'rendering',
   },
   {
     slug: 'huffman',
     title: 'Huffman Decode',
     desc: 'A Huffman-coded image decoding in bit by bit — a bit-granular stream reader threading a prefix tree, left on a 0 and right on a 1, the classic progressive image reveal. Compiler stress-test #67.',
     keys: 'Self-running — the coded image decodes in, then replays',
+    category: 'algorithms',
   },
   {
     slug: 'editdist',
     title: 'Edit-Distance DP',
     desc: 'The Levenshtein edit-distance table filled in and backtracked — a 2-D dynamic-programming grid with a min-of-three recurrence, drawn as a cost heat-map with the optimal alignment path traced through it. Compiler stress-test #66.',
     keys: 'Self-running — the table and path cycle through word pairs',
+    category: 'algorithms',
   },
   {
     slug: 'hull',
     title: 'Convex Hull',
     desc: 'A drifting point cloud wrapped by a rubber-band convex hull, recomputed each frame by gift-wrapping — built entirely from the sign of a 2-D cross product (left turn or right turn?). Compiler stress-test #65.',
     keys: 'Self-running — the hull rubber-bands around the points',
+    category: 'algorithms',
   },
   {
     slug: 'radix',
     title: 'Radix Sort',
     desc: 'A non-comparison sort: bars re-bucketed by counting sort — histogram, prefix-sum, stable scatter — one digit at a time until they land in a clean ascending gradient. No comparisons anywhere. Compiler stress-test #64.',
     keys: 'Self-running — bars re-bucket pass by pass, then reshuffle',
+    category: 'algorithms',
   },
   {
     slug: 'fenwick',
     title: 'Fenwick Tree',
     desc: 'A binary-indexed tree maintaining the running integral of a live signal, driven by the i & -i low-bit-isolation trick — hopping up and down a virtual tree of partial sums. Compiler stress-test #63.',
     keys: 'Self-running — the signal moves, its integral reshapes',
+    category: 'algorithms',
   },
   {
     slug: 'percol',
     title: 'Union-Find Percolation',
     desc: 'Random bonds join neighbouring cells; a wet region spreads from the top until it percolates to the bottom, tracked by a disjoint-set (union-find) with path compression — pointer-chasing that flattens the path in place. Compiler stress-test #62.',
     keys: 'Self-running — the wet region spreads, then reseeds',
+    category: 'cellular',
   },
   {
     slug: 'dhmix',
     title: 'Diffie-Hellman Colour-Mixer',
     desc: 'Two parties agree on a shared secret colour via 64-bit modular exponentiation — the key exchange behind HTTPS. The 64-bit maths crashed the backend until this demo found and fixed the bug (patch 0017). Compiler stress-test #61.',
     keys: 'Self-running — the shared secret is always agreed',
+    category: 'bignums',
   },
   {
     slug: 'multibase',
     title: 'Multi-Base Clock',
     desc: 'One counter shown in decimal, dozenal, hex and sexagesimal at once, each digit split with the standard-library div() returning a div_t (quotient+remainder) struct by value, plus a 64-bit odometer via lldiv(). Compiler stress-test #60.',
     keys: 'Self-running — the same instant ticks in four bases',
+    category: 'bignums',
   },
   {
     slug: 'cosmzoom',
     title: 'Cosmic Zoom Ruler',
     desc: 'A 64-bit scale growing through the powers of ten, swept across a logarithmic ruler by converting it to float (__floatundisf) and back (__fixunssfdi) — the 64-bit-integer-to-float conversion. Compiler stress-test #59.',
     keys: 'Self-running — the bar sweeps up the powers of ten',
+    category: 'bignums',
   },
   {
     slug: 'domcol',
     title: 'Domain Colouring',
     desc: 'The poles of a rational complex map (z*z-1)/(z*z+c) painted on a Super Nintendo, detected with NaN / unordered floating-point comparisons (x != x). Software float, no FPU; develops a row at a time, then shimmers. Compiler stress-test #58.',
     keys: 'Self-running — the field develops, then the palette shimmers',
+    category: 'fractals',
   },
   {
     slug: 'medfilt',
     title: 'Median Denoiser',
     desc: 'Salt-and-pepper noise cleaned by a 3x3 median filter, computed as a 19-comparator branchless min/max sorting network (no multiply, no divide). A sweeping wipe shows denoised vs raw. Compiler stress-test #57.',
     keys: 'Self-running — the wipe sweeps between noisy and clean',
+    category: 'rendering',
   },
   {
     slug: 'rotozoom',
     title: 'Rotozoom',
     desc: 'The demoscene spin-zoom: each cell samples a procedural texture at a Q16.16 rotated/scaled coordinate, using the widening multiply-high (keep the middle of a 64-bit product). On a chip with no multiply, it measures how that lowers. Compiler stress-test #56.',
     keys: 'Self-running — the texture spins and breathes',
+    category: 'rendering',
   },
   {
     slug: 'gf256',
     title: 'GF(2⁸) Galois Field',
     desc: 'A morphing finite-field plaid coloured by GF(2⁸) carryless multiplies — the arithmetic under Reed-Solomon and QR codes: log/antilog tables and xor, no carry chain. A live RS syndrome lights up when a symbol is corrupted. Compiler stress-test #55.',
     keys: 'Self-running — the field plaid morphs, the syndrome updates',
+    category: 'ciphers',
   },
   {
     slug: 'bitshuffle',
     title: 'Perfect-Shuffle Transition',
     desc: 'An image scrambles into its bit-reversed "butterfly" order and reassembles — the perfect shuffle from the FFT — driven by __builtin_bitreverse32 (its own inverse) and __builtin_bswap32, which inline-lower on the 65816. Compiler stress-test #54.',
     keys: 'Self-running — the image scrambles and reassembles',
-  },
-  {
-    slug: 'fabsridge',
-    title: 'Fabs Ridgeline',
-    desc: 'An animated terrain ridgeline driven by the tent-map iteration using __builtin_fabsf as the hot op, targeting the backend\'s inline sign-bit AND path (legalizeFAbs at :3410). V-notch peaks and valleys drift each frame. Compiler stress-test #80.',
-    keys: 'Self-running — the terrain undulates as seeds drift',
+    category: 'ciphers',
   },
   {
     slug: 'funnelkal',
     title: 'Funnel-Shift Kaleidoscope',
     desc: 'An 8-fold kaleidoscope driven by two-source funnel shifts — fshl(A,B,k) and fshr(B,A,k) with A≠B — forcing the LLVM backend\'s "terrible" double-source shift+OR expansion that no prior demo triggered. Compiler stress-test #73.',
     keys: 'Self-running — the mandala animates as the shift count sweeps',
+    category: 'rendering',
   },
   {
     slug: 'bitcensus',
     title: 'Bit-Census Field',
     desc: 'Every cell\'s colour is a bit-population count of its coordinates — popcount, count-leading-zeros, count-trailing-zeros, parity — cycling the four __builtin_*ll intrinsics, which inline-lower to SWAR bit-count trees. XOR fractal, magnitude bands, ruler, checker. Compiler stress-test #53.',
     keys: 'Self-running — the field scrolls and the intrinsic cycles',
+    category: 'ciphers',
   },
   {
     slug: 'disbits',
     title: 'Cross-Byte Bitfields',
     desc: 'A 65816 instruction decoder packs eight fields into a 32-bit word — two of them straddle byte boundaries (group crosses bit 16, flags crosses bit 24), forcing multi-byte shift and mask. Compiler stress-test #52.',
     keys: 'Self-running — decoded fields colour a scrolling map',
+    category: 'ciphers',
   },
   {
     slug: 'critters',
     title: 'Protothread Critters',
     desc: 'A swarm of critters, each a resumable protothread (coroutine) that yields every frame and resumes its scripted patrol via a saved continuation index — case labels inside loops. Compiler stress-test #51.',
     keys: 'Self-running — each critter runs its own patrol',
+    category: 'classics',
   },
   {
     slug: 'cgrade',
     title: 'Many-Arg Color Grade',
     desc: 'A ten-coefficient color grade re-grades a gradient through looks. So many arguments that the extras spill onto the soft stack — the register-overflow calling convention. Compiler stress-test #50.',
     keys: 'Self-running — the scene re-grades through looks',
+    category: 'rendering',
   },
   {
     slug: 'lzdec',
     title: 'LZ77 Decompress Reveal',
     desc: 'A compressed diamond image loads in on-screen, decoded by an LZ77 byte-stream decoder that copies back-references from its own output buffer (sliding window, overlap = RLE). Compiler stress-test #49.',
     keys: 'Self-running — the compressed image decodes and reveals',
+    category: 'algorithms',
   },
   {
     slug: 'nrecip',
     title: 'Newton Reciprocal Floor',
     desc: 'A scrolling perspective checkerboard floor whose 1/z depth is a multiply-only Newton-Raphson fixed-point reciprocal — no hardware divide, no divide libcall. Compiler stress-test #47.',
     keys: 'Self-running — the floor scrolls toward the horizon',
+    category: 'rendering',
   },
   {
     slug: 'qsortviz',
     title: 'qsort Sort Visualizer',
     desc: 'Bars reshuffle then re-sort under libc qsort with a rotating function-pointer comparator. Building it caught a real backend crash — an unlegalized G_SCMP three-way compare — since fixed. Compiler stress-test #46.',
     keys: 'Self-running — bars reshuffle then re-sort',
+    category: 'algorithms',
   },
   {
     slug: 'metaball',
     title: 'Type-Pun Metaballs',
     desc: 'Gooey blobs merge and split, their 1/dist glow computed by the Quake III fast inverse square root — the union{float;uint32} bit hack with magic constant 0x5f3759df. Compiler stress-test #45.',
     keys: 'Self-running — the blobs merge and split on their own',
+    category: 'rendering',
   },
   {
     slug: 'sodo',
     title: 'Signed 64-bit Odometer',
     desc: 'A vast signed odometer ticks through zero, each value split into decimal digits by the v%10 / v/=10 loop — exercising the sign-corrected 64-bit divide+modulo libcall __divmoddi4 on a CPU with no hardware divide. Compiler stress-test #43.',
     keys: 'Self-running — the odometer tape ticks through zero',
+    category: 'bignums',
   },
   {
     slug: 'duff',
     title: 'Duff Dissolve',
     desc: 'One image dissolves into the next in scattered bursts, each tile copied by the classic Duff\'s device — a switch whose case labels land in the middle of a do/while loop, forming irreducible control flow. Compiler stress-test #42.',
     keys: 'Self-running — one image dissolves into the next',
+    category: 'algorithms',
   },
   {
     slug: 'poolfx',
     title: 'Free-List Pool Allocator',
     desc: 'A sparking particle fountain whose 48 fixed slots are recycled through a manual singly-linked LIFO free list threaded through the slots — alloc pops the head, free pushes it back, no malloc. Compiler stress-test #41.',
     keys: 'Self-running — sparks are born and die as the pool recycles slots',
+    category: 'classics',
   },
   {
     slug: 'crctex',
     title: 'CRC32 Hash-Marble Texture',
     desc: 'A flowing procedural field where every cell\'s colour is a real CRC32 (poly 0xEDB88320) of its coordinates, computed by the byte-at-a-time table algorithm with a 256-entry const look-up table in ROM. Compiler stress-test #40.',
     keys: 'Self-running — the hash field flows and mutates on its own',
+    category: 'rendering',
   },
   {
     slug: 'divclock',
     title: 'Division Clock + Odometer',
     desc: 'A sweeping analog clock + rolling odometer, splitting a counter into h:m:s and base-10 digits with compile-time constant divides. A probe for magic-reciprocal strength reduction — with the measured finding that llvm-mos keeps the __udiv libcall on this soft-multiply target. Compiler stress-test #39.',
     keys: 'Self-running — the clock sweeps and the odometer rolls on their own',
+    category: 'classics',
   },
   {
     slug: 'seqvm',
     title: 'Step-Sequencer VM (Sparse Switch)',
     desc: 'A tiny register VM runs a looping bytecode song driving an 8-bar equalizer; its opcode dispatch is a sparse switch (14 non-contiguous cases) the compiler must lower to a binary-search comparison tree, not a jump table. Compiler stress-test #37.',
     keys: 'Self-running — the VM plays its bytecode song on its own',
+    category: 'signals',
   },
   {
     slug: 'polyfill',
     title: 'Polygon Scanline Fill (VLA)',
     desc: 'A filled star tumbles and morphs its point count while an even-odd scanline fill rasterises it — the per-scanline crossing table is a C99 variable-length array (int16_t xs[nv]), a runtime-sized stack frame (alloca/VLA). Compiler stress-test #36.',
     keys: 'Self-running — the star tumbles and morphs on its own',
+    category: 'rendering',
   },
   {
     slug: 'iir-scope',
     title: 'IIR Resonant-Filter Scope',
     desc: 'Four 2-pole IIR resonators plucked into a live oscilloscope — a recursive feedback chain (y[n] from y[n-1], y[n-2]) that, unlike a feed-forward FFT, cannot be reordered. Compiler stress-test #48.',
     keys: 'Self-running — the resonators are plucked and ring on their own',
+    category: 'signals',
   },
   {
     slug: 'hdr-bloom',
     title: 'HDR Additive Bloom',
     desc: 'Six drifting lights summed per cell with saturating (overflow-checked) add — where they overlap the field blows out to white, the HDR bloom look, in 8-bit integers via __builtin_add_overflow. Compiler stress-test #44.',
     keys: 'Self-running — the lights drift and blow out on their own',
+    category: 'rendering',
   },
   {
     slug: 'bf-vm',
     title: 'Brainfuck Threaded-Code VM',
     desc: 'A Brainfuck interpreter on the SNES dispatching each opcode with a computed goto (goto *handlers[op] → an indirect jump — the "threaded code" loop). Watch it compute HELLO WORLD one byte at a time. Compiler stress-test #38.',
     keys: 'Self-running — the VM interprets Hello World on a loop',
+    category: 'classics',
   },
   {
     slug: 'blossom',
     title: 'Blossom',
     desc: "Barry Martin's Hopalong strange attractor rendered live on SNES and flown around with the joypad. Accumulates into a hit-count grid in WRAM, displayed through Mode 7 with an HDMA colour split.",
     keys: '← ↑ ↓ → pan · Q/W zoom · X/A attractor · Shift colour',
+    category: 'classics',
   },
   {
     slug: 'space-invaders',
     title: 'Space Invaders',
     desc: 'The arcade classic on Super Nintendo — marching aliens, falling bombs, destructible bunkers, bonus UFO. Written in C on an OOP rendering library; boots into a self-playing attract demo.',
     keys: '← → move · Z/X/A fire · Enter play · Shift attract',
+    category: 'classics',
   },
   {
     slug: 'spirograph',
     title: 'Spirograph',
     desc: 'Interactive hypotrochoid curves: four curve families (hypotrochoid, epitrochoid, rose, Lissajous) bloom live into a bitmap canvas with real-time parameter control from the joypad.',
     keys: '↑ ↓ ring · ← → wheel · Q/W pen · X/A family · Shift preset',
+    category: 'motion',
   },
   {
     slug: '3d-wireframe',
     title: 'Wireframe 3-D Solid',
     desc: 'A spinning polyhedron (tetrahedron → cube → octahedron → icosahedron). Each frame: 3×3 rotation matrix, perspective divide, and integer Bresenham lines into a 2bpp bitmap canvas. Compiler stress-test #16.',
     keys: '↑ ↓ spin Y · ← → spin X · Q/W dolly · X/A solid · S palette · Shift trail',
+    category: 'physics',
   },
   {
     slug: 'spigot',
     title: 'π Spigot + Monte-Carlo',
     desc: 'Two π algorithms running simultaneously on the SNES: the Rabinowitz-Wagon spigot streams decimal digits via a 76-cell carry chain (32-bit div+mod per cell), while Monte-Carlo darts accumulate in the right panel. Self-running.',
     keys: 'Self-running — no controls',
+    category: 'bignums',
   },
   {
     slug: 'double-pendulum',
     title: 'Double Pendulum (Chaos)',
     desc: 'Two double pendulums with nearly-identical starting angles swing from a shared pivot. Their mass-2 paths trace white and cyan trails into a bitmap canvas — diverging exponentially, the visual signature of chaos. Compiler stress-test #14.',
     keys: 'Self-running — no controls',
+    category: 'physics',
   },
   {
     slug: '1d-ca',
     title: '1-D Cellular Automaton',
     desc: 'Rule 90 draws the Sierpinski triangle; Rule 110 is Turing-complete chaos. Each pixel row is one generation scrolling down — the screen IS the computation. Pure shift+boolean, no multiply. Compiler stress-test #6.',
     keys: 'X toggle rule · Enter reset',
+    category: 'cellular',
   },
   {
     slug: 'n-body',
     title: 'N-body Orbits',
     desc: 'Sun, Earth, and Jupiter orbit each other under Newtonian 1/r² gravity. Symplectic Euler integration in Q8.8 fixed-point; trails fade via CGRAM palette dimming. Compiler stress-test #13.',
     keys: 'Self-running — no controls',
+    category: 'physics',
   },
   {
     slug: 'rdiff',
     title: 'Reaction-Diffusion',
     desc: 'Gray-Scott activator-inhibitor PDE growing Turing-instability worm patterns from a 2×2 seed on a 32×28 toroidal grid. 384 32-bit multiplies per frame. Compiler stress-test #8.',
     keys: 'Self-running — no controls',
+    category: 'cellular',
   },
   {
     slug: 'factorial',
     title: 'Bignum Factorial',
     desc: 'n! computed live in base-10000 bignum arithmetic — 700 uint16 cells, schoolbook carry-mul. The growing decimal number fills 27 rows as n climbs toward 1000. Stresses __mulsi3 + __udivmodsi4. Compiler stress-test #20.',
     keys: 'Self-running — no controls',
+    category: 'bignums',
   },
   {
     slug: 'newton',
     title: "Newton's Fractal",
     desc: "Newton's method on z³−1 colours the complex plane into three basins of attraction — one per cube root of unity — shaded by convergence speed. One full complex division per tile. Compiler stress-test #2.",
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'buddhabrot',
     title: 'Buddhabrot',
-    desc: 'The Mandelbrot set’s ghost: random points iterated z²+c, and every escaping orbit is tallied into a 16 KiB density buffer in high WRAM via far scatter-writes. PRNG + far read-modify-write under +mos-a16. Compiler stress-test #4.',
+    desc: 'The Mandelbrot set’s ghost: random points iterated z²+c, and every escaping orbit is tallied into a 16 KiB density buffer in high WRAM via far scatter-writes. PRNG + far read-modify-write under +mos-a16. Compiler stress-test #4.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'cordic',
     title: 'CORDIC Rotator',
     desc: 'sin/cos/atan computed with CORDIC — shift-and-add only, no multiply and no divide. A rotating hand sweeps a vector field while a live atan2 reads its angle back. The multiply-free compiler stress-test #12.',
     keys: 'Self-running — no controls',
+    category: 'motion',
   },
   {
     slug: 'doom-fire',
     title: 'Doom Fire',
     desc: 'The classic PSX-Doom fire effect: a 32×28 heat field rises and flickers from a max-heat source row through a 16-colour ramp. Deliberately multiply-free — stresses indexed 8-bit array sweep + a 16-bit xorshift PRNG. Compiler stress-test #7.',
     keys: 'Self-running — no controls',
+    category: 'cellular',
   },
   {
     slug: 'sort-race',
     title: 'Sorting Race',
     desc: 'Quicksort vs heapsort vs mergesort race to sort three bar arrays in real time. The two recursive sorts stress the 65816 soft stack / frame ABI; heapsort is the iterative contrast. Compiler stress-test #17.',
     keys: 'Self-running — no controls',
+    category: 'algorithms',
   },
   {
     slug: 'maze',
     title: 'Maze Generate + Solve',
     desc: 'A maze carved by recursive division then solved by A* with an indexed binary-heap priority queue. Stresses genuine recursion (soft-stack frame ABI) + a heap data structure; multiply/divide-free. Compiler stress-test #18.',
     keys: 'Self-running — no controls',
+    category: 'algorithms',
   },
   {
     slug: 'epicycles',
     title: 'Fourier Epicycles',
     desc: 'A chain of rotating vectors (the Fourier series of a 5-pointed star) draws the star outline live. The many-multiply member: four 16×16→32 multiplies per harmonic, no divide. Compiler stress-test #10.',
     keys: 'Self-running — no controls',
+    category: 'motion',
   },
   {
     slug: 'life',
     title: "Conway's Game of Life",
     desc: 'A Gosper glider gun fires gliders into a settling random soup on a 128×112 bit-packed grid. Neighbour counts are summed bit-parallel (SWAR half-adders) — multiply-free boolean logic. Compiler stress-test #5.',
     keys: 'Self-running — no controls',
+    category: 'cellular',
   },
   {
     slug: 'harmonograph',
     title: 'Lissajous Harmonograph',
     desc: 'Four damped pendulums trace a Lissajous figure that precesses and spirals inward as the exponential damping decays. Eight fixed-point multiplies per sample (sin·env + env·decay), no divide. Compiler stress-test #9.',
     keys: 'Self-running — no controls',
+    category: 'motion',
   },
   {
     slug: 'julia',
     title: 'Julia Set Explorer',
     desc: 'A morphing Julia fractal — z² + c in Q5.10 fixed point, three 32-bit multiplies per iteration, far-stored into high WRAM and drawn through Mode 7 as c orbits a path. The affine matrix spins it while the multiply grind morphs it. Compiler stress-test #1.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'raycaster',
     title: 'Raycaster Maze',
     desc: 'A Wolfenstein-style grid raycaster: a first-person camera auto-walks a 16×16 maze, one DDA-cast ray per column with a per-column 1/distance divide. The battery’s division member — three __udivsi3 per column. Compiler stress-test #15.',
     keys: 'Self-running — no controls',
+    category: 'physics',
   },
   {
     slug: 'burning-ship',
     title: 'Burning Ship Fractal',
     desc: 'The Mandelbrot’s folded cousin — z = (|Re z| + i|Im z|)² + c — rendered as escape-time colour bands with the iconic black ship silhouette. Three multiplies per iteration plus the abs fold; multiply-only. Compiler stress-test #3.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'mandel-float',
     title: 'Soft-Float Mandelbrot',
     desc: 'The Mandelbrot set in IEEE-754 single-precision float — on a CPU with no FPU, so every multiply, add and compare is a software-float libcall. The chunky image grinds in because each fat pixel is hundreds of __mulsf3/__addsf3; bit-for-bit identical to host x86. Compiler stress-test #21.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'mandel-double',
     title: 'Double-Precision Mandelbrot',
     desc: 'The Mandelbrot set in 64-bit IEEE-754 double (top half) beside a 32-bit float twin (bottom half). No FPU, so every double op is a soft-float libcall (__muldf3/__adddf3/__gtdf2); the escape buffer is bit-for-bit identical to host x86 across every codegen mode. Compiler stress-test #33.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'avalanche',
     title: '64-Bit Avalanche',
     desc: 'A 64-bit splitmix64 hash visualised as an avalanche matrix — cell (i,j) = output bit j of hash64(seed^(1<<i)). On a 16-bit CPU every op is a multi-limb libcall (__muldi3/__udivdi3/64-bit shifts); a correct mixer gives a ~50%-dense rainbow field, bit-for-bit identical to host x86. Compiler stress-test #22.',
     keys: 'Self-running — no controls',
+    category: 'bignums',
   },
   {
     slug: 'boids',
     title: 'Boids Flock',
     desc: 'Reynolds flocking built on a vec2 struct passed and returned BY VALUE — on the 16-bit 65816 that forces the aggregate-return ABI (register pair vs sret), run O(N²) per frame. The coherent, heading-coloured flock is bit-for-bit identical to host x86. Compiler stress-test #26.',
     keys: 'Self-running — no controls',
+    category: 'physics',
   },
   {
     slug: 'turtle-vm',
     title: 'Bytecode-VM Turtle',
     desc: 'A stack-machine bytecode interpreter drawing LOGO turtle graphics — its switch(op) compiles to a JMP (abs,X) jump table and its ALU ops dispatch through a function-pointer opcode table (indirect/computed control flow no other demo runs). The woven rosette is bit-for-bit identical to host x86. Compiler stress-test #29a.',
     keys: 'Self-running — no controls',
+    category: 'classics',
   },
   {
     slug: 'truchet',
     title: 'Truchet · Packed Bitfields',
     desc: 'The 10-PRINT / Truchet diagonal maze, but every cell is a 16-bit C bitfield struct (orient/style/hue/phase/mark/energy in one word). A colour wave ripples through, stressing the bitfield insert/extract codegen — and/ora/shift, no libcalls — bit-for-bit identical host vs target. Compiler stress-test #29b.',
     keys: 'Self-running — no controls',
+    category: 'ciphers',
   },
   {
     slug: 'lsystem',
     title: 'L-System Plant',
-    desc: 'An L-system fractal plant grown by string rewriting — five generations of in-place memmove + memcpy + strlen over a 1 700-byte buffer, then a turtle walks the result with a bracket push/pop stack. The first demo in the battery to call the string libcalls. Bit-for-bit identical to host x86. Compiler stress-test #23.',
+    desc: 'An L-system fractal plant grown by string rewriting — five generations of in-place memmove + memcpy + strlen over a 1 700-byte buffer, then a turtle walks the result with a bracket push/pop stack. The first demo in the battery to call the string libcalls. Bit-for-bit identical to host x86. Compiler stress-test #23.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'fn-plot',
     title: 'Function Plotter',
-    desc: 'A recursive-descent parser evaluates math expressions on the SNES using soft-float arithmetic — every +, *, / is a software libcall (~3 000 cycles). The parser recurses 7 levels deep per pixel, stressing the soft-stack ABI. Four curves cycle automatically. Compiler stress-test #24.',
+    desc: 'A recursive-descent parser evaluates math expressions on the SNES using soft-float arithmetic — every +, *, / is a software libcall (~3 000 cycles). The parser recurses 7 levels deep per pixel, stressing the soft-stack ABI. Four curves cycle automatically. Compiler stress-test #24.',
     keys: 'Self-running — no controls',
+    category: 'fractals',
   },
   {
     slug: 'bhut',
     title: 'Barnes-Hut Galaxy',
     desc: '8-body gravity via a recursively built-and-walked quadtree, chased through runtime child indices — the first demo to exercise pointer-chasing dynamic trees. Stars draw trails as the galaxy collapses. Compiler stress-test #31.',
     keys: 'Self-running — no controls',
+    category: 'physics',
   },
   {
     slug: 'vaprintf',
     title: 'VA_ARG Formatter',
     desc: 'mini_sprintf() formats Lissajous HUD parameters via va_arg — the first demo to exercise the variadic calling convention on the 65816. 9 va_arg reads per gate; 6 curve pairs cycle. Compiler stress-test #32.',
     keys: 'Self-running — no controls',
+    category: 'motion',
   },
   {
     slug: 'fft',
     title: 'FFT Spectrum Analyser',
     desc: '32-point radix-2 DIT FFT runs every frame; 16 frequency bars track a sweeping sine tone. Butterfly twiddle multiply = 320 __mulsi3 per frame. Exercises bit-reversal permutation. Compiler stress-test #25.',
     keys: 'Self-running — no controls',
+    category: 'signals',
   },
   {
     slug: 'hilbert',
     title: 'Hilbert Curve',
     desc: 'An order-4 Hilbert space-filling curve traces 256 grid positions in one connected path. The d2xy kernel uses variable-count 32-bit shifts (__ashlsi3), the corner TEA #30 missed. Compiler stress-test #28.',
     keys: 'Self-running — no controls',
+    category: 'motion',
   },
   {
     slug: 'tea',
     title: 'TEA Cipher Avalanche',
     desc: '32 rounds of the Tiny Encryption Algorithm paint a 16×16 tile grid; 16 key variants each differing by 1 bit demonstrate the avalanche effect live. Hot loop is pure 32-bit shift/add/XOR — no multiply. Compiler stress-test #30.',
     keys: 'Self-running — no controls',
+    category: 'ciphers',
   },
   {
     slug: 'cardioid',
     title: 'Times-table Cardioid',
     desc: '200 circle points, chords from i to (k·i) mod N — k animates 2–30 tracing cardioids, nephroids, and epicycloid envelopes. The inner loop runs __mulsi3 + __umodsi3 per chord. Compiler stress-test #27.',
     keys: 'Self-running — no controls',
+    category: 'motion',
   },
 ];
+
+const byCategory = categories.map(cat => ({
+  ...cat,
+  items: demos.filter(d => d.category === cat.id),
+})).filter(c => c.items.length > 0);
 ---
 
 <Base title="SNES Demos — bioHACK•NET" description={`${demos.length} in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — each a stress-test for the compiler's 16-bit-accumulator codegen (+mos-a16). Play them in your browser.`}>
@@ -480,31 +566,44 @@ const demos = [
       </p>
     </header>
 
-    <ul class="gl-grid" role="list">
-      {demos.map(({ slug, title, desc, keys }) => (
-        <li class="gl-card">
-          <a href={`/snes/${slug}/`} class="gl-card-link" aria-label={`Play ${title}`}>
-            <div class="gl-thumb-wrap">
-              <img
-                class="gl-thumb"
-                src={`/play/preview/${slug}.png${previewV(slug) ? `?v=${previewV(slug)}` : ''}`}
-                alt={`${title} running on SNES`}
-                width="256"
-                height="224"
-                loading="lazy"
-                decoding="async"
-              />
-              <div class="gl-play-overlay" aria-hidden="true">▶</div>
-            </div>
-            <div class="gl-card-body">
-              <h2 class="gl-card-title">{title}</h2>
-              <p class="gl-card-desc">{desc}</p>
-              <p class="gl-card-keys">{keys}</p>
-            </div>
-          </a>
-        </li>
-      ))}
-    </ul>
+    {byCategory.map(({ id, label, items }) => (
+      <section class="cat-shelf" id={`cat-${id}`}>
+        <div class="cat-header">
+          <h2 class="cat-title">{label}</h2>
+          <div class="cat-nav">
+            <button class="cat-btn cat-prev" aria-label={`Scroll ${label} left`}>‹</button>
+            <button class="cat-btn cat-next" aria-label={`Scroll ${label} right`}>›</button>
+          </div>
+        </div>
+        <ul class="cat-row" role="list">
+          {items.map(({ slug, title, keys }) => {
+            const v = previewV(slug);
+            return (
+              <li class="cat-card">
+                <a href={`/snes/${slug}/`} class="cat-card-link" aria-label={`Play ${title}`}>
+                  <div class="cat-thumb-wrap">
+                    <img
+                      class="cat-thumb"
+                      src={`/play/preview/${slug}.png${v ? `?v=${v}` : ''}`}
+                      alt={`${title} preview`}
+                      width="256"
+                      height="224"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div class="cat-play-overlay" aria-hidden="true">▶</div>
+                  </div>
+                  <div class="cat-card-body">
+                    <h3 class="cat-card-title">{title}</h3>
+                    <p class="cat-card-keys">{keys}</p>
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
 
     <p class="gl-foot">
       Each ROM boots in the bsnes-jg WASM core — no install, no plugin. Hit
@@ -514,9 +613,20 @@ const demos = [
   </main>
 </Base>
 
+<script is:inline>
+  document.querySelectorAll('.cat-shelf').forEach(function(shelf) {
+    var row = shelf.querySelector('.cat-row');
+    function scrollAmt() { return Math.floor(row.clientWidth * 0.85); }
+    var prev = shelf.querySelector('.cat-prev');
+    var next = shelf.querySelector('.cat-next');
+    if (prev) prev.addEventListener('click', function() { row.scrollBy({ left: -scrollAmt(), behavior: 'smooth' }); });
+    if (next) next.addEventListener('click', function() { row.scrollBy({ left:  scrollAmt(), behavior: 'smooth' }); });
+  });
+</script>
+
 <style>
   .gl-wrap {
-    max-width: 900px;
+    max-width: 960px;
     margin-inline: auto;
     padding: 2.5rem 1.25rem 5rem;
   }
@@ -556,32 +666,67 @@ const demos = [
   .gl-lede a { color: var(--accent); text-decoration: none; }
   .gl-lede a:hover { text-decoration: underline; }
 
-  /* ── card grid ──────────────────────────────────────── */
-  .gl-grid {
-    list-style: none;
-    padding: 0;
+  /* ── category shelf ─────────────────────────────────── */
+  .cat-shelf { margin-bottom: 2.75rem; }
+
+  .cat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+  .cat-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
     margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
   }
-  @media (max-width: 520px) {
-    .gl-grid { grid-template-columns: 1fr; }
+  .cat-nav { display: flex; gap: 0.35rem; }
+  .cat-btn {
+    background: transparent;
+    color: var(--ink-dim);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    border: 1px solid var(--accent-soft, rgba(194,65,12,0.35));
+    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    transition: border-color 0.15s, color 0.15s;
   }
+  .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── scrollable row ─────────────────────────────────── */
+  .cat-row {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 0 0 6px;
+    margin: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cat-row::-webkit-scrollbar { display: none; }
 
   /* ── card ───────────────────────────────────────────── */
-  .gl-card {
+  .cat-card {
+    flex: 0 0 180px;
+    scroll-snap-align: start;
     border: 1px solid var(--rule);
     background: var(--bg-soft);
     border-radius: 8px;
     overflow: hidden;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .gl-card:hover {
+  .cat-card:hover {
     border-color: var(--accent);
-    box-shadow: 0 0 24px rgba(194, 65, 12, 0.3), 0 0 48px rgba(194, 65, 12, 0.12);
+    box-shadow: 0 0 20px rgba(194, 65, 12, 0.3), 0 0 40px rgba(194, 65, 12, 0.1);
   }
-  .gl-card-link {
+  .cat-card-link {
     display: flex;
     flex-direction: column;
     text-decoration: none;
@@ -590,13 +735,13 @@ const demos = [
   }
 
   /* ── thumbnail ──────────────────────────────────────── */
-  .gl-thumb-wrap {
+  .cat-thumb-wrap {
     position: relative;
     background: #000;
     line-height: 0;
     overflow: hidden;
   }
-  .gl-thumb {
+  .cat-thumb {
     display: block;
     width: 100%;
     height: auto;
@@ -605,55 +750,55 @@ const demos = [
     object-fit: cover;
     transition: opacity 0.2s;
   }
-  .gl-card:hover .gl-thumb { opacity: 0.82; }
-  .gl-play-overlay {
+  .cat-card:hover .cat-thumb { opacity: 0.82; }
+  .cat-play-overlay {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     color: rgba(255, 255, 255, 0.9);
     text-shadow: 0 0 20px rgba(194, 65, 12, 0.9), 0 0 4px rgba(0,0,0,0.8);
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
   }
-  .gl-card:hover .gl-play-overlay { opacity: 1; }
+  .cat-card:hover .cat-play-overlay { opacity: 1; }
 
   /* ── card body ──────────────────────────────────────── */
-  .gl-card-body {
-    padding: 0.9rem 1rem 1rem;
+  .cat-card-body {
+    padding: 0.6rem 0.75rem 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.45rem;
+    gap: 0.3rem;
     flex: 1;
   }
-  .gl-card-title {
+  .cat-card-title {
     margin: 0;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    line-height: 1.35;
     color: var(--ink);
     transition: color 0.15s;
   }
-  .gl-card:hover .gl-card-title { color: var(--accent); }
-  .gl-card-desc {
+  .cat-card:hover .cat-card-title { color: var(--accent); }
+  .cat-card-keys {
     margin: 0;
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--ink-dim);
-    flex: 1;
-  }
-  .gl-card-keys {
-    margin: 0;
-    font-size: 11px;
+    font-size: 10px;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     color: var(--ink-dim);
-    opacity: 0.65;
+    opacity: 0.6;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex: 1;
+    align-self: flex-end;
+  }
+
+  @media (max-width: 520px) {
+    .cat-card { flex: 0 0 140px; }
+    .cat-card-title { font-size: 11px; }
   }
 
   /* ── footer note ────────────────────────────────────── */
