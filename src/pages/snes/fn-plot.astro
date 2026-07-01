@@ -29,6 +29,7 @@ const notes = [
 
     <header class="rp-hero">
       <h1 class="rp-title">Function Plotter</h1>
+      <a href="/snes/#cat-fractals" class="rp-cat-chip">Fractals</a>
       <p class="rp-lede">
         A <a href="https://en.wikipedia.org/wiki/Recursive_descent_parser">recursive-descent parser</a>
         evaluates math expressions on a Super Nintendo — using
@@ -122,6 +123,15 @@ int16_t py = (int16_t)((2.0f - yi) * 32.0f);  // __subsf3 + __mulsf3 + __fixsfsi
 </script>
 
 <style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
   .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
   .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
   .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;

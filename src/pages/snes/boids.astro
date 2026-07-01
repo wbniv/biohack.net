@@ -31,6 +31,7 @@ const notes = [
 
     <header class="rp-hero">
       <h1 class="rp-title">Boids Flock</h1>
+      <a href="/snes/#cat-physics" class="rp-cat-chip">Physics &amp; Simulation</a>
       <p class="rp-lede">
         <a href="https://en.wikipedia.org/wiki/Boids">Reynolds boids</a> flocking, computed live on a
         Super Nintendo — and built entirely on a <code>vec2 {'{'} int16_t x, y {'}'}</code> struct that
@@ -142,6 +143,15 @@ vec2 acc = v2_add(v2_add(sep, ali), coh);     // chained aggregate returns</pre>
 </script>
 
 <style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
   .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
   .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
   .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;

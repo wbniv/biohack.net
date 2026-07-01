@@ -38,6 +38,7 @@ const stressItems = [
 
     <header class="rp-hero">
       <h1 class="rp-title">1-D Cellular Automaton</h1>
+      <a href="/snes/#cat-cellular" class="rp-cat-chip">Cellular Automata</a>
       <p class="rp-lede">
         Rule 90 draws the <em>Sierpinski triangle</em>. Rule 110 is <em>Turing-complete chaos</em>.
         Both run live on a Super Nintendo — one pixel row generated per frame, scrolling down so
@@ -146,6 +147,15 @@ const stressItems = [
 </script>
 
 <style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
   .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
   .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
   .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;

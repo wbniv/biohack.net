@@ -41,6 +41,7 @@ const notes = [
 
     <header class="rp-hero">
       <h1 class="rp-title">Funnel-Shift Kaleidoscope</h1>
+      <a href="/snes/#cat-rendering" class="rp-cat-chip">Rendering & Graphics</a>
       <p class="rp-lede">
         An 8-fold-symmetric kaleidoscope on a Super Nintendo driven by <em>two-source funnel shifts</em>:
         <code>__builtin_elementwise_fshl(A,B,k)</code> and <code>fshr(B,A,k)</code> with A&nbsp;≠&nbsp;B.
@@ -122,6 +123,15 @@ const notes = [
 </script>
 
 <style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
   .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
   .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
   .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
