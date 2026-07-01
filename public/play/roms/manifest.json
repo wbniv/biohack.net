@@ -550,6 +550,17 @@
         "frames": 500,
         "label": "lzdec"
       }
+    },
+    {
+      "id": "cgrade",
+      "title": "Many-Argument Color-Grade",
+      "selfcheck": {
+        "off": "0x77",
+        "len": 2,
+        "want": "0x783F",
+        "frames": 500,
+        "label": "cgrade"
+      }
     }
   ]
 }
