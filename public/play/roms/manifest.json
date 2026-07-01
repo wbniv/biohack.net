@@ -574,17 +574,6 @@
       }
     },
     {
-      "id": "hilbert",
-      "title": "Hilbert Curve",
-      "selfcheck": {
-        "off": "0x5c",
-        "len": 2,
-        "want": "0x5999",
-        "frames": 500,
-        "label": "hilbert"
-      }
-    },
-    {
       "id": "bitcensus",
       "title": "Bit-Census Field",
       "selfcheck": {
@@ -802,6 +791,17 @@
         "want": "0xFCDE",
         "frames": 800,
         "label": "grid3d"
+      }
+    },
+    {
+      "id": "hilbert",
+      "title": "Hilbert Curve",
+      "selfcheck": {
+        "off": "0x200",
+        "len": 2,
+        "want": "0x5999",
+        "frames": 500,
+        "label": "hilbert gate CRC host==bsnes-jg"
       }
     }
   ]
