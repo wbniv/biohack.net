@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'bf-vm',
+    title: 'Brainfuck Threaded-Code VM',
+    desc: 'A Brainfuck interpreter on the SNES dispatching each opcode with a computed goto (goto *handlers[op] → an indirect jump — the "threaded code" loop). Watch it compute HELLO WORLD one byte at a time. Compiler stress-test #38.',
+    keys: 'Self-running — the VM interprets Hello World on a loop',
+  },
+  {
     slug: 'blossom',
     title: 'Blossom',
     desc: "Barry Martin's Hopalong strange attractor rendered live on SNES and flown around with the joypad. Accumulates into a hit-count grid in WRAM, displayed through Mode 7 with an HDMA colour split.",

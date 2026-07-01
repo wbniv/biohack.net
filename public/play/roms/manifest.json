@@ -396,6 +396,17 @@
         "frames": 2200,
         "label": "mandel-double"
       }
+    },
+    {
+      "id": "bf-vm",
+      "title": "Brainfuck Threaded-Code VM",
+      "selfcheck": {
+        "off": "0x51",
+        "len": 2,
+        "want": "0x9954",
+        "frames": 400,
+        "label": "bf-vm"
+      }
     }
   ]
 }
