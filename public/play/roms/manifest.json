@@ -759,6 +759,17 @@
         "frames": 500,
         "label": "perlin"
       }
+    },
+    {
+      "id": "gouraud",
+      "title": "Gouraud Triangle",
+      "selfcheck": {
+        "off": "0x7c",
+        "len": 2,
+        "want": "0xC5E9",
+        "frames": 1500,
+        "label": "gouraud"
+      }
     }
   ]
 }

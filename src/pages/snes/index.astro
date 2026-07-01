@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'gouraud',
+    title: 'Gouraud Triangle',
+    desc: 'A tumbling, smoothly colour-interpolated triangle drawn by barycentric edge-function rasterisation — three signed cross-product edge functions decide inside/outside and their values shade each pixel. Compiler stress-test #69.',
+    keys: 'Self-running — the shaded triangle tumbles',
+  },
+  {
     slug: 'perlin',
     title: 'Perlin Noise',
     desc: 'A flowing smoke/marble field coloured by fixed-point Perlin gradient noise — a permutation table, the 6t^5-15t^4+10t^3 fade polynomial, gradient dot products and lerp. Compiler stress-test #68.',
