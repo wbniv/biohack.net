@@ -572,6 +572,17 @@
         "frames": 500,
         "label": "critters"
       }
+    },
+    {
+      "id": "disbits",
+      "title": "Cross-Byte Bitfield Disassembler",
+      "selfcheck": {
+        "off": "0x77",
+        "len": 2,
+        "want": "0x31D7",
+        "frames": 500,
+        "label": "disbits"
+      }
     }
   ]
 }
