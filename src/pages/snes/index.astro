@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'dither',
+    title: 'Floyd-Steinberg Dither',
+    desc: 'A smooth gradient resolving into a four-level dither by Floyd-Steinberg error diffusion — each pixel\'s signed quantisation residual is spread to its down-right neighbours (7/16, 3/16, 5/16, 1/16). Compiler stress-test #70.',
+    keys: 'Self-running — the gradient resolves into dither',
+  },
+  {
     slug: 'gouraud',
     title: 'Gouraud Triangle',
     desc: 'A tumbling, smoothly colour-interpolated triangle drawn by barycentric edge-function rasterisation — three signed cross-product edge functions decide inside/outside and their values shade each pixel. Compiler stress-test #69.',

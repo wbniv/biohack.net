@@ -770,6 +770,17 @@
         "frames": 1500,
         "label": "gouraud"
       }
+    },
+    {
+      "id": "dither",
+      "title": "Floyd-Steinberg Dither",
+      "selfcheck": {
+        "off": "0x30",
+        "len": 2,
+        "want": "0x80C4",
+        "frames": 2000,
+        "label": "dither"
+      }
     }
   ]
 }
