@@ -638,6 +638,17 @@
         "frames": 500,
         "label": "medfilt"
       }
+    },
+    {
+      "id": "domcol",
+      "title": "Complex Domain-Colouring",
+      "selfcheck": {
+        "off": "0x72",
+        "len": 2,
+        "want": "0xF3FD",
+        "frames": 500,
+        "label": "domcol"
+      }
     }
   ]
 }
