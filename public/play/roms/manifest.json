@@ -825,6 +825,17 @@
         "frames": 500,
         "label": "fabs-ridgeline"
       }
+    },
+    {
+      "id": "smulorbit",
+      "title": "Signed Multiply-Overflow Orbit",
+      "selfcheck": {
+        "off": "0x57",
+        "len": 2,
+        "want": "0xD81B",
+        "frames": 500,
+        "label": "smul-overflow"
+      }
     }
   ]
 }
