@@ -1,0 +1,192 @@
+---
+// /snes/rotkal — playable in-browser Rotate-Register Kaleidoscope SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/rotkal.sfc.
+// Compiler stress-test #74: G_ROTL/G_ROTR byte/16-bit custom lowering.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/rotkal.sfc', 'preview/rotkal.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// 8 ring registers (uint8_t) + 1 outer word (uint16_t)
+// Per-frame rk_step(s, k):
+
+ring[0] = rotl8(ring[0], 1);  // constant amount — ConstantAmt path
+ring[1] = rotl8(ring[1], 2);
+ring[2] = rotl8(ring[2], 3);
+ring[3] = rotl8(ring[3], 1);
+ring[4] = rotr8(ring[4], 1);  // right rotate — S8 special case
+ring[5] = rotr8(ring[5], 2);
+ring[6] = rotr8(ring[6], 3);
+ring[7] = rotr8(ring[7], 1);
+outer   = rotl16(outer, k);   // k = (frame & 14)+1 — runtime amount
+
+// Per-tile colour rk_cell(s, tx, ty):
+ax = abs(dx); ay = abs(dy);         // center-relative
+ox = min(ax,ay); oy = max(ax,ay);   // octant fold → 8-fold symmetry
+ring_idx  = min(oy >> 3, 7);        // Chebyshev ring 0..7
+ring_val  = (ring[ring_idx] >> (ox & 7)) & 3;  // 2 bits
+outer_bits = (outer >> 14) & 3;                 // top 2 bits
+colour = ring_val ^ outer_bits;     // 0..3 → 2bpp palette`;
+
+const notes = [
+  ['G_ROTL / G_ROTR', 'legalizeShiftRotate at MOSLegalizerInfo.cpp:1029–1254 handles circular bit rotates. It branches on whether the shift amount is a compile-time constant (ConstantAmt fast path, :1046–1061), on the bit-width (S8 special case for 8-bit rotates, :1167–1178), and on the runtime-amount case. This demo fires all three sub-paths.'],
+  ['constant amounts', '__builtin_rotateleft8(ring[i], 1) with a literal "1" lets the compiler take the ConstantAmt fast path: it knows the exact displacement at compile time and can fold the rotate into a dedicated instruction sequence (ROL/ROR on the 65816, which natively rotate through the carry flag). Rings 0–3 rotate left, rings 4–7 rotate right, at different constant speeds.'],
+  ['S8 special case', 'The 65816\'s ROL/ROR instructions operate through the carry flag, making them a 9-bit rotate. The S8 special case (line 1167) emits the correct CLC+ROL (or SEC+ROR) sequence to produce a pure 8-bit circular shift. This path had not been exercised by any prior demo.'],
+  ['runtime amount', '__builtin_rotateleft16(outer, k) where k = (frame & 14)+1 is a non-constant, so the compiler must emit a general variable-shift sequence — a shift loop or a combined shift+OR. The outer word\'s top 2 bits are XOR\'d into each tile\'s colour, producing shimmering interference beats between rings.'],
+  ['integer-exact gate', 'Circular rotates on fixed-width unsigned integers are pure bitwise operations — bit-identical host vs target, no rounding, no UB. Any wrong lowering (shifted by off-by-one, wrong direction, missing wrap) diverges the CRC immediately. GATE_N=100 (not a multiple of 8) avoids the state-period trap where multiples of 8 steps return all registers to their initial values and yield CRC=0.'],
+];
+---
+
+<Base title="Rotate-Register Kaleidoscope — bioHACK•NET" description="An 8-fold kaleidoscope on a Super Nintendo driven by circular bit rotations: __builtin_rotateleft8/right8 with constant per-ring amounts (exercising the G_ROTL/G_ROTR ConstantAmt path and S8 special case) and __builtin_rotateleft16 with a runtime amount. Compiler stress-test #74.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Rotate-Register Kaleidoscope</h1>
+      <a href="/snes/#cat-rendering" class="rp-cat-chip">Rendering & Graphics</a>
+      <p class="rp-lede">
+        An 8-fold-symmetric kaleidoscope on a Super Nintendo driven by <em>circular bit rotations</em>.
+        Eight ring registers rotate at different constant speeds via
+        <code>__builtin_rotateleft8</code>/<code>rotateright8</code>, exercising the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> ConstantAmt fast path and S8 special
+        case in <code>legalizeShiftRotate</code>. A 16-bit outer word rotates by a runtime frame-derived
+        amount, exercising the variable-amount lowering path. Compiler stress-test #74 — the first demo
+        in the battery to use any rotate builtin.
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Rotate-Register Kaleidoscope">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — ring registers precess producing counter-rotating petals.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The screen is a 16×16 tile grid folded into 8-fold symmetry (octant reflection). Each tile belongs
+        to one of 8 concentric <em>rings</em> (by Chebyshev distance from center). Every ring has a
+        <code>uint8_t</code> register that rotates at its own constant speed — rings 0–3 rotate left at 1,
+        2, 3, 1 bits per frame; rings 4–7 rotate right at 1, 2, 3, 1 bits per frame. A <code>uint16_t</code>
+        outer word rotates by a runtime-variable amount each frame. Two bits extracted from the ring
+        register, XOR'd with the top two bits of the outer word, select one of four palette colours.
+        Counter-rotating rings at incommensurable speeds produce moire interference patterns that continuously
+        evolve without ever repeating.
+      </p>
+      <pre class="rp-code">{code}</pre>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (gate CRC <code>0x300C</code> —
+        100-step rotating-XOR fold of all ring registers and outer word) live in this tab. No far
+        pointers — <code>host == default == +mos-a16 == +mos-xy16</code>, <code>-verify</code> clean.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'rotkal';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x6b, len: 2, want: 0x300C, frames: 500, label: 'rotate-register CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

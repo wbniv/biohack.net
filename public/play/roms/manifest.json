@@ -847,6 +847,17 @@
         "frames": 500,
         "label": "sat-comet"
       }
+    },
+    {
+      "id": "rotkal",
+      "title": "Rotate-Register Kaleidoscope",
+      "selfcheck": {
+        "off": "0x6b",
+        "len": 2,
+        "want": "0x300C",
+        "frames": 500,
+        "label": "ROTKAL"
+      }
     }
   ]
 }

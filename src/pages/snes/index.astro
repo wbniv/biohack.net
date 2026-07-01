@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'rotkal',
+    title: 'Rotate-Register Kaleidoscope',
+    desc: 'An 8-fold mandala driven by circular bit rotations: eight ring registers rotate at different constant speeds (__builtin_rotateleft8/right8), while a 16-bit outer word rotates by a runtime amount. Exercises G_ROTL/G_ROTR ConstantAmt path and S8 special case. Compiler stress-test #74.',
+    keys: 'Self-running — ring registers precess producing counter-rotating petals',
+    category: 'rendering',
+  },
+  {
     slug: 'satcomet',
     title: 'Saturating Comet Trails',
     desc: 'Six comets leave glowing trails that saturate to white where they cross, then fade cleanly to black — no wrap-around. Uses __builtin_elementwise_add_sat/sub_sat on uint8 and int16 to exercise all four saturating-arithmetic nodes. Compiler stress-test #75.',
