@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'crctex',
+    title: 'CRC32 Hash-Marble Texture',
+    desc: 'A flowing procedural field where every cell\'s colour is a real CRC32 (poly 0xEDB88320) of its coordinates, computed by the byte-at-a-time table algorithm with a 256-entry const look-up table in ROM. Compiler stress-test #40.',
+    keys: 'Self-running — the hash field flows and mutates on its own',
+  },
+  {
     slug: 'divclock',
     title: 'Division Clock + Odometer',
     desc: 'A sweeping analog clock + rolling odometer, splitting a counter into h:m:s and base-10 digits with compile-time constant divides. A probe for magic-reciprocal strength reduction — with the measured finding that llvm-mos keeps the __udiv libcall on this soft-multiply target. Compiler stress-test #39.',

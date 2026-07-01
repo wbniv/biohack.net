@@ -462,6 +462,17 @@
         "frames": 500,
         "label": "divclock"
       }
+    },
+    {
+      "id": "crctex",
+      "title": "Table-Driven CRC32 Texture",
+      "selfcheck": {
+        "off": "0x6d",
+        "len": 2,
+        "want": "0xDBBA",
+        "frames": 500,
+        "label": "crctex"
+      }
     }
   ]
 }
