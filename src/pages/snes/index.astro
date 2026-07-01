@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'bitcensus',
+    title: 'Bit-Census Field',
+    desc: 'Every cell\'s colour is a bit-population count of its coordinates — popcount, count-leading-zeros, count-trailing-zeros, parity — cycling the four __builtin_*ll intrinsics, which inline-lower to SWAR bit-count trees. XOR fractal, magnitude bands, ruler, checker. Compiler stress-test #53.',
+    keys: 'Self-running — the field scrolls and the intrinsic cycles',
+  },
+  {
     slug: 'disbits',
     title: 'Cross-Byte Bitfields',
     desc: 'A 65816 instruction decoder packs eight fields into a 32-bit word — two of them straddle byte boundaries (group crosses bit 16, flags crosses bit 24), forcing multi-byte shift and mask. Compiler stress-test #52.',
