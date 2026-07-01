@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'poolfx',
+    title: 'Free-List Pool Allocator',
+    desc: 'A sparking particle fountain whose 48 fixed slots are recycled through a manual singly-linked LIFO free list threaded through the slots — alloc pops the head, free pushes it back, no malloc. Compiler stress-test #41.',
+    keys: 'Self-running — sparks are born and die as the pool recycles slots',
+  },
+  {
     slug: 'crctex',
     title: 'CRC32 Hash-Marble Texture',
     desc: 'A flowing procedural field where every cell\'s colour is a real CRC32 (poly 0xEDB88320) of its coordinates, computed by the byte-at-a-time table algorithm with a 256-entry const look-up table in ROM. Compiler stress-test #40.',

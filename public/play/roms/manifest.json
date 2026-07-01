@@ -473,6 +473,17 @@
         "frames": 500,
         "label": "crctex"
       }
+    },
+    {
+      "id": "poolfx",
+      "title": "Free-List Pool Allocator",
+      "selfcheck": {
+        "off": "0x72",
+        "len": 2,
+        "want": "0x2B9B",
+        "frames": 500,
+        "label": "poolfx"
+      }
     }
   ]
 }
