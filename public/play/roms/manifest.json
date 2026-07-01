@@ -671,6 +671,17 @@
         "frames": 500,
         "label": "multibase"
       }
+    },
+    {
+      "id": "dhmix",
+      "title": "Diffie-Hellman Colour-Mixer",
+      "selfcheck": {
+        "off": "0x73",
+        "len": 2,
+        "want": "0x69AA",
+        "frames": 500,
+        "label": "dhmix"
+      }
     }
   ]
 }

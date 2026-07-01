@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'dhmix',
+    title: 'Diffie-Hellman Colour-Mixer',
+    desc: 'Two parties agree on a shared secret colour via 64-bit modular exponentiation — the key exchange behind HTTPS. The 64-bit maths crashed the backend until this demo found and fixed the bug (patch 0017). Compiler stress-test #61.',
+    keys: 'Self-running — the shared secret is always agreed',
+  },
+  {
     slug: 'multibase',
     title: 'Multi-Base Clock',
     desc: 'One counter shown in decimal, dozenal, hex and sexagesimal at once, each digit split with the standard-library div() returning a div_t (quotient+remainder) struct by value, plus a 64-bit odometer via lldiv(). Compiler stress-test #60.',

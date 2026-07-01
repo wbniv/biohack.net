@@ -1,0 +1,169 @@
+---
+// /snes/dhmix — playable in-browser Diffie-Hellman Colour-Mixer SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/dhmix.sfc. Built from the
+// snes-rom-page skill's page-template.astro, branded to biohack.net (dark + orange, Dune Rise).
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/dhmix.sfc', 'preview/dhmix.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `A = g^a mod p;          // Alice publishes A
+B = g^b mod p;          // Bob   publishes B
+shared = B^a mod p;     // Alice computes the secret...
+shared = A^b mod p;     // ...Bob gets the SAME number: g^(ab) mod p`;
+
+const notes = [
+  ['64-bit modulo', 'Modular exponentiation squares and multiplies a 64-bit number, taking the remainder mod p at every step. That 64-bit remainder (__umoddi3), after a 64-bit multiply, is the hot operation — a path no earlier demo runs.'],
+  ['found a compiler bug', 'The 64-bit math crashed the 16-bit-accumulator backend outright ("unable to legalize G_UNMERGE_VALUES (s64)") — a missing rule for splitting a 64-bit value into 16-bit pieces. This demo isolated it and it was fixed (patch 0017); the demo is now the regression guard.'],
+  ['no overflow', 'The modulus is kept just under 2^32 so the product of two residues stays under 2^64 — exactly representable — before the remainder is taken. All 64-bit, identical on host and console.'],
+  ['both sides agree', 'The point of Diffie-Hellman is that Alice\'s B^a and Bob\'s A^b are the same number without ever sharing it. The self-check folds both and their XOR, which must be zero — the agreement, verified in hardware.'],
+];
+---
+
+<Base title="Diffie-Hellman Colour-Mixer — bioHACK•NET" description="Two parties agree on a shared secret colour via 64-bit modular exponentiation on a Super Nintendo — the key-exchange behind HTTPS. Found and fixed a real backend compiler bug. Written in C with the llvm-mos 65816 toolchain under +mos-a16.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Diffie-Hellman</h1>
+      <p class="rp-lede">
+        The <a href="https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange">key exchange</a>
+        behind HTTPS, running on a Super Nintendo. Two parties each pick a secret, publish
+        <code>g^secret mod p</code>, and — by raising the other's public value to their own secret — arrive
+        at the <em>same</em> shared number without ever sending it. Here that number is a colour: the two
+        public bands shift, but the shared band is always the colour both sides agree on. The maths is
+        64-bit <a href="https://en.wikipedia.org/wiki/Modular_exponentiation">modular exponentiation</a> —
+        which, fittingly, <strong>crashed the compiler until this demo found and fixed the bug</strong>.
+        Runs on its own; no joypad needed. Written in C and compiled with the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>-based 65816 toolchain
+        (<code>+mos-a16</code>, 16-bit accumulator mode).
+      </p>
+    </header>
+
+    <!-- emulator (centred) -->
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Diffie-Hellman Colour-Mixer">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running demo — the public colours shift; the shared secret is always agreed.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <!-- instructions -->
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Diffie-Hellman lets two people who have never met agree on a secret over an open channel. It rests
+        on modular exponentiation being easy to compute but hard to reverse:
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Because <code>(g^a)^b = (g^b)^a</code>, both sides land on <code>g^(ab) mod p</code> — the shared
+        secret — while an eavesdropper who sees only <code>A</code> and <code>B</code> cannot. The numbers
+        here are 64-bit, and computing them stays bit-exact across every codegen mode (once the backend
+        knew how to split a 64-bit value into 16-bit pieces — which it didn't, until this demo).
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg
+        (and MAME where the SPC700 IPL is present). Hit <b>Verify fidelity</b> to reproduce the build
+        gate's WRAM assert (gate CRC <code>0x69AA</code> — a fold of the exchanges plus the shared-secret
+        agreement check) live in this tab. No far pointers — the same source passes every way:
+        host == default == <code>+mos-a16</code> == <code>+mos-xy16</code> == bsnes-jg,
+        <code>-verify</code> clean.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'dhmix';
+    window.BJG_BUST = bust;
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em, .rp-lede strong { font-style: italic; color: var(--ink); }
+
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0;
+               border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em, .rp-doc strong { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
