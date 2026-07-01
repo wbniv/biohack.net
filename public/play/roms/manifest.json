@@ -792,6 +792,17 @@
         "frames": 1800,
         "label": "msquares"
       }
+    },
+    {
+      "id": "grid3d",
+      "title": "3-D Grid Voxel Life",
+      "selfcheck": {
+        "off": "0x69",
+        "len": 2,
+        "want": "0xFCDE",
+        "frames": 800,
+        "label": "grid3d"
+      }
     }
   ]
 }
