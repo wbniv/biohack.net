@@ -836,6 +836,17 @@
         "frames": 500,
         "label": "smul-overflow"
       }
+    },
+    {
+      "id": "satcomet",
+      "title": "Saturating Comet Trails",
+      "selfcheck": {
+        "off": "0x6f",
+        "len": 2,
+        "want": "0xC2AF",
+        "frames": 500,
+        "label": "sat-comet"
+      }
     }
   ]
 }

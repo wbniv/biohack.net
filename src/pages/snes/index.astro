@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'satcomet',
+    title: 'Saturating Comet Trails',
+    desc: 'Six comets leave glowing trails that saturate to white where they cross, then fade cleanly to black — no wrap-around. Uses __builtin_elementwise_add_sat/sub_sat on uint8 and int16 to exercise all four saturating-arithmetic nodes. Compiler stress-test #75.',
+    keys: 'Self-running — comets streak and cross, saturating to white',
+    category: 'motion',
+  },
+  {
     slug: 'smulorbit',
     title: 'Signed Multiply-Overflow Orbit',
     desc: 'Six orbiters trace paths on the canvas; when a signed 16-bit multiply overflows, the orbiter teleports to the mirror quadrant and sparks orange. Uses __builtin_mul_overflow to exercise G_SMULO (signed multiply-overflow lowerMulo). Compiler stress-test #76.',

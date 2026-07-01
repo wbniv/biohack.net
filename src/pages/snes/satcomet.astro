@@ -1,0 +1,177 @@
+---
+// /snes/satcomet — Saturating Palette Comet Trails. Compiler stress-test #75.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/satcomet.sfc', 'preview/satcomet.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Unsigned uint8 saturating ops (G_UADDSAT / G_USUBSAT)
+glow[y][x] = __builtin_elementwise_sub_sat(glow[y][x], 8);  // decay: floors at 0
+glow[cy][cx] = __builtin_elementwise_add_sat(glow[cy][cx], 100); // brighten: caps at 255
+
+// Signed int16 saturating ops (G_SADDSAT / G_SSUBSAT)
+vx = __builtin_elementwise_add_sat(vx, kick_x);  // velocity kick
+vy = __builtin_elementwise_sub_sat(vy, kick_y);  // clamped at ±INT16_MAX
+
+// All four → lowerAddSubSatToMinMax at MOSLegalizerInfo.cpp:246 (branchless min/max)`;
+
+const notes = [
+  ['G_UADDSAT / G_USUBSAT', 'Unsigned 8-bit saturating add and subtract: glow accumulates up to 255 (never wraps to 0) and decays down to 0 (never wraps to 255). Distinct from demo #44 hdr-bloom which uses __builtin_add_overflow → G_UADDO (flag-test+branch, not a saturating clamp) and demo #70 dither (hand-written ternary → G_ICMP+G_SELECT, never the *SAT intrinsic node).'],
+  ['G_SADDSAT / G_SSUBSAT', 'Signed 16-bit saturating add and subtract on the comet velocity, clamping at ±INT16_MAX. The velocity is also cast to int8_t for storage, so the signed sat limits are never hit in practice — but the node is still emitted and lowered, exercising the signed clamp path that unsigned operators never reach.'],
+  ['lowerAddSubSatToMinMax', 'All four saturating nodes lower via the same function at MOSLegalizerInfo.cpp:246: compute the raw result, then select between the clamped bound and the result using a comparison. On the 65816 this becomes a compare + conditional branch, verified by the cmp/cpx/cpy count in the disasm gate.'],
+  ['white crossing = visible saturation', 'Where two comet trails overlap, the brightness from the second add_sat can reach 200 (100+100) or higher if more comets cross. The colour palette maps 201..255 to white — so crossing comets visually blow out to white, proving the unsigned add really saturates rather than wrapping. The demo would look different (incorrect) if add_sat were silently replaced by wrapping addition.'],
+  ['demo bug caught by differential', 'The initial comet positions used py = i*3+1, giving py=16 for the 6th comet — out of bounds for the 16-row glow array. The differential found it: on the host the out-of-bounds write hit padding or stack (no net effect on the CRC); on the 65816 target it hit different WRAM and changed the trajectory. Fixed by masking with &15. The differential gate is correct — it catches demo code bugs too, not only compiler bugs.'],
+];
+---
+
+<Base title="Saturating Comet Trails — bioHACK•NET" description="Six comets streak across a Super Nintendo canvas leaving glowing trails that saturate to white where they cross, then fade cleanly to black. Uses __builtin_elementwise_add_sat/sub_sat on uint8_t and int16_t to exercise all four saturating-arithmetic nodes. Compiler stress-test #75.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Saturating Comet Trails</h1>
+      <a href="/snes/#cat-motion" class="rp-cat-chip">Motion & Curves</a>
+      <p class="rp-lede">
+        Six comets streak across a Super Nintendo canvas, leaving glowing trails that
+        <em>additively saturate</em> to white where they cross, then fade cleanly to black.
+        The demo uses <code>__builtin_elementwise_add_sat</code> and
+        <code>sub_sat</code> on both <code>uint8_t</code> (glow/decay) and
+        <code>int16_t</code> (velocity), exercising all four
+        <a href="https://llvm.org/docs/LangRef.html#llvm-sadd-sat-intrinsics">saturating-arithmetic</a>
+        nodes. Compiler stress-test #75.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Saturating Comet Trails">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — comets streak and cross, their trails saturating to white.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Saturating arithmetic clamps at the range boundary instead of wrapping: adding 200 + 100
+        in uint8_t with saturation gives 255, not 44. This makes it correct for things like
+        colour accumulation (brightness never wraps back to 0) and velocity limiting (speed never
+        jumps to the wrong sign). Each glow cell decays by 8 per frame (sub_sat, floors at 0),
+        and each comet adds 100 brightness (add_sat, caps at 255). Where two comets meet, the
+        brightness hits the ceiling and the tile turns white.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The velocity kick uses signed 16-bit saturating ops to show that the same lowering handles
+        both signed and unsigned variants — all four nodes route through the same
+        <code>lowerAddSubSatToMinMax</code> expansion in the LLVM legalizer.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0xC2AF</code> — a fold of 256 glow values after 100 simulation steps) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'satcomet';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x6f, len: 2, want: 0xC2AF, frames: 500, label: 'sat-comet CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
