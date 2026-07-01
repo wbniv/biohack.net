@@ -704,6 +704,17 @@
         "frames": 500,
         "label": "fenwick"
       }
+    },
+    {
+      "id": "radix",
+      "title": "Radix Sort",
+      "selfcheck": {
+        "off": "0x73",
+        "len": 2,
+        "want": "0x123E",
+        "frames": 500,
+        "label": "radix"
+      }
     }
   ]
 }
