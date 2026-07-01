@@ -616,6 +616,17 @@
         "frames": 500,
         "label": "gf256"
       }
+    },
+    {
+      "id": "rotozoom",
+      "title": "Rotozoom",
+      "selfcheck": {
+        "off": "0x64",
+        "len": 2,
+        "want": "0x391B",
+        "frames": 700,
+        "label": "rotozoom"
+      }
     }
   ]
 }
