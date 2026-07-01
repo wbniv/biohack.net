@@ -332,17 +332,6 @@
       }
     },
     {
-      "id": "hilbert",
-      "title": "Hilbert Curve",
-      "selfcheck": {
-        "off": "0x3a",
-        "len": 2,
-        "want": "0x5999",
-        "frames": 500,
-        "label": "hilbert"
-      }
-    },
-    {
       "id": "fft",
       "title": "FFT Spectrum Analyser",
       "selfcheck": {
@@ -582,6 +571,17 @@
         "want": "0x31D7",
         "frames": 500,
         "label": "disbits"
+      }
+    },
+    {
+      "id": "hilbert",
+      "title": "Hilbert Curve",
+      "selfcheck": {
+        "off": "0x5c",
+        "len": 2,
+        "want": "0x5999",
+        "frames": 500,
+        "label": "hilbert"
       }
     }
   ]
