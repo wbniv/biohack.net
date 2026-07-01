@@ -539,6 +539,17 @@
         "frames": 500,
         "label": "nrecip"
       }
+    },
+    {
+      "id": "lzdec",
+      "title": "LZ77 Image-Decompress Reveal",
+      "selfcheck": {
+        "off": "0x6f",
+        "len": 2,
+        "want": "0x0100",
+        "frames": 500,
+        "label": "lzdec"
+      }
     }
   ]
 }

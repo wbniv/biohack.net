@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'lzdec',
+    title: 'LZ77 Decompress Reveal',
+    desc: 'A compressed diamond image loads in on-screen, decoded by an LZ77 byte-stream decoder that copies back-references from its own output buffer (sliding window, overlap = RLE). Compiler stress-test #49.',
+    keys: 'Self-running — the compressed image decodes and reveals',
+  },
+  {
     slug: 'nrecip',
     title: 'Newton Reciprocal Floor',
     desc: 'A scrolling perspective checkerboard floor whose 1/z depth is a multiply-only Newton-Raphson fixed-point reciprocal — no hardware divide, no divide libcall. Compiler stress-test #47.',
