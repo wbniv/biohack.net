@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'satcast',
+    title: 'Saturating-Cast Kaleidoscope',
+    desc: 'A 6-fold hex kaleidoscope where tile colours are float intensities clamped to int16 via fminf/fmaxf and truncated. Exercises G_FMINNUM + G_FMAXNUM + G_FPTOSI with legalizer-inserted NaN guard. Compiler stress-test #77.',
+    keys: 'Self-running — saturation boundary pulses as phase sweeps',
+    category: 'rendering',
+  },
+  {
     slug: 'rotkal',
     title: 'Rotate-Register Kaleidoscope',
     desc: 'An 8-fold mandala driven by circular bit rotations: eight ring registers rotate at different constant speeds (__builtin_rotateleft8/right8), while a 16-bit outer word rotates by a runtime amount. Exercises G_ROTL/G_ROTR ConstantAmt path and S8 special case. Compiler stress-test #74.',

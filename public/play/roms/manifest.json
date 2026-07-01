@@ -858,6 +858,17 @@
         "frames": 500,
         "label": "ROTKAL"
       }
+    },
+    {
+      "id": "satcast",
+      "title": "Saturating-Cast Kaleidoscope",
+      "selfcheck": {
+        "off": "0x80",
+        "len": 2,
+        "want": "0xC8CF",
+        "frames": 500,
+        "label": "SATCAST"
+      }
     }
   ]
 }
