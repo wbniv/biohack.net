@@ -880,6 +880,17 @@
         "frames": 500,
         "label": "SBITFLD"
       }
+    },
+    {
+      "id": "mvscrl",
+      "title": "Memmove Scroll Slabs",
+      "selfcheck": {
+        "off": "0x68",
+        "len": 2,
+        "want": "0x72A7",
+        "frames": 500,
+        "label": "MVSCRL"
+      }
     }
   ]
 }

@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'mvscrl',
+    title: 'Memmove Scroll Slabs',
+    desc: 'Two counter-scrolling slab bands driven by overlapping memmove calls. Upper band uses memmove(dst+1,dst,N) where dst>src (descending path); lower band uses the ascending path. Both G_MEMMOVE sub-paths exercised. Compiler stress-test #79.',
+    keys: 'Self-running — upper band scrolls down, lower scrolls up',
+    category: 'algorithms',
+  },
+  {
     slug: 'sbitfld',
     title: 'Signed-Bitfield Terrain',
     desc: 'An animated eroding terrain where each cell packs int16_t height:5/slope:4/flow:4 signed fields. Reading them fires G_SEXT_INREG (sign-extend in register). Indigo valleys prove the sign-extension lowering is correct. Compiler stress-test #78.',

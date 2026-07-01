@@ -1,0 +1,171 @@
+---
+// /snes/mvscrl — playable in-browser Memmove Scroll Slabs SNES demo + notes.
+// Boots the shared bsnes-jg WASM player (public/play/app.js) on roms/mvscrl.sfc.
+// Compiler stress-test #79: G_MEMMOVE descending (dst>src) + ascending (dst<src) paths.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/mvscrl.sfc', 'preview/mvscrl.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Upper 8 rows scroll DOWN (descending memmove: dst > src, overlapping):
+memmove(&upper[1][0], &upper[0][0], 7 * 16);   // shift rows 0-6 → 1-7
+upper[0][col] = new_colour(seed, col);          // insert fresh top row
+
+// Lower 8 rows scroll UP (ascending memmove: dst < src, overlapping):
+memmove(&lower[0][0], &lower[1][0], 7 * 16);   // shift rows 1-7 → 0-6
+lower[7][col] = new_colour(seed, col);          // insert fresh bottom row
+
+// Both copies OVERLAP (dst and src share 6 rows).
+// Wrong direction on either call smears the image and diverges the CRC.`;
+
+const notes = [
+  ['G_MEMMOVE descending path', 'When dst > src and the regions overlap (as in memmove(&upper[1], &upper[0], 7×16)), copying low-to-high would corrupt the source data before reading it. The MOS legalizer detects this via compareOperandLocations (:3145–3152, returns −1) and sets Descending=true, adjusting the copy start offset (:3231/:3247). A wrong direction would copy the first row over itself, leaving all 7 rows unchanged.'],
+  ['G_MEMMOVE ascending path', 'When dst < src (memmove(&lower[0], &lower[1], 7×16)), copying high-to-low is safe. The legalizer takes the Ascending path. Both sub-paths of the same legalizer rule at :422 are exercised — prior demos #23 (lsystem) and #49 (lzdec) only used non-overlapping copies or byte-by-byte loops, never emitting G_MEMMOVE.'],
+  ['SDK memmove', 'The underlying call goes to the llvm-mos-sdk\'s memmove weak implementation at mos-platform/common/c/mem.c:15. On the 65816 it resolves the direction at runtime from the pointer comparison, using indexed copies in the correct order. A bug in the SDK\'s direction detection would produce mismatched output on the SNES vs the host.'],
+  ['differential gate', '16 scroll steps × 256 bytes per step × 2 folds. The CRC uses an additive rotate-shift fold (not XOR) because the injected rows have a period-4 byte pattern whose XOR sums to zero — an XOR-based fold would collapse to zero regardless of the data. The additive fold accumulates correctly and diverges on any wrong copy direction.'],
+];
+---
+
+<Base title="Memmove Scroll Slabs — bioHACK•NET" description="Two counter-scrolling bands of coloured slabs on a Super Nintendo, driven by overlapping memmove calls. The upper band uses memmove(dst+1, dst, N) where dst>src, exercising the descending (high-to-low) G_MEMMOVE path; the lower band uses the ascending path. Compiler stress-test #79.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Memmove Scroll Slabs</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms</a>
+      <p class="rp-lede">
+        Two counter-scrolling slab bands on a Super Nintendo, driven by <em>overlapping</em>
+        <code>memmove</code> calls. The upper band uses <code>memmove(upper+row1, upper+row0, N)</code>
+        where dst&nbsp;&gt;&nbsp;src — forcing the <strong>descending</strong> (high-to-low) copy path in
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>'s G_MEMMOVE legalizer. The lower
+        band uses the ascending path. Compiler stress-test #79, exercising both sub-paths of the
+        overlapping-<code>memmove</code> legalizer for the first time.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Memmove Scroll Slabs">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — upper band scrolls down, lower band scrolls up, slabs meet at centre.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The 128×128 canvas is split into an upper 8-row band (scrolling <em>down</em>) and a lower
+        8-row band (scrolling <em>up</em>). Each frame a fresh row of coloured tiles is injected
+        at the scroll boundary and the rest of the band is shifted by one row via
+        <code>memmove</code>. Because the source and destination windows overlap by 7 rows,
+        the copy must go in the right direction — ascending or descending — or the image
+        smears and the gate CRC diverges.
+      </p>
+      <pre class="rp-code">{code}</pre>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert (gate CRC <code>0x72A7</code> —
+        16 steps × 256 bytes, additive fold) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>, <code>-verify</code> clean.</p>
+    </section>
+
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'mvscrl';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x68, len: 2, want: 0x72A7, frames: 500, label: 'memmove CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede strong { font-weight: 600; color: var(--ink); }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc strong { font-weight: 600; color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
