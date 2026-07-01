@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'fenwick',
+    title: 'Fenwick Tree',
+    desc: 'A binary-indexed tree maintaining the running integral of a live signal, driven by the i & -i low-bit-isolation trick — hopping up and down a virtual tree of partial sums. Compiler stress-test #63.',
+    keys: 'Self-running — the signal moves, its integral reshapes',
+  },
+  {
     slug: 'percol',
     title: 'Union-Find Percolation',
     desc: 'Random bonds join neighbouring cells; a wet region spreads from the top until it percolates to the bottom, tracked by a disjoint-set (union-find) with path compression — pointer-chasing that flattens the path in place. Compiler stress-test #62.',

@@ -693,6 +693,17 @@
         "frames": 500,
         "label": "percol"
       }
+    },
+    {
+      "id": "fenwick",
+      "title": "Fenwick Tree",
+      "selfcheck": {
+        "off": "0x80",
+        "len": 2,
+        "want": "0x3454",
+        "frames": 500,
+        "label": "fenwick"
+      }
     }
   ]
 }
