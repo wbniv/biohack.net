@@ -594,6 +594,17 @@
         "frames": 500,
         "label": "bitcensus"
       }
+    },
+    {
+      "id": "bitshuffle",
+      "title": "Perfect-Shuffle Transition",
+      "selfcheck": {
+        "off": "0x52",
+        "len": 2,
+        "want": "0x2A4A",
+        "frames": 500,
+        "label": "bitshuffle"
+      }
     }
   ]
 }
