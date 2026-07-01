@@ -561,6 +561,17 @@
         "frames": 500,
         "label": "cgrade"
       }
+    },
+    {
+      "id": "critters",
+      "title": "Protothread Critter Swarm",
+      "selfcheck": {
+        "off": "0x79",
+        "len": 2,
+        "want": "0xAD9F",
+        "frames": 500,
+        "label": "critters"
+      }
     }
   ]
 }

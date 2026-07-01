@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'critters',
+    title: 'Protothread Critters',
+    desc: 'A swarm of critters, each a resumable protothread (coroutine) that yields every frame and resumes its scripted patrol via a saved continuation index — case labels inside loops. Compiler stress-test #51.',
+    keys: 'Self-running — each critter runs its own patrol',
+  },
+  {
     slug: 'cgrade',
     title: 'Many-Arg Color Grade',
     desc: 'A ten-coefficient color grade re-grades a gradient through looks. So many arguments that the extras spill onto the soft stack — the register-overflow calling convention. Compiler stress-test #50.',
