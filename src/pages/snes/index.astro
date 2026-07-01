@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'multibase',
+    title: 'Multi-Base Clock',
+    desc: 'One counter shown in decimal, dozenal, hex and sexagesimal at once, each digit split with the standard-library div() returning a div_t (quotient+remainder) struct by value, plus a 64-bit odometer via lldiv(). Compiler stress-test #60.',
+    keys: 'Self-running — the same instant ticks in four bases',
+  },
+  {
     slug: 'cosmzoom',
     title: 'Cosmic Zoom Ruler',
     desc: 'A 64-bit scale growing through the powers of ten, swept across a logarithmic ruler by converting it to float (__floatundisf) and back (__fixunssfdi) — the 64-bit-integer-to-float conversion. Compiler stress-test #59.',

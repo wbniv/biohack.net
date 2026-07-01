@@ -660,6 +660,17 @@
         "frames": 500,
         "label": "cosmzoom"
       }
+    },
+    {
+      "id": "multibase",
+      "title": "Multi-Base Clock",
+      "selfcheck": {
+        "off": "0x46",
+        "len": 2,
+        "want": "0x371A",
+        "frames": 500,
+        "label": "multibase"
+      }
     }
   ]
 }
