@@ -418,6 +418,17 @@
         "frames": 500,
         "label": "hdr-bloom"
       }
+    },
+    {
+      "id": "iir-scope",
+      "title": "IIR Resonant-Filter Scope",
+      "selfcheck": {
+        "off": "0xbe",
+        "len": 2,
+        "want": "0x49BD",
+        "frames": 700,
+        "label": "iir-scope"
+      }
     }
   ]
 }

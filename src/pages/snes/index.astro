@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'iir-scope',
+    title: 'IIR Resonant-Filter Scope',
+    desc: 'Four 2-pole IIR resonators plucked into a live oscilloscope — a recursive feedback chain (y[n] from y[n-1], y[n-2]) that, unlike a feed-forward FFT, cannot be reordered. Compiler stress-test #48.',
+    keys: 'Self-running — the resonators are plucked and ring on their own',
+  },
+  {
     slug: 'hdr-bloom',
     title: 'HDR Additive Bloom',
     desc: 'Six drifting lights summed per cell with saturating (overflow-checked) add — where they overlap the field blows out to white, the HDR bloom look, in 8-bit integers via __builtin_add_overflow. Compiler stress-test #44.',
