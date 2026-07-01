@@ -682,6 +682,17 @@
         "frames": 500,
         "label": "dhmix"
       }
+    },
+    {
+      "id": "percol",
+      "title": "Union-Find Percolation",
+      "selfcheck": {
+        "off": "0x7d",
+        "len": 2,
+        "want": "0x025B",
+        "frames": 500,
+        "label": "percol"
+      }
     }
   ]
 }
