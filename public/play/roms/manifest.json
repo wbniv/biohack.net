@@ -517,6 +517,17 @@
         "frames": 500,
         "label": "metaball"
       }
+    },
+    {
+      "id": "qsortviz",
+      "title": "qsort Sort Visualizer",
+      "selfcheck": {
+        "off": "0x139b",
+        "len": 2,
+        "want": "0x8EA5",
+        "frames": 500,
+        "label": "qsortviz"
+      }
     }
   ]
 }
