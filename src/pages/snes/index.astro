@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'sbitfld',
+    title: 'Signed-Bitfield Terrain',
+    desc: 'An animated eroding terrain where each cell packs int16_t height:5/slope:4/flow:4 signed fields. Reading them fires G_SEXT_INREG (sign-extend in register). Indigo valleys prove the sign-extension lowering is correct. Compiler stress-test #78.',
+    keys: 'Self-running — ridges erode and valleys fill each frame',
+    category: 'algorithms',
+  },
+  {
     slug: 'satcast',
     title: 'Saturating-Cast Kaleidoscope',
     desc: 'A 6-fold hex kaleidoscope where tile colours are float intensities clamped to int16 via fminf/fmaxf and truncated. Exercises G_FMINNUM + G_FMAXNUM + G_FPTOSI with legalizer-inserted NaN guard. Compiler stress-test #77.',

@@ -869,6 +869,17 @@
         "frames": 500,
         "label": "SATCAST"
       }
+    },
+    {
+      "id": "sbitfld",
+      "title": "Signed-Bitfield Terrain",
+      "selfcheck": {
+        "off": "0x6b",
+        "len": 2,
+        "want": "0x40C5",
+        "frames": 500,
+        "label": "SBITFLD"
+      }
     }
   ]
 }
