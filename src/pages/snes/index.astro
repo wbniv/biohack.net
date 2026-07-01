@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'gf256',
+    title: 'GF(2⁸) Galois Field',
+    desc: 'A morphing finite-field plaid coloured by GF(2⁸) carryless multiplies — the arithmetic under Reed-Solomon and QR codes: log/antilog tables and xor, no carry chain. A live RS syndrome lights up when a symbol is corrupted. Compiler stress-test #55.',
+    keys: 'Self-running — the field plaid morphs, the syndrome updates',
+  },
+  {
     slug: 'bitshuffle',
     title: 'Perfect-Shuffle Transition',
     desc: 'An image scrambles into its bit-reversed "butterfly" order and reassembles — the perfect shuffle from the FFT — driven by __builtin_bitreverse32 (its own inverse) and __builtin_bswap32, which inline-lower on the 65816. Compiler stress-test #54.',

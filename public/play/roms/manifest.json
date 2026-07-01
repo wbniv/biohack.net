@@ -605,6 +605,17 @@
         "frames": 500,
         "label": "bitshuffle"
       }
+    },
+    {
+      "id": "gf256",
+      "title": "GF(2^8) Galois Field",
+      "selfcheck": {
+        "off": "0x68",
+        "len": 2,
+        "want": "0xC028",
+        "frames": 500,
+        "label": "gf256"
+      }
     }
   ]
 }
