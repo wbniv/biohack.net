@@ -407,6 +407,17 @@
         "frames": 400,
         "label": "bf-vm"
       }
+    },
+    {
+      "id": "hdr-bloom",
+      "title": "HDR Additive Bloom",
+      "selfcheck": {
+        "off": "0x6a",
+        "len": 2,
+        "want": "0xF951",
+        "frames": 500,
+        "label": "hdr-bloom"
+      }
     }
   ]
 }

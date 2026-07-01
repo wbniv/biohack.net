@@ -14,6 +14,12 @@ const previewV = (slug: string) => {
 
 const demos = [
   {
+    slug: 'hdr-bloom',
+    title: 'HDR Additive Bloom',
+    desc: 'Six drifting lights summed per cell with saturating (overflow-checked) add — where they overlap the field blows out to white, the HDR bloom look, in 8-bit integers via __builtin_add_overflow. Compiler stress-test #44.',
+    keys: 'Self-running — the lights drift and blow out on their own',
+  },
+  {
     slug: 'bf-vm',
     title: 'Brainfuck Threaded-Code VM',
     desc: 'A Brainfuck interpreter on the SNES dispatching each opcode with a computed goto (goto *handlers[op] → an indirect jump — the "threaded code" loop). Watch it compute HELLO WORLD one byte at a time. Compiler stress-test #38.',
