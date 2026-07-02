@@ -957,6 +957,17 @@
         "frames": 500,
         "label": "rangecoder CRC"
       }
+    },
+    {
+      "id": "sobel",
+      "title": "Sobelscope",
+      "selfcheck": {
+        "off": "0x66",
+        "len": 2,
+        "want": "0x2849",
+        "frames": 500,
+        "label": "edge CRC"
+      }
     }
   ]
 }

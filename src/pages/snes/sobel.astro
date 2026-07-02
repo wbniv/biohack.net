@@ -1,0 +1,172 @@
+---
+// /snes/sobel — playable in-browser Sobelscope SNES demo.
+// Compiler stress-test #87: signed 3x3 Sobel MAC + G_SADDSAT/G_USUBSAT.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/sobel.sfc', 'preview/sobel.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Signed 3x3 Sobel: Gx/Gy are signed MACs; magnitude uses SATURATING add.
+int16_t Gx = (s02-s00) + 2*(s12-s10) + (s22-s20);   // signed multiply-accumulate
+int16_t Gy = (s20-s00) + 2*(s21-s01) + (s22-s02);
+int16_t mag = __builtin_elementwise_add_sat(abs(Gx), abs(Gy)); // G_SADDSAT (clamps, no wrap)
+uint8_t m8  = min(mag >> 1, 255);
+uint8_t out = __builtin_elementwise_sub_sat(m8, 16);           // G_USUBSAT (floor, no underflow)`;
+
+const notes = [
+  ['saturating arithmetic', 'The edge magnitude adds |Gx| and |Gy| with __builtin_elementwise_add_sat, which clamps at the type maximum instead of wrapping — a bright edge stays bright rather than overflowing to a dark value. The floor subtract uses __builtin_elementwise_sub_sat (clamps at 0). These lower to the backend\'s G_SADDSAT / G_USUBSAT saturating opcodes.'],
+  ['signed MAC', 'Gx and Gy are signed weighted sums (multiply-accumulate) over the 3×3 window with the classic Sobel kernels. On a CPU with no MAC instruction this is a sequence of signed adds and shifts; the accumulator stays 16-bit signed throughout.'],
+  ['host vs target', 'The host oracle (gcc) has no elementwise saturating builtins, so it uses a bit-identical manual clamp; the 65816 target (clang) uses the real intrinsics. The differential gate confirms both produce the same CRC — i.e. G_SADDSAT/G_USUBSAT are correct.'],
+  ['distinct from #57 medfilt', '#57 is a median filter — a min/max compare-exchange sorting network, no multiply-accumulate and no saturation. This is the MAC + saturating-arithmetic member of the battery.'],
+];
+---
+
+<Base title="Sobelscope — bioHACK•NET" description="A signed 3x3 Sobel edge detector on a Super Nintendo — signed multiply-accumulate kernels with a saturating magnitude (__builtin_elementwise_add_sat/_sub_sat, G_SADDSAT/G_USUBSAT). Compiler stress-test #87.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Sobelscope</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Numeric</a>
+      <p class="rp-lede">
+        A signed 3×3 <a href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel</a>
+        edge detector over a procedural animated field. The <code>Gx</code>/<code>Gy</code>
+        gradients are signed <b>multiply-accumulates</b>; the edge magnitude
+        <code>|Gx| +sat |Gy|</code> uses <b>saturating</b> arithmetic
+        (<code>__builtin_elementwise_add_sat</code> → <code>G_SADDSAT</code>) so bright edges
+        clamp instead of wrapping. Compiler stress-test #87.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Sobelscope">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — brighter cells = stronger detected edges in the field.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        A procedural pattern of rings and diagonal steps scrolls across a 32×32 field. Each cell
+        runs a 3×3 Sobel convolution against its neighbours to estimate the local gradient; the
+        magnitude is quantized to four brightness levels, so the moving step-edges light up as the
+        detector tracks them.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The magnitude combine uses a saturating add so a strong edge can't wrap around to look
+        flat — the kind of clamp real image kernels rely on. On the 65816 that lowers to the
+        backend's saturating opcodes; the host oracle checks the results are bit-identical.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (edge CRC <code>0x2849</code> — a fold of every Sobel magnitude in the field) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'sobel';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x66, len: 2, want: 0x2849, frames: 500, label: 'edge CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede b { color: var(--ink); }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
