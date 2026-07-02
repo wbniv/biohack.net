@@ -48,6 +48,13 @@ const demos = [
     category: 'ciphers',
   },
   {
+    slug: 'bitweave',
+    title: 'Serial Bit-Reversal Weave',
+    desc: 'Bit reversal done one bit at a time through a rotate-carry loop — a loop-carried result rotated on every back edge, deliberately not the bit-reverse builtin. Re-runs a default-build register-coalescer bug in loop-carried rotate code. Compiler stress-test #107 (Round 6).',
+    keys: 'Self-running — a gradient shown through its bit-reversed order',
+    category: 'ciphers',
+  },
+  {
     slug: 'spaceship',
     title: 'Width-Sweep Sort Gallery',
     desc: 'Four bar panels sort in lockstep, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — 8/16/32/64-bit. Re-runs the fix that taught the 65816 to lower the three-way-compare (G_SCMP), now at the 32- and 64-bit widths the original never reached. Compiler stress-test #97 (Round 6).',

@@ -1,0 +1,173 @@
+---
+// /bitweave — Serial Bit-Reversal Weave. Compiler stress-test #107 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/bitweave.sfc', 'preview/bitweave.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// reverse the bits of a byte the hard way: one bit at a time
+uint8_t rev = 0;
+for (int i = 0; i < 8; i++) {
+    rev = (rev << 1) | (v & 1);   // rotate the source's low bit INTO rev
+    v >>= 1;                       // rotate the source OUT
+}
+// 'rev' is carried around the loop and rotated on every back edge —
+// the exact shape a default-build register-coalescer bug once corrupted.`;
+
+const notes = [
+  ['bit reversal, one bit at a time', 'Reversing the bits of a byte can be done with a clever mask cascade, but here it is done the plain way: a loop that shifts each bit out of the source and rotates it into the result. That result register lives across the whole loop and is rotated on every iteration — a loop-carried rotate, which is exactly the pattern the compiler once mishandled.'],
+  ['a deliberate contrast', 'A sibling demo reverses bits with a compiler builtin, which lowers to a straight-line mask-swap with no loop. This one avoids the builtin on purpose, to exercise the serial rotate-carry loop instead — the shape that carries a value around the back edge and rotates it there.'],
+  ['the bug this guards (patch 0010)', 'On the ordinary 8-bit build, a register-coalescer once merged two shift/rotate values into the accumulator-only class, stranding a loop-carried byte while the loop’s back-edge rotate read a stale accumulator. The fix keeps them apart. This demo runs two such loops at once — an 8-bit and a 16-bit reversal interleaved — under the pressure that tempted the bad merge.'],
+  ['reversal is its own inverse', 'Reverse a value twice and you get it back. The gate uses that: it reverses, then reverses again, and folds the difference from the original into the CRC — which is zero when everything is correct. A single stranded bit would make that difference non-zero and change the CRC.'],
+  ['default build is the real test', 'Because the bug only appears on the plain 8-bit build, that column carries the weight. The demo is checked five ways — host, default, and both 16-bit-accumulator modes on two emulators — and the default build stays green.'],
+  ['the visual', 'A smooth diagonal gradient is displayed through its bit-reversed order: the cell at each position shows the gradient sampled at that position’s bit-reversed index. That scatters the smooth ramp into the characteristic interleaved weave you see in FFT reordering, and it scrolls as the gradient drifts.'],
+];
+---
+
+<Base title="Serial Bit-Reversal Weave — bioHACK•NET" description="Bit reversal done one bit at a time through a rotate-carry loop on a Super Nintendo. Compiler stress-test #107: hardens a default-build register-coalescer bug in loop-carried rotate code.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Serial Bit-Reversal Weave</h1>
+      <a href="/snes/#cat-ciphers" class="rp-cat-chip">Ciphers &amp; Bit Tricks</a>
+      <p class="rp-lede">
+        Bit reversal done the plain way — <em>one bit at a time</em> through a rotate-carry loop,
+        with the result register carried around the loop and rotated on every back edge. This is
+        compiler stress-test #107: it runs the loop-carried rotate shape a real
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> register-coalescer bug once
+        corrupted on the ordinary 8-bit build — deliberately avoiding the bit-reverse builtin that
+        would skip the loop entirely.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Serial Bit-Reversal Weave">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — a gradient shown through its bit-reversed order, scrolling.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Bit-reversal reordering shows up wherever FFTs and interleavers do. Doing it bit-by-bit is the
+        textbook loop — and the textbook loop is precisely a loop-carried rotate, which is where the
+        compiler bug this demo guards used to live.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Two reversals run interleaved — an 8-bit and a 16-bit — so two result registers are live and
+        rotated together. The gate folds the reversed words plus a reverse-it-twice self-check into a
+        CRC. The picture is the proof: a stranded loop-carried byte would scramble the weave.
+      </p>
+
+      <h2>Compiler stress-test #107 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0x0E03</code> — a fold of 128 reversals plus their self-check) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean (including the default build — the one that matters here).</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'bitweave';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x6d, len: 2, want: 0x0E03, frames: 500, label: 'bit-reversal weave CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

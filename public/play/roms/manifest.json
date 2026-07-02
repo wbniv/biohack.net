@@ -1177,6 +1177,17 @@
         "frames": 500,
         "label": "lfsr2"
       }
+    },
+    {
+      "id": "bitweave",
+      "title": "Serial Bit-Reversal Weave",
+      "selfcheck": {
+        "off": "0x6d",
+        "len": 2,
+        "want": "0x0E03",
+        "frames": 500,
+        "label": "bitweave"
+      }
     }
   ]
 }
