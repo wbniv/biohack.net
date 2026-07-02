@@ -1089,6 +1089,17 @@
         "frames": 500,
         "label": "permscat"
       }
+    },
+    {
+      "id": "ropeedit",
+      "title": "Gap-Buffer Rope Editor",
+      "selfcheck": {
+        "off": "0x6a",
+        "len": 2,
+        "want": "0x2361",
+        "frames": 500,
+        "label": "ropeedit"
+      }
     }
   ]
 }

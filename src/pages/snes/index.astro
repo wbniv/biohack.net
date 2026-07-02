@@ -62,6 +62,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'ropeedit',
+    title: 'Gap-Buffer Rope Editor',
+    desc: 'A text gap buffer whose cursor moves memmove text across the gap — both directions, past the 256-byte boundary. Re-runs the +mos-xy16 index-width fix at scale, as a real editor primitive rather than a synthetic loop. Compiler stress-test #96 (Round 6).',
+    keys: 'Self-running — text blocks slide across the gap',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',
