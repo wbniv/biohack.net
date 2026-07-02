@@ -968,6 +968,17 @@
         "frames": 500,
         "label": "edge CRC"
       }
+    },
+    {
+      "id": "dctbloom",
+      "title": "DCT Bloom",
+      "selfcheck": {
+        "off": "0x43",
+        "len": 2,
+        "want": "0x5364",
+        "frames": 500,
+        "label": "dct CRC"
+      }
     }
   ]
 }
