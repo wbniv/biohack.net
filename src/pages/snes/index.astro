@@ -69,6 +69,13 @@ const demos = [
     category: 'motion',
   },
   {
+    slug: 'compass',
+    title: 'Copysign Compass',
+    desc: 'A rotating 16×16 quadrant vector field driven by __builtin_copysignf — the backend\'s G_FCOPYSIGN inline sign-bit transplant (lowerFCopySign). Sign-zero crossings swirl as the phase sweeps. Compiler stress-test #81.',
+    keys: 'Self-running — quadrant boundaries rotate as phase sweeps',
+    category: 'motion',
+  },
+  {
     slug: 'fabsridge',
     title: 'Fabs Ridgeline',
     desc: 'An animated terrain ridgeline driven by the tent-map iteration using __builtin_fabsf as the hot op, targeting the backend\'s inline sign-bit AND path (legalizeFAbs). V-notch peaks and valleys drift each frame. Compiler stress-test #80.',

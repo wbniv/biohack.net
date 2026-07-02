@@ -891,6 +891,17 @@
         "frames": 500,
         "label": "MVSCRL"
       }
+    },
+    {
+      "id": "compass",
+      "title": "Copysign Compass",
+      "selfcheck": {
+        "off": "0x64",
+        "len": 2,
+        "want": "0xB9CB",
+        "frames": 500,
+        "label": "corpus_result Sign-bit CRC"
+      }
     }
   ]
 }

@@ -1,0 +1,179 @@
+---
+// /snes/compass — playable in-browser Copysign Compass SNES demo.
+// Compiler stress-test #81: G_FCOPYSIGN via __builtin_copysignf + G_IS_FPCLASS via __builtin_signbitf.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/compass.sfc', 'preview/compass.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Per-cell colour in the 16×16 vector-field lattice.
+int16_t src_x = (int16_t)(dx + phase);      // sign source for vx
+int16_t src_y = (int16_t)(dy - phase);      // sign source for vy
+float fsrc_x = (float)src_x;               // G_SITOFP → __floatsisf
+float fsrc_y = (float)src_y;
+float vx = __builtin_copysignf(1.0f, fsrc_x); // G_FCOPYSIGN → inline AND/OR
+float vy = __builtin_copysignf(1.0f, fsrc_y);
+uint8_t sx = __builtin_signbitf(vx) ? 1 : 0;  // G_IS_FPCLASS(fcNeg) → inline sign test
+uint8_t sy = __builtin_signbitf(vy) ? 1 : 0;
+return sx | (sy << 1);  // 0=NE  1=NW  2=SE  3=SW`;
+
+const notes = [
+  ['G_FCOPYSIGN', 'The float copy-sign operation lowers through LegalizerHelper::lowerFCopySign (LegalizerHelper.cpp:8899-8960): it emits AND/OR of sign bits entirely inline. The sign bit (bit 31) of the source is ANDed with the sign mask, the sign bit of the magnitude is ANDed with its inverse, then the two are ORed together. No libcall, no rounding — a pure bit manipulation that is exact by definition.'],
+  ['G_IS_FPCLASS', '__builtin_signbitf lowers to G_IS_FPCLASS(fcNeg), which the backend resolves as an inline sign-bit integer test: read the 32-bit float representation, test bit 31. No fcmp instruction, no library call.'],
+  ['copysignf(1.0f, x)', 'The magnitude argument is the constant 1.0f. The sign source is a runtime integer converted to float via __floatsisf (G_SITOFP). Because both arguments are non-constant at compile time, the compiler cannot constant-fold the result — it must emit the G_FCOPYSIGN node and lower it through lowerFCopySign. This is the first demo to generate that code path.'],
+  ['distinct from #45 and #57', '#45 metaball type-puns a float to uint32_t and back through the integer ALU — G_FCOPYSIGN is never formed. #57 medfilt uses integer G_ABS/G_SMIN on int16_t — no float sign-bit operation at all. This is the first stress-test of lowerFCopySign and G_IS_FPCLASS(fcNeg).'],
+  ['quadrant CRC', 'XOR-based CRCs cancel on symmetric data: with 64 cells of each colour (0..3) per phase, a plain XOR fold sums to zero for all phases. The gate breaks symmetry by adding a position hash: each cell contributes (colour XOR (pos*97)) where 97 is prime and unique per position. GATE_N=16 phases, phase step=3 (coprime with 16 to avoid period reset). Result: 0xB9CB — non-zero and non-canceling.'],
+];
+---
+
+<Base title="Copysign Compass — bioHACK•NET" description="A rotating 16×16 quadrant vector field on a Super Nintendo driven by __builtin_copysignf — the compiler's G_FCOPYSIGN inline sign-bit transplant. Sign-zero crossings swirl as the phase sweeps. Compiler stress-test #81.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Copysign Compass</h1>
+      <a href="/snes/#cat-motion" class="rp-cat-chip">Motion &amp; Curves</a>
+      <p class="rp-lede">
+        A rotating 16×16 quadrant vector field on a Super Nintendo driven by
+        <code>__builtin_copysignf</code> — the LLVM backend's
+        <code>G_FCOPYSIGN</code> inline sign-bit transplant. Each cell computes
+        its quadrant colour (NE/NW/SE/SW) from sign tests on integer sums cast
+        to float; as the phase sweeps, sign-zero crossings swirl across the
+        lattice and quadrant boundaries rotate. The first demo to fire
+        <code>lowerFCopySign</code> and <code>G_IS_FPCLASS(fcNeg)</code>.
+        Compiler stress-test #81.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Copysign Compass">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the quadrant field rotates as the phase sweeps.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each of the 256 cells in a 16×16 grid gets a <em>quadrant colour</em>: NE (gold), NW (indigo),
+        SE (orange), or SW (teal), depending on the signs of two integer sums cast to float. The sums
+        shift by one each frame, so the zero-crossing boundary sweeps across the field and the quadrant
+        pattern slowly rotates. At zero-crossings the colour flips crisply — <code>copysignf</code>
+        has no fuzzy region; it is an exact sign-bit copy.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The four colours tile across the 128×128 canvas (8 pixels per cell). Gold and indigo dominate
+        alternate half-planes; as the phase advances the diagonal boundary that separates them sweeps
+        diagonally, giving the impression of a slowly rotating compass needle on each cell.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0xB9CB</code> — 16×16 cell colours across 16 phases with position hashing)
+        live in this tab. No far pointers —
+        <code>host == default == +mos-a16 == +mos-xy16</code>, <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'compass';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x64, len: 2, want: 0xB9CB, frames: 500, label: 'sign-bit CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
