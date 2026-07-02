@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'cpu6502',
+    title: '6502 CPU Simulator',
+    desc: 'A 6502/65C02 processor emulated on the SNES: a scrolling disassembly listing steps through a program one instruction at a time while the matching ALU logic gate lights up. The emulator’s 256-entry opcode switch is lowered to a jump table on the 65816. Compiler stress-test #102 (Round 6).',
+    keys: 'Self-running — the disassembly scrolls, ALU gates light up',
+    category: 'classics',
+  },
+  {
     slug: 'crcwall',
     title: 'Bit-Serial CRC Wall',
     desc: 'Three CRC checksums (8/16/32-bit) computed bit-by-bit as software shift-registers, interleaved under heavy register pressure — re-running a fix for a default-8-bit register-allocator bug that once stranded a loop-carried CRC byte. A flowing hash marble. Compiler stress-test #105 (Round 6).',
@@ -94,6 +101,13 @@ const demos = [
     title: 'Odd-Width Mask Sculptor',
     desc: 'Values masked to odd widths — 20, 24, 28 bits — zero-extended to 64 bits and multiplied. Re-runs the odd-width extend and 64-bit split that once crashed the 16-bit-accumulator backend. Compiler stress-test #103 (Round 6).',
     keys: 'Self-running — four mask-width bands terrace and flow',
+    category: 'algorithms',
+  },
+  {
+    slug: 'modexp256',
+    title: '256-bit Modular Exponentiation',
+    desc: 'A 256-bit Diffie-Hellman key exchange built from 32-bit limbs and 64-bit multiply-accumulate. Hammers the 64-bit (un)merge glue that once crashed the backend, hundreds of times over. Compiler stress-test #104 (Round 6).',
+    keys: 'Self-running — the 256-bit shared secret as a colour field',
     category: 'algorithms',
   },
   {
