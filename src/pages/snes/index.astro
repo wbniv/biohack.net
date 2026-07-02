@@ -146,6 +146,13 @@ const demos = [
     category: 'bignums',
   },
   {
+    slug: 'borrowlad',
+    title: 'Borrow-Ladder Odometer',
+    desc: 'A 128-bit number counting down through a limb-by-limb borrow chain, borrows rippling upward like an odometer. Re-runs the set-carry lowering that every multi-precision subtract begins with. Compiler stress-test #110 (Round 6).',
+    keys: 'Self-running — a 128-bit binary counter ticks down',
+    category: 'bignums',
+  },
+  {
     slug: 'mvscrl',
     title: 'Memmove Scroll Slabs',
     desc: 'Two counter-scrolling slab bands driven by overlapping memmove calls. Upper band uses memmove(dst+1,dst,N) where dst>src (descending path); lower band uses the ascending path. Both G_MEMMOVE sub-paths exercised. Compiler stress-test #79.',

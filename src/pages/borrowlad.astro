@@ -1,0 +1,173 @@
+---
+// /borrowlad — Borrow-Ladder Odometer. Compiler stress-test #110 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/borrowlad.sfc', 'preview/borrowlad.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// subtract two 128-bit numbers, limb by limb, borrow rippling upward
+uint16_t borrow = 0;
+for (int i = 0; i < 8; i++) {
+    int32_t t = a[i] - b[i] - borrow;   // 16-bit subtract with a borrow-in
+    a[i] = (uint16_t)t;
+    borrow = (t < 0) ? 1 : 0;           // borrow-out feeds the next limb
+}
+// the very first subtract needs its carry SET (no borrow yet) —
+// a single-bit "carry = 1" the compiler must materialize just so.`;
+
+const notes = [
+  ['subtracting big numbers', 'A 128-bit number is stored as eight 16-bit pieces. To subtract one from another you work piece by piece from the bottom, and whenever a piece would go negative you take a borrow from the next one up. That borrow ripples upward — the same way a car odometer rolls 30000 back to 29999.'],
+  ['the set carry bit', 'On the 65816, subtract uses the carry flag as an inverted borrow: before the first subtract you must SET the carry to say “no borrow yet”. That single set bit is a tiny value the compiler has to produce exactly right — a “carry = 1” materialized just before the subtract chain.'],
+  ['the bug this guards (patch 0012)', 'Producing that set carry bit — lowering a one-bit “true” into the actual set-carry instruction — is a narrow, easy-to-get-wrong step. Patch 0012 lowers it correctly. This demo builds a long borrow chain across eight limbs, so the set carry and the borrow ripple are exercised on every tick, and confirms the fix holds.'],
+  ['exact by construction', 'Multi-precision subtraction is exact integer arithmetic, identical on the host and on the SNES. A single dropped or duplicated borrow would send the countdown off the rails. The gate folds the running 128-bit value into a CRC and checks it matches — host == default == +mos-a16 == +mos-xy16, -verify-machineinstrs clean.'],
+  ['default and 16-bit modes', 'The fix lives in the 16-bit-accumulator modes, so those columns carry the weight, but the demo is checked all five ways on two emulators and every column stays green.'],
+  ['the visual', 'The 128 bits are shown as a grid — bright for 1, dark for 0. Each frame the odometer subtracts a big decrement and ticks down, so the low bits churn constantly while borrows ripple up into the higher bits, exactly the cascade the borrow chain produces.'],
+];
+---
+
+<Base title="Borrow-Ladder Odometer — bioHACK•NET" description="A 128-bit number counting down through a limb-by-limb borrow chain on a Super Nintendo. Compiler stress-test #110: hardens the set-carry (LDCImm-set) lowering for multi-precision subtraction.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Borrow-Ladder Odometer</h1>
+      <a href="/snes/#cat-bignums" class="rp-cat-chip">Big Numbers</a>
+      <p class="rp-lede">
+        A 128-bit number counting <em>down</em> — subtracted limb by limb, the borrow rippling upward
+        like an odometer rolling past zero. This is compiler stress-test #110: every subtract chain
+        begins with a <em>set carry bit</em> the compiler must materialize just so, and a real
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> fix (patch 0012) is what lowers
+        that one-bit “no borrow yet” correctly. Eight limbs, exercised on every tick.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Borrow-Ladder Odometer">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — a 128-bit binary counter ticks down, borrows rippling upward.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Numbers wider than the machine word are done in pieces, and subtraction threads a borrow from
+        the bottom piece to the top. The awkward part for a compiler is the very start of the chain —
+        setting the carry to mean “no borrow yet” — and that is exactly what this demo hammers.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Each frame subtracts a large decrement, so borrows fire constantly and cascade up through all
+        eight limbs. The gate folds the value into a CRC. The picture is the proof: a wrong borrow
+        would break the countdown and change the CRC.
+      </p>
+
+      <h2>Compiler stress-test #110 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0x1BE3</code> — a fold of 160 countdown steps) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'borrowlad';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x6a, len: 2, want: 0x1BE3, frames: 500, label: 'borrow-ladder odometer CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

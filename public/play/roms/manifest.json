@@ -1210,6 +1210,17 @@
         "frames": 1500,
         "label": "pcooker"
       }
+    },
+    {
+      "id": "borrowlad",
+      "title": "Borrow-Ladder Odometer",
+      "selfcheck": {
+        "off": "0x6a",
+        "len": 2,
+        "want": "0x1BE3",
+        "frames": 500,
+        "label": "borrowlad"
+      }
     }
   ]
 }
