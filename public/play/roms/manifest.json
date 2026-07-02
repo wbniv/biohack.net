@@ -913,6 +913,17 @@
         "frames": 500,
         "label": "speed-gov CRC"
       }
+    },
+    {
+      "id": "truncstair",
+      "title": "Truncation Staircase",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0x02CA",
+        "frames": 500,
+        "label": "rounding CRC"
+      }
     }
   ]
 }

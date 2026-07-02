@@ -69,6 +69,13 @@ const demos = [
     category: 'motion',
   },
   {
+    slug: 'truncstair',
+    title: 'Truncation Staircase',
+    desc: 'Three bands compare truncate/floor/round on a scrolling ramp, built from __fixsfsi/__floatsisf (G_FPTOSI/G_SITOFP) since floorf/ceilf/truncf are unsupported. Compiler stress-test #83.',
+    keys: 'Self-running · trunc / floor / round diverge on negatives',
+    category: 'algorithms',
+  },
+  {
     slug: 'speedcap',
     title: 'Fmin/Fmax Speed Cap',
     desc: '12 particles attracted to center, velocity double-clamped by __builtin_fminf/__builtin_fmaxf (G_FMINNUM/G_FMAXNUM → libcall). NaN-quieting: a NaN-injected particle recovers via fmaxf. Compiler stress-test #82.',
