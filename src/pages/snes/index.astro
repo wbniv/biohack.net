@@ -69,6 +69,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'ucmprank',
+    title: 'Unsigned Rank Percentile Field',
+    desc: 'A field recoloured by each cell\'s unsigned rank, computed with the three-way compare (a>b)-(a<b) at uint16/uint32/uint64. Re-runs the unsigned half of the spaceship-operator fix — the 64-bit unsigned compare the signed sort never emitted. Compiler stress-test #98 (Round 6).',
+    keys: 'Self-running — the field recolours by unsigned rank',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',

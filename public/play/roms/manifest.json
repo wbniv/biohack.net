@@ -1100,6 +1100,17 @@
         "frames": 500,
         "label": "ropeedit"
       }
+    },
+    {
+      "id": "ucmprank",
+      "title": "Unsigned Rank Percentile Field",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0x4CDD",
+        "frames": 500,
+        "label": "ucmprank"
+      }
     }
   ]
 }
