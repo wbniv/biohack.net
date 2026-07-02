@@ -1199,6 +1199,17 @@
         "frames": 500,
         "label": "uarteye"
       }
+    },
+    {
+      "id": "pcooker",
+      "title": "Pressure-Cooker Fixed-Point Evaluator",
+      "selfcheck": {
+        "off": "0x71",
+        "len": 2,
+        "want": "0xEE6D",
+        "frames": 1500,
+        "label": "pcooker"
+      }
     }
   ]
 }
