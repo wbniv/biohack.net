@@ -1067,6 +1067,17 @@
         "frames": 500,
         "label": "crcwall bit-serial CRC gate host==bsnes-jg"
       }
+    },
+    {
+      "id": "rotslab",
+      "title": "In-Place Block Rotate",
+      "selfcheck": {
+        "off": "0x69",
+        "len": 2,
+        "want": "0xB93A",
+        "frames": 500,
+        "label": "rotslab"
+      }
     }
   ]
 }

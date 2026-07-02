@@ -48,6 +48,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'rotslab',
+    title: 'In-Place Block Rotate',
+    desc: 'A 384-entry barber-pole buffer rotated in place by the three-reversal trick — 16-bit-indexed swaps sweeping across the register-width boundary. Re-runs the +mos-xy16 index-width fix a second way, with no memmove library call, so both angles onto the same bug are guarded. Compiler stress-test #94 (Round 6).',
+    keys: 'Self-running — the barber-pole marquee rotates in place',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',

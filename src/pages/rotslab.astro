@@ -1,0 +1,184 @@
+---
+// /rotslab — In-Place Block Rotate. Compiler stress-test #94 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/rotslab.sfc', 'preview/rotslab.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// rotate a 384-entry uint16_t buffer LEFT by k, all in place —
+// via the three-reversal identity  rev[0,k) . rev[k,n) . rev[0,n)
+void reverse(uint16_t *buf, uint16_t lo, uint16_t hi) {
+    while (lo + 1 < hi) {              // lo, hi are 16-bit indices (0..383)
+        hi--;
+        uint16_t t = buf[lo];          // 16-bit indexed load
+        buf[lo] = buf[hi];
+        buf[hi] = t;                   // ...and store, past the 256 boundary
+        lo++;
+    }
+}
+void rotate_left(uint16_t *buf, uint16_t n, uint16_t k) {
+    reverse(buf, 0, k);  reverse(buf, k, n);  reverse(buf, 0, n);
+}`;
+
+const notes = [
+  ['rotate by three reversals', 'Rotating an array left by k is three reversals: reverse the first k, reverse the rest, then reverse the whole thing. It needs no scratch buffer — the whole rotation happens in place, swapping pairs from the outside in. Classic, O(1) extra space, and a tidy stress of index arithmetic.'],
+  ['384 entries, on purpose (the 256 boundary)', 'The 65816 addresses memory with 8-bit or 16-bit index registers; a table with more than 256 entries forces the 16-bit-index path. This buffer holds 384 uint16_t values precisely so every buf[lo]/buf[hi] access in the reversal is a 16-bit-indexed read and write — the exact register-width regime a real compiler bug once mishandled.'],
+  ['the bug this guards (#23, patch 0002)', 'When the index registers run 16-bit (the +mos-xy16 mode), an earlier version of the compiler could place a "switch index back to 8-bit" instruction (sep #$10) in the middle of a live 16-bit index — zeroing its high byte. The fix (MOSInsertREPSEP::placeIntraBlock) reloads the index after each width switch. Demo #93 re-ran that via the C memmove library call; this one re-runs it a different way — a hand-written swap loop whose 16-bit buffer accesses are bracketed by the same rep/sep width transitions the fix schedules — so both angles onto the same fix are guarded.'],
+  ['a measured aside — the modulo vanishes', 'The rotate normalises k with k %= n. Because the demo always feeds a small k (never more than 34) and n is 384, the compiler proves k % 384 == k and deletes the divide entirely — no __umodhi call is emitted. That is a correct optimization, not a bug; the demo’s real target is the width-flag handling around the 16-bit buffer access, not the modulo.'],
+  ['result: bit-exact in every mode', 'A rotate is a pure permutation — it only moves values, so the host and the SNES must agree exactly. The gate folds all 384 entries each step (position-sensitive, so the moved data matters) into a rolling CRC: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. A dropped index high byte would swap the wrong element, tear the barber-pole, and change the CRC. It does not — the fix holds, now permanently regression-guarded.'],
+  ['the visual', 'The 384 entries map to a 16×24 grid; each cell’s colour is a diagonal stripe baked into the top bits of its value. Rotating the 1-D buffer marches those stripes across the grid — a barber-pole marquee that shears smoothly, one small rotation per frame, without tearing.'],
+];
+---
+
+<Base title="In-Place Block Rotate — bioHACK•NET" description="A 384-entry buffer rotated in place by the three-reversal trick on a Super Nintendo — 16-bit-indexed swaps crossing the register-width boundary. Compiler stress-test #94: re-stresses the +mos-xy16 index-width fix from a different angle than the memmove demo.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">In-Place Block Rotate</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <p class="rp-lede">
+        A 384-entry <code>uint16_t</code> buffer rotated <em>in place</em> by the classic
+        three-reversal trick — <code>rev[0,k) · rev[k,n) · rev[0,n)</code> — so the reversal’s
+        <code>buf[lo] ↔ buf[hi]</code> swaps sweep 16-bit indices back and forth across the
+        register-width boundary. This is compiler stress-test #94: it re-runs the scenario a real
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> bug once corrupted — a live
+        16-bit index under <code>+mos-xy16</code> — from a different angle than the
+        <a href="/ovmove/">memmove</a> demo, with no library call in sight, to confirm the fix holds.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running In-Place Block Rotate">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the barber-pole marquee rotates in place, one step per frame.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Rotating an array is often written with a scratch copy. It doesn’t need one: reverse the
+        first <code>k</code> elements, reverse the remaining <code>n−k</code>, then reverse the whole
+        thing, and the array comes out rotated left by <code>k</code> — entirely in place. Each
+        reversal swaps pairs working inward from both ends, which is exactly where the index
+        arithmetic gets exercised.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The buffer holds 384 sixteen-bit values, so every <code>buf[lo]</code> and
+        <code>buf[hi]</code> is a 16-bit-indexed access, past the 256-element boundary. Each step
+        rotates by a small runtime <code>k</code> and folds all 384 entries into a rolling CRC. The
+        picture is the proof: any corruption of a 16-bit index would swap the wrong element, tear the
+        barber-pole, and change the CRC.
+      </p>
+
+      <h2>Compiler stress-test #94 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0xB93A</code> — a fold of 12 steps × 384 entries) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'rotslab';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x69, len: 2, want: 0xB93A, frames: 500, label: 'three-reversal rotate CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
