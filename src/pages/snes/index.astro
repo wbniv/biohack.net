@@ -83,6 +83,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'keycmp64',
+    title: '64-bit Multi-Key Record Sort',
+    desc: 'Records sorted by a primary 64-bit key then a secondary tie-break — two 64-bit three-way compares per comparison. The widest, densest form of the spaceship-operator fix, stacked two deep in qsort. Compiler stress-test #100 (Round 6).',
+    keys: 'Self-running — rows resort under a two-level 64-bit key',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',

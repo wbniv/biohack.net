@@ -1122,6 +1122,17 @@
         "frames": 500,
         "label": "trimerge"
       }
+    },
+    {
+      "id": "keycmp64",
+      "title": "64-bit Multi-Key Record Sort",
+      "selfcheck": {
+        "off": "0x69",
+        "len": 2,
+        "want": "0xB8AD",
+        "frames": 500,
+        "label": "keycmp64"
+      }
     }
   ]
 }

@@ -1,0 +1,174 @@
+---
+// /keycmp64 — 64-bit Multi-Key Record Sort. Compiler stress-test #100 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/keycmp64.sfc', 'preview/keycmp64.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// sort records by a PRIMARY 64-bit key, then break ties with a SECOND
+int cmp(const void *a, const void *b) {
+    const Rec *x = a, *y = b;
+    int c = (x->k1 > y->k1) - (x->k1 < y->k1);   // 64-bit spaceship (primary)
+    if (c != 0) return c;
+    return (x->k2 > y->k2) - (x->k2 < y->k2);    // 64-bit spaceship (tie-break)
+}
+qsort(records, N, sizeof(Rec), cmp);             // two 64-bit three-way compares / call`;
+
+const notes = [
+  ['a chained comparator', 'Sorting by more than one key is everyday code: order by the primary field, and when two records match, fall back to a secondary field. Each comparison therefore runs the three-way compare twice — once on the primary 64-bit key, and again on the secondary — with the second only reached when the first ties.'],
+  ['64 bits, twice', 'Both keys are full 64-bit signed integers, so every comparator call can emit two 64-bit three-way compares. That is the widest, densest form of the operation in the whole battery — a compare-and-select over four 16-bit limbs, stacked two deep, inside qsort’s hot loop.'],
+  ['making the tie-break fire', 'The primary key is drawn from a deliberately small range so records collide often — 38 tie pairs among 24 records in the gate. That guarantees the second 64-bit compare is genuinely exercised rather than dead code, and the sort really does resolve ties by the secondary key.'],
+  ['the bug this guards (#46, patch 0016)', 'The three-way-compare idiom once crashed the 65816 backend, which had no rule to lower the generic opcode. Patch 0016 routes it through LLVM’s compare-and-select lowering. Earlier demos exercised it at single widths and as a sort key or a branch; this one stacks two 64-bit compares per call — the extreme case — and confirms the fix still holds.'],
+  ['why qsort', 'Inline, ((a>b)-(a<b)) folds back to ordinary comparisons and the three-way intrinsic vanishes — untested. Passing the comparator to qsort through its opaque function pointer forces it to return the −1/0/+1 value, keeping both 64-bit compares alive. An IR probe confirms the 64-bit three-way compare is present (and chained).'],
+  ['result: bit-exact, and the visual', 'Sorting is a pure reordering, so the sorted records are identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. On screen each row is a sorted record — the left half coloured by the primary key (non-decreasing down the field), the right half by the secondary key (ordered within each tie group) — and the rows reshuffle as the data re-seeds.'],
+];
+---
+
+<Base title="64-bit Multi-Key Record Sort — bioHACK•NET" description="Records sorted by a primary 64-bit key then a secondary tie-break on a Super Nintendo — two 64-bit three-way compares per comparison. Compiler stress-test #100: the spaceship operator at the extreme width, chained.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">64-bit Multi-Key Record Sort</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <p class="rp-lede">
+        Records sorted by a <em>primary</em> 64-bit key, ties broken by a <em>secondary</em> 64-bit
+        key — so each comparison runs the “spaceship” three-way compare <code>(a&gt;b)-(a&lt;b)</code>
+        <em>twice</em>, both at 64 bits. This is compiler stress-test #100, the last of its cluster:
+        the widest, densest form of the three-way-compare fix
+        (<a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> patch 0016), stacked two deep in
+        qsort’s hot loop.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-bit Multi-Key Record Sort">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — left half = primary key, right half = secondary; rows resort.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        A multi-key sort orders records by one field, then resolves ties with another. Expressed with
+        the spaceship compare, each comparison is a chained pair of three-way compares — and here both
+        keys are 64-bit, the widest the operation gets.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The primary key collides often on purpose, so the secondary 64-bit compare truly runs. The
+        gate folds the sorted (primary, secondary) pairs into a CRC. The picture is the proof: a wrong
+        64-bit three-way lowering — in either the primary or the tie-break — would misorder the
+        records and change the CRC.
+      </p>
+
+      <h2>Compiler stress-test #100 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0xB8AD</code> — a fold of the sorted 64-bit key pairs) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'keycmp64';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x69, len: 2, want: 0xB8AD, frames: 500, label: '64-bit multi-key sort CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
