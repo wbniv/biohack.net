@@ -1,0 +1,176 @@
+---
+// /trimerge — Three-Way Merge Diff. Compiler stress-test #99 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/trimerge.sfc', 'preview/trimerge.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// merge two sorted streams; the THREE-WAY compare picks the branch
+int cmp(int32_t a, int32_t b) { return (a > b) - (a < b); }  // -1 / 0 / +1
+
+while (i < nl && j < nr) {
+    int c = cmp(L[i], R[j]);
+    if      (c < 0) out[k++] = L[i++];              // advance left
+    else if (c > 0) out[k++] = R[j++];              // advance right
+    else          { out[k++] = L[i++];              // c == 0:
+                    out[k++] = R[j++]; }            //   emit BOTH
+}`;
+
+const notes = [
+  ['the spaceship result as control flow', 'The three-way compare (a>b)-(a<b) yields −1, 0, or +1. Earlier demos handed that value to qsort, which compares it to zero. Here the value itself selects among three code paths: take the left element, take the right, or — when they are equal — emit both. It is a branch selector, not a sort key.'],
+  ['the emit-both branch', 'The equal case (0) is the one a two-way if/else would miss. Because the two streams are built to collide periodically, the equal branch really fires — you can see it as the third colour in the braid. This is the branch that makes the demo a genuine three-way test rather than a disguised pair of comparisons.'],
+  ['both widths', 'The merge runs on 32-bit and 64-bit signed values, forcing the three-way compare at each width as a branch. The 64-bit compare-and-branch is the sharpest — a full-width three-way decision the backend lowers to compares and selects.'],
+  ['the bug this guards (#46, patch 0016)', 'The three-way-compare idiom once crashed the 65816 backend, which had no rule to lower the generic opcode. Patch 0016 routes it through LLVM’s compare-and-select lowering. The sort-gallery and rank-field demos consumed the result as a sort return; this one consumes it as control flow — confirming the lowering is correct no matter what reads its output.'],
+  ['why a separate comparator function', 'Written inline, ((a>b)-(a<b)) < 0 folds straight back to a < b and the three-way intrinsic disappears — untested. Keeping the comparator in its own non-inlined function forces it to actually produce the −1/0/+1 value, which the merge then branches on. An IR probe confirms the intrinsic is present at both widths, including 64-bit.'],
+  ['result: bit-exact, and the visual', 'Merging sorted streams is a deterministic reordering, so the merged sequence is identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. Each screen row is one merge round; every output cell is coloured by the branch that produced it — teal for left, orange for right, gold for emit-both — so the −1/0/+1 decisions braid down the field as the streams shift.'],
+];
+---
+
+<Base title="Three-Way Merge Diff — bioHACK•NET" description="A merge of sorted streams on a Super Nintendo where the three-way compare (a>b)-(a<b) selects the branch — advance-left, advance-right, or emit-both. Compiler stress-test #99: the spaceship operator as control flow.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Three-Way Merge Diff</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <p class="rp-lede">
+        A merge of two sorted streams where the C “spaceship” compare
+        <code>(a&gt;b)-(a&lt;b)</code> — yielding <code>−1 / 0 / +1</code> — <em>selects the branch</em>:
+        advance-left, advance-right, or emit-both. This is compiler stress-test #99: it consumes the
+        three-way-compare result as <em>control flow</em> rather than a sort key, confirming the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> lowering (patch 0016) is correct
+        whatever reads its output — at 32 and 64 bits.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Three-Way Merge Diff">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — teal = advance-left, orange = advance-right, gold = emit-both.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Merging two already-sorted lists is a staple of mergesort and diff tools. The choice at each
+        step — which side to take, or whether the heads are equal — is exactly a three-way decision,
+        and this demo makes that decision with the spaceship compare, then branches on its sign.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The streams are centred on zero (so the compare sees both signs) and collide periodically (so
+        the equal branch fires). Each screen row is one merge round at a shifting offset; the gate
+        folds the merged outputs into a CRC. The picture is the proof: a wrong branch would tear the
+        ordering and change the CRC.
+      </p>
+
+      <h2>Compiler stress-test #99 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0xCCCC</code> — a fold of the merged s32/s64 streams) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'trimerge';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x46, len: 2, want: 0xCCCC, frames: 500, label: 'three-way merge diff CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

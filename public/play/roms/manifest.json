@@ -1111,6 +1111,17 @@
         "frames": 500,
         "label": "ucmprank"
       }
+    },
+    {
+      "id": "trimerge",
+      "title": "Three-Way Merge Diff",
+      "selfcheck": {
+        "off": "0x46",
+        "len": 2,
+        "want": "0xCCCC",
+        "frames": 500,
+        "label": "trimerge"
+      }
     }
   ]
 }

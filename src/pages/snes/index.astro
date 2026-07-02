@@ -76,6 +76,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'trimerge',
+    title: 'Three-Way Merge Diff',
+    desc: 'A merge of sorted streams where the three-way compare (a>b)-(a<b) selects the branch — advance-left, advance-right, or emit-both. Uses the spaceship result as control flow, not a sort key, confirming the fix holds whatever reads its output. Compiler stress-test #99 (Round 6).',
+    keys: 'Self-running — teal/orange/gold braid the merge branches',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',
