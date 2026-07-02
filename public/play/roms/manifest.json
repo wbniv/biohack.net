@@ -979,6 +979,17 @@
         "frames": 500,
         "label": "dct CRC"
       }
+    },
+    {
+      "id": "adpcm",
+      "title": "ADPCM Waverider",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0xCA56",
+        "frames": 500,
+        "label": "adpcm CRC"
+      }
     }
   ]
 }
