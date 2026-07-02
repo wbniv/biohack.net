@@ -1146,17 +1146,6 @@
       }
     },
     {
-      "id": "cpu6502",
-      "title": "6502 CPU Simulator",
-      "selfcheck": {
-        "off": "0x70",
-        "len": 2,
-        "want": "0xAC8A",
-        "frames": 1000,
-        "label": "corpus_result CRC"
-      }
-    },
-    {
       "id": "modexp256",
       "title": "256-bit Modular Exponentiation",
       "selfcheck": {
@@ -1220,6 +1209,17 @@
         "want": "0x1BE3",
         "frames": 500,
         "label": "borrowlad"
+      }
+    },
+    {
+      "id": "cpu6502",
+      "title": "6502 CPU Simulator",
+      "selfcheck": {
+        "off": "0xADD",
+        "len": 2,
+        "want": "0xAC8A",
+        "frames": 1000,
+        "label": "corpus_result CRC"
       }
     }
   ]
