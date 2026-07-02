@@ -1001,6 +1001,17 @@
         "frames": 500,
         "label": "cleanup CRC"
       }
+    },
+    {
+      "id": "matcascade",
+      "title": "Matrix Cascade",
+      "selfcheck": {
+        "off": "0x77",
+        "len": 2,
+        "want": "0x8064",
+        "frames": 500,
+        "label": "sret CRC"
+      }
     }
   ]
 }
