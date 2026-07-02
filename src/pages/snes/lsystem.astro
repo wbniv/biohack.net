@@ -21,13 +21,13 @@ const notes = [
   ['String rewriting — the libcall corner', 'Each rewrite generation walks the buffer symbol by symbol; for every symbol that has a rule it shifts the tail right with memmove (overlapping copy), writes the production with memcpy, and measures the production with strlen. These are the three string libcalls no other demo in the battery calls — the stress is building a string dynamically on a 16-bit machine with no heap'],
   ['In-place memmove', 'The buffer is rewritten IN PLACE (single buffer, no ping-pong). Each production insertion shifts the tail right before writing, so source and destination overlap — a genuine memmove, not a memcpy. Every other demo that copies memory uses memcpy over disjoint regions'],
   ['Bracket push/pop stack', "The turtle's [ saves the full turtle state (position, heading, depth) and ] restores it, so each frond returns to its branch point. This is the battery's save/restore stack member — the push/pop path no fractal or simulation demo runs"],
-  ['Bit-exact differential', 'String rewriting and turtle interpretation are exact byte/integer operations (position Q8.8 in int32, heading 0..255 indexing the shared SINCOS LUT). Exact ops reproduce bit-for-bit on host x86 and on the console — a memmove or strlen miscompile corrupts the string, a bracket stack bug scrambles the path, and the gate CRC diverges immediately. Verified default == +mos-a16 == +mos-xy16 == 0x79C3'],
+  ['Bit-exact differential', 'String rewriting and turtle interpretation are exact byte/integer operations (position Q8.8 in int32, heading 0..255 indexing the shared SINCOS LUT). Exact ops reproduce bit-for-bit on host x86 and on the console — a memmove or strlen miscompile corrupts the string, a bracket stack bug scrambles the path, and the gate CRC diverges immediately. Verified default == +mos-a16 == +mos-xy16 == 0x8073'],
   ['Found a compiler bug', 'The gate caught a +mos-xy16 miscompile: SEP #$10 (inserted by the REP/SEP scheduler for an intervening ldy) zeroed the high byte of the 16-bit index register between the ldx that loaded i and the lda abs,X that read buf[i]. For i ≥ 256 the wrong byte was read. Fixed in MOSInsertREPSEP by cloning the last X-writer instruction after the repair REP'],
   ['Far-pointer reveal (high WRAM)', "After the string is rewritten, the interpreter records every line segment into a FAR buffer at $7E2000 in the SNES's 128 KiB WRAM — exercising the +mos-a16 24-bit far-pointer STORE path. The main loop then replays a few segments per frame, reading them back from far memory (the far LOAD path), so the plant draws itself stroke by stroke. The far path is display-only (the differential gate stays far-pointer-free), but it adds the high-memory codegen coverage the low-WRAM-only version never touched — and the picture proves it: a far store/load miscompile would scramble the replayed plant"],
 ];
 ---
 
-<Base title="L-System Plant — bioHACK•NET" description="A Lindenmayer-system fractal plant grown by string rewriting on a Super Nintendo: five generations of in-place memmove + memcpy + strlen, then a turtle walks the string with a bracket push/pop stack. Written in C, bit-for-bit identical to host x86, compiled with the llvm-mos 65816 toolchain.">
+<Base title="L-System Plant — bioHACK•NET" description="A Lindenmayer-system fractal plant grown by string rewriting on a Super Nintendo: six generations of in-place memmove + memcpy + strlen, then a turtle walks the string with a bracket push/pop stack. Written in C, bit-for-bit identical to host x86, compiled with the llvm-mos 65816 toolchain.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
@@ -56,7 +56,7 @@ const notes = [
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
       <p class="rp-keys">Self-running demo — after the title card the plant draws itself stroke by
-        stroke (trunk first, then branch by branch). <em>(Rewriting 1 690 symbols takes a moment.)</em></p>
+        stroke (trunk first, then branch by branch). <em>(Rewriting 2 388 symbols takes a moment.)</em></p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus. Tab away and it pauses.</p>
     </section>
@@ -65,18 +65,18 @@ const notes = [
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        The axiom <code>"X"</code> is rewritten 5 generations by two rules:
+        The axiom <code>"X"</code> is rewritten 6 generations by two rules:
       </p>
       <pre class="rp-code">X → "F-[[X]+X]+F[+FX]-X"   // branch into two sub-fronds
 F → "FF"                    // elongate each segment</pre>
       <p>
-        After 5 generations the string is 1 690 symbols long. Each <code>F</code> moves the turtle
+        After 6 generations the string is 2 388 symbols long. Each <code>F</code> moves the turtle
         forward one step; <code>+</code>/<code>-</code> turn 25°; <code>[</code> pushes the full
         turtle state (position, heading, depth) and <code>]</code> restores it. Colour is chosen by
         bracket depth — dark brown trunk, two greens for inner and outer fronds.
       </p>
       <p>
-        The rewriting runs entirely in a single 1 700-byte bank-0 WRAM buffer (<em>in place</em> —
+        The rewriting runs entirely in a single 2 400-byte bank-0 WRAM buffer (<em>in place</em> —
         no second buffer). Each symbol expansion shifts the buffer tail right with
         <code>memmove</code>, writes the production with <code>memcpy</code>, and measures its
         length with <code>strlen</code>.
@@ -101,7 +101,7 @@ F → "FF"                    // elongate each segment</pre>
       </p>
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain. Hit <b>Verify fidelity</b>
-        to reproduce the build gate's WRAM assert (gate CRC <code>0x79C3</code>) live in this tab —
+        to reproduce the build gate's WRAM assert (gate CRC <code>0x8073</code>) live in this tab —
         the same hash the host oracle and the cycle-accurate bsnes-jg core agree on, bit for bit.
         The disasm gate proves the shape: <code>memcpy/memmove = 2</code>, <code>strlen = 1</code>,
         <code>rep/sep = 87</code> — string libcalls in native-16 mode.</p>

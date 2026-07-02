@@ -368,10 +368,10 @@
       "id": "lsystem",
       "title": "L-System Plant",
       "selfcheck": {
-        "off": "0x20",
+        "off": "0x42",
         "len": 2,
-        "want": "0x79C3",
-        "frames": 600,
+        "want": "0x8073",
+        "frames": 1200,
         "label": "lsystem"
       }
     },
