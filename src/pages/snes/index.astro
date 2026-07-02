@@ -41,6 +41,13 @@ const demos = [
     category: 'ciphers',
   },
   {
+    slug: 'lfsr2',
+    title: 'Dual-LFSR Scrambler',
+    desc: 'A Galois and a Fibonacci LFSR stepped together — two loop-carried shift registers folded through rotates at once. Re-runs a default-build register-coalescer bug in loop-carried rotate code, under double pressure. Compiler stress-test #106 (Round 6).',
+    keys: 'Self-running — two interleaved pseudo-noise fields scroll',
+    category: 'ciphers',
+  },
+  {
     slug: 'spaceship',
     title: 'Width-Sweep Sort Gallery',
     desc: 'Four bar panels sort in lockstep, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — 8/16/32/64-bit. Re-runs the fix that taught the 65816 to lower the three-way-compare (G_SCMP), now at the 32- and 64-bit widths the original never reached. Compiler stress-test #97 (Round 6).',

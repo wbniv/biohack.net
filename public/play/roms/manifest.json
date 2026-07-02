@@ -1166,6 +1166,17 @@
         "frames": 1500,
         "label": "modexp256"
       }
+    },
+    {
+      "id": "lfsr2",
+      "title": "Dual-LFSR Scrambler",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0x6AA3",
+        "frames": 500,
+        "label": "lfsr2"
+      }
     }
   ]
 }
