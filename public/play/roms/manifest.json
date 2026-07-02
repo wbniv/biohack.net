@@ -1045,6 +1045,17 @@
         "frames": 500,
         "label": "ovmove overlapping-memmove gate CRC host==bsnes-jg"
       }
+    },
+    {
+      "id": "spaceship",
+      "title": "Width-Sweep Sort Gallery",
+      "selfcheck": {
+        "off": "0x58",
+        "len": 2,
+        "want": "0xF20F",
+        "frames": 500,
+        "label": "spaceship G_SCMP gate CRC host==bsnes-jg"
+      }
     }
   ]
 }

@@ -1,0 +1,168 @@
+---
+// /spaceship — Width-Sweep Sort Gallery. Compiler stress-test #97 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/spaceship.sfc', 'preview/spaceship.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// the C "spaceship" three-way comparator, at four key widths
+int cmp8 (const void *a, const void *b) { int8_t  x=*..a, y=*..b; return (x>y)-(x<y); }
+int cmp16(const void *a, const void *b) { int16_t x=*..a, y=*..b; return (x>y)-(x<y); }
+int cmp32(const void *a, const void *b) { int32_t x=*..a, y=*..b; return (x>y)-(x<y); }
+int cmp64(const void *a, const void *b) { int64_t x=*..a, y=*..b; return (x>y)-(x<y); }
+
+qsort(arr8,  N, 1, cmp8);   qsort(arr16, N, 2, cmp16);
+qsort(arr32, N, 4, cmp32);  qsort(arr64, N, 8, cmp64);   // → G_SCMP at s16/s32/s64`;
+
+const notes = [
+  ['the spaceship operator', '(a>b)-(a<b) evaluates to −1, 0, or +1 — "less / equal / greater" in one expression. It is the classic C comparator body (and the shape C++20\'s <=> compiles to). Modern LLVM recognizes it and folds it to a single generic three-way-compare node, G_SCMP, rather than two separate comparisons.'],
+  ['G_SCMP and the bug it once hit (#46)', 'The 65816 backend originally had no rule to lower G_SCMP, so any program that sorted with a spaceship comparator failed to build ("unable to legalize G_SCMP"). Demo #46 caught that crash; the one-line fix routes G_SCMP through LLVM\'s standard icmp+select expansion. But #46 only ever exercised it at 16-bit keys.'],
+  ['why four widths (the escalation)', 'This gallery qsorts int8, int16, int32 and int64 arrays, each with its own spaceship comparator — forcing G_SCMP at the distinct widths s16, s32 and s64. The 32- and 64-bit legs are paths #46 never reached; a 64-bit three-way compare (a full-width icmp + select) had never been lowered on this target until now.'],
+  ['why qsort, not an inline sort', 'A direct if ((a>b)-(a<b) > 0) would let the compiler cancel the three-way compare back into a plain a > b — the G_SCMP would vanish and nothing would be tested. Passing the comparator to qsort as an opaque function pointer forces it to genuinely return the −1/0/+1 value, so the three-way compare survives. The build gate confirms it (the s64 intrinsic is present in the emitted IR).'],
+  ['result: correct at every width', 'Sorting is deterministic — the sorted sequence of values is identical on the host and on the SNES. The gate folds all four sorted arrays into a CRC; host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The three-way-compare lowering is correct at s16/s32/s64 — a clean positive, now a permanent regression guard.'],
+];
+---
+
+<Base title="Width-Sweep Sort Gallery — bioHACK•NET" description="Four bar-chart panels sort on a Super Nintendo, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — int8, int16, int32, int64. Compiler stress-test #97: G_SCMP three-way compare at s16/s32/s64 (the wide widths #46 never reached).">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Width-Sweep Sort Gallery</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <p class="rp-lede">
+        Four bar-chart panels sort in lockstep, each driven by the C <em>spaceship</em> comparator
+        <code>(a&gt;b)−(a&lt;b)</code> at a different key width — 8, 16, 32 and 64 bits. Modern
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> folds that idiom to a single
+        three-way-compare node (<code>G_SCMP</code>); this is compiler stress-test #97, re-running
+        the fix that first taught the 65816 to lower it — now at the 32- and 64-bit widths the
+        original demo never reached.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Width-Sweep Sort Gallery">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — four panels bubble-sort, then reshuffle and sort again.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The build gate sorts four arrays — <code>int8_t</code>, <code>int16_t</code>,
+        <code>int32_t</code>, <code>int64_t</code> — with libc <code>qsort</code>, each using its
+        own spaceship comparator, and folds the sorted values into a checksum. The on-screen panels
+        animate the same idea: four columns of bars settling under the three-way comparison.
+      </p>
+      <pre class="rp-code">{code}</pre>
+
+      <h2>Compiler stress-test #97 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0xF20F</code> — a fold of four sorted arrays) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'spaceship';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x58, len: 2, want: 0xF20F, frames: 500, label: 'G_SCMP sort CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

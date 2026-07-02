@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'spaceship',
+    title: 'Width-Sweep Sort Gallery',
+    desc: 'Four bar panels sort in lockstep, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — 8/16/32/64-bit. Re-runs the fix that taught the 65816 to lower the three-way-compare (G_SCMP), now at the 32- and 64-bit widths the original never reached. Compiler stress-test #97 (Round 6).',
+    keys: 'Self-running — four panels sort, reshuffle, and sort again',
+    category: 'algorithms',
+  },
+  {
     slug: 'ovmove',
     title: 'Overlap-Move Mosaic',
     desc: 'A 384-byte mosaic scrolled in place by four overlapping memmoves per step — both copy directions, each over a 16-bit-indexed buffer. Re-runs the exact scenario a real +mos-xy16 in-place-memmove bug once corrupted, larger and both ways, and confirms the fix holds. Compiler stress-test #93 (Round 6).',
