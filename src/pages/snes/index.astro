@@ -69,6 +69,13 @@ const demos = [
     category: 'motion',
   },
   {
+    slug: 'speedcap',
+    title: 'Fmin/Fmax Speed Cap',
+    desc: '12 particles attracted to center, velocity double-clamped by __builtin_fminf/__builtin_fmaxf (G_FMINNUM/G_FMAXNUM → libcall). NaN-quieting: a NaN-injected particle recovers via fmaxf. Compiler stress-test #82.',
+    keys: 'Self-running · teal=normal · orange=capped · red=NaN-recovered',
+    category: 'physics',
+  },
+  {
     slug: 'compass',
     title: 'Copysign Compass',
     desc: 'A rotating 16×16 quadrant vector field driven by __builtin_copysignf — the backend\'s G_FCOPYSIGN inline sign-bit transplant (lowerFCopySign). Sign-zero crossings swirl as the phase sweeps. Compiler stress-test #81.',

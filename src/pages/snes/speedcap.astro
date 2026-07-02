@@ -1,0 +1,182 @@
+---
+// /snes/speedcap — playable in-browser Fmin/Fmax Speed Cap SNES demo.
+// Compiler stress-test #82: G_FMINNUM/G_FMAXNUM via __builtin_fminf/__builtin_fmaxf.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/speedcap.sfc', 'preview/speedcap.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Speed governor applied to each particle's velocity each frame.
+float dx = (float)((int16_t)(CENTER_X - px[i]));   // G_SITOFP → __floatsisf
+float sdx = dx * K_ATTR;                            // G_FMUL   → __mulsf3
+float nvx = vx[i] + sdx;                            // G_FADD   → __addsf3
+// Speed governor — the codegen corners:
+vx[i] = __builtin_fminf(                            // G_FMINNUM → fminf libcall
+          __builtin_fmaxf(nvx, -MAX_V), MAX_V);     // G_FMAXNUM → fmaxf libcall
+// NaN-quieting: fmaxf(NaN, -MAX_V) = -MAX_V
+//               (IEEE 754-2008 minNum/maxNum silences NaN to the number)
+int16_t ivx = (int16_t)vx[i];                      // G_FPTOSI → __fixsfsi
+px[i] = (int16_t)(px[i] + ivx);`;
+
+const notes = [
+  ['G_FMINNUM / G_FMAXNUM', 'The float minimum and maximum operations on 32-bit floats lower via .libcallFor S32 in the MOS legalizer — there is no inline SSE-style instruction on the 65816. The legalizer emits calls to fminf and fmaxf from the SDK\'s math.cc (lines 18–19), the only libm implementation for these functions.'],
+  ['NaN-quieting', 'IEEE 754-2008 minNum/maxNum semantics: if one input is NaN and the other is a number, the result is the number. A simple (a < b) ? a : b comparison instead propagates NaN. The ROM demos this every 180 frames by injecting a quiet NaN (0x7FC00000) into one particle\'s velocity; fmaxf(NaN, -MAX_V) = -MAX_V recovers it in the next step. The recovering particle flashes red for 30 frames.'],
+  ['distinct from #77 satcast', '#77 uses fminf/fmaxf as a saturating-cast clamp immediately before G_FPTOSI (float-to-int), stressing the fminf→fptosi chain on a hex kaleidoscope. This demo uses fminf/fmaxf as the velocity speed governor on a physics simulation — the downstream use is int16 position update, not a saturating integer cast.'],
+  ['distinct from #26 boids', '#26 is an integer fixed-point Reynolds flocking simulation built on a vec2 value type, testing aggregate-return ABI (struct by value). It has no float operations, no fminf/fmaxf, no libm calls. This demo uses float velocity and explicit NaN injection/recovery.'],
+  ['position fold CRC', 'The gate CRC runs 12 particles × 16 steps, folding all (px, py) pairs with prime multipliers (97, 13) to break XOR-cancel symmetry. The speed cap fires from step ~8 (attraction builds velocity past MAX_V in ~8 frames), so all 16 steps exercise the fmin/fmax path. GATE_N was reduced from 64 to 16 to keep computation within the 500-frame capture window (fminf/fmaxf libcalls cost ~3–8 k cycles each on the 65816).'],
+];
+---
+
+<Base title="Fmin/Fmax Speed Cap — bioHACK•NET" description="12 float-velocity particles attracted to center and speed-clamped by __builtin_fminf/__builtin_fmaxf — the LLVM backend's G_FMINNUM/G_FMAXNUM libcall path. Demonstrates NaN-quieting: a NaN-injected particle recovers via fmaxf. Compiler stress-test #82.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Fmin/Fmax Speed Cap</h1>
+      <a href="/snes/#cat-physics" class="rp-cat-chip">Physics &amp; Simulation</a>
+      <p class="rp-lede">
+        12 float-velocity particles attracted to a center, each clamped by a
+        <code>fminf(fmaxf(v, −MAX_V), MAX_V)</code> speed governor — the LLVM
+        backend's <code>G_FMINNUM</code>/<code>G_FMAXNUM</code> nodes, which
+        lower to <code>fminf</code>/<code>fmaxf</code> libcalls on the 65816.
+        Every 180 frames one particle gets a quiet NaN injected into its
+        velocity; <code>fmaxf(NaN, −8.0f) = −8.0f</code> (NaN-quieting)
+        recovers it. Compiler stress-test #82.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Fmin/Fmax Speed Cap">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — teal = normal · orange = speed-capped · red = NaN-recovered</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Each of the 12 particles starts on a circle of radius 48 centred at the canvas and is
+        pulled toward the center by a constant acceleration proportional to distance. As speed
+        builds, the velocity is clamped each frame by a double-clamp:
+        <em>v ← fminf(fmaxf(v, −8), 8)</em>. Particles that hit the cap turn orange; once
+        released they return to teal. Every 180 frames, particle 0 gets a quiet NaN written into
+        its x-velocity — the next step's <code>fmaxf(NaN, −8)</code> silences the NaN to −8.0
+        (IEEE 754-2008 minNum semantics), and the particle flashes red for 30 frames.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The simulation is entirely in float space; position is updated by truncating the clamped
+        float velocity to <code>int16_t</code> pixels per frame. The integer position fold is the
+        gate CRC witness — any fminf/fmaxf miscompile immediately shifts at least one particle's
+        trajectory and breaks the CRC.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (speed-gov CRC <code>0x0116</code> — 12 particles × 16 steps position fold)
+        live in this tab. No far pointers —
+        <code>host == default == +mos-a16 == +mos-xy16</code>, <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'speedcap';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x69, len: 2, want: 0x0116, frames: 500, label: 'speed-gov CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

@@ -902,6 +902,17 @@
         "frames": 500,
         "label": "corpus_result Sign-bit CRC"
       }
+    },
+    {
+      "id": "speedcap",
+      "title": "Fmin/Fmax Speed Cap",
+      "selfcheck": {
+        "off": "0x69",
+        "len": 2,
+        "want": "0x0116",
+        "frames": 500,
+        "label": "speed-gov CRC"
+      }
     }
   ]
 }
