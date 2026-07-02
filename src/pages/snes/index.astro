@@ -55,6 +55,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'permscat',
+    title: 'Gather-Scatter Permutation',
+    desc: 'A 576-cell grid shuffled by a bijective scatter dst[perm[i]]=src[i] — two 16-bit indices live at once, a data-dependent scatter index lowering to sta abs,X. Re-runs the +mos-xy16 index-width fix on its sharpest addressing form. Compiler stress-test #95 (Round 6).',
+    keys: 'Self-running — the grid shuffles kaleidoscopically',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',

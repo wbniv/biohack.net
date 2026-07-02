@@ -1078,6 +1078,17 @@
         "frames": 500,
         "label": "rotslab"
       }
+    },
+    {
+      "id": "permscat",
+      "title": "Gather-Scatter Permutation",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0x0C2C",
+        "frames": 500,
+        "label": "permscat"
+      }
     }
   ]
 }
