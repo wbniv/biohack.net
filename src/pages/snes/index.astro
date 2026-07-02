@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'crcwall',
+    title: 'Bit-Serial CRC Wall',
+    desc: 'Three CRC checksums (8/16/32-bit) computed bit-by-bit as software shift-registers, interleaved under heavy register pressure — re-running a fix for a default-8-bit register-allocator bug that once stranded a loop-carried CRC byte. A flowing hash marble. Compiler stress-test #105 (Round 6).',
+    keys: 'Self-running — a bit-serial CRC hash marble flows',
+    category: 'ciphers',
+  },
+  {
     slug: 'spaceship',
     title: 'Width-Sweep Sort Gallery',
     desc: 'Four bar panels sort in lockstep, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — 8/16/32/64-bit. Re-runs the fix that taught the 65816 to lower the three-way-compare (G_SCMP), now at the 32- and 64-bit widths the original never reached. Compiler stress-test #97 (Round 6).',

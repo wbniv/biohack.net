@@ -1,0 +1,167 @@
+---
+// /crcwall — Bit-Serial CRC Wall. Compiler stress-test #105 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/crcwall.sfc', 'preview/crcwall.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// three bit-serial CRC shift registers, interleaved in ONE inner loop
+crc8  ^= byte;  crc16 ^= byte<<8;  crc32 ^= byte<<24;
+for (int b = 0; b < 8; b++) {
+    crc8  = (crc8  & 0x80)       ? (crc8 <<1) ^ 0x07       : crc8 <<1;   // loop-carried
+    crc16 = (crc16 & 0x8000)     ? (crc16<<1) ^ 0x1021     : crc16<<1;   // shift
+    crc32 = (crc32 & 0x80000000) ? (crc32<<1) ^ 0x04C11DB7 : crc32<<1;   // registers
+}
+// three live shift registers + three polys = the register pressure that found the bug`;
+
+const notes = [
+  ['bit-serial CRC', 'A CRC is normally computed byte-at-a-time from a 256-entry lookup table. The bit-serial form instead shifts the CRC register one bit at a time, XOR-ing in the polynomial whenever the top bit falls off — a classic hardware shift-register in software. That shift-and-conditionally-xor is a loop-carried rotate, the pattern this demo needs.'],
+  ['the bug this guards (patch 0010)', 'On the plain 8-bit target (no 16-bit-accumulator mode), the register allocator’s coalescer could merge two rotate-referenced values into the accumulator-only register class — stranding a loop-carried CRC byte in the Y register while the loop’s back-edge rotate read a stale accumulator. The result was a silently wrong CRC. The fix teaches the coalescer to refuse that merge.'],
+  ['default-8-bit is the point', 'Every other Round 6 demo leans on the 16-bit-accumulator modes; this bug is the opposite — it only ever appears in the default 8-bit build, so it is invisible to those gates. This demo’s load-bearing check is the default build, making it the one dedicated guard for that fix.'],
+  ['three CRCs = pressure', 'One CRC loop already found the bug once. Running CRC-8, CRC-16 and CRC-32 interleaved keeps three shift registers and three polynomial constants live at the same time, maximizing register pressure — the exact condition that tempts the coalescer into the bad merge. If it regressed, the folded checksum would diverge on the default build.'],
+  ['result: correct', 'Bit-serial CRC is pure shift/xor — bit-identical on host and SNES. host == default == +mos-a16 == +mos-xy16 on MAME and bsnes-jg, -verify-machineinstrs clean. The coalescer fix holds under tripled pressure; a clean positive, now a permanent default-8-bit regression guard.'],
+];
+---
+
+<Base title="Bit-Serial CRC Wall — bioHACK•NET" description="Three bit-serial CRC shift registers (CRC-8/16/32) run interleaved on a Super Nintendo, painting a flowing hash marble. Compiler stress-test #105: re-stresses the default-8-bit register-coalescer fix (rotate value stranded in the accumulator class) under tripled register pressure.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Bit-Serial CRC Wall</h1>
+      <a href="/snes/#cat-ciphers" class="rp-cat-chip">Ciphers &amp; Bit Tricks</a>
+      <p class="rp-lede">
+        Three CRC checksums — 8-, 16- and 32-bit — computed <em>bit by bit</em> as software
+        shift-registers, interleaved in one loop so all three run under heavy register pressure.
+        This is compiler stress-test #105, re-running a fix for a subtle
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> register-allocator bug that once
+        stranded a loop-carried CRC byte in the wrong register on the plain 8-bit target — the one
+        Round 6 corner invisible to the 16-bit-accumulator gates.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Bit-Serial CRC Wall">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — a hash marble flows as the bit-serial CRC of each cell drifts.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        The build gate hashes a stream of bytes through three interleaved bit-serial CRC registers
+        and folds the results into one checksum. On screen, each cell's colour is a bit-serial CRC-8
+        of its coordinates and a drifting phase, so the field marbles and flows.
+      </p>
+      <pre class="rp-code">{code}</pre>
+
+      <h2>Compiler stress-test #105 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0x8E47</code> — a fold of the CRC-8/16/32 registers) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'crcwall';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x68, len: 2, want: 0x8E47, frames: 500, label: 'bit-serial CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

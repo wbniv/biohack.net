@@ -1056,6 +1056,17 @@
         "frames": 500,
         "label": "spaceship G_SCMP gate CRC host==bsnes-jg"
       }
+    },
+    {
+      "id": "crcwall",
+      "title": "Bit-Serial CRC Wall",
+      "selfcheck": {
+        "off": "0x68",
+        "len": 2,
+        "want": "0x8E47",
+        "frames": 500,
+        "label": "crcwall bit-serial CRC gate host==bsnes-jg"
+      }
     }
   ]
 }
