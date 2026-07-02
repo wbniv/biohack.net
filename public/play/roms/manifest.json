@@ -1012,6 +1012,17 @@
         "frames": 500,
         "label": "sret CRC"
       }
+    },
+    {
+      "id": "plyoracle",
+      "title": "PlyOracle",
+      "selfcheck": {
+        "off": "0x75",
+        "len": 2,
+        "want": "0x6146",
+        "frames": 500,
+        "label": "negamax CRC"
+      }
     }
   ]
 }
