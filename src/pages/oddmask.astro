@@ -1,0 +1,172 @@
+---
+// /oddmask — Odd-Width Mask Sculptor. Compiler stress-test #103 (Round 6, harden-the-fixes).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/oddmask.sfc', 'preview/oddmask.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// a 20/24/28-bit value, then widened to 64 bits and multiplied
+uint32_t x = (uint32_t)v * 2654435761u + rot;   // 32-bit multiply
+uint64_t w20 = (uint64_t)((x ^ y) & 0x000FFFFF);  // 20-bit → zero-extend to 64
+uint64_t w24 = (uint64_t)((x + y) & 0x00FFFFFF);  // 24-bit → zero-extend to 64
+uint64_t a   = w20 * w24;                          // 64-bit multiply
+
+// the compiler narrows each masked value to an ODD width (20, 24, 28 bits),
+// then must zero-extend that odd width to 64 — a shape with no clean
+// decomposition into 16-bit lanes, which once crashed the backend.`;
+
+const notes = [
+  ['odd-width integers', 'Most integers are 8, 16, 32, or 64 bits wide. But mask a value to 20 bits and the compiler tracks it as a 20-bit quantity — an “odd” width. When that narrow value is then widened to 64 bits and fed to 64-bit arithmetic, the backend must extend an odd width into four 16-bit lanes, which has no tidy decomposition.'],
+  ['the bug this guards (#61, patch 0017)', 'A 64-bit Diffie-Hellman demo once crashed the 16-bit-accumulator backend on exactly this: a 20-bit-masked value zero-extended to 64 bits (“unable to legalize”), plus splitting a 64-bit value into 16-bit lanes. Patch 0017 taught the legalizer both moves. This demo re-runs the odd-width extend at 20, 24, and 28 bits, threaded through a 64-bit multiply, and confirms the fix holds.'],
+  ['what actually forms the odd width', 'A measured detail: masking a 64-bit value directly (v & 0xFFFFF) does NOT create an odd-width type — it stays 64-bit with some bits known-zero. The odd width only appears when a 32-bit value is masked and an operation is applied, then the result is widened to 64 bits. So widths above 32 (40, 48) can’t arise this way; the reachable odd widths here are 20, 24, and 28.'],
+  ['a 64-bit multiply on top', 'The two zero-extended narrow values are multiplied at 64 bits, which exercises the other half of the fix — the 64-bit multiply glue that composes a product from 32-bit pieces without ever widening to 128 bits. So a single step touches both the odd-width extend and the 64-bit (un)merge legalization.'],
+  ['keeping it honest', 'The computation runs from a volatile seed so the compiler can’t precompute the whole thing to a constant and skip the code entirely. Without that, a pure function with fixed inputs folds away and tests nothing — a trap worth flagging.'],
+  ['result: bit-exact, and the visual', '64-bit integer arithmetic on masked values is exact, so the result is identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean (the modes that used to crash). On screen, a field is split into horizontal bands, each masking the running 64-bit state to a different width — so a band’s terrace granularity tracks its mask — and the terraces flow as the state mixes.'],
+];
+---
+
+<Base title="Odd-Width Mask Sculptor — bioHACK•NET" description="Odd-width (20/24/28-bit) integers zero-extended to 64 bits and multiplied on a Super Nintendo. Compiler stress-test #103: hardens the odd-width extend and 64-bit (un)merge legalization that once crashed the 16-bit-accumulator backend.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Odd-Width Mask Sculptor</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <p class="rp-lede">
+        Values masked to <em>odd</em> widths — 20, 24, and 28 bits — then zero-extended to 64 bits and
+        multiplied. This is compiler stress-test #103: it re-runs the exact legalization shape a real
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> 64-bit crash once hit — an
+        odd-width value with no clean 16-bit-lane decomposition, widened into 64-bit arithmetic — and
+        confirms the fix (patch 0017) holds.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Odd-Width Mask Sculptor">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — four bands, each masked to a different width, terrace and flow.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Odd-width integers are the awkward case for a 16-bit machine: a 20- or 24- or 28-bit value has
+        no neat split into 16-bit halves, yet the compiler must zero-extend it to 64 bits to do 64-bit
+        math on it. This demo builds exactly those values and multiplies them wide.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Each step folds the 64-bit result into a CRC. The picture is the proof: a wrong odd-width
+        extend or a wrong 64-bit split would corrupt the arithmetic and change the CRC.
+      </p>
+
+      <h2>Compiler stress-test #103 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0x1FD9</code> — a fold of 40 mix steps) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'oddmask';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x6b, len: 2, want: 0x1FD9, frames: 500, label: 'odd-width mask sculptor CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>

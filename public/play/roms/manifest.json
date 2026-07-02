@@ -1133,6 +1133,17 @@
         "frames": 500,
         "label": "keycmp64"
       }
+    },
+    {
+      "id": "oddmask",
+      "title": "Odd-Width Mask Sculptor",
+      "selfcheck": {
+        "off": "0x6b",
+        "len": 2,
+        "want": "0x1FD9",
+        "frames": 500,
+        "label": "oddmask"
+      }
     }
   ]
 }

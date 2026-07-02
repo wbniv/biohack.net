@@ -90,6 +90,13 @@ const demos = [
     category: 'algorithms',
   },
   {
+    slug: 'oddmask',
+    title: 'Odd-Width Mask Sculptor',
+    desc: 'Values masked to odd widths — 20, 24, 28 bits — zero-extended to 64 bits and multiplied. Re-runs the odd-width extend and 64-bit split that once crashed the 16-bit-accumulator backend. Compiler stress-test #103 (Round 6).',
+    keys: 'Self-running — four mask-width bands terrace and flow',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',
