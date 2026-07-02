@@ -924,6 +924,17 @@
         "frames": 500,
         "label": "rounding CRC"
       }
+    },
+    {
+      "id": "montorbit",
+      "title": "Montgomery Orbit",
+      "selfcheck": {
+        "off": "0x69",
+        "len": 2,
+        "want": "0xBA9B",
+        "frames": 500,
+        "label": "modmul CRC"
+      }
     }
   ]
 }

@@ -1,0 +1,176 @@
+---
+// /snes/montorbit — playable in-browser Montgomery Orbit SNES demo.
+// Compiler stress-test #84: Montgomery REDC modmul — division-free (no __udivsi3/__umodsi3).
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/montorbit.sfc', 'preview/montorbit.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// Montgomery reduction: a*b mod N with NO divide — just multiply, shift, mask, subtract.
+uint16_t redc(uint32_t T) {            // T = a*b, both < N
+  uint16_t m = (uint16_t)((uint16_t)T * Nprime);   // __mulhi3 + mask (mod R)
+  uint32_t t = (T + (uint32_t)m * N) >> 16;        // __mulsi3, then G_LSHR by 16
+  uint16_t r = (uint16_t)t;
+  if (r >= N) r -= N;                              // conditional subtract
+  return r;                                        // in [0, N)
+}
+uint16_t mont_mul(uint16_t a, uint16_t b) { return redc((uint32_t)a * b); }  // __mulsi3`;
+
+const notes = [
+  ['Montgomery REDC', 'Modular multiplication a·b mod N normally needs a divide (a·b then mod N). Montgomery\'s trick replaces the divide with a multiply-by-a-precomputed-constant, a shift, a mask, and one conditional subtract — all cheap on a CPU with no divide instruction. The 65816 has no hardware divide (software divide is dozens of cycles), so this is exactly how real crypto code runs there.'],
+  ['division-free (the gate proves it)', 'The build gate disassembles the hot loop and asserts it contains __mulsi3/__mulhi3 (32- and 16-bit multiply) and rep/sep, and ZERO division library calls (__udivsi3, __umodsi3, __udivmodsi4). If any divide crept in, the gate fails. This is the demo\'s whole point: modular arithmetic with no divide.'],
+  ['distinct from #61 / #20', '#61 dhmix does 64-bit modular exponentiation the division-based way (__udivdi3/__umoddi3). #20 factorial and #19 pi use base-10000 bignums with __udivmodsi4. This is the only battery demo that does modmul entirely without a divide.'],
+  ['the orbit', 'The multiplicative group mod N is cyclic; iterating x → x·g mod N walks an orbit g⁰, g¹, g², … Each residue maps to an angle on a circle, and connecting consecutive points draws a star polygon whose density reflects the order of g. The whole orbit is recomputed every frame with Montgomery modmul (no divide), then rotated.'],
+];
+---
+
+<Base title="Montgomery Orbit — bioHACK•NET" description="A rotating multiplicative-group star polygon on a Super Nintendo, computed with Montgomery REDC modular multiplication — a·b mod N using only multiply, shift, mask and a conditional subtract, with no divide instruction. Compiler stress-test #84.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Montgomery Orbit</h1>
+      <a href="/snes/#cat-ciphers" class="rp-cat-chip">Ciphers &amp; Number Theory</a>
+      <p class="rp-lede">
+        A rotating multiplicative-group star polygon, computed with
+        <a href="https://en.wikipedia.org/wiki/Montgomery_modular_multiplication">Montgomery
+        modular multiplication</a> — <code>a·b mod N</code> using only a multiply, a shift, a
+        mask, and one conditional subtract, with <b>no divide</b>. The 65816 has no hardware
+        divide, so this is how real crypto runs there. The build gate disassembles the loop and
+        asserts <b>zero</b> division library calls. The orbit <code>g⁰, g¹, g², …&nbsp;mod N</code>
+        traces the star. Compiler stress-test #84.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Montgomery Orbit">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the multiplicative-group orbit rotates as a star polygon.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        In the integers mod a prime N, multiplication by a fixed generator <em>g</em> cycles
+        through the whole group: <em>1, g, g², g³, …</em> This demo maps each residue to an angle
+        on a circle and connects consecutive orbit points, drawing a star polygon. Every frame the
+        entire orbit is recomputed — and every one of those multiplications is done <em>modulo N
+        without a divide</em>, using Montgomery reduction.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Montgomery form keeps numbers pre-scaled by R = 2¹⁶ so the reduction step is a shift
+        instead of a divide. The result is exact integer arithmetic — bit-identical on the host
+        and on the 65816 in all code-generation modes.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (modmul CRC <code>0xBA9B</code> — a fold of the orbit residues) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean, and <b>zero</b> division library calls in the hot loop.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'montorbit';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x69, len: 2, want: 0xBA9B, frames: 500, label: 'modmul CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede b { color: var(--ink); }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
