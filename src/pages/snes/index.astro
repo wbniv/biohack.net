@@ -55,6 +55,13 @@ const demos = [
     category: 'ciphers',
   },
   {
+    slug: 'uarteye',
+    title: 'Bit-Banged UART Eye',
+    desc: 'A software UART bit-banged through carry-rotated transmit and receive registers, drawn as an oscilloscope eye diagram. Re-runs a default-build register-coalescer bug in loop-carried rotate code. Compiler stress-test #108 (Round 6).',
+    keys: 'Self-running — a serial eye diagram, rails and crossings shimmer',
+    category: 'ciphers',
+  },
+  {
     slug: 'spaceship',
     title: 'Width-Sweep Sort Gallery',
     desc: 'Four bar panels sort in lockstep, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — 8/16/32/64-bit. Re-runs the fix that taught the 65816 to lower the three-way-compare (G_SCMP), now at the 32- and 64-bit widths the original never reached. Compiler stress-test #97 (Round 6).',

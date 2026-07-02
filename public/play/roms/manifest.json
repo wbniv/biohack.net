@@ -1188,6 +1188,17 @@
         "frames": 500,
         "label": "bitweave"
       }
+    },
+    {
+      "id": "uarteye",
+      "title": "Bit-Banged UART Eye",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0x3F09",
+        "frames": 500,
+        "label": "uarteye"
+      }
     }
   ]
 }
