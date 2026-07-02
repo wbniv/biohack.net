@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'mulov64',
+    title: '64-bit Multiply-Overflow',
+    desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',
+    keys: 'Self-running — orbiters spark on 64-bit overflow',
+    category: 'bignums',
+  },
+  {
     slug: 'mvscrl',
     title: 'Memmove Scroll Slabs',
     desc: 'Two counter-scrolling slab bands driven by overlapping memmove calls. Upper band uses memmove(dst+1,dst,N) where dst>src (descending path); lower band uses the ascending path. Both G_MEMMOVE sub-paths exercised. Compiler stress-test #79.',

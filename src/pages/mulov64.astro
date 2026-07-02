@@ -1,0 +1,181 @@
+---
+// /mulov64 — 64-bit Multiply-Overflow / Multiply-High Sentinel. Compiler stress-test #101 (Round 6).
+import Base from '../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/mulov64.sfc', 'preview/mulov64.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// unsigned 64-bit multiply-overflow (G_UMULO at s64)
+uint64_t up;
+bool uov = __builtin_mul_overflow(ua, ub, &up);
+
+// signed 64-bit multiply-overflow (G_SMULO at s64)
+int64_t sp;
+bool sov = __builtin_mul_overflow(sa, sb, &sp);
+
+// llvm-mos lowers each to the FULL 128-bit product, whose high 64
+// bits need G_UMULH/G_SMULH at s64 — composed from 32-bit __mulsi3
+// pieces + __muldi3 glue, WITHOUT widening to 128 bits.
+if (uov) { teleport_to_mirror(); emit_spark(); }`;
+
+const notes = [
+  ['G_UMULH / G_SMULH at s64', 'The high half of a 64×64 → 128-bit product. To decide whether a 64-bit multiply overflowed, the compiler needs those top 64 bits — but on a 16-bit CPU it cannot just widen to a 128-bit multiply: the multiply legalizer is deliberately clamped to 32 bits (the source comments warn that "lowering S128 to S64 would produce infinite regress"). So the 128-bit product is hand-composed from 32-bit __mulsi3 partial products plus __muldi3 glue. This demo is the first in the battery to make the compiler form an s64 multiply-high at all.'],
+  ['the coverage-check that found it', 'Round 6 stops hunting new corners and instead re-stresses bugs already fixed — auditing which code paths each fix actually exercises. An audit of the legalizer against the five shipped 64-bit demos showed s64 add/sub/mul/divide/shift/convert were all already covered — but nothing formed an s64 multiply-high or multiply-overflow. This demo closes that one gap.'],
+  ['distinct from #76 (s16/s32)', 'Demo #76 smulorbit used __builtin_mul_overflow on int16_t and int32_t (G_SMULO at 16/32 bits). At those widths the overflow check widens to a 32- or 64-bit multiply that the compiler already supports directly. At 64 bits there is no wider native multiply to widen into — that is what makes the s64 path a separate, previously-untested lowering.'],
+  ['distinct from #56 (s32 mul-high) and #22 (low 64)', 'Demo #56 rotozoom takes the high half of a 32-bit multiply (G_UMULH at s32). Demo #22 avalanche uses __muldi3 — but only the LOW 64 bits of the product, never the high half. This demo is the first to need the HIGH 64 bits of a 64-bit product.'],
+  ['result: correct across every mode', 'The 64-bit overflow flags are computed identically on the host (native 64-bit) and on the SNES (the composed multiply-high). The gate folds a rolling overflow count into a CRC; host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The one untested s64 legalizer path is correct — a clean positive that now guards against any future regression.'],
+];
+---
+
+<Base title="64-bit Multiply-Overflow — bioHACK•NET" description="Six orbiters on a Super Nintendo carry a 64-bit momentum scaled until it overflows; on overflow the orbiter teleports and sparks orange. Compiler stress-test #101: the first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) on the 65816.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">64-bit Multiply-Overflow</h1>
+      <a href="/snes/#cat-bignums" class="rp-cat-chip">Big Numbers</a>
+      <p class="rp-lede">
+        Six orbiters trace looping paths on a Super Nintendo canvas. Each carries a 64-bit
+        momentum scaled by a growing factor; when the product overflows a 64-bit integer the
+        orbiter teleports to the mirror quadrant and flashes orange. This is compiler stress-test
+        #101 — the first demo to make <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>
+        form an <strong>s64 multiply-high / multiply-overflow</strong> (<code>G_UMULH</code>/<code>G_UMULO</code>),
+        a lowering path no prior demo exercised.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-bit Multiply-Overflow demo">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — trails accumulate and sparks fire when a 64-bit product overflows.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses. (The title holds a few seconds while the 64-bit gate computes — it is the heaviest compute in the battery.)</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        <code>__builtin_mul_overflow(a, b, &result)</code> stores the truncated product in
+        <code>result</code> and returns <code>true</code> if the true mathematical product didn't
+        fit the type. Deciding that for a 64-bit multiply requires the top 64 bits of the full
+        128-bit product — the <em>multiply-high</em>. On a chip with no hardware multiply and a
+        multiply legalizer capped at 32 bits, the compiler must build that 128-bit product from
+        32-bit partial products by hand. This demo drives both the unsigned and signed 64-bit
+        overflow checks.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Each orbiter's 64-bit momentum is multiplied by a growing scale every frame; the moment it
+        overflows, the orbiter teleports to the mirror quadrant (127−x, 127−y), reverses direction,
+        resets its momentum and emits an orange spark. Because each orbiter starts from a different
+        seed, they overflow at staggered times, scattering sparks across the accumulating trails.
+      </p>
+
+      <h2>Compiler stress-test #101 — Round 6: hardening the fixes</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
+        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (gate CRC <code>0x3A69</code> — a fold of 121 unsigned + signed 64-bit overflow checks) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'mulov64';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x58, len: 2, want: 0x3A69, frames: 700, label: 's64 mul-overflow CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede strong { color: var(--ink); font-weight: 600; }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc em { font-style: italic; }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
