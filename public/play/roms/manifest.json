@@ -1034,6 +1034,17 @@
         "frames": 700,
         "label": "mulov64 s64 mul-overflow gate CRC host==bsnes-jg"
       }
+    },
+    {
+      "id": "ovmove",
+      "title": "Overlap-Move Mosaic",
+      "selfcheck": {
+        "off": "0x67",
+        "len": 2,
+        "want": "0xA990",
+        "frames": 500,
+        "label": "ovmove overlapping-memmove gate CRC host==bsnes-jg"
+      }
     }
   ]
 }

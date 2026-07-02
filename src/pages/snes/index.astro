@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'ovmove',
+    title: 'Overlap-Move Mosaic',
+    desc: 'A 384-byte mosaic scrolled in place by four overlapping memmoves per step — both copy directions, each over a 16-bit-indexed buffer. Re-runs the exact scenario a real +mos-xy16 in-place-memmove bug once corrupted, larger and both ways, and confirms the fix holds. Compiler stress-test #93 (Round 6).',
+    keys: 'Self-running — the mosaic shears down-right, then up-left',
+    category: 'algorithms',
+  },
+  {
     slug: 'mulov64',
     title: '64-bit Multiply-Overflow',
     desc: 'Six orbiters carry a 64-bit momentum scaled until it overflows, then teleport and spark. The first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) — the one untested s64 lowering path, composed from 32-bit pieces without widening to 128 bits. Compiler stress-test #101 (Round 6).',
