@@ -1,0 +1,178 @@
+---
+// /snes/ulam — playable in-browser Ulam Prime Sieve SNES demo.
+// Compiler stress-test #85: variable-count G_SHL/G_LSHR bit-array sieve.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/ulam.sfc', 'preview/ulam.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// A set of integers as a packed bit-array — the shift amount (i&7) is RUNTIME.
+void set(uint16_t i)      { comp[i>>3] |= (1u << (i & 7)); }        // variable G_SHL
+uint8_t is_prime(uint16_t i){ return !((comp[i>>3] >> (i & 7)) & 1); } // variable G_LSHR
+
+// Sieve of Eratosthenes over [0, 1024):
+set(0); set(1);
+for (i = 2; i*i < N; i++)
+  if (is_prime(i))
+    for (j = i*i; j < N; j += i) set(j);`;
+
+const notes = [
+  ['variable-count shifts', 'A packed bit-array addresses bit i as byte i>>3, bit (i&7). Because i&7 is a runtime value, the shift `1u << (i&7)` (and the test `>> (i&7)`) compiles to a variable-count shift — a shift loop or helper (__ashlhi3/__lshrhi3 on this target), not a single fixed shift instruction. That is the codegen corner this demo exercises.'],
+  ['distinct from #5 and #28', '#5 Life shifts by fixed neighbour-mask amounts (1<<0, 1<<1, …) — constant shifts the compiler folds. #28 Hilbert uses fixed bit twiddles. This demo\'s shift amount is data-dependent, forcing the general variable-count path.'],
+  ['bit-array as a set', 'The whole sieve is a membership set: 1024 bits = 128 bytes. Marking composites and testing primality are set-insert and set-contains. This is the idiom real code uses when a bool[] would waste 8× the memory — important on a 128 KB console.'],
+  ['the Ulam spiral', 'Walking the integers 1, 2, 3, … along a square spiral and marking the primes reveals Stanislaw Ulam\'s famous diagonal streaks — primes cluster on certain diagonals (values of prime-rich quadratic polynomials). The demo reveals the spiral outward from the center.'],
+];
+---
+
+<Base title="Ulam Prime Sieve — bioHACK•NET" description="A Sieve of Eratosthenes stored as a packed bit-array with runtime-variable shift amounts (arr[i>>3] |= 1u<<(i&7)), rendered as an Ulam spiral of primes on a Super Nintendo. Compiler stress-test #85.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Ulam Prime Sieve</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Numeric</a>
+      <p class="rp-lede">
+        A <a href="https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of
+        Eratosthenes</a> stored as a packed <b>bit-array</b> — set a bit with
+        <code>arr[i&gt;&gt;3] |= (1u &lt;&lt; (i&amp;7))</code>, test with
+        <code>(arr[i&gt;&gt;3] &gt;&gt; (i&amp;7)) &amp; 1</code>. The shift amount
+        <code>i&amp;7</code> is a <em>runtime</em> value, so the compiler must emit a
+        <b>variable-count shift</b> — the codegen corner. The primes render as an
+        <a href="https://en.wikipedia.org/wiki/Ulam_spiral">Ulam spiral</a>, revealing
+        the famous diagonal clustering. Compiler stress-test #85.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Ulam Prime Sieve">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — the spiral reveals outward; gold pixels are primes.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Every integer from 1 up to 1024 is placed on a square spiral around the center of the
+        screen; the ones that are prime are lit in gold. Because primes favour the values of
+        certain quadratic polynomials, they line up along diagonals — the Ulam spiral. The
+        primality data comes from a Sieve of Eratosthenes packed into a 128-byte bit-array.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        The interesting part for the compiler is the bit addressing: a data-dependent shift by
+        <code>i&amp;7</code>. A naive <code>bool primes[1024]</code> would avoid the shift but
+        waste 8× the RAM; the bit-array is the idiomatic choice and forces the general
+        variable-count shift path in the backend.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (sieve CRC <code>0x1F2F</code> — a fold of all 1024 primality bits) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'ulam';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x64, len: 2, want: 0x1F2F, frames: 500, label: 'sieve CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede b { color: var(--ink); }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
