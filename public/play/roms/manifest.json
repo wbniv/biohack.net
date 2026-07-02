@@ -990,6 +990,17 @@
         "frames": 500,
         "label": "adpcm CRC"
       }
+    },
+    {
+      "id": "scopeguard",
+      "title": "Scope-Guard Ripple Tank",
+      "selfcheck": {
+        "off": "0x66",
+        "len": 2,
+        "want": "0x05A3",
+        "frames": 500,
+        "label": "cleanup CRC"
+      }
     }
   ]
 }

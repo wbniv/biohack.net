@@ -1,0 +1,181 @@
+---
+// /snes/scopeguard — playable in-browser Scope-Guard Ripple Tank SNES demo.
+// Compiler stress-test #90: __attribute__((cleanup)) synthesized scope-exit calls.
+import Base from '../../layouts/Base.astro';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+const PLAY = 'public/play';
+const BUST_ASSETS = [
+  'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
+  'roms/manifest.json', 'roms/scopeguard.sfc', 'preview/scopeguard.png',
+];
+const bust: Record<string, string> = {};
+for (const a of BUST_ASSETS) {
+  try { bust[a] = createHash('sha256').update(readFileSync(`${PLAY}/${a}`)).digest('hex').slice(0, 12); } catch {}
+}
+const appV = bust['app.js'] ?? '';
+
+const code = `// __attribute__((cleanup)): the cleanup fn runs at EVERY exit of the variable's scope.
+uint16_t process(uint16_t a, uint16_t b) {
+  uint16_t outer __attribute__((cleanup(guard))) = a;      // runs last, on any exit
+  if ((a & 3) == 0) {
+    uint16_t g __attribute__((cleanup(guard))) = a ^ 0x1234;
+    return a + 1;                 // exit: g fires, then outer  (compiler synthesizes both)
+  }
+  for (i = 0; i < 3; i++) {
+    uint16_t lg __attribute__((cleanup(guard))) = a + i;
+    if (((a+i) & 7) == 5) break;  // early break: lg fires
+  }
+  { uint16_t p __attribute__((cleanup(guard))) = b, q __attribute__((cleanup(guard))) = b^a; }
+  return a ^ b;                   // q, then p fired at the block close; outer fires here
+}`;
+
+const notes = [
+  ['cleanup attribute', 'A variable marked __attribute__((cleanup(fn))) has fn(&var) called automatically when the variable goes out of scope — GCC/Clang\'s "poor man\'s destructor". Clang synthesizes those calls (CGDecl.cpp:2254) at compile time.'],
+  ['scope-exit fan-out', 'The cleanup must run on EVERY way control leaves the scope: falling off the end, an early return, a break out of a loop, or the close of a nested block. The compiler duplicates (fans out) the cleanup call onto each of those control-flow edges — and multiple guards in one scope run in reverse declaration order.'],
+  ['the codegen corner', 'Getting this right means the backend emits the correct set of cleanup calls at the correct edges, in the correct order, with no double-runs and no missed exits. The gate\'s CRC folds the exact sequence of cleanup calls, so any missed/extra/reordered call diverges it.'],
+  ['first cleanup-attr demo', 'No other demo in the battery uses the cleanup attribute. The ripple tank is just the visual witness that the program runs; the compiler stress is the synthesized scope-exit call sequence, checked at startup.'],
+];
+---
+
+<Base title="Scope-Guard Ripple Tank — bioHACK•NET" description="A fixed-point ripple tank on a Super Nintendo whose compiler stress is __attribute__((cleanup)) — synthesized scope-exit calls fanned out to every control-flow exit. Compiler stress-test #90.">
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title">Scope-Guard Ripple Tank</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Numeric</a>
+      <p class="rp-lede">
+        A fixed-point 2-D ripple tank — but the compiler stress is
+        <code>__attribute__((cleanup(fn)))</code>, C's "poor man's destructor". A guarded local
+        runs its cleanup at <b>every</b> exit of its scope: fall-through, early <code>return</code>,
+        loop <code>break</code>, nested-block close — and multiple guards run in <b>reverse</b>
+        declaration order. The compiler must fan those synthesized calls out to each control-flow
+        edge. Compiler stress-test #90.
+      </p>
+    </header>
+
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Scope-Guard Ripple Tank">
+      <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
+      <div class="rp-row">
+        <span id="status" class="rp-status">loading core…</span>
+        <span id="checkresult" class="rp-badge"></span>
+        <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
+        <button id="fullscreen" class="rp-btn">Fullscreen</button>
+      </div>
+      <p class="rp-keys">Self-running — ripples spread and interfere; HUD shows the cleanup count.</p>
+      <p id="banner" class="rp-banner"></p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+    </section>
+
+    <section class="rp-doc">
+      <h2>What it is</h2>
+      <p>
+        Pebbles drop into a fixed-point wave-equation tank and the ripples spread, reflect, and
+        interfere. That's the visible part; the part that stresses the compiler runs once at
+        startup — a routine full of <code>cleanup</code>-guarded locals across branches, loops,
+        and nested blocks, whose scope-exit calls are folded into a CRC and checked against the host.
+      </p>
+      <pre class="rp-code">{code}</pre>
+      <p>
+        Cleanup handlers are how C code does RAII-style resource release (closing files, freeing
+        locks) without a destructor. Correctly duplicating them onto every exit edge — and only
+        those edges, in the right order — is a real obligation of the front-end + backend, and
+        this demo checks it end to end on the 65816.
+      </p>
+
+      <h2>Compiler stress-test</h2>
+      <table class="rp-table rp-wide">
+        <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
+        <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
+      </table>
+
+      <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against
+        bsnes-jg and MAME. Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
+        (cleanup CRC <code>0x05A3</code> — a fold of the exact scope-exit call sequence) live in this tab.
+        No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
+        <code>-verify</code> clean.</p>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ bust, appV }}>
+  function bootEmulator() {
+    if (!document.getElementById('bjg-embed')) return;
+    if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
+    window.BJG_BASE = '/play/';
+    window.BJG_DEFAULT_ROM = 'scopeguard';
+    window.BJG_BUST = bust;
+    window.BJG_SELFCHECK = { off: 0x66, len: 2, want: 0x05A3, frames: 500, label: 'cleanup CRC' };
+    window.BsnesJg = undefined;
+    window.__bjg = undefined;
+    var old = document.getElementById('bjg-appjs');
+    if (old) old.remove();
+    var s = document.createElement('script');
+    s.id = 'bjg-appjs';
+    s.src = '/play/app.js' + (appV ? '?v=' + appV : '');
+    document.body.appendChild(s);
+  }
+  if (!window.__bjgReg) { window.__bjgReg = true; document.addEventListener('astro:page-load', bootEmulator); }
+  if (document.readyState !== 'loading') bootEmulator();
+  else document.addEventListener('DOMContentLoaded', bootEmulator);
+</script>
+
+<style>
+  .rp-cat-chip {
+    display: inline-block; margin-top: .5rem; padding: 3px 10px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--ink-dim); background: var(--bg-soft, #1e2128);
+    border: 1px solid var(--rule, #2e3138); border-radius: 4px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .rp-cat-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .rp-wrap { --rp-accent: var(--accent); max-width: 900px; margin-inline: auto; padding: 2.5rem 1.25rem 4rem; }
+  .rp-hero { max-width: 42rem; margin-inline: auto; text-align: center; }
+  .rp-title { font-family: 'Dune Rise', 'Space Grotesk', system-ui, sans-serif; font-weight: 400;
+              text-transform: uppercase; letter-spacing: 0.04em; line-height: 1;
+              font-size: clamp(2.2rem, 9vw, 3.5rem); margin: 0; color: var(--ink); }
+  .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
+  .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-lede a:hover { text-decoration: underline; }
+  .rp-lede em { font-style: italic; }
+  .rp-lede b { color: var(--ink); }
+  .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
+  .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
+  .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem;
+            font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
+  .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px;
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem;
+            transition: border-color .15s, color .15s; }
+  .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .rp-badge { font: 12px 'JetBrains Mono', ui-monospace, monospace; }
+  .rp-badge.running { color: var(--accent); }
+  .rp-badge.pass { background: #54d98c; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-badge.fail { background: #ff6b6b; color: #0c1116; font-weight: 600; padding: 2px 8px; border-radius: 5px; }
+  .rp-keys { margin: .75rem 0 0; font-size: 11.5px; color: var(--ink-dim); font-style: italic; }
+  .rp-hint { margin: .5rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner { margin: .6rem 0 0; font-size: 12px; color: var(--ink-dim); }
+  .rp-banner :global(b) { color: var(--ink); }
+  .rp-banner :global(code) { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-doc { max-width: 42rem; margin: 3rem auto 0; color: var(--ink); line-height: 1.7; }
+  .rp-doc h2 { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+               color: #7dd3fc; margin: 2.25rem 0 .6rem; }
+  .rp-doc p { margin: .4rem 0; }
+  .rp-doc em { font-style: italic; }
+  .rp-doc b { color: var(--ink); }
+  .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
+             background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
+             border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
+  .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }
+  .rp-table.rp-wide { max-width: 44rem; }
+  .rp-table th { text-align: left; text-transform: uppercase; font-size: .68rem; letter-spacing: .08em;
+                 color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
+  .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+</style>
