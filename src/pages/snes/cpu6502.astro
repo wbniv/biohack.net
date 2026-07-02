@@ -1,13 +1,13 @@
 ---
-// /ovmove — Overlap-Move Mosaic. Compiler stress-test #93 (Round 6, harden-the-fixes).
-import Base from '../layouts/Base.astro';
+// /cpu6502 — 6502/65C02 CPU Disassembler + Simulator. Compiler stress-test #102 (Round 6).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/ovmove.sfc', 'preview/ovmove.png',
+  'roms/manifest.json', 'roms/cpu6502.sfc', 'preview/cpu6502.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,46 +15,55 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// a 16×24 = 384-byte mosaic, scrolled IN PLACE (dst and src overlap)
-uint8_t *flat = &cell[0][0];
+const code = `// The simulated 6502 program — the assembly equivalent of hello.c:
+// set a colour register to green, store a sentinel, then loop
+// exercising every ALU gate type.
+LDA #$E0   STA $F0     // colour lo  (SNES_RGB(0,31,0) = $03E0)
+LDA #$03   STA $F1     // colour hi
+LDA #$42   STA $FF     // sentinel = 0x42     ("hello.c: sentinel = 0x42")
+LDX #$08               // loop counter
+loop:
+  CLC  ADC #$01        // ADD  gate
+  AND $FF              // AND  gate
+  EOR $FF              // XOR  gate
+  ORA $FF              // OR   gate
+  ASL                  // SHL  gate
+  LSR                  // SHR  gate
+  CMP $FF              // CMP  gate
+  DEX                  // SUB  gate
+  BNE loop
+JMP restart
 
-// descending overlap (dst > src): scroll down / right
-memmove(&cell[1][0], &cell[0][0], 23*16);   // 368 bytes
-memmove(flat + 1,    flat,        384 - 1);  // 383 bytes
-
-// ascending overlap (dst < src): scroll up / left
-memmove(&cell[0][0], &cell[1][0], 23*16);   // 368 bytes
-memmove(flat,        flat + 2,    384 - 2);  // 382 bytes
-
-// every count > 256, so the copy must index with a 16-bit register.`;
+// The simulator itself is one 256-entry switch(opcode) dispatch —
+// which the llvm-mos backend lowers to a jump table on the 65816.`;
 
 const notes = [
-  ['in-place overlapping memmove', 'memmove (unlike memcpy) is defined even when source and destination overlap — it must pick a copy direction so it never clobbers bytes it has not read yet. dst>src copies high-to-low (descending); dst<src copies low-to-high (ascending). This demo drives both directions, four memmoves per step, over the same 384-byte buffer.'],
-  ['the 256-byte boundary (why >256 matters)', 'The 65816 addresses memory with 8-bit or 16-bit index registers. A copy of ≤256 bytes fits an 8-bit index; a copy of more than 256 bytes needs a 16-bit index. This buffer is 384 bytes precisely so every memmove is forced onto the 16-bit-index path — the exact path a real compiler bug once corrupted.'],
-  ['the bug this guards (#23, patch 0002)', 'When the accumulator/index registers run 16-bit (the +mos-xy16 mode), an earlier version of the compiler could place a "switch index back to 8-bit" instruction (sep #$10) between writing a 16-bit index and reading it — zeroing the index’s high byte and corrupting an in-place memmove. The fix reloads the index after switching width. This demo re-runs that exact scenario, larger and in both directions, and confirms the fix holds.'],
-  ['result: bit-exact in every mode', 'A memmove of a byte array is a pure data shuffle — identical on the host and on the SNES. The gate folds all 384 bytes each step into a CRC; host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. A dropped index high byte would streak the mosaic and change the CRC. It does not — the fix is correct and now permanently regression-guarded.'],
-  ['the visual', 'A 16×16 window of the mosaic is drawn as solid colour tiles. On descending steps the pattern shears down and right; on ascending steps it shears up and left. Fresh coloured rows/bytes are injected at the exposed edges, so the diagonal bands keep flowing.'],
+  ['256-entry opcode dispatch → jump table', 'The heart of the simulator is a single switch(opcode) over all 256 possible bytes. The llvm-mos 65816 backend lowers this dense switch to a real jump table — an indexed indirect jump (jmp (addr,x)) rather than a chain of compare-and-branch. The build gate confirms it: the disassembly contains 4 jump tables. This is the load-bearing codegen path the demo exercises.'],
+  ['16-bit program counter on an 8-bit machine', 'The simulated 6502 is 8-bit (A, X, Y) but its program counter is 16-bit. On the 65816 under +mos-a16 that PC arithmetic is native 16-bit adds bracketed by rep/sep width switches — 97 of them across the simulator. The status-register flag math (N, V, Z, C from each 8-bit ALU result) is 8-bit bit-manipulation on top.'],
+  ['what you are watching', 'A scrolling disassembly listing rendered in the recovered Great Waldo Search 16×16 font (its built-in drop-shadow makes each line pop). The bright line is the instruction that just executed; below it, one of eight ALU gates lights up — AND, OR, XOR drawn as their classic logic-gate silhouettes, ADD/SUB/SHL/SHR/CMP as blocks. The register + flag strip tracks A, X, Y and the NV-BDIZC bits live.'],
+  ['65C02 too', 'The disassembler decodes the full 65C02 superset — STZ, TRB, TSB, PHX/PHY/PLX/PLY, BRA and the zero-page-indirect (zp) addressing mode — not just the NMOS 6502. The embedded program uses plain 6502 opcodes; the extended table is exercised by the gate CRC folding across all 256 opcode bytes.'],
+  ['result: correct across every mode', 'The simulator runs 256 fetch-decode-execute steps and folds A, X, PC and the status register into a rolling CRC each step. host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. No far pointers. A clean positive — the jump-table dispatch and 16-bit PC arithmetic are correct, now guarded against regression.'],
 ];
 ---
 
-<Base title="Overlap-Move Mosaic — bioHACK•NET" description="A 384-byte mosaic scrolled in place by four overlapping memmoves per step on a Super Nintendo — both copy directions, each over a 16-bit-indexed buffer. Compiler stress-test #93: re-stresses the +mos-xy16 in-place-memmove fix and both G_MEMMOVE overlap paths.">
+<Base title="6502 CPU Simulator — bioHACK•NET" description="A 6502/65C02 CPU emulator running on a Super Nintendo: watch a scrolling disassembly listing execute one instruction at a time while the matching ALU logic gate lights up. Compiler stress-test #102 — a 256-entry opcode switch lowered to a jump table on the 65816.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">Overlap-Move Mosaic</h1>
-      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <h1 class="rp-title">6502 CPU Simulator</h1>
+      <a href="/snes/#cat-classics" class="rp-cat-chip">Games &amp; Classics</a>
       <p class="rp-lede">
-        A 16×24 = 384-byte mosaic scrolled <em>in place</em> by four overlapping
-        <code>memmove</code> calls every step — two descending (dst&gt;src), two ascending
-        (dst&lt;src), each over more than 256 bytes so the copy must use a 16-bit index register.
-        This is compiler stress-test #93: it re-runs the exact scenario a real
-        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> bug once corrupted — an
-        in-place <code>memmove</code> under 16-bit-index mode — larger and in both directions, to
-        confirm the fix holds.
+        A <strong>6502/65C02</strong> processor, emulated on a Super Nintendo. Watch a scrolling
+        disassembly listing step through a program one instruction at a time — the bright line is the
+        instruction that just ran — while the matching <strong>ALU logic gate</strong> lights up below
+        (AND, OR, XOR as classic gate shapes; ADD, SUB, SHL, SHR, CMP as blocks). This is compiler
+        stress-test #102: the emulator's 256-entry <code>switch(opcode)</code> is lowered by
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> to a <strong>jump table</strong> on
+        the 65816, with the 6502's 16-bit program counter running as native 16-bit arithmetic.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Overlap-Move Mosaic">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 6502 CPU Simulator demo">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -62,28 +71,29 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — the mosaic shears down-right, then up-left, as the memmoves alternate.</p>
+      <p class="rp-keys">Self-running — the disassembly scrolls and the ALU gate for each instruction lights up.</p>
       <p id="banner" class="rp-banner"></p>
-      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses. (The listing steps deliberately — each instruction holds ~1.5&nbsp;s so you can read it.)</p>
     </section>
 
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        <code>memmove</code> copies bytes safely even when the source and destination ranges
-        overlap — the case plain <code>memcpy</code> is not allowed to handle. The compiler proves
-        the direction: if the destination is above the source it copies high-to-low, otherwise
-        low-to-high. This demo exercises both directions, on a buffer deliberately sized past 256
-        bytes so each copy is driven by a 16-bit index register.
+        The program running <em>inside</em> the simulated 6502 is the assembly equivalent of the
+        classic <code>hello.c</code> — set a colour register to green, store a sentinel byte, then
+        loop. The loop is arranged to fire every one of the eight ALU gate types in turn, so the
+        gate panel cycles through the whole set. The 6502 is the machine being simulated; the SNES
+        (a 65816) is just the hardware running the C emulator that draws it all.
       </p>
       <pre class="rp-code">{code}</pre>
       <p>
-        Each step alternates a descending pair (scroll down + right) and an ascending pair (scroll
-        up + left), then folds all 384 bytes into a rolling CRC. The picture is the proof: any
-        corruption of the 16-bit index would both streak the mosaic and change the CRC.
+        Each of the 256 fetch-decode-execute steps decodes an opcode byte through the emulator's
+        opcode table, executes it (updating <code>A/X/Y</code>, the status flags and the 16-bit PC),
+        and returns which ALU gate fired. The disassembly window shows the two prior instructions,
+        the one just executed (bright), and the next one up.
       </p>
 
-      <h2>Compiler stress-test #93 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #102 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -91,7 +101,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0xA990</code> — a fold of 16 steps × 384 bytes) live in this tab.
+        (gate CRC <code>0xAC8A</code> — a fold of A, X, PC and the status register across 256 executed instructions) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -103,9 +113,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'ovmove';
+    window.BJG_DEFAULT_ROM = 'cpu6502';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x67, len: 2, want: 0xA990, frames: 500, label: 'overlap-memmove CRC' };
+    window.BJG_SELFCHECK = { off: 0x70, len: 2, want: 0xAC8A, frames: 1000, label: 'CPU-sim CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');
@@ -138,7 +148,7 @@ const notes = [
   .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
   .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
   .rp-lede a:hover { text-decoration: underline; }
-  .rp-lede em { font-style: italic; }
+  .rp-lede strong { color: var(--ink); font-weight: 600; }
   .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
   .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
   .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }

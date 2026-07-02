@@ -3,16 +3,9 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   output: 'static',
-  redirects: {
-    '/1d-ca/':           '/snes/1d-ca/',
-    '/3d-wireframe/':    '/snes/3d-wireframe/',
-    '/blossom/':         '/snes/blossom/',
-    '/double-pendulum/': '/snes/double-pendulum/',
-    '/nbody/':           '/snes/n-body/',
-    '/space-invaders/':  '/snes/space-invaders/',
-    '/spigot/':          '/snes/spigot/',
-    '/spirograph/':      '/snes/spirograph/',
-  },
+  // Demo pages live ONLY under /snes/<slug>/. The old apex redirect stubs
+  // (/1d-ca/, /blossom/, … → /snes/…) were removed 2026-07-02 — no demo paths
+  // at the apex. (Non-demo redirects like /cv, /bishop live in public/_redirects.)
   vite: {
     plugins: [tailwindcss()],
   },

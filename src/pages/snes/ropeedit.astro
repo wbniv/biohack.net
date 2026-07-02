@@ -1,13 +1,13 @@
 ---
-// /crcwall — Bit-Serial CRC Wall. Compiler stress-test #105 (Round 6, harden-the-fixes).
-import Base from '../layouts/Base.astro';
+// /ropeedit — Gap-Buffer Rope Editor. Compiler stress-test #96 (Round 6, harden-the-fixes).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/crcwall.sfc', 'preview/crcwall.png',
+  'roms/manifest.json', 'roms/ropeedit.sfc', 'preview/ropeedit.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,41 +15,49 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// three bit-serial CRC shift registers, interleaved in ONE inner loop
-crc8  ^= byte;  crc16 ^= byte<<8;  crc32 ^= byte<<24;
-for (int b = 0; b < 8; b++) {
-    crc8  = (crc8  & 0x80)       ? (crc8 <<1) ^ 0x07       : crc8 <<1;   // loop-carried
-    crc16 = (crc16 & 0x8000)     ? (crc16<<1) ^ 0x1021     : crc16<<1;   // shift
-    crc32 = (crc32 & 0x80000000) ? (crc32<<1) ^ 0x04C11DB7 : crc32<<1;   // registers
-}
-// three live shift registers + three polys = the register pressure that found the bug`;
+const code = `// a gap buffer: text lives on either side of a movable "gap"
+//   text = buf[0, gap_start)  ++  buf[gap_end, N)
+uint8_t buf[576]; uint16_t gap_start, gap_end;
+
+insert(ch): buf[gap_start++] = ch;      // typing fills the gap
+delete():   gap_start--;                // backspace grows the gap
+
+move(pos):  // move the cursor — memmove text across the gap, EITHER way
+  if (pos < gap_start) {                 // cursor left  -> shift text right
+    n = gap_start - pos;
+    memmove(&buf[gap_end - n], &buf[pos], n);   // n can exceed 256 bytes
+  } else {                               // cursor right -> shift text left
+    n = pos - gap_start;
+    memmove(&buf[gap_start], &buf[gap_end], n);
+  }`;
 
 const notes = [
-  ['bit-serial CRC', 'A CRC is normally computed byte-at-a-time from a 256-entry lookup table. The bit-serial form instead shifts the CRC register one bit at a time, XOR-ing in the polynomial whenever the top bit falls off — a classic hardware shift-register in software. That shift-and-conditionally-xor is a loop-carried rotate, the pattern this demo needs.'],
-  ['the bug this guards (patch 0010)', 'On the plain 8-bit target (no 16-bit-accumulator mode), the register allocator’s coalescer could merge two rotate-referenced values into the accumulator-only register class — stranding a loop-carried CRC byte in the Y register while the loop’s back-edge rotate read a stale accumulator. The result was a silently wrong CRC. The fix teaches the coalescer to refuse that merge.'],
-  ['default-8-bit is the point', 'Every other Round 6 demo leans on the 16-bit-accumulator modes; this bug is the opposite — it only ever appears in the default 8-bit build, so it is invisible to those gates. This demo’s load-bearing check is the default build, making it the one dedicated guard for that fix.'],
-  ['three CRCs = pressure', 'One CRC loop already found the bug once. Running CRC-8, CRC-16 and CRC-32 interleaved keeps three shift registers and three polynomial constants live at the same time, maximizing register pressure — the exact condition that tempts the coalescer into the bad merge. If it regressed, the folded checksum would diverge on the default build.'],
-  ['result: correct', 'Bit-serial CRC is pure shift/xor — bit-identical on host and SNES. host == default == +mos-a16 == +mos-xy16 on MAME and bsnes-jg, -verify-machineinstrs clean. The coalescer fix holds under tripled pressure; a clean positive, now a permanent default-8-bit regression guard.'],
+  ['the gap buffer', 'A gap buffer is how many real text editors store a line: the characters sit on either side of an empty “gap” at the cursor. Typing writes into the gap; backspace enlarges it. The only expensive operation is moving the cursor a long way — that memmoves all the text between the old and new cursor across the gap.'],
+  ['memmove, both directions, at scale', 'Moving the cursor left shifts text toward the high end; moving it right shifts text toward the low end — so both memmove copy directions fire. With a 576-byte buffer holding ~480 characters, a cursor jump moves more than 256 bytes, which forces the copy onto the 65816’s 16-bit-index path.'],
+  ['the 256-byte boundary', 'The 65816 addresses memory with 8-bit or 16-bit index registers. A copy of ≤256 bytes fits an 8-bit index; more than that needs a 16-bit index. The buffer is sized past 256 so every cursor-move memmove is driven by a 16-bit index — the exact path a real compiler bug once corrupted.'],
+  ['the bug this guards (#23, patch 0002)', 'Under 16-bit-index mode (+mos-xy16), an earlier compiler could slip a “switch index to 8-bit” instruction (sep #$10) between writing a 16-bit index and reading it, zeroing the high byte and mis-addressing the copy. The fix reloads the index after each width switch. This is the fourth and final Cluster-A demo guarding it — after a synthetic memmove, an indirect-pointer reversal, and an indexed store, this one exercises memmove as a real editor primitive, at scale, in both directions.'],
+  ['result: bit-exact in every mode', 'A gap buffer is a pure byte shuffle — identical on the host and on the SNES. A scripted edit stream (type / delete / jump) runs, and the gate folds all 576 bytes each step into a CRC: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. A dropped index high byte would smear the text and change the CRC. It does not — the fix holds, now permanently regression-guarded.'],
+  ['the visual', 'The 576-byte buffer is drawn as a 16×16 window of colour cells (colour by byte class). As the cursor jumps around and text is typed and deleted, the coloured text blocks slide across the gap — the memmoves made visible.'],
 ];
 ---
 
-<Base title="Bit-Serial CRC Wall — bioHACK•NET" description="Three bit-serial CRC shift registers (CRC-8/16/32) run interleaved on a Super Nintendo, painting a flowing hash marble. Compiler stress-test #105: re-stresses the default-8-bit register-coalescer fix (rotate value stranded in the accumulator class) under tripled register pressure.">
+<Base title="Gap-Buffer Rope Editor — bioHACK•NET" description="A text gap buffer whose cursor moves memmove text across the gap on a Super Nintendo — both directions, past the 256-byte boundary. Compiler stress-test #96: hardens the +mos-xy16 index-width fix at scale, as a real editor primitive.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">Bit-Serial CRC Wall</h1>
-      <a href="/snes/#cat-ciphers" class="rp-cat-chip">Ciphers &amp; Bit Tricks</a>
+      <h1 class="rp-title">Gap-Buffer Rope Editor</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">
-        Three CRC checksums — 8-, 16- and 32-bit — computed <em>bit by bit</em> as software
-        shift-registers, interleaved in one loop so all three run under heavy register pressure.
-        This is compiler stress-test #105, re-running a fix for a subtle
-        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> register-allocator bug that once
-        stranded a loop-carried CRC byte in the wrong register on the plain 8-bit target — the one
-        Round 6 corner invisible to the 16-bit-accumulator gates.
+        A text <em>gap buffer</em> — the data structure inside many real editors — whose cursor moves
+        <code>memmove</code> the text across the gap, <em>both</em> directions and more than 256 bytes
+        at a time. This is compiler stress-test #96, the final Cluster-A demo: it runs the exact
+        scenario a real <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> bug once corrupted
+        — a 16-bit-indexed copy under <code>+mos-xy16</code> — at scale, as a working editor primitive
+        rather than a synthetic loop.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Bit-Serial CRC Wall">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Gap-Buffer Rope Editor">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -57,7 +65,7 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — a hash marble flows as the bit-serial CRC of each cell drifts.</p>
+      <p class="rp-keys">Self-running — text blocks slide across the gap as the cursor jumps and edits.</p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
     </section>
@@ -65,13 +73,20 @@ const notes = [
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        The build gate hashes a stream of bytes through three interleaved bit-serial CRC registers
-        and folds the results into one checksum. On screen, each cell's colour is a bit-serial CRC-8
-        of its coordinates and a drifting phase, so the field marbles and flows.
+        In a gap buffer the characters live on either side of a movable empty region at the cursor.
+        Typing and deleting only touch the gap’s edge and are cheap. The one costly operation is a
+        long cursor jump: all the text between the old and new position must be copied across the gap
+        with <code>memmove</code>, which handles the overlapping ranges safely.
       </p>
       <pre class="rp-code">{code}</pre>
+      <p>
+        The buffer holds 576 bytes with ~480 characters typed in, so a cursor jump copies more than
+        256 bytes — a 16-bit-indexed move. A scripted edit stream drives jumps in both directions and
+        folds all 576 bytes into a rolling CRC each step. The picture is the proof: a wrong index
+        would smear the text and change the CRC.
+      </p>
 
-      <h2>Compiler stress-test #105 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #96 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -79,7 +94,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0x8E47</code> — a fold of the CRC-8/16/32 registers) live in this tab.
+        (gate CRC <code>0x2361</code> — a fold of 20 edit steps × 576 bytes) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -91,9 +106,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'crcwall';
+    window.BJG_DEFAULT_ROM = 'ropeedit';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x68, len: 2, want: 0x8E47, frames: 500, label: 'bit-serial CRC' };
+    window.BJG_SELFCHECK = { off: 0x6a, len: 2, want: 0x2361, frames: 500, label: 'gap-buffer rope editor CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');
@@ -154,7 +169,7 @@ const notes = [
   .rp-doc b { color: var(--ink); }
   .rp-doc em { font-style: italic; }
   .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
-  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px;
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
              background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
              border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
   .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }

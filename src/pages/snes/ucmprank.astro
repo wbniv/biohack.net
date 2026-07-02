@@ -1,13 +1,13 @@
 ---
-// /mulov64 — 64-bit Multiply-Overflow / Multiply-High Sentinel. Compiler stress-test #101 (Round 6).
-import Base from '../layouts/Base.astro';
+// /ucmprank — Unsigned Rank Percentile Field. Compiler stress-test #98 (Round 6, harden-the-fixes).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/mulov64.sfc', 'preview/mulov64.png',
+  'roms/manifest.json', 'roms/ucmprank.sfc', 'preview/ucmprank.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,45 +15,43 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// unsigned 64-bit multiply-overflow (G_UMULO at s64)
-uint64_t up;
-bool uov = __builtin_mul_overflow(ua, ub, &up);
+const code = `// the "spaceship" three-way compare, on UNSIGNED values
+int cmp(const void *a, const void *b) {
+    uint32_t x = *(const uint32_t*)a, y = *(const uint32_t*)b;
+    return (x > y) - (x < y);      //  -1, 0, or +1   → clang: llvm.ucmp
+}
+qsort(values, n, sizeof(uint32_t), cmp);   // sort unsigned; also u16 and u64
 
-// signed 64-bit multiply-overflow (G_SMULO at s64)
-int64_t sp;
-bool sov = __builtin_mul_overflow(sa, sb, &sp);
-
-// llvm-mos lowers each to the FULL 128-bit product, whose high 64
-// bits need G_UMULH/G_SMULH at s64 — composed from 32-bit __mulsi3
-// pieces + __muldi3 glue, WITHOUT widening to 128 bits.
-if (uov) { teleport_to_mirror(); emit_spark(); }`;
+// unsigned order differs from signed exactly at the top bit:
+//   0xFFFFFFFF is the LARGEST unsigned value, but -1 as signed.`;
 
 const notes = [
-  ['G_UMULH / G_SMULH at s64', 'The high half of a 64×64 → 128-bit product. To decide whether a 64-bit multiply overflowed, the compiler needs those top 64 bits — but on a 16-bit CPU it cannot just widen to a 128-bit multiply: the multiply legalizer is deliberately clamped to 32 bits (the source comments warn that "lowering S128 to S64 would produce infinite regress"). So the 128-bit product is hand-composed from 32-bit __mulsi3 partial products plus __muldi3 glue. This demo is the first in the battery to make the compiler form an s64 multiply-high at all.'],
-  ['the coverage-check that found it', 'Round 6 stops hunting new corners and instead re-stresses bugs already fixed — auditing which code paths each fix actually exercises. An audit of the legalizer against the five shipped 64-bit demos showed s64 add/sub/mul/divide/shift/convert were all already covered — but nothing formed an s64 multiply-high or multiply-overflow. This demo closes that one gap.'],
-  ['distinct from #76 (s16/s32)', 'Demo #76 smulorbit used __builtin_mul_overflow on int16_t and int32_t (G_SMULO at 16/32 bits). At those widths the overflow check widens to a 32- or 64-bit multiply that the compiler already supports directly. At 64 bits there is no wider native multiply to widen into — that is what makes the s64 path a separate, previously-untested lowering.'],
-  ['distinct from #56 (s32 mul-high) and #22 (low 64)', 'Demo #56 rotozoom takes the high half of a 32-bit multiply (G_UMULH at s32). Demo #22 avalanche uses __muldi3 — but only the LOW 64 bits of the product, never the high half. This demo is the first to need the HIGH 64 bits of a 64-bit product.'],
-  ['result: correct across every mode', 'The 64-bit overflow flags are computed identically on the host (native 64-bit) and on the SNES (the composed multiply-high). The gate folds a rolling overflow count into a CRC; host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The one untested s64 legalizer path is correct — a clean positive that now guards against any future regression.'],
+  ['the three-way compare, unsigned', 'C’s (a>b)-(a<b) idiom yields −1, 0, or +1 — the “spaceship” operator. The compiler turns it into a single intrinsic; on unsigned operands that is llvm.ucmp (the signed twin, llvm.scmp, was covered by an earlier demo). The 65816 backend has to lower it to a compare-and-select sequence.'],
+  ['why unsigned is a different case', 'Unsigned and signed comparisons disagree exactly where the top bit is set: 0xFFFFFFFF is the largest unsigned value but −1 as a signed integer. So the unsigned lowering is genuinely separate code from the signed one — reusing the signed path would sort high-bit values into the wrong place.'],
+  ['three widths in one ROM', 'The demo sorts uint16, uint32, and uint64 arrays, forcing the unsigned three-way compare at all three widths. The 64-bit unsigned compare is the sharpest: a full-width compare-and-select the backend had never been asked to build for unsigned operands.'],
+  ['the bug this guards (#46, patch 0016)', 'The spaceship idiom once crashed the 65816 backend outright — it had no rule to lower the generic three-way-compare opcode. The fix (patch 0016) routes both the signed and unsigned forms through LLVM’s compare-and-select lowering. The sort-gallery demo exercised the signed side; this one closes the loop on the unsigned side, which no prior demo had ever emitted.'],
+  ['why qsort (not a direct compare)', 'Written inline, spaceship(a,b) > 0 folds straight back to a > b and the three-way intrinsic disappears — so it would never be tested. Passing the comparator to qsort through its opaque function pointer forces the comparator to actually return the −1/0/+1 value, keeping the intrinsic alive. An IR probe confirms llvm.ucmp is present (including the 64-bit form) and that no signed compare leaked in.'],
+  ['result: bit-exact, and the visual', 'Sorting is a pure reordering, so the sorted values are identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. On screen, a 16×16 field of values is recoloured by each cell’s rank (percentile band) under unsigned ordering — low values one colour, high values another — re-sorting into fresh bands as it re-seeds.'],
 ];
 ---
 
-<Base title="64-bit Multiply-Overflow — bioHACK•NET" description="Six orbiters on a Super Nintendo carry a 64-bit momentum scaled until it overflows; on overflow the orbiter teleports and sparks orange. Compiler stress-test #101: the first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) on the 65816.">
+<Base title="Unsigned Rank Percentile Field — bioHACK•NET" description="A field recoloured by each cell's unsigned rank on a Super Nintendo, driven by the three-way compare (a>b)-(a<b) at uint16/uint32/uint64. Compiler stress-test #98: hardens the unsigned half of the spaceship-operator fix.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">64-bit Multiply-Overflow</h1>
-      <a href="/snes/#cat-bignums" class="rp-cat-chip">Big Numbers</a>
+      <h1 class="rp-title">Unsigned Rank Percentile Field</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">
-        Six orbiters trace looping paths on a Super Nintendo canvas. Each carries a 64-bit
-        momentum scaled by a growing factor; when the product overflows a 64-bit integer the
-        orbiter teleports to the mirror quadrant and flashes orange. This is compiler stress-test
-        #101 — the first demo to make <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>
-        form an <strong>s64 multiply-high / multiply-overflow</strong> (<code>G_UMULH</code>/<code>G_UMULO</code>),
-        a lowering path no prior demo exercised.
+        A field recoloured by each cell’s <em>rank</em> — its percentile among all cells — computed
+        with the C “spaceship” compare <code>(a&gt;b)-(a&lt;b)</code> on <em>unsigned</em> values at
+        16, 32, and 64 bits. This is compiler stress-test #98: it exercises the <em>unsigned</em> half
+        of the three-way-compare fix (<a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> patch
+        0016) that the <a href="/spaceship/">signed sort gallery</a> never reached — the unsigned
+        64-bit compare had never once been emitted.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-bit Multiply-Overflow demo">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Unsigned Rank Percentile Field">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -61,31 +59,26 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — trails accumulate and sparks fire when a 64-bit product overflows.</p>
+      <p class="rp-keys">Self-running — the field recolours by unsigned rank, re-sorting into fresh bands.</p>
       <p id="banner" class="rp-banner"></p>
-      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses. (The title holds a few seconds while the 64-bit gate computes — it is the heaviest compute in the battery.)</p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
     </section>
 
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        <code>__builtin_mul_overflow(a, b, &result)</code> stores the truncated product in
-        <code>result</code> and returns <code>true</code> if the true mathematical product didn't
-        fit the type. Deciding that for a 64-bit multiply requires the top 64 bits of the full
-        128-bit product — the <em>multiply-high</em>. On a chip with no hardware multiply and a
-        multiply legalizer capped at 32 bits, the compiler must build that 128-bit product from
-        32-bit partial products by hand. This demo drives both the unsigned and signed 64-bit
-        overflow checks.
+        Each cell holds an unsigned value; its colour is its rank — how many other cells it exceeds,
+        quantised into four percentile bands. The ranking leans on the three-way compare, and the
+        gate sorts unsigned arrays with that compare to prove the intrinsic is really formed.
       </p>
       <pre class="rp-code">{code}</pre>
       <p>
-        Each orbiter's 64-bit momentum is multiplied by a growing scale every frame; the moment it
-        overflows, the orbiter teleports to the mirror quadrant (127−x, 127−y), reverses direction,
-        resets its momentum and emits an orange spark. Because each orbiter starts from a different
-        seed, they overflow at staggered times, scattering sparks across the accumulating trails.
+        Sorting three widths (16/32/64-bit) forces the unsigned three-way compare at each. Because
+        unsigned order differs from signed at the top bit, this is a genuinely separate code path
+        from the signed sort — and the 64-bit case is one the backend had never built before.
       </p>
 
-      <h2>Compiler stress-test #101 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #98 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -93,7 +86,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0x3A69</code> — a fold of 121 unsigned + signed 64-bit overflow checks) live in this tab.
+        (gate CRC <code>0x4CDD</code> — a fold of the sorted u16/u32/u64 arrays) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -105,9 +98,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'mulov64';
+    window.BJG_DEFAULT_ROM = 'ucmprank';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x58, len: 2, want: 0x3A69, frames: 700, label: 's64 mul-overflow CRC' };
+    window.BJG_SELFCHECK = { off: 0x67, len: 2, want: 0x4CDD, frames: 500, label: 'unsigned rank field CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');
@@ -140,7 +133,7 @@ const notes = [
   .rp-lede { margin: 1rem 0 0; color: var(--ink); opacity: .85; line-height: 1.65; }
   .rp-lede code, .rp-lede a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
   .rp-lede a:hover { text-decoration: underline; }
-  .rp-lede strong { color: var(--ink); font-weight: 600; }
+  .rp-lede em { font-style: italic; }
   .rp-player { max-width: 544px; margin: 2.25rem auto 0; }
   .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
   .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }

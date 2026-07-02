@@ -1,13 +1,13 @@
 ---
-// /oddmask — Odd-Width Mask Sculptor. Compiler stress-test #103 (Round 6, harden-the-fixes).
-import Base from '../layouts/Base.astro';
+// /keycmp64 — 64-bit Multi-Key Record Sort. Compiler stress-test #100 (Round 6, harden-the-fixes).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/oddmask.sfc', 'preview/oddmask.png',
+  'roms/manifest.json', 'roms/keycmp64.sfc', 'preview/keycmp64.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,42 +15,42 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// a 20/24/28-bit value, then widened to 64 bits and multiplied
-uint32_t x = (uint32_t)v * 2654435761u + rot;   // 32-bit multiply
-uint64_t w20 = (uint64_t)((x ^ y) & 0x000FFFFF);  // 20-bit → zero-extend to 64
-uint64_t w24 = (uint64_t)((x + y) & 0x00FFFFFF);  // 24-bit → zero-extend to 64
-uint64_t a   = w20 * w24;                          // 64-bit multiply
-
-// the compiler narrows each masked value to an ODD width (20, 24, 28 bits),
-// then must zero-extend that odd width to 64 — a shape with no clean
-// decomposition into 16-bit lanes, which once crashed the backend.`;
+const code = `// sort records by a PRIMARY 64-bit key, then break ties with a SECOND
+int cmp(const void *a, const void *b) {
+    const Rec *x = a, *y = b;
+    int c = (x->k1 > y->k1) - (x->k1 < y->k1);   // 64-bit spaceship (primary)
+    if (c != 0) return c;
+    return (x->k2 > y->k2) - (x->k2 < y->k2);    // 64-bit spaceship (tie-break)
+}
+qsort(records, N, sizeof(Rec), cmp);             // two 64-bit three-way compares / call`;
 
 const notes = [
-  ['odd-width integers', 'Most integers are 8, 16, 32, or 64 bits wide. But mask a value to 20 bits and the compiler tracks it as a 20-bit quantity — an “odd” width. When that narrow value is then widened to 64 bits and fed to 64-bit arithmetic, the backend must extend an odd width into four 16-bit lanes, which has no tidy decomposition.'],
-  ['the bug this guards (#61, patch 0017)', 'A 64-bit Diffie-Hellman demo once crashed the 16-bit-accumulator backend on exactly this: a 20-bit-masked value zero-extended to 64 bits (“unable to legalize”), plus splitting a 64-bit value into 16-bit lanes. Patch 0017 taught the legalizer both moves. This demo re-runs the odd-width extend at 20, 24, and 28 bits, threaded through a 64-bit multiply, and confirms the fix holds.'],
-  ['what actually forms the odd width', 'A measured detail: masking a 64-bit value directly (v & 0xFFFFF) does NOT create an odd-width type — it stays 64-bit with some bits known-zero. The odd width only appears when a 32-bit value is masked and an operation is applied, then the result is widened to 64 bits. So widths above 32 (40, 48) can’t arise this way; the reachable odd widths here are 20, 24, and 28.'],
-  ['a 64-bit multiply on top', 'The two zero-extended narrow values are multiplied at 64 bits, which exercises the other half of the fix — the 64-bit multiply glue that composes a product from 32-bit pieces without ever widening to 128 bits. So a single step touches both the odd-width extend and the 64-bit (un)merge legalization.'],
-  ['keeping it honest', 'The computation runs from a volatile seed so the compiler can’t precompute the whole thing to a constant and skip the code entirely. Without that, a pure function with fixed inputs folds away and tests nothing — a trap worth flagging.'],
-  ['result: bit-exact, and the visual', '64-bit integer arithmetic on masked values is exact, so the result is identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean (the modes that used to crash). On screen, a field is split into horizontal bands, each masking the running 64-bit state to a different width — so a band’s terrace granularity tracks its mask — and the terraces flow as the state mixes.'],
+  ['a chained comparator', 'Sorting by more than one key is everyday code: order by the primary field, and when two records match, fall back to a secondary field. Each comparison therefore runs the three-way compare twice — once on the primary 64-bit key, and again on the secondary — with the second only reached when the first ties.'],
+  ['64 bits, twice', 'Both keys are full 64-bit signed integers, so every comparator call can emit two 64-bit three-way compares. That is the widest, densest form of the operation in the whole battery — a compare-and-select over four 16-bit limbs, stacked two deep, inside qsort’s hot loop.'],
+  ['making the tie-break fire', 'The primary key is drawn from a deliberately small range so records collide often — 38 tie pairs among 24 records in the gate. That guarantees the second 64-bit compare is genuinely exercised rather than dead code, and the sort really does resolve ties by the secondary key.'],
+  ['the bug this guards (#46, patch 0016)', 'The three-way-compare idiom once crashed the 65816 backend, which had no rule to lower the generic opcode. Patch 0016 routes it through LLVM’s compare-and-select lowering. Earlier demos exercised it at single widths and as a sort key or a branch; this one stacks two 64-bit compares per call — the extreme case — and confirms the fix still holds.'],
+  ['why qsort', 'Inline, ((a>b)-(a<b)) folds back to ordinary comparisons and the three-way intrinsic vanishes — untested. Passing the comparator to qsort through its opaque function pointer forces it to return the −1/0/+1 value, keeping both 64-bit compares alive. An IR probe confirms the 64-bit three-way compare is present (and chained).'],
+  ['result: bit-exact, and the visual', 'Sorting is a pure reordering, so the sorted records are identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. On screen each row is a sorted record — the left half coloured by the primary key (non-decreasing down the field), the right half by the secondary key (ordered within each tie group) — and the rows reshuffle as the data re-seeds.'],
 ];
 ---
 
-<Base title="Odd-Width Mask Sculptor — bioHACK•NET" description="Odd-width (20/24/28-bit) integers zero-extended to 64 bits and multiplied on a Super Nintendo. Compiler stress-test #103: hardens the odd-width extend and 64-bit (un)merge legalization that once crashed the 16-bit-accumulator backend.">
+<Base title="64-bit Multi-Key Record Sort — bioHACK•NET" description="Records sorted by a primary 64-bit key then a secondary tie-break on a Super Nintendo — two 64-bit three-way compares per comparison. Compiler stress-test #100: the spaceship operator at the extreme width, chained.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">Odd-Width Mask Sculptor</h1>
+      <h1 class="rp-title">64-bit Multi-Key Record Sort</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">
-        Values masked to <em>odd</em> widths — 20, 24, and 28 bits — then zero-extended to 64 bits and
-        multiplied. This is compiler stress-test #103: it re-runs the exact legalization shape a real
-        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> 64-bit crash once hit — an
-        odd-width value with no clean 16-bit-lane decomposition, widened into 64-bit arithmetic — and
-        confirms the fix (patch 0017) holds.
+        Records sorted by a <em>primary</em> 64-bit key, ties broken by a <em>secondary</em> 64-bit
+        key — so each comparison runs the “spaceship” three-way compare <code>(a&gt;b)-(a&lt;b)</code>
+        <em>twice</em>, both at 64 bits. This is compiler stress-test #100, the last of its cluster:
+        the widest, densest form of the three-way-compare fix
+        (<a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> patch 0016), stacked two deep in
+        qsort’s hot loop.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Odd-Width Mask Sculptor">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-bit Multi-Key Record Sort">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -58,7 +58,7 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — four bands, each masked to a different width, terrace and flow.</p>
+      <p class="rp-keys">Self-running — left half = primary key, right half = secondary; rows resort.</p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
     </section>
@@ -66,17 +66,19 @@ const notes = [
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        Odd-width integers are the awkward case for a 16-bit machine: a 20- or 24- or 28-bit value has
-        no neat split into 16-bit halves, yet the compiler must zero-extend it to 64 bits to do 64-bit
-        math on it. This demo builds exactly those values and multiplies them wide.
+        A multi-key sort orders records by one field, then resolves ties with another. Expressed with
+        the spaceship compare, each comparison is a chained pair of three-way compares — and here both
+        keys are 64-bit, the widest the operation gets.
       </p>
       <pre class="rp-code">{code}</pre>
       <p>
-        Each step folds the 64-bit result into a CRC. The picture is the proof: a wrong odd-width
-        extend or a wrong 64-bit split would corrupt the arithmetic and change the CRC.
+        The primary key collides often on purpose, so the secondary 64-bit compare truly runs. The
+        gate folds the sorted (primary, secondary) pairs into a CRC. The picture is the proof: a wrong
+        64-bit three-way lowering — in either the primary or the tie-break — would misorder the
+        records and change the CRC.
       </p>
 
-      <h2>Compiler stress-test #103 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #100 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -84,7 +86,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0x1FD9</code> — a fold of 40 mix steps) live in this tab.
+        (gate CRC <code>0xB8AD</code> — a fold of the sorted 64-bit key pairs) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -96,9 +98,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'oddmask';
+    window.BJG_DEFAULT_ROM = 'keycmp64';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x6b, len: 2, want: 0x1FD9, frames: 500, label: 'odd-width mask sculptor CRC' };
+    window.BJG_SELFCHECK = { off: 0x69, len: 2, want: 0xB8AD, frames: 500, label: '64-bit multi-key sort CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');

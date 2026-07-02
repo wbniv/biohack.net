@@ -1,13 +1,13 @@
 ---
-// /cpu6502 — 6502/65C02 CPU Disassembler + Simulator. Compiler stress-test #102 (Round 6).
-import Base from '../layouts/Base.astro';
+// /mulov64 — 64-bit Multiply-Overflow / Multiply-High Sentinel. Compiler stress-test #101 (Round 6).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/cpu6502.sfc', 'preview/cpu6502.png',
+  'roms/manifest.json', 'roms/mulov64.sfc', 'preview/mulov64.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,55 +15,45 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// The simulated 6502 program — the assembly equivalent of hello.c:
-// set a colour register to green, store a sentinel, then loop
-// exercising every ALU gate type.
-LDA #$E0   STA $F0     // colour lo  (SNES_RGB(0,31,0) = $03E0)
-LDA #$03   STA $F1     // colour hi
-LDA #$42   STA $FF     // sentinel = 0x42     ("hello.c: sentinel = 0x42")
-LDX #$08               // loop counter
-loop:
-  CLC  ADC #$01        // ADD  gate
-  AND $FF              // AND  gate
-  EOR $FF              // XOR  gate
-  ORA $FF              // OR   gate
-  ASL                  // SHL  gate
-  LSR                  // SHR  gate
-  CMP $FF              // CMP  gate
-  DEX                  // SUB  gate
-  BNE loop
-JMP restart
+const code = `// unsigned 64-bit multiply-overflow (G_UMULO at s64)
+uint64_t up;
+bool uov = __builtin_mul_overflow(ua, ub, &up);
 
-// The simulator itself is one 256-entry switch(opcode) dispatch —
-// which the llvm-mos backend lowers to a jump table on the 65816.`;
+// signed 64-bit multiply-overflow (G_SMULO at s64)
+int64_t sp;
+bool sov = __builtin_mul_overflow(sa, sb, &sp);
+
+// llvm-mos lowers each to the FULL 128-bit product, whose high 64
+// bits need G_UMULH/G_SMULH at s64 — composed from 32-bit __mulsi3
+// pieces + __muldi3 glue, WITHOUT widening to 128 bits.
+if (uov) { teleport_to_mirror(); emit_spark(); }`;
 
 const notes = [
-  ['256-entry opcode dispatch → jump table', 'The heart of the simulator is a single switch(opcode) over all 256 possible bytes. The llvm-mos 65816 backend lowers this dense switch to a real jump table — an indexed indirect jump (jmp (addr,x)) rather than a chain of compare-and-branch. The build gate confirms it: the disassembly contains 4 jump tables. This is the load-bearing codegen path the demo exercises.'],
-  ['16-bit program counter on an 8-bit machine', 'The simulated 6502 is 8-bit (A, X, Y) but its program counter is 16-bit. On the 65816 under +mos-a16 that PC arithmetic is native 16-bit adds bracketed by rep/sep width switches — 97 of them across the simulator. The status-register flag math (N, V, Z, C from each 8-bit ALU result) is 8-bit bit-manipulation on top.'],
-  ['what you are watching', 'A scrolling disassembly listing rendered in the recovered Great Waldo Search 16×16 font (its built-in drop-shadow makes each line pop). The bright line is the instruction that just executed; below it, one of eight ALU gates lights up — AND, OR, XOR drawn as their classic logic-gate silhouettes, ADD/SUB/SHL/SHR/CMP as blocks. The register + flag strip tracks A, X, Y and the NV-BDIZC bits live.'],
-  ['65C02 too', 'The disassembler decodes the full 65C02 superset — STZ, TRB, TSB, PHX/PHY/PLX/PLY, BRA and the zero-page-indirect (zp) addressing mode — not just the NMOS 6502. The embedded program uses plain 6502 opcodes; the extended table is exercised by the gate CRC folding across all 256 opcode bytes.'],
-  ['result: correct across every mode', 'The simulator runs 256 fetch-decode-execute steps and folds A, X, PC and the status register into a rolling CRC each step. host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. No far pointers. A clean positive — the jump-table dispatch and 16-bit PC arithmetic are correct, now guarded against regression.'],
+  ['G_UMULH / G_SMULH at s64', 'The high half of a 64×64 → 128-bit product. To decide whether a 64-bit multiply overflowed, the compiler needs those top 64 bits — but on a 16-bit CPU it cannot just widen to a 128-bit multiply: the multiply legalizer is deliberately clamped to 32 bits (the source comments warn that "lowering S128 to S64 would produce infinite regress"). So the 128-bit product is hand-composed from 32-bit __mulsi3 partial products plus __muldi3 glue. This demo is the first in the battery to make the compiler form an s64 multiply-high at all.'],
+  ['the coverage-check that found it', 'Round 6 stops hunting new corners and instead re-stresses bugs already fixed — auditing which code paths each fix actually exercises. An audit of the legalizer against the five shipped 64-bit demos showed s64 add/sub/mul/divide/shift/convert were all already covered — but nothing formed an s64 multiply-high or multiply-overflow. This demo closes that one gap.'],
+  ['distinct from #76 (s16/s32)', 'Demo #76 smulorbit used __builtin_mul_overflow on int16_t and int32_t (G_SMULO at 16/32 bits). At those widths the overflow check widens to a 32- or 64-bit multiply that the compiler already supports directly. At 64 bits there is no wider native multiply to widen into — that is what makes the s64 path a separate, previously-untested lowering.'],
+  ['distinct from #56 (s32 mul-high) and #22 (low 64)', 'Demo #56 rotozoom takes the high half of a 32-bit multiply (G_UMULH at s32). Demo #22 avalanche uses __muldi3 — but only the LOW 64 bits of the product, never the high half. This demo is the first to need the HIGH 64 bits of a 64-bit product.'],
+  ['result: correct across every mode', 'The 64-bit overflow flags are computed identically on the host (native 64-bit) and on the SNES (the composed multiply-high). The gate folds a rolling overflow count into a CRC; host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The one untested s64 legalizer path is correct — a clean positive that now guards against any future regression.'],
 ];
 ---
 
-<Base title="6502 CPU Simulator — bioHACK•NET" description="A 6502/65C02 CPU emulator running on a Super Nintendo: watch a scrolling disassembly listing execute one instruction at a time while the matching ALU logic gate lights up. Compiler stress-test #102 — a 256-entry opcode switch lowered to a jump table on the 65816.">
+<Base title="64-bit Multiply-Overflow — bioHACK•NET" description="Six orbiters on a Super Nintendo carry a 64-bit momentum scaled until it overflows; on overflow the orbiter teleports and sparks orange. Compiler stress-test #101: the first demo to form an s64 multiply-high / multiply-overflow (G_UMULH/G_UMULO) on the 65816.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">6502 CPU Simulator</h1>
-      <a href="/snes/#cat-classics" class="rp-cat-chip">Games &amp; Classics</a>
+      <h1 class="rp-title">64-bit Multiply-Overflow</h1>
+      <a href="/snes/#cat-bignums" class="rp-cat-chip">Big Numbers</a>
       <p class="rp-lede">
-        A <strong>6502/65C02</strong> processor, emulated on a Super Nintendo. Watch a scrolling
-        disassembly listing step through a program one instruction at a time — the bright line is the
-        instruction that just ran — while the matching <strong>ALU logic gate</strong> lights up below
-        (AND, OR, XOR as classic gate shapes; ADD, SUB, SHL, SHR, CMP as blocks). This is compiler
-        stress-test #102: the emulator's 256-entry <code>switch(opcode)</code> is lowered by
-        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> to a <strong>jump table</strong> on
-        the 65816, with the 6502's 16-bit program counter running as native 16-bit arithmetic.
+        Six orbiters trace looping paths on a Super Nintendo canvas. Each carries a 64-bit
+        momentum scaled by a growing factor; when the product overflows a 64-bit integer the
+        orbiter teleports to the mirror quadrant and flashes orange. This is compiler stress-test
+        #101 — the first demo to make <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a>
+        form an <strong>s64 multiply-high / multiply-overflow</strong> (<code>G_UMULH</code>/<code>G_UMULO</code>),
+        a lowering path no prior demo exercised.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 6502 CPU Simulator demo">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-bit Multiply-Overflow demo">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -71,29 +61,31 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — the disassembly scrolls and the ALU gate for each instruction lights up.</p>
+      <p class="rp-keys">Self-running — trails accumulate and sparks fire when a 64-bit product overflows.</p>
       <p id="banner" class="rp-banner"></p>
-      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses. (The listing steps deliberately — each instruction holds ~1.5&nbsp;s so you can read it.)</p>
+      <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses. (The title holds a few seconds while the 64-bit gate computes — it is the heaviest compute in the battery.)</p>
     </section>
 
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        The program running <em>inside</em> the simulated 6502 is the assembly equivalent of the
-        classic <code>hello.c</code> — set a colour register to green, store a sentinel byte, then
-        loop. The loop is arranged to fire every one of the eight ALU gate types in turn, so the
-        gate panel cycles through the whole set. The 6502 is the machine being simulated; the SNES
-        (a 65816) is just the hardware running the C emulator that draws it all.
+        <code>__builtin_mul_overflow(a, b, &result)</code> stores the truncated product in
+        <code>result</code> and returns <code>true</code> if the true mathematical product didn't
+        fit the type. Deciding that for a 64-bit multiply requires the top 64 bits of the full
+        128-bit product — the <em>multiply-high</em>. On a chip with no hardware multiply and a
+        multiply legalizer capped at 32 bits, the compiler must build that 128-bit product from
+        32-bit partial products by hand. This demo drives both the unsigned and signed 64-bit
+        overflow checks.
       </p>
       <pre class="rp-code">{code}</pre>
       <p>
-        Each of the 256 fetch-decode-execute steps decodes an opcode byte through the emulator's
-        opcode table, executes it (updating <code>A/X/Y</code>, the status flags and the 16-bit PC),
-        and returns which ALU gate fired. The disassembly window shows the two prior instructions,
-        the one just executed (bright), and the next one up.
+        Each orbiter's 64-bit momentum is multiplied by a growing scale every frame; the moment it
+        overflows, the orbiter teleports to the mirror quadrant (127−x, 127−y), reverses direction,
+        resets its momentum and emits an orange spark. Because each orbiter starts from a different
+        seed, they overflow at staggered times, scattering sparks across the accumulating trails.
       </p>
 
-      <h2>Compiler stress-test #102 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #101 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -101,7 +93,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0xAC8A</code> — a fold of A, X, PC and the status register across 256 executed instructions) live in this tab.
+        (gate CRC <code>0x3A69</code> — a fold of 121 unsigned + signed 64-bit overflow checks) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -113,9 +105,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'cpu6502';
+    window.BJG_DEFAULT_ROM = 'mulov64';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x70, len: 2, want: 0xAC8A, frames: 1000, label: 'CPU-sim CRC' };
+    window.BJG_SELFCHECK = { off: 0x58, len: 2, want: 0x3A69, frames: 700, label: 's64 mul-overflow CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');

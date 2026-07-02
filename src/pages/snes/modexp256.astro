@@ -1,13 +1,13 @@
 ---
-// /keycmp64 — 64-bit Multi-Key Record Sort. Compiler stress-test #100 (Round 6, harden-the-fixes).
-import Base from '../layouts/Base.astro';
+// /modexp256 — 256-bit Modular Exponentiation. Compiler stress-test #104 (Round 6, harden-the-fixes).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/keycmp64.sfc', 'preview/keycmp64.png',
+  'roms/manifest.json', 'roms/modexp256.sfc', 'preview/modexp256.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,42 +15,41 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// sort records by a PRIMARY 64-bit key, then break ties with a SECOND
-int cmp(const void *a, const void *b) {
-    const Rec *x = a, *y = b;
-    int c = (x->k1 > y->k1) - (x->k1 < y->k1);   // 64-bit spaceship (primary)
-    if (c != 0) return c;
-    return (x->k2 > y->k2) - (x->k2 < y->k2);    // 64-bit spaceship (tie-break)
-}
-qsort(records, N, sizeof(Rec), cmp);             // two 64-bit three-way compares / call`;
+const code = `// a 256-bit number is eight 32-bit limbs; multiply is schoolbook,
+// each partial product accumulated in a 64-bit column with carry
+uint64_t cur = (uint64_t)p[i+j] + (uint64_t)a[i]*(uint64_t)b[j] + carry;
+p[i+j] = (uint32_t)cur;  carry = cur >> 32;      // 64-bit math the whole way
+
+// reduce mod (2^256 - 189): fold the high half back in (2^256 ≡ 189)
+// Diffie-Hellman: A = g^a, B = g^b, shared = B^a == A^b   (must be equal)`;
 
 const notes = [
-  ['a chained comparator', 'Sorting by more than one key is everyday code: order by the primary field, and when two records match, fall back to a secondary field. Each comparison therefore runs the three-way compare twice — once on the primary 64-bit key, and again on the secondary — with the second only reached when the first ties.'],
-  ['64 bits, twice', 'Both keys are full 64-bit signed integers, so every comparator call can emit two 64-bit three-way compares. That is the widest, densest form of the operation in the whole battery — a compare-and-select over four 16-bit limbs, stacked two deep, inside qsort’s hot loop.'],
-  ['making the tie-break fire', 'The primary key is drawn from a deliberately small range so records collide often — 38 tie pairs among 24 records in the gate. That guarantees the second 64-bit compare is genuinely exercised rather than dead code, and the sort really does resolve ties by the secondary key.'],
-  ['the bug this guards (#46, patch 0016)', 'The three-way-compare idiom once crashed the 65816 backend, which had no rule to lower the generic opcode. Patch 0016 routes it through LLVM’s compare-and-select lowering. Earlier demos exercised it at single widths and as a sort key or a branch; this one stacks two 64-bit compares per call — the extreme case — and confirms the fix still holds.'],
-  ['why qsort', 'Inline, ((a>b)-(a<b)) folds back to ordinary comparisons and the three-way intrinsic vanishes — untested. Passing the comparator to qsort through its opaque function pointer forces it to return the −1/0/+1 value, keeping both 64-bit compares alive. An IR probe confirms the 64-bit three-way compare is present (and chained).'],
-  ['result: bit-exact, and the visual', 'Sorting is a pure reordering, so the sorted records are identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. On screen each row is a sorted record — the left half coloured by the primary key (non-decreasing down the field), the right half by the secondary key (ordered within each tie group) — and the rows reshuffle as the data re-seeds.'],
+  ['256-bit from 64-bit pieces', 'The 65816 has no 128- or 256-bit type — so a 256-bit number is built as eight 32-bit limbs, and every multiply, add, shift, and compare runs through 64-bit arithmetic. A single 256×256 multiply is dozens of 64-bit multiply-accumulates; a full modular exponentiation is thousands. That is the point: it runs the 64-bit code paths at volume.'],
+  ['the bug this guards (#61, patch 0017)', 'A 64-bit Diffie-Hellman demo once crashed this backend — it had no rule to split a 64-bit value into 16-bit lanes, nor to multiply two 64-bit values without ballooning to 128 bits. Patch 0017 taught it both. This demo hammers that same 64-bit glue hundreds of times over, at heavy register pressure, and confirms it still holds.'],
+  ['Diffie-Hellman as a self-check', 'Two parties pick secret exponents a and b; one computes A = g^a, the other B = g^b; the shared secret is B^a on one side and A^b on the other. These are always equal, because (g^a)^b = g^(ab) = (g^b)^a. The demo computes both and folds their difference into the CRC — so a single wrong 64-bit limb breaks the equality and the check.'],
+  ['no prime needed', 'The Diffie-Hellman equality holds for any modulus, not just a prime — it is pure exponent commutativity. So the demo uses 2^256 − 189, a modulus whose shape makes reduction cheap: since 2^256 ≡ 189, the high half of a product folds back into the low half with one small multiply.'],
+  ['checked against a reference', 'The 256-bit modular arithmetic was cross-checked against Python’s arbitrary-precision integers: the C result for g^7 mod (2^256 − 189) matches pow(g, 7, m) bit for bit. So the on-device result has a known-correct ground truth, not just internal consistency.'],
+  ['result: bit-exact, and the visual', '256-bit integer modexp is exact, so it is identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The shared secret is heavy to compute, so it is worked out once at startup and shown as a 16×16 field coloured from its 256 bits, with a slow palette drift. (The compute takes a beat — that is thousands of 64-bit operations running.)'],
 ];
 ---
 
-<Base title="64-bit Multi-Key Record Sort — bioHACK•NET" description="Records sorted by a primary 64-bit key then a secondary tie-break on a Super Nintendo — two 64-bit three-way compares per comparison. Compiler stress-test #100: the spaceship operator at the extreme width, chained.">
+<Base title="256-bit Modular Exponentiation — bioHACK•NET" description="A 256-bit Diffie-Hellman modexp built from 32-bit limbs and 64-bit multiply-accumulate on a Super Nintendo. Compiler stress-test #104: hammers the 64-bit (un)merge glue that once crashed the 16-bit-accumulator backend.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">64-bit Multi-Key Record Sort</h1>
+      <h1 class="rp-title">256-bit Modular Exponentiation</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">
-        Records sorted by a <em>primary</em> 64-bit key, ties broken by a <em>secondary</em> 64-bit
-        key — so each comparison runs the “spaceship” three-way compare <code>(a&gt;b)-(a&lt;b)</code>
-        <em>twice</em>, both at 64 bits. This is compiler stress-test #100, the last of its cluster:
-        the widest, densest form of the three-way-compare fix
-        (<a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> patch 0016), stacked two deep in
-        qsort’s hot loop.
+        A 256-bit Diffie-Hellman key exchange — <code>g^a</code>, <code>g^b</code>, shared secret
+        <code>B^a == A^b</code> — built from 32-bit limbs and <em>64-bit</em> multiply-accumulate. This
+        is compiler stress-test #104: it runs the exact 64-bit code paths a real
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> crash once hit
+        (<a href="/snes/">patch 0017</a>), hundreds of times over at heavy register pressure, and
+        confirms the fix holds.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 64-bit Multi-Key Record Sort">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 256-bit Modular Exponentiation">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -58,7 +57,7 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — left half = primary key, right half = secondary; rows resort.</p>
+      <p class="rp-keys">Self-running — the 256-bit shared secret, computed once, shown as a colour field.</p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
     </section>
@@ -66,19 +65,19 @@ const notes = [
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        A multi-key sort orders records by one field, then resolves ties with another. Expressed with
-        the spaceship compare, each comparison is a chained pair of three-way compares — and here both
-        keys are 64-bit, the widest the operation gets.
+        Public-key crypto leans on modular exponentiation of big integers. Here the integers are 256
+        bits — far past any native type on a 16-bit machine — so they are assembled from smaller limbs,
+        and every operation bottoms out in 64-bit arithmetic. The exchange is small but the 64-bit
+        traffic is enormous.
       </p>
       <pre class="rp-code">{code}</pre>
       <p>
-        The primary key collides often on purpose, so the secondary 64-bit compare truly runs. The
-        gate folds the sorted (primary, secondary) pairs into a CRC. The picture is the proof: a wrong
-        64-bit three-way lowering — in either the primary or the tie-break — would misorder the
-        records and change the CRC.
+        The gate folds the shared secret, plus the difference between the two ways of computing it,
+        into a CRC. The picture is the proof: a single wrong 64-bit limb breaks the Diffie-Hellman
+        equality and changes the CRC.
       </p>
 
-      <h2>Compiler stress-test #100 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #104 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -86,7 +85,8 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0xB8AD</code> — a fold of the sorted 64-bit key pairs) live in this tab.
+        (gate CRC <code>0x31D4</code> — a fold of the 256-bit shared secret; give it a few seconds, the
+        256-bit modexp is heavy) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -98,9 +98,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'keycmp64';
+    window.BJG_DEFAULT_ROM = 'modexp256';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x69, len: 2, want: 0xB8AD, frames: 500, label: '64-bit multi-key sort CRC' };
+    window.BJG_SELFCHECK = { off: 0x31, len: 2, want: 0x31D4, frames: 1500, label: '256-bit modexp CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');

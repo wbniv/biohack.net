@@ -1,13 +1,13 @@
 ---
-// /spaceship — Width-Sweep Sort Gallery. Compiler stress-test #97 (Round 6, harden-the-fixes).
-import Base from '../layouts/Base.astro';
+// /permscat — Gather-Scatter Permutation. Compiler stress-test #95 (Round 6, harden-the-fixes).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/spaceship.sfc', 'preview/spaceship.png',
+  'roms/manifest.json', 'roms/permscat.sfc', 'preview/permscat.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,41 +15,46 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// the C "spaceship" three-way comparator, at four key widths
-int cmp8 (const void *a, const void *b) { int8_t  x=*..a, y=*..b; return (x>y)-(x<y); }
-int cmp16(const void *a, const void *b) { int16_t x=*..a, y=*..b; return (x>y)-(x<y); }
-int cmp32(const void *a, const void *b) { int32_t x=*..a, y=*..b; return (x>y)-(x<y); }
-int cmp64(const void *a, const void *b) { int64_t x=*..a, y=*..b; return (x>y)-(x<y); }
+const code = `// scatter a 576-entry grid through a permutation, in place per step
+uint16_t perm[576];               // perm[i] = (i*5) % 576  — a bijection
+uint8_t  src[576], dst[576];
 
-qsort(arr8,  N, 1, cmp8);   qsort(arr16, N, 2, cmp16);
-qsort(arr32, N, 4, cmp32);  qsort(arr64, N, 8, cmp64);   // → G_SCMP at s16/s32/s64`;
+for (uint16_t i = 0; i < 576; i++)
+    dst[ perm[i] ] = src[i];
+//        ^^^^^^^        ^
+//        pi = perm[i]   i         TWO 16-bit indices live at once:
+//   store index (data)  load index (counter)
+
+// perm is a bijection, so every one of the 576 cells is written exactly once.`;
 
 const notes = [
-  ['the spaceship operator', '(a>b)-(a<b) evaluates to −1, 0, or +1 — "less / equal / greater" in one expression. It is the classic C comparator body (and the shape C++20\'s <=> compiles to). Modern LLVM recognizes it and folds it to a single generic three-way-compare node, G_SCMP, rather than two separate comparisons.'],
-  ['G_SCMP and the bug it once hit (#46)', 'The 65816 backend originally had no rule to lower G_SCMP, so any program that sorted with a spaceship comparator failed to build ("unable to legalize G_SCMP"). Demo #46 caught that crash; the one-line fix routes G_SCMP through LLVM\'s standard icmp+select expansion. But #46 only ever exercised it at 16-bit keys.'],
-  ['why four widths (the escalation)', 'This gallery qsorts int8, int16, int32 and int64 arrays, each with its own spaceship comparator — forcing G_SCMP at the distinct widths s16, s32 and s64. The 32- and 64-bit legs are paths #46 never reached; a 64-bit three-way compare (a full-width icmp + select) had never been lowered on this target until now.'],
-  ['why qsort, not an inline sort', 'A direct if ((a>b)-(a<b) > 0) would let the compiler cancel the three-way compare back into a plain a > b — the G_SCMP would vanish and nothing would be tested. Passing the comparator to qsort as an opaque function pointer forces it to genuinely return the −1/0/+1 value, so the three-way compare survives. The build gate confirms it (the s64 intrinsic is present in the emitted IR).'],
-  ['result: correct at every width', 'Sorting is deterministic — the sorted sequence of values is identical on the host and on the SNES. The gate folds all four sorted arrays into a CRC; host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The three-way-compare lowering is correct at s16/s32/s64 — a clean positive, now a permanent regression guard.'],
+  ['two live 16-bit indices', 'The inner loop reads src[i] at the loop counter i and writes dst[perm[i]] at a second index pulled from a table. On the 65816 both indices are 16-bit registers at the same time. That simultaneity is the point: it is exactly the situation an old compiler bug mangled — switching one index back to 8-bit would zero its high byte and send a write to the wrong place.'],
+  ['a data-dependent index', 'The store index perm[i] is not a stride the compiler can precompute — it is a value loaded from memory and used immediately as an address. So the 16-bit index really must be materialised and kept live, unlike a plain counting loop the optimiser could turn into pointer bumps.'],
+  ['576 entries (the 256 boundary)', 'The 65816 indexes memory with 8-bit or 16-bit registers; a table past 256 entries forces the 16-bit path. This grid holds 576 cells precisely so the scatter is driven by full 16-bit indices — and here it lowers to a genuine sta abs,X (store at a 16-bit index register), the exact addressing form the bug corrupted.'],
+  ['the bug this guards (#23, patch 0002)', 'When the index registers run 16-bit (+mos-xy16 mode), an earlier compiler could insert a "switch index to 8-bit" instruction (sep #$10) between writing a 16-bit index and using it, zeroing the high byte. The fix (MOSInsertREPSEP::placeIntraBlock) reloads the index after each width switch. Three Cluster-A demos now guard it from three angles: a memmove library call (Overlap-Move Mosaic), an indirect-pointer reversal (In-Place Block Rotate), and this indexed store.'],
+  ['result: a perfect bijection, bit-exact', 'Because perm is a bijection, every cell must be written exactly once — no cell dropped, none written twice. The gate folds all 576 cells each step (position-sensitive) into a CRC: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. A dropped index high byte would drop or duplicate a tile and change the CRC. It does not — the fix holds, now regression-guarded on the indexed-store form.'],
+  ['the visual', 'The 576 cells map to a 24×24 grid (a 16×16 window shown). Each step re-applies the permutation, so the checkerboard pattern shuffles kaleidoscopically — every frame is a bijective rearrangement of the last, never losing a tile.'],
 ];
 ---
 
-<Base title="Width-Sweep Sort Gallery — bioHACK•NET" description="Four bar-chart panels sort on a Super Nintendo, each driven by the C spaceship comparator (a>b)-(a<b) at a different key width — int8, int16, int32, int64. Compiler stress-test #97: G_SCMP three-way compare at s16/s32/s64 (the wide widths #46 never reached).">
+<Base title="Gather-Scatter Permutation — bioHACK•NET" description="A 576-cell grid shuffled by a bijective gather-scatter on a Super Nintendo — two 16-bit indices live at once, a data-dependent scatter index lowering to sta abs,X. Compiler stress-test #95: hardens the +mos-xy16 index-width fix on the indexed-store form.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">Width-Sweep Sort Gallery</h1>
+      <h1 class="rp-title">Gather-Scatter Permutation</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">
-        Four bar-chart panels sort in lockstep, each driven by the C <em>spaceship</em> comparator
-        <code>(a&gt;b)−(a&lt;b)</code> at a different key width — 8, 16, 32 and 64 bits. Modern
-        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> folds that idiom to a single
-        three-way-compare node (<code>G_SCMP</code>); this is compiler stress-test #97, re-running
-        the fix that first taught the 65816 to lower it — now at the 32- and 64-bit widths the
-        original demo never reached.
+        A 576-cell grid shuffled <em>in place</em> by a bijective scatter
+        <code>dst[perm[i]] = src[i]</code>, so the inner loop keeps <em>two</em> 16-bit indices live at
+        once — the loop counter <code>i</code> and a <em>data-dependent</em> scatter index
+        <code>perm[i]</code>. This is compiler stress-test #95: it drives the exact situation a real
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> bug once corrupted — a live 16-bit
+        index under <code>+mos-xy16</code> — in its sharpest form, an <code>sta&nbsp;abs,X</code> store
+        that the <a href="/rotslab/">reversal demo</a> never produced.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Width-Sweep Sort Gallery">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running Gather-Scatter Permutation">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -57,7 +62,7 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — four panels bubble-sort, then reshuffle and sort again.</p>
+      <p class="rp-keys">Self-running — the grid shuffles kaleidoscopically, one bijection per step.</p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
     </section>
@@ -65,14 +70,21 @@ const notes = [
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        The build gate sorts four arrays — <code>int8_t</code>, <code>int16_t</code>,
-        <code>int32_t</code>, <code>int64_t</code> — with libc <code>qsort</code>, each using its
-        own spaceship comparator, and folds the sorted values into a checksum. The on-screen panels
-        animate the same idea: four columns of bars settling under the three-way comparison.
+        A gather-scatter moves each element of one array to a position chosen by a permutation table:
+        <code>dst[perm[i]] = src[i]</code>. When the permutation is a bijection, it is a perfect
+        rearrangement — every slot filled once. The interesting part for a compiler is that two array
+        indices are live at the same time, and one of them is a value read from memory rather than a
+        simple counter.
       </p>
       <pre class="rp-code">{code}</pre>
+      <p>
+        The grid holds 576 cells, past the 256-entry boundary, so both indices are full 16-bit
+        registers — and the store lowers to <code>sta abs,X</code>, indexed by a 16-bit register. Each
+        step re-permutes and folds all 576 cells into a rolling CRC. The picture is the proof: a wrong
+        index would drop or duplicate a tile and change the CRC.
+      </p>
 
-      <h2>Compiler stress-test #97 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #95 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -80,7 +92,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0xF20F</code> — a fold of four sorted arrays) live in this tab.
+        (gate CRC <code>0x0C2C</code> — a fold of 12 steps × 576 cells) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -92,9 +104,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'spaceship';
+    window.BJG_DEFAULT_ROM = 'permscat';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x58, len: 2, want: 0xF20F, frames: 500, label: 'G_SCMP sort CRC' };
+    window.BJG_SELFCHECK = { off: 0x67, len: 2, want: 0x0C2C, frames: 500, label: 'gather-scatter permutation CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');
@@ -155,7 +167,7 @@ const notes = [
   .rp-doc b { color: var(--ink); }
   .rp-doc em { font-style: italic; }
   .rp-doc code { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); }
-  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px;
+  .rp-code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px;
              background: var(--bg-soft, #1e2128); color: var(--accent); padding: .75rem 1rem;
              border-radius: 6px; margin: .75rem 0; white-space: pre; overflow-x: auto; line-height: 1.6; }
   .rp-table { width: 100%; max-width: 26rem; border-collapse: collapse; margin: .5rem 0 1rem; }

@@ -1,13 +1,13 @@
 ---
-// /modexp256 — 256-bit Modular Exponentiation. Compiler stress-test #104 (Round 6, harden-the-fixes).
-import Base from '../layouts/Base.astro';
+// /trimerge — Three-Way Merge Diff. Compiler stress-test #99 (Round 6, harden-the-fixes).
+import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const PLAY = 'public/play';
 const BUST_ASSETS = [
   'app.js', 'cores/bsnes_jg.js', 'cores/bsnes_jg.wasm', 'cores/PROVENANCE.json',
-  'roms/manifest.json', 'roms/modexp256.sfc', 'preview/modexp256.png',
+  'roms/manifest.json', 'roms/trimerge.sfc', 'preview/trimerge.png',
 ];
 const bust: Record<string, string> = {};
 for (const a of BUST_ASSETS) {
@@ -15,41 +15,44 @@ for (const a of BUST_ASSETS) {
 }
 const appV = bust['app.js'] ?? '';
 
-const code = `// a 256-bit number is eight 32-bit limbs; multiply is schoolbook,
-// each partial product accumulated in a 64-bit column with carry
-uint64_t cur = (uint64_t)p[i+j] + (uint64_t)a[i]*(uint64_t)b[j] + carry;
-p[i+j] = (uint32_t)cur;  carry = cur >> 32;      // 64-bit math the whole way
+const code = `// merge two sorted streams; the THREE-WAY compare picks the branch
+int cmp(int32_t a, int32_t b) { return (a > b) - (a < b); }  // -1 / 0 / +1
 
-// reduce mod (2^256 - 189): fold the high half back in (2^256 ≡ 189)
-// Diffie-Hellman: A = g^a, B = g^b, shared = B^a == A^b   (must be equal)`;
+while (i < nl && j < nr) {
+    int c = cmp(L[i], R[j]);
+    if      (c < 0) out[k++] = L[i++];              // advance left
+    else if (c > 0) out[k++] = R[j++];              // advance right
+    else          { out[k++] = L[i++];              // c == 0:
+                    out[k++] = R[j++]; }            //   emit BOTH
+}`;
 
 const notes = [
-  ['256-bit from 64-bit pieces', 'The 65816 has no 128- or 256-bit type — so a 256-bit number is built as eight 32-bit limbs, and every multiply, add, shift, and compare runs through 64-bit arithmetic. A single 256×256 multiply is dozens of 64-bit multiply-accumulates; a full modular exponentiation is thousands. That is the point: it runs the 64-bit code paths at volume.'],
-  ['the bug this guards (#61, patch 0017)', 'A 64-bit Diffie-Hellman demo once crashed this backend — it had no rule to split a 64-bit value into 16-bit lanes, nor to multiply two 64-bit values without ballooning to 128 bits. Patch 0017 taught it both. This demo hammers that same 64-bit glue hundreds of times over, at heavy register pressure, and confirms it still holds.'],
-  ['Diffie-Hellman as a self-check', 'Two parties pick secret exponents a and b; one computes A = g^a, the other B = g^b; the shared secret is B^a on one side and A^b on the other. These are always equal, because (g^a)^b = g^(ab) = (g^b)^a. The demo computes both and folds their difference into the CRC — so a single wrong 64-bit limb breaks the equality and the check.'],
-  ['no prime needed', 'The Diffie-Hellman equality holds for any modulus, not just a prime — it is pure exponent commutativity. So the demo uses 2^256 − 189, a modulus whose shape makes reduction cheap: since 2^256 ≡ 189, the high half of a product folds back into the low half with one small multiply.'],
-  ['checked against a reference', 'The 256-bit modular arithmetic was cross-checked against Python’s arbitrary-precision integers: the C result for g^7 mod (2^256 − 189) matches pow(g, 7, m) bit for bit. So the on-device result has a known-correct ground truth, not just internal consistency.'],
-  ['result: bit-exact, and the visual', '256-bit integer modexp is exact, so it is identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. The shared secret is heavy to compute, so it is worked out once at startup and shown as a 16×16 field coloured from its 256 bits, with a slow palette drift. (The compute takes a beat — that is thousands of 64-bit operations running.)'],
+  ['the spaceship result as control flow', 'The three-way compare (a>b)-(a<b) yields −1, 0, or +1. Earlier demos handed that value to qsort, which compares it to zero. Here the value itself selects among three code paths: take the left element, take the right, or — when they are equal — emit both. It is a branch selector, not a sort key.'],
+  ['the emit-both branch', 'The equal case (0) is the one a two-way if/else would miss. Because the two streams are built to collide periodically, the equal branch really fires — you can see it as the third colour in the braid. This is the branch that makes the demo a genuine three-way test rather than a disguised pair of comparisons.'],
+  ['both widths', 'The merge runs on 32-bit and 64-bit signed values, forcing the three-way compare at each width as a branch. The 64-bit compare-and-branch is the sharpest — a full-width three-way decision the backend lowers to compares and selects.'],
+  ['the bug this guards (#46, patch 0016)', 'The three-way-compare idiom once crashed the 65816 backend, which had no rule to lower the generic opcode. Patch 0016 routes it through LLVM’s compare-and-select lowering. The sort-gallery and rank-field demos consumed the result as a sort return; this one consumes it as control flow — confirming the lowering is correct no matter what reads its output.'],
+  ['why a separate comparator function', 'Written inline, ((a>b)-(a<b)) < 0 folds straight back to a < b and the three-way intrinsic disappears — untested. Keeping the comparator in its own non-inlined function forces it to actually produce the −1/0/+1 value, which the merge then branches on. An IR probe confirms the intrinsic is present at both widths, including 64-bit.'],
+  ['result: bit-exact, and the visual', 'Merging sorted streams is a deterministic reordering, so the merged sequence is identical on host and SNES: host == default == +mos-a16 == +mos-xy16 on both MAME and bsnes-jg, -verify-machineinstrs clean. Each screen row is one merge round; every output cell is coloured by the branch that produced it — teal for left, orange for right, gold for emit-both — so the −1/0/+1 decisions braid down the field as the streams shift.'],
 ];
 ---
 
-<Base title="256-bit Modular Exponentiation — bioHACK•NET" description="A 256-bit Diffie-Hellman modexp built from 32-bit limbs and 64-bit multiply-accumulate on a Super Nintendo. Compiler stress-test #104: hammers the 64-bit (un)merge glue that once crashed the 16-bit-accumulator backend.">
+<Base title="Three-Way Merge Diff — bioHACK•NET" description="A merge of sorted streams on a Super Nintendo where the three-way compare (a>b)-(a<b) selects the branch — advance-left, advance-right, or emit-both. Compiler stress-test #99: the spaceship operator as control flow.">
   <main class="rp-wrap">
 
     <header class="rp-hero">
-      <h1 class="rp-title">256-bit Modular Exponentiation</h1>
+      <h1 class="rp-title">Three-Way Merge Diff</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">
-        A 256-bit Diffie-Hellman key exchange — <code>g^a</code>, <code>g^b</code>, shared secret
-        <code>B^a == A^b</code> — built from 32-bit limbs and <em>64-bit</em> multiply-accumulate. This
-        is compiler stress-test #104: it runs the exact 64-bit code paths a real
-        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> crash once hit
-        (<a href="/snes/">patch 0017</a>), hundreds of times over at heavy register pressure, and
-        confirms the fix holds.
+        A merge of two sorted streams where the C “spaceship” compare
+        <code>(a&gt;b)-(a&lt;b)</code> — yielding <code>−1 / 0 / +1</code> — <em>selects the branch</em>:
+        advance-left, advance-right, or emit-both. This is compiler stress-test #99: it consumes the
+        three-way-compare result as <em>control flow</em> rather than a sort key, confirming the
+        <a href="https://github.com/llvm-mos/llvm-mos">llvm-mos</a> lowering (patch 0016) is correct
+        whatever reads its output — at 32 and 64 bits.
       </p>
     </header>
 
-    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the 256-bit Modular Exponentiation">
+    <section id="bjg-embed" class="rp-player" aria-label="Live SNES emulator running the Three-Way Merge Diff">
       <div class="rp-screen"><canvas id="screen" width="256" height="224" aria-label="SNES screen"></canvas></div>
       <div class="rp-row">
         <span id="status" class="rp-status">loading core…</span>
@@ -57,7 +60,7 @@ const notes = [
         <button id="verify" class="rp-btn" disabled>Verify fidelity</button>
         <button id="fullscreen" class="rp-btn">Fullscreen</button>
       </div>
-      <p class="rp-keys">Self-running — the 256-bit shared secret, computed once, shown as a colour field.</p>
+      <p class="rp-keys">Self-running — teal = advance-left, orange = advance-right, gold = emit-both.</p>
       <p id="banner" class="rp-banner"></p>
       <p class="rp-hint">Click the screen to focus, then watch. Tab away and it pauses.</p>
     </section>
@@ -65,19 +68,19 @@ const notes = [
     <section class="rp-doc">
       <h2>What it is</h2>
       <p>
-        Public-key crypto leans on modular exponentiation of big integers. Here the integers are 256
-        bits — far past any native type on a 16-bit machine — so they are assembled from smaller limbs,
-        and every operation bottoms out in 64-bit arithmetic. The exchange is small but the 64-bit
-        traffic is enormous.
+        Merging two already-sorted lists is a staple of mergesort and diff tools. The choice at each
+        step — which side to take, or whether the heads are equal — is exactly a three-way decision,
+        and this demo makes that decision with the spaceship compare, then branches on its sign.
       </p>
       <pre class="rp-code">{code}</pre>
       <p>
-        The gate folds the shared secret, plus the difference between the two ways of computing it,
-        into a CRC. The picture is the proof: a single wrong 64-bit limb breaks the Diffie-Hellman
-        equality and changes the CRC.
+        The streams are centred on zero (so the compare sees both signs) and collide periodically (so
+        the equal branch fires). Each screen row is one merge round at a shifting offset; the gate
+        folds the merged outputs into a CRC. The picture is the proof: a wrong branch would tear the
+        ordering and change the CRC.
       </p>
 
-      <h2>Compiler stress-test #104 — Round 6: hardening the fixes</h2>
+      <h2>Compiler stress-test #99 — Round 6: hardening the fixes</h2>
       <table class="rp-table rp-wide">
         <thead><tr><th>Item</th><th>What it exercises</th></tr></thead>
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
@@ -85,8 +88,7 @@ const notes = [
 
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
-        (gate CRC <code>0x31D4</code> — a fold of the 256-bit shared secret; give it a few seconds, the
-        256-bit modexp is heavy) live in this tab.
+        (gate CRC <code>0xCCCC</code> — a fold of the merged s32/s64 streams) live in this tab.
         No far pointers — <code>host == default == +mos-a16 == +mos-xy16</code>,
         <code>-verify</code> clean.</p>
     </section>
@@ -98,9 +100,9 @@ const notes = [
     if (!document.getElementById('bjg-embed')) return;
     if (window.__bjgStop) { try { window.__bjgStop(); } catch (e) {} }
     window.BJG_BASE = '/play/';
-    window.BJG_DEFAULT_ROM = 'modexp256';
+    window.BJG_DEFAULT_ROM = 'trimerge';
     window.BJG_BUST = bust;
-    window.BJG_SELFCHECK = { off: 0x31, len: 2, want: 0x31D4, frames: 1500, label: '256-bit modexp CRC' };
+    window.BJG_SELFCHECK = { off: 0x46, len: 2, want: 0xCCCC, frames: 500, label: 'three-way merge diff CRC' };
     window.BsnesJg = undefined;
     window.__bjg = undefined;
     var old = document.getElementById('bjg-appjs');
