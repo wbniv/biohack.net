@@ -33,6 +33,25 @@ jobs:
       - name: Check links
         run: node scripts/check-links.js --skip-external --dir dist
 
+      # The SNES player's Fullscreen handler has been silently deleted twice by unrelated
+      # ROM-rebuild commits, shipping ~111 pages with a button that only highlights on hover.
+      # Every player page emits #fullscreen, so app.js without the handler is a broken deploy.
+      # Checked against dist/, i.e. what actually ships.
+      - name: Check SNES player Fullscreen handler
+        run: |
+          set -euo pipefail
+          app=dist/play/app.js
+          [ -f "$app" ] || { echo "::error::$app missing from the build"; exit 1; }
+          for probe in requestFullscreen fullscreenchange; do
+            grep -q "$probe" "$app" || {
+              echo "::error::$app has no '$probe' — the Fullscreen button would be dead on every"
+              echo "::error::SNES page. Restore the handler in public/play/app.js (source of truth:"
+              echo "::error::llvm-mos-65816/.claude/skills/snes-rom-page/engine/app.js)."
+              exit 1
+            }
+          done
+          echo "Fullscreen handler present in $app"
+
       - uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CF_PAGES_API_TOKEN }}
