@@ -84,6 +84,23 @@ const notes = [
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
       </table>
 
+      <h2>Compiler bug this demo guards against</h2>
+      <div class="rp-bugbox">
+        <p><b>Patch 0011</b> — a <code>+mos-a16</code>/<code>+mos-xy16</code> backend crash: a 16-bit compare
+          kept the N/Z flags live across a frame-carry spill, forcing the carry-flag pseudo-register
+          <code>$p</code> to be preserved across an <i>unbalanced</i> range — but <code>$p</code> (register
+          class <code>Cc</code>) has no general-purpose-register home, so the register scavenger emitted an
+          illegal spill of <code>$p</code> / read an undefined <code>$p</code>. The scavenger logic predates
+          the 16-bit-accumulator feature; this was the first code path to hit its <code>$p</code>-has-no-home
+          gap.</p>
+        <p><b>Fix:</b> Route <code>$p</code> hard-stack-neutrally through a dead index register into a spare
+          register class, and drop a now-stale liveness assumption in the scavenger.</p>
+        <p>This demo's heavy fixed-point expression evaluator — a dozen live temporaries whose compare
+          result is consumed after several multiply/divide calls — reproduces the exact register pressure
+          that triggered the crash, as a standing regression guard.</p>
+        <p class="rp-bug-link"><a href="https://github.com/wbniv/llvm-mos-65816/commit/a320cbd">View the fix commit →</a></p>
+      </div>
+
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
         (gate CRC <code>0xEE6D</code> — a fold of the evaluated field; give it a few seconds, the
@@ -172,4 +189,11 @@ const notes = [
   .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
   .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
   .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+  .rp-bugbox { border: 1px solid var(--accent-soft); border-radius: 8px; padding: 1rem 1.25rem;
+               margin: .75rem 0 1.25rem; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  .rp-bugbox p { margin: .4rem 0; }
+  .rp-bugbox b { color: var(--ink); }
+  .rp-bug-link { margin-top: .6rem !important; }
+  .rp-bug-link a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); text-decoration: none; }
+  .rp-bug-link a:hover { text-decoration: underline; }
 </style>

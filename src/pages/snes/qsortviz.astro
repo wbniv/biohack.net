@@ -84,6 +84,23 @@ const notes = [
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
       </table>
 
+      <h2>Compiler bug this demo guards against</h2>
+      <div class="rp-bugbox">
+        <p><b>Patch 0016</b> — a fully generic gap present in <i>every</i> build mode (default 8-bit
+          included — nothing to do with the 16-bit-accumulator feature): the C "spaceship" three-way-compare
+          idiom <code>(x&gt;y)-(x&lt;y)</code>, which libc <code>qsort</code> comparators commonly use,
+          canonicalizes to a <code>G_SCMP</code>/<code>G_UCMP</code> machine-IR opcode that the backend's
+          legalizer had <i>zero</i> rule for, at any width — an <code>unable to legalize</code> abort, in
+          every mode, with or without LTO.</p>
+        <p><b>Fix:</b> One line: mark <code>G_SCMP</code>/<code>G_UCMP</code> as <code>.lower()</code>,
+          routing them through LLVM's existing built-in three-way-compare expansion — no new codegen
+          needed.</p>
+        <p>This demo — a libc <code>qsort</code> visualizer using a rotating comparator — is the demo that
+          <b>originally caught this bug</b>: every spaceship-comparator sort failed to build until this fix
+          landed.</p>
+        <p class="rp-bug-link"><a href="https://github.com/wbniv/llvm-mos-65816/commit/3c2c7a5">View the fix commit →</a></p>
+      </div>
+
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg
         (and MAME where the SPC700 IPL is present). Hit <b>Verify fidelity</b> to reproduce the build
         gate's WRAM assert (gate hash <code>0x8EA5</code> — a fold of a 64-element array sorted three
@@ -175,4 +192,11 @@ const notes = [
   .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
   .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
   .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+  .rp-bugbox { border: 1px solid var(--accent-soft); border-radius: 8px; padding: 1rem 1.25rem;
+               margin: .75rem 0 1.25rem; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  .rp-bugbox p { margin: .4rem 0; }
+  .rp-bugbox b { color: var(--ink); }
+  .rp-bug-link { margin-top: .6rem !important; }
+  .rp-bug-link a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); text-decoration: none; }
+  .rp-bug-link a:hover { text-decoration: underline; }
 </style>

@@ -83,6 +83,22 @@ const notes = [
         <tbody>{notes.map(([n, d]) => (<tr><td class="rp-mono">{n}</td><td>{d}</td></tr>))}</tbody>
       </table>
 
+      <h2>Compiler bug this demo guards against</h2>
+      <div class="rp-bugbox">
+        <p><b>Patch 0012</b> — a pre-existing gap in the machine-code lowering for carry-flag immediates:
+          the lowering only handled the encodings for "clear" (0) and "set" (-1), but a <i>set</i> carry-in
+          can also arrive as the literal value 1 (e.g. the carry-in for a 16-bit subtract) — hitting an
+          <code>unreachable</code> assertion on debug builds, and undefined behaviour (that happened to
+          still produce the right instruction) on release builds. This was surfaced only once a separate fix
+          (patch 0011) let compilation reach this stage at all.</p>
+        <p><b>Fix:</b> Lower any nonzero carry-flag immediate as "set carry", not just -1 — a
+          differential-neutral fix.</p>
+        <p>This demo's 128-bit descending odometer, built from eight chained 16-bit subtract-with-borrow
+          limbs, exercises exactly the carry-in pattern that triggered the bug, as a standing regression
+          guard.</p>
+        <p class="rp-bug-link"><a href="https://github.com/wbniv/llvm-mos-65816/commit/a320cbd">View the fix commit →</a></p>
+      </div>
+
       <p class="rp-foot">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.
         Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert
         (gate CRC <code>0x1BE3</code> — a fold of 160 countdown steps) live in this tab.
@@ -170,4 +186,11 @@ const notes = [
   .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
   .rp-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .85em; }
   .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
+  .rp-bugbox { border: 1px solid var(--accent-soft); border-radius: 8px; padding: 1rem 1.25rem;
+               margin: .75rem 0 1.25rem; background: color-mix(in srgb, var(--accent) 6%, transparent); }
+  .rp-bugbox p { margin: .4rem 0; }
+  .rp-bugbox b { color: var(--ink); }
+  .rp-bug-link { margin-top: .6rem !important; }
+  .rp-bug-link a { font-family: 'JetBrains Mono', ui-monospace, monospace; color: var(--accent); text-decoration: none; }
+  .rp-bug-link a:hover { text-decoration: underline; }
 </style>
