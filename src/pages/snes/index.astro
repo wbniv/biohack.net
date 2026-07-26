@@ -28,6 +28,7 @@ const categories = [
 const demos = [
   {
     slug: 'lzss-gallery',
+    displayMode: 7,
     title: 'LZSS Mode 7 Gallery',
     desc: 'A complete LZSS compressor/decompressor benchmark on the 65816. Ten CC0 artworks are decoded into far WRAM, displayed through Mode 7, recompressed on-console, compared with host goldens, decoded again, and verified byte-for-byte. Compiler stress-test #119.',
     keys: 'Self-running — progress is measured work; D/C/V report stage frames',
@@ -35,6 +36,7 @@ const demos = [
   },
   {
     slug: 'mandel-display',
+    displayMode: 7,
     title: 'Mode 7 Mandelbrot',
     desc: 'A fixed-point Mandelbrot computed live on the 65816 and revealed through Mode 7 — every pixel round-trips through a 24-bit far pointer into high WRAM, the broadest single codegen exercise the publish gate runs. The canonical #321 tester.',
     keys: 'Self-running — reveals coarse-to-fine, then spins and zooms',
@@ -42,9 +44,10 @@ const demos = [
   },
   {
     slug: 'mandel-oop',
+    displayMode: 7,
     title: 'Mode 7 Mandelbrot (OOP)',
     desc: 'The same fixed-point Mandelbrot, rebuilt through the snesgfx object-oriented C interface (Mode 7 as a polymorphic Drawable) instead of procedural calls — a formal verification client proving the OOP pattern costs nothing on real hardware.',
-    keys: 'Self-running — reveals coarse-to-fine, then spins and zooms',
+    keys: 'Self-running — animated build, coarse-to-fine reveal, then Mode 7 spin and zoom',
     category: 'fractals',
   },
   {
@@ -574,6 +577,7 @@ const demos = [
   },
   {
     slug: 'blossom',
+    displayMode: 7,
     title: 'Blossom',
     desc: "Barry Martin's Hopalong strange attractor rendered live on SNES and flown around with the joypad. Accumulates into a hit-count grid in WRAM, displayed through Mode 7 with an HDMA colour split.",
     keys: '← ↑ ↓ → pan · Q/W zoom · X/A attractor · Shift colour',
@@ -651,6 +655,7 @@ const demos = [
   },
   {
     slug: 'buddhabrot',
+    displayMode: 7,
     title: 'Buddhabrot',
     desc: 'The Mandelbrot set’s ghost: random points iterated z²+c, and every escaping orbit is tallied into a 16 KiB density buffer in high WRAM via far scatter-writes. PRNG + far read-modify-write under +mos-a16. Compiler stress-test #4.',
     keys: 'Self-running — no controls',
@@ -707,6 +712,7 @@ const demos = [
   },
   {
     slug: 'julia',
+    displayMode: 7,
     title: 'Julia Set Explorer',
     desc: 'A morphing Julia fractal — z² + c in Q5.10 fixed point, three 32-bit multiplies per iteration, far-stored into high WRAM and drawn through Mode 7 as c orbits a path. The affine matrix spins it while the multiply grind morphs it. Compiler stress-test #1.',
     keys: 'Self-running — no controls',
@@ -728,6 +734,7 @@ const demos = [
   },
   {
     slug: 'mandel-float',
+    displayMode: 7,
     title: 'Soft-Float Mandelbrot',
     desc: 'The Mandelbrot set in IEEE-754 single-precision float — on a CPU with no FPU, so every multiply, add and compare is a software-float libcall. The chunky image grinds in because each fat pixel is hundreds of __mulsf3/__addsf3; bit-for-bit identical to host x86. Compiler stress-test #21.',
     keys: 'Self-running — no controls',
@@ -735,6 +742,7 @@ const demos = [
   },
   {
     slug: 'mandel-double',
+    displayMode: 7,
     title: 'Double-Precision Mandelbrot',
     desc: 'The Mandelbrot set in 64-bit IEEE-754 double (top half) beside a 32-bit float twin (bottom half). No FPU, so every double op is a soft-float libcall (__muldf3/__adddf3/__gtdf2); the escape buffer is bit-for-bit identical to host x86 across every codegen mode. Compiler stress-test #33.',
     keys: 'Self-running — no controls',
@@ -742,6 +750,7 @@ const demos = [
   },
   {
     slug: 'avalanche',
+    displayMode: 7,
     title: '64-Bit Avalanche',
     desc: 'A 64-bit splitmix64 hash visualised as an avalanche matrix — cell (i,j) = output bit j of hash64(seed^(1<<i)). On a 16-bit CPU every op is a multi-limb libcall (__muldi3/__udivdi3/64-bit shifts); a correct mixer gives a ~50%-dense rainbow field, bit-for-bit identical to host x86. Compiler stress-test #22.',
     keys: 'Self-running — no controls',
@@ -856,7 +865,7 @@ const byCategory = categories.map(cat => ({
           </div>
         </div>
         <ul class="cat-row" role="list">
-          {items.map(({ slug, title, keys }) => {
+          {items.map(({ slug, title, keys, displayMode }) => {
             const v = previewV(slug);
             return (
               <li class="cat-card">
@@ -872,6 +881,9 @@ const byCategory = categories.map(cat => ({
                       decoding="async"
                     />
                     <div class="cat-play-overlay" aria-hidden="true">▶</div>
+                    {displayMode === 7 && (
+                      <span class="gl-mode7-badge" title="Mode 7 display" aria-label="Mode 7 display">7</span>
+                    )}
                   </div>
                   <div class="cat-card-body">
                     <h3 class="cat-card-title">{title}</h3>
@@ -1045,6 +1057,22 @@ const byCategory = categories.map(cat => ({
     pointer-events: none;
   }
   .cat-card:hover .cat-play-overlay { opacity: 1; }
+  .gl-mode7-badge {
+    position: absolute;
+    z-index: 2;
+    top: 7px;
+    left: 7px;
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 1px solid rgba(116, 255, 229, 0.9);
+    border-radius: 5px;
+    background: rgba(5, 19, 33, 0.88);
+    color: #74ffe5;
+    font: 700 14px/1 'JetBrains Mono', ui-monospace, monospace;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+  }
 
   /* ── card body ──────────────────────────────────────── */
   .cat-card-body {
@@ -1079,6 +1107,7 @@ const byCategory = categories.map(cat => ({
   @media (max-width: 520px) {
     .cat-card { flex: 0 0 140px; }
     .cat-card-title { font-size: 11px; }
+    .gl-mode7-badge { width: 22px; height: 22px; font-size: 13px; }
   }
 
   /* ── footer note ────────────────────────────────────── */
