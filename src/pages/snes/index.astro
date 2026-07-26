@@ -27,6 +27,13 @@ const categories = [
 
 const demos = [
   {
+    slug: 'lzss-gallery',
+    title: 'LZSS Mode 7 Gallery',
+    desc: 'A complete LZSS compressor/decompressor benchmark on the 65816. Ten CC0 artworks are decoded into far WRAM, displayed through Mode 7, recompressed on-console, compared with host goldens, decoded again, and verified byte-for-byte. Compiler stress-test #119.',
+    keys: 'Self-running — progress is measured work; D/C/V report stage frames',
+    category: 'algorithms',
+  },
+  {
     slug: 'mandel-display',
     title: 'Mode 7 Mandelbrot',
     desc: 'A fixed-point Mandelbrot computed live on the 65816 and revealed through Mode 7 — every pixel round-trips through a 24-bit far pointer into high WRAM, the broadest single codegen exercise the publish gate runs. The canonical #321 tester.',
