@@ -855,6 +855,15 @@ const byCategory = categories.map(cat => ({
       </p>
     </header>
 
+    <div class="gl-mode-filter" data-total={demos.length}>
+      <button type="button" class="gl-mode-toggle" aria-pressed="false" aria-label="Show Mode 7 demos only">
+        <span class="gl-mode-filter-seven" aria-hidden="true">7</span>
+        <span>Mode 7</span>
+        <span class="gl-mode-check" aria-hidden="true">✓</span>
+      </button>
+      <span class="gl-mode-count" aria-live="polite">{demos.length} demos</span>
+    </div>
+
     {byCategory.map(({ id, label, items }) => (
       <section class="cat-shelf" id={`cat-${id}`}>
         <div class="cat-header">
@@ -868,7 +877,7 @@ const byCategory = categories.map(cat => ({
           {items.map(({ slug, title, keys, displayMode }) => {
             const v = previewV(slug);
             return (
-              <li class="cat-card">
+              <li class="cat-card" data-display-mode={displayMode}>
                 <a href={`/snes/${slug}/`} class="cat-card-link" aria-label={`Play ${title}`}>
                   <div class="cat-thumb-wrap">
                     <img
@@ -906,7 +915,8 @@ const byCategory = categories.map(cat => ({
 </Base>
 
 <script is:inline>
-  document.querySelectorAll('.cat-shelf').forEach(function(shelf) {
+  var shelves = Array.from(document.querySelectorAll('.cat-shelf'));
+  shelves.forEach(function(shelf) {
     var row = shelf.querySelector('.cat-row');
     function scrollAmt() { return Math.floor(row.clientWidth * 0.85); }
     var prev = shelf.querySelector('.cat-prev');
@@ -914,6 +924,46 @@ const byCategory = categories.map(cat => ({
     if (prev) prev.addEventListener('click', function() { row.scrollBy({ left: -scrollAmt(), behavior: 'smooth' }); });
     if (next) next.addEventListener('click', function() { row.scrollBy({ left:  scrollAmt(), behavior: 'smooth' }); });
   });
+  var modeWrap = document.querySelector('.gl-mode-filter');
+  var modeToggle = document.querySelector('.gl-mode-toggle');
+  var modeCount = document.querySelector('.gl-mode-count');
+  var mode7 = false;
+  function updateShelfNav(shelf) {
+    var row = shelf.querySelector('.cat-row');
+    var nav = shelf.querySelector('.cat-nav');
+    if (nav) nav.hidden = row.scrollWidth <= row.clientWidth + 1;
+  }
+  function applyMode7() {
+    var shown = 0;
+    document.querySelectorAll('.cat-card').forEach(function(card) {
+      var visible = !mode7 || card.dataset.displayMode === '7';
+      card.hidden = !visible;
+      if (visible) shown++;
+    });
+    shelves.forEach(function(shelf) {
+      var visible = !!shelf.querySelector('.cat-card:not([hidden])');
+      shelf.hidden = !visible;
+      if (visible && mode7) shelf.querySelector('.cat-row').scrollLeft = 0;
+      if (visible) requestAnimationFrame(function() { updateShelfNav(shelf); });
+    });
+    modeToggle.setAttribute('aria-pressed', String(mode7));
+    modeToggle.setAttribute('aria-label', mode7 ? 'Show all demos' : 'Show Mode 7 demos only');
+    modeCount.textContent = mode7 ? shown + ' Mode 7 demos' : modeWrap.dataset.total + ' demos';
+    var url = new URL(location.href);
+    if (mode7) url.searchParams.set('mode', '7'); else url.searchParams.delete('mode');
+    history.replaceState(null, '', url);
+  }
+  modeToggle.addEventListener('click', function() { mode7 = !mode7; applyMode7(); });
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && mode7 && document.querySelector('.gl-wrap:focus-within')) {
+      mode7 = false; applyMode7(); modeToggle.focus();
+    }
+  });
+  window.addEventListener('popstate', function() {
+    mode7 = new URL(location.href).searchParams.get('mode') === '7'; applyMode7();
+  });
+  mode7 = new URL(location.href).searchParams.get('mode') === '7';
+  applyMode7();
 </script>
 
 <style>
@@ -957,6 +1007,41 @@ const byCategory = categories.map(cat => ({
   }
   .gl-lede a { color: var(--accent); text-decoration: none; }
   .gl-lede a:hover { text-decoration: underline; }
+  .gl-mode-filter {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: -1.5rem 0 2rem;
+  }
+  .gl-mode-toggle {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--ink-dim);
+    font: 700 12px 'JetBrains Mono', ui-monospace, monospace;
+    cursor: pointer;
+  }
+  .gl-mode-toggle[aria-pressed="true"] {
+    color: #74ffe5;
+    border-color: #74ffe5;
+    background: rgba(10, 51, 48, 0.72);
+    box-shadow: inset 3px 0 #74ffe5;
+  }
+  .gl-mode-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .gl-mode-filter-seven {
+    display: grid; width: 25px; height: 25px; place-items: center;
+    border: 1px solid #74ffe5; border-radius: 5px; background: #051321; color: #74ffe5;
+    font-size: 14px;
+  }
+  .gl-mode-check { visibility: hidden; }
+  .gl-mode-toggle[aria-pressed="true"] .gl-mode-check { visibility: visible; }
+  .gl-mode-count { color: var(--ink-dim); font: 11px 'JetBrains Mono', ui-monospace, monospace; }
 
   /* ── category shelf ─────────────────────────────────── */
   .cat-shelf { margin-bottom: 2.75rem; }
