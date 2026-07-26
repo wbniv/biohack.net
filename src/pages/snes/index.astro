@@ -27,6 +27,20 @@ const categories = [
 
 const demos = [
   {
+    slug: 'mandel-display',
+    title: 'Mode 7 Mandelbrot',
+    desc: 'A fixed-point Mandelbrot computed live on the 65816 and revealed through Mode 7 — every pixel round-trips through a 24-bit far pointer into high WRAM, the broadest single codegen exercise the publish gate runs. The canonical #321 tester.',
+    keys: 'Self-running — reveals coarse-to-fine, then spins and zooms',
+    category: 'fractals',
+  },
+  {
+    slug: 'mandel-oop',
+    title: 'Mode 7 Mandelbrot (OOP)',
+    desc: 'The same fixed-point Mandelbrot, rebuilt through the snesgfx object-oriented C interface (Mode 7 as a polymorphic Drawable) instead of procedural calls — a formal verification client proving the OOP pattern costs nothing on real hardware.',
+    keys: 'Self-running — reveals coarse-to-fine, then spins and zooms',
+    category: 'fractals',
+  },
+  {
     slug: 'cpu6502',
     title: '6502 CPU Simulator',
     desc: 'A 6502/65C02 processor emulated on the SNES: a scrolling disassembly listing steps through a program one instruction at a time while the matching ALU logic gate lights up. The emulator’s 256-entry opcode switch is lowered to a jump table on the 65816. Compiler stress-test #102 (Round 6).',
