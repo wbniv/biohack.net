@@ -20,20 +20,22 @@ const works = [
     <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
-      65816. Ten artworks form a 116,736-byte corpus: each is decoded, displayed through Mode 7,
+      65816. Ten artworks form a 154,840-byte corpus: each is decoded, displayed through Mode 7,
       recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
       checksummed, and verified.</p></header>
     <section id="bjg-embed" class="rp-player" aria-label="Live SNES LZSS gallery">
       <div class="rp-screen"><canvas id="screen" width="256" height="224"></canvas></div>
       <div class="rp-row"><span id="status" class="rp-status">loading core…</span><span id="checkresult" class="rp-badge"></span>
       <button id="verify" class="rp-btn" disabled>Verify benchmark</button><button id="fullscreen" class="rp-btn">Fullscreen</button></div>
-      <p class="rp-keys">Self-running — the meter advances by bytes processed; D/C/V are measured frames.</p>
+      <p class="rp-keys">Left/Right: previous/next work · the meter advances by bytes processed; D/C/V are measured frames.</p>
       <p id="banner" class="rp-banner"></p>
     </section>
     <section class="rp-doc"><h2>The benchmark</h2>
-      <p>The indexed corpus compresses from <b>116,736</b> to <b>70,455 bytes</b>, a weighted
-      <b>39.65%</b> reduction. A complete measured pass takes 2,348 unpack frames, 33,844 repack
-      frames, and 3,025 verification frames. The final WRAM oracle is <code>0x29AF</code>.</p>
+      <p>The aspect-preserving 219-color corpus compresses from <b>154,840</b> to <b>154,761 bytes</b>,
+      a weighted <b>0.05%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      Every work is rendered at its largest tile-budget fit.
+      Left/Right navigation cancels the current stage immediately and starts the selected work
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0xBFAB</code>.</p>
       <h2>Public-domain corpus</h2><p>All images carry the Art Institute of Chicago's CC0 Public
       Domain Designation. Credits are retained even though CC0 does not require attribution.</p>
       <table class="rp-table"><thead><tr><th>Artist</th><th>Work</th></tr></thead>
