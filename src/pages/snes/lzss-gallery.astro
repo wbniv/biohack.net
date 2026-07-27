@@ -106,7 +106,6 @@ const works = catalog;
           <p>{work.artist}<br /><span>{work.date}</span></p>
         </article>)}
       </div>
-      <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all 60 Mode 7 gallery artworks" loading="lazy" />
       <p class="rp-foot">8 Mbit (1 MiB) LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
       deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
     </section>
@@ -230,9 +229,5 @@ const works = catalog;
   }
   .rp-work p { margin: 0 .8rem .85rem; color: var(--ink-dim); font-size: .78rem; line-height: 1.45; }
   .rp-work span { opacity: .75; }
-  .rp-contact {
-    display: block; width: min(100%, 512px); height: auto; margin: 1.5rem auto;
-    border: 1px solid var(--rule); border-radius: 6px; background: #000;
-  }
   .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
 </style>
