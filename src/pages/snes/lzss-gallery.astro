@@ -73,12 +73,12 @@ const legacyWorks = [
 ];
 const works = catalog;
 ---
-<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using 62 public-domain artworks as its visible Mode 7 corpus.">
+<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description={`An on-SNES LZSS compressor/decompressor benchmark using ${catalog.length} public-domain artworks as its visible Mode 7 corpus.`}>
   <main class="rp-wrap">
     <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
-      65816. Sixty-two artworks form a 957,841-byte corpus: each is decoded, displayed through Mode 7,
+      65816. {catalog.length} artworks form a 957,841-byte corpus: each is decoded, displayed through Mode 7,
       recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
       checksummed, and verified.</p></header>
     <section id="bjg-embed" class="rp-player" aria-label="Live SNES LZSS gallery">

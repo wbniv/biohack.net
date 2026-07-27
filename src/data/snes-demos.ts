@@ -1,6 +1,7 @@
 // Shared SNES demo registry — the single source of truth for the /snes/ gallery and the
 // homepage's demo count. Publishing a demo (snes-rom-page skill) appends an entry here.
 import { readFileSync } from 'node:fs';
+import lzssCatalog from './lzss-gallery-catalog.json';
 
 export interface Demo {
   slug: string;
@@ -29,7 +30,7 @@ export const demos: Demo[] = [
     slug: 'lzss-gallery',
     displayMode: 7,
     title: 'LZSS Mode 7 Gallery',
-    desc: 'A complete LZSS compressor/decompressor benchmark on the 65816. Nineteen public-domain artworks use full-composition, aspect-preserving Mode 7 rasters with up to 219 artwork colors, then recompress and verify byte-for-byte on-console. Tap the left or right half on phones. Compiler stress-test #119.',
+    desc: `A complete LZSS compressor/decompressor benchmark on the 65816. ${lzssCatalog.length} public-domain artworks use full-composition, aspect-preserving Mode 7 rasters with up to 219 artwork colors, then recompress and verify byte-for-byte on-console. Tap the left or right half on phones. Compiler stress-test #119.`,
     keys: 'Self-running — progress is measured work; D/C/V report stage frames',
     category: 'algorithms',
   },
