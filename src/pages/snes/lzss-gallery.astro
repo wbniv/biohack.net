@@ -2,13 +2,14 @@
 import Base from '../../layouts/Base.astro';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import catalog from '../../data/lzss-gallery-catalog.json';
 const PLAY = 'public/play';
 const files = ['app.js','cores/bsnes_jg.js','cores/bsnes_jg.wasm','roms/manifest.json',
   'roms/lzss-gallery.sfc','preview/lzss-gallery.png'];
 const bust: Record<string,string> = {};
 for (const f of files) try { bust[f]=createHash('sha256').update(readFileSync(`${PLAY}/${f}`)).digest('hex').slice(0,12); } catch {}
 const appV=bust['app.js']??'';
-const works = [
+const legacyWorks = [
   ['Katsushika Hokusai','Under the Wave off Kanagawa','https://www.artic.edu/artworks/24645'],
   ['Vincent van Gogh','The Bedroom','https://www.artic.edu/artworks/28560'],
   ['Georges Seurat','A Sunday on La Grande Jatte — 1884','https://www.artic.edu/artworks/27992'],
@@ -70,6 +71,7 @@ const works = [
   ['Ando Hiroshige','Distant View of Mount Akiha, Kakegawa','https://www.nga.gov/artworks/224457-distant-view-mount-akiha-kakegawa'],
   ['Ando Hiroshige','Fujisawa-shuku','https://www.nga.gov/artworks/181425-fujisawa-shuku']
 ];
+const works = catalog;
 ---
 <Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using 60 public-domain artworks as its visible Mode 7 corpus.">
   <main class="rp-wrap">
@@ -93,11 +95,17 @@ const works = [
       Every work is rendered at its largest tile-budget fit.
       Left/Right navigation cancels the current stage immediately and starts the selected work
       without contaminating its benchmark sample. The final WRAM oracle is <code>0x1D8E</code>.</p>
-      <h2>Public-domain corpus</h2><p>The original ten Art Institute of Chicago images are CC0.
-      Each added museum scan is explicitly marked public domain; every title links to its canonical
-      museum or collection record.</p>
-      <table class="rp-table"><thead><tr><th>Artist</th><th>Work</th></tr></thead>
-      <tbody>{works.map(([a,w,url])=><tr><td>{url ? <a href={url}>{a}</a> : a}</td><td>{url ? <a href={url}>{w}</a> : w}</td></tr>)}</tbody></table>
+      <h2>Current candidate corpus</h2><p>All {works.length} current candidates are shown below using
+      the actual indexed image prepared for the SNES. Every title links to its canonical museum or
+      collection record. The cartridge is being curated back to 8 Mbit (1 MiB), so this visual list
+      is intentionally published before the next ROM.</p>
+      <div class="rp-gallery">
+        {works.map((work)=><article class="rp-work">
+          <a href={work.object_url}><img src={work.preview} alt={`${work.title} by ${work.artist}`} loading="lazy" /></a>
+          <h3><a href={work.object_url}>{work.title}</a></h3>
+          <p>{work.artist}<br /><span>{work.date}</span></p>
+        </article>)}
+      </div>
       <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all 60 Mode 7 gallery artworks" loading="lazy" />
       <p class="rp-foot">8 Mbit (1 MiB) LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
       deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
@@ -205,6 +213,23 @@ const works = [
     color: var(--ink-dim); padding: .35rem .6rem; border-bottom: 1px solid var(--rule);
   }
   .rp-table td { padding: .35rem .6rem; border-bottom: 1px solid var(--rule); }
+  .rp-gallery {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin: 1rem 0 2rem;
+  }
+  .rp-work {
+    min-width: 0; overflow: hidden; border: 1px solid var(--rule); border-radius: 6px;
+    background: var(--bg-soft, #151820);
+  }
+  .rp-work > a {
+    display: grid; place-items: center; height: 168px; background: #000;
+  }
+  .rp-work img { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+  .rp-work h3 {
+    margin: .75rem .8rem .2rem; font-size: .9rem; line-height: 1.35; font-weight: 600;
+  }
+  .rp-work p { margin: 0 .8rem .85rem; color: var(--ink-dim); font-size: .78rem; line-height: 1.45; }
+  .rp-work span { opacity: .75; }
   .rp-contact {
     display: block; width: min(100%, 512px); height: auto; margin: 1.5rem auto;
     border: 1px solid var(--rule); border-radius: 6px; background: #000;
