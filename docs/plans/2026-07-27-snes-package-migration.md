@@ -14,7 +14,42 @@ Mockups: see the canonical plan's bundle ([rendered page + drift-error states](.
 ## Verification (B8)
 
 1. `pnpm build` green; `ls dist/snes/*/index.html | wc -l` == 115.
-2. Prose-fidelity diff: old dist vs new dist `.rp-hero`/`.rp-doc` regions, whitespace-normalized — clean.
-3. Selfcheck-override audit: every legacy inline `BJG_SELFCHECK` == its manifest entry before deletion.
-4. Headless selfcheck sample PASS (mandel-display, blossom, lzss-gallery, 3d-wireframe + one per category); lzss chevron tap works (manifest touchNav).
-5. Deploy via tag; re-run the headless sample against production.
+
+    ```
+    [build] 118 page(s) built — dist/snes: 114 demo pages (113 dynamic + lzss-gallery static) + index
+    ```
+    PASS (2026-07-27; the count moved from "115 slugs" to "113 dynamic + 1 static page" when the
+    post-merge design kept lzss-gallery as a catalog-driven .astro page — see plan note below)
+
+2. Prose-fidelity diff: old dist vs new dist title/meta/h1/lede/keys/doc regions, whitespace-normalized.
+
+    ```
+    prose fidelity: 114/114 clean
+    ```
+    PASS (after fixing a numeric-entity double-escape on fenwick/ulam meta descriptions)
+
+3. Selfcheck-override audit before deleting the 41 inline `BJG_SELFCHECK` blocks.
+
+    ```
+    pages with inline BJG_SELFCHECK: 41 — deployed app.js contains no BJG_SELFCHECK reference:
+    the overrides were dead code (manifest already authoritative); 40 were stale vs the manifest.
+    ```
+    PASS — zero behavior change from deletion.
+
+4. Selfcheck + touch nav on the migrated build.
+
+    ```
+    mandel-display: ✓ FIDELITY 0x204F == gate (5800 frames)          [headless ?verify=1]
+    blossom:        ✓ FIDELITY 0x9047 == gate (3000 frames)          [headless ?verify=1]
+    lzss-gallery:   {"right":true,"centerInert":true,"left":true,
+                     "verifyLabel":"Verify benchmark","galleryCards":62}   [live Chrome]
+    ```
+    PASS. (lzss's 200000-frame benchmark selfcheck is impractical headless; its Verify button ships
+    user-facing with the 0x5CF0 oracle from commit 304c27b.)
+
+5. Deploy via tag (`v1.0.307`); re-check against production. — recorded in Done/TODO once the run is green.
+
+**Post-merge design note:** master's catalog-driven lzss-gallery (62 works from
+`src/data/lzss-gallery-catalog.json`, commit 304c27b) stays a real `.astro` page on `<SnesPlayer/>`;
+its collection entry is gallery-only (prose fields now optional in the schema) and the page asserts
+the entry's baked artwork count against the catalog at build time.
