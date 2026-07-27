@@ -73,12 +73,12 @@ const legacyWorks = [
 ];
 const works = catalog;
 ---
-<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using 60 public-domain artworks as its visible Mode 7 corpus.">
+<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using 62 public-domain artworks as its visible Mode 7 corpus.">
   <main class="rp-wrap">
     <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
-      65816. Sixty artworks form a 930,035-byte corpus: each is decoded, displayed through Mode 7,
+      65816. Sixty-two artworks form a 957,841-byte corpus: each is decoded, displayed through Mode 7,
       recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
       checksummed, and verified.</p></header>
     <section id="bjg-embed" class="rp-player" aria-label="Live SNES LZSS gallery">
@@ -90,11 +90,11 @@ const works = catalog;
       <p id="banner" class="rp-banner"></p>
     </section>
     <section class="rp-doc"><h2>The benchmark</h2>
-      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>930,035</b> to <b>884,107 bytes</b>,
-      a weighted <b>4.94%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>957,841</b> to <b>914,349 bytes</b>,
+      a weighted <b>4.54%</b> reduction—high-color dither is a deliberately difficult LZSS input.
       Every work is rendered at its largest tile-budget fit.
       Left/Right navigation cancels the current stage immediately and starts the selected work
-      without contaminating its benchmark sample. The final WRAM oracle is <code>0x1D8E</code>.</p>
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0x5CF0</code>.</p>
       <h2>Current candidate corpus</h2><p>All {works.length} current candidates are shown below using
       the actual indexed image prepared for the SNES. Every title links to its canonical museum or
       collection record. The cartridge is being curated back to 8 Mbit (1 MiB), so this visual list
