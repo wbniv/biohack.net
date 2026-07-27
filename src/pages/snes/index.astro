@@ -1,9 +1,15 @@
 ---
 // /snes — gallery of in-browser SNES demos compiled with the llvm-mos-65816 toolchain.
 import Base from '../../layouts/Base.astro';
-import { categories, demos } from '../../data/snes-demos';
+import { getCollection } from 'astro:content';
+import { categories } from '../../data/snes-categories';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+
+// The demo registry lives in the `snes` content collection (one JSON per ROM,
+// which also carries each page's prose for /snes/[slug]). Gallery order = the
+// entries' `order` field (the old snes-demos.ts array order).
+const demos = (await getCollection('snes')).map((e) => e.data).sort((a, b) => a.order - b.order);
 
 // Cache-bust the card thumbnails: /play/* is served `immutable, max-age=1y`, and these <img> URLs
 // have no ?v= (unlike the app.js-loaded ROM/engine assets), so a regenerated preview at the same

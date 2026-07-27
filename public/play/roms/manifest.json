@@ -1242,6 +1242,20 @@
         "want": "0x1D8E",
         "frames": 200000,
         "label": "lzss-gallery"
+      },
+      "touchNav": {
+        "left": [
+          0,
+          70,
+          24,
+          24
+        ],
+        "right": [
+          232,
+          70,
+          24,
+          24
+        ]
       }
     },
     {

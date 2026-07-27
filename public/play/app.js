@@ -85,7 +85,13 @@
     // this the picture is stretched 2x wide.
     var step = w >= 512 ? 2 : 1;
     var ow = (w / step) | 0;
-    var yoff = h >= 232 ? 8 : 0;             // skip the top NTSC overscan (active picture starts at line 8)
+    // Skip the top NTSC overscan when the core hands us a tall buffer. Measured
+    // per-row on this build (2026-07-27, deterministic frames after _bjg_reset):
+    // the 512x240 buffer carries content in rows [8,232) — yoff=0 would add an
+    // 8px black band and crop the bottom rows instead. A 224-line buffer (h<232)
+    // is already flush, so the offset degrades to 0. Supersedes aaacbae, whose
+    // "flush at buffer top" rationale described the headless jgxcheck capture.
+    var yoff = h >= 232 ? 8 : 0;
     var avail = h - yoff;
     var oh = avail < 224 ? avail : 224;
     var heap = Module.HEAPU32;               // re-fetch each frame (may grow)
@@ -177,6 +183,12 @@
         status(runLabel);
         startLoop();
         updateCheckButton(id);
+        // ?verify=1 auto-runs the fidelity self-check once the ROM is up — the
+        // hook CI's headless gate drives (poll #checkresult for PASS/MISMATCH).
+        if (new URLSearchParams(location.search).get("verify") === "1" && !window.__bjgAutoVerified) {
+          window.__bjgAutoVerified = true;
+          setTimeout(verify, 0);
+        }
       })
       .catch(function (e) { status("error: " + e.message); });
   }
@@ -341,7 +353,8 @@
     var verifyEl = document.getElementById("verify");
     if (verifyEl) verifyEl.addEventListener("click", verify);
 
-    // BEGIN SHARED FULLSCREEN CONTROLLER — keep both site copies byte-identical.
+    // BEGIN SHARED FULLSCREEN CONTROLLER — canonical copy lives in bsnes-jg-wasm;
+    // sites vendor this file verbatim via `bsnes-jg-player sync`, never edit a site copy.
     (function () {
       if (window.__bjgFullscreenCleanup) window.__bjgFullscreenCleanup();
 
@@ -469,22 +482,31 @@
 
     window.addEventListener("keydown", onKey(true));
     window.addEventListener("keyup", onKey(false));
-    // The gallery's in-ROM chevrons are sprites, not DOM controls. Hit-test
-    // only their 24x24 logical squares; artwork/status taps must stay inert.
-    function galleryChevronBitAt(x, y) {
-      if (y < 70 || y >= 94) return 0;
-      if (x >= 0 && x < 24) return JOY.Left;
-      if (x >= 232 && x < 256) return JOY.Right;
+    // In-ROM touch controls (e.g. a gallery's sprite chevrons — not DOM
+    // controls). A ROM opts in via its manifest entry:
+    //   "touchNav": { "left": [x, y, w, h], "right": [x, y, w, h] }
+    // in logical canvas pixels; taps inside a rect press that pad button for
+    // one tap-length. Taps elsewhere stay inert. (Was hardcoded to the
+    // lzss-gallery slug; the rects moved into roms/manifest.json.)
+    function touchNavBits() {
+      var meta = romMeta(current);
+      return meta && meta.touchNav ? meta.touchNav : null;
+    }
+    function touchNavBitAt(tn, x, y) {
+      function hit(r) { return r && x >= r[0] && x < r[0] + r[2] && y >= r[1] && y < r[1] + r[3]; }
+      if (hit(tn.left)) return JOY.Left;
+      if (hit(tn.right)) return JOY.Right;
       return 0;
     }
     var touchRelease = 0;
     canvas.addEventListener("pointerdown", function (e) {
-      if (current !== "lzss-gallery") return;
+      var tn = touchNavBits();
+      if (!tn) return;
       var r = canvas.getBoundingClientRect();
       if (!r.width || !r.height) return;
       var x = (e.clientX - r.left) * canvas.width / r.width;
       var y = (e.clientY - r.top) * canvas.height / r.height;
-      var bit = galleryChevronBitAt(x, y);
+      var bit = touchNavBitAt(tn, x, y);
       if (!bit) return;
       e.preventDefault();
       pad |= bit;
@@ -493,7 +515,7 @@
     }, { passive: false });
     ["pointerup", "pointercancel"].forEach(function (name) {
       canvas.addEventListener(name, function () {
-        if (current !== "lzss-gallery") return;
+        if (!touchNavBits()) return;
         pad &= ~(JOY.Left | JOY.Right);
       });
     });

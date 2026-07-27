@@ -1,0 +1,17 @@
+{
+  "order": 2,
+  "slug": "mandel-oop",
+  "title": "Mode 7 Mandelbrot (OOP)",
+  "desc": "The same fixed-point Mandelbrot, rebuilt through the snesgfx object-oriented C interface (Mode 7 as a polymorphic Drawable) instead of procedural calls — a formal verification client proving the OOP pattern costs nothing on real hardware.",
+  "keys": "Self-running — animated build, coarse-to-fine reveal, then Mode 7 spin and zoom",
+  "category": "fractals",
+  "displayMode": 7,
+  "pageTitle": "Mode 7 Mandelbrot (OOP) — bioHACK•NET",
+  "pageDesc": "The same fixed-point Mandelbrot as Mode 7 Mandelbrot, rendered through the snesgfx object-oriented C interface instead of procedural calls — proving the OOP pattern costs nothing on real SNES hardware.",
+  "heading": "Mode 7 Mandelbrot (OOP)",
+  "lede": "The same 64&times;56 fixed-point Mandelbrot as <a href=\"/snes/mandel-display/\">Mode 7\n        Mandelbrot</a> &mdash; rebuilt through the <code>snesgfx</code> object-oriented C interface\n        instead of procedural <code>snes_*</code> calls. A formal verification client: it proves Mode\n        7 works as a polymorphic <code>Drawable</code>, with one coarse-grained virtual dispatch per\n        frame, never inside the per-pixel loop.",
+  "keysHtml": [
+    "Self-running — the fractal reveals coarse-to-fine, then spins and zooms."
+  ],
+  "doc": "<h2>What it is</h2> <p>\nPixel-for-pixel the same computation as <a href=\"/snes/mandel-display/\">Mode 7\n        Mandelbrot</a>, but every hardware interaction is routed through <code>snesgfx</code>'s\n<code>Drawable</code> interface (<code>reserve</code>/<code>emit</code>) instead of direct\n        register writes &mdash; the object-oriented C pattern this toolchain's SNES library is built\n        on.\n</p> <h2>Object-oriented C on the 65816</h2> <table class=\"rp-table rp-wide\"> <thead><tr><th>Item</th><th>What it exercises</th></tr></thead> <tbody><tr><td class=\"rp-mono\">Mode 7 as a Drawable</td><td>The Mandelbrot layer is a MandelLayer struct whose first member is the base Drawable — a C vtable upcast, not a language feature. scene_emit() dispatches through one virtual call per Drawable per frame (never inside the inner mandel_cell loop), proving the OOP-in-C pattern stays coarse-grained.</td></tr><tr><td class=\"rp-mono\">zero bare REG_*/snes_* in main()</td><td>main() never touches a hardware register or a snes_* call directly — every side effect flows through the Drawable interface (reserve/emit), the same discipline the snesgfx library uses for every other demo.</td></tr><tr><td class=\"rp-mono\">same fractal, same answer</td><td>Pixel math, grid, and far-pointer WRAM buffer are identical to mandel-display.c — same corpus_result CRC (0x204F). This program exists purely to prove the OOP path costs nothing behaviourally: procedural and OOP must render bit-identical images.</td></tr><tr><td class=\"rp-mono\">result: correct</td><td>LTO devirtualizes the single-drawable dispatch to zero indirect JMPs; OOP overhead is +338 B (+10%) vs the procedural version for the vtable/upcast scaffolding. host == +mos-a16 on bsnes-jg, -verify-machineinstrs clean.</td></tr></tbody> </table> <p class=\"rp-foot\">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg.\n        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert\n        (image CRC <code>0x204F</code>, matching the procedural version exactly) live in this tab.\n<code>host == +mos-a16</code>, <code>-verify</code> clean.</p>"
+}

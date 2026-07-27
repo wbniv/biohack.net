@@ -1,0 +1,17 @@
+{
+  "order": 78,
+  "slug": "blossom",
+  "title": "Blossom",
+  "desc": "Barry Martin's Hopalong strange attractor rendered live on SNES and flown around with the joypad. Accumulates into a hit-count grid in WRAM, displayed through Mode 7 with an HDMA colour split.",
+  "keys": "← ↑ ↓ → pan · Q/W zoom · X/A attractor · Shift colour",
+  "category": "classics",
+  "displayMode": 7,
+  "pageTitle": "Blossom — bioHACK•NET",
+  "pageDesc": "Barry Martin's Hopalong strange attractor, rendered live on the Super Nintendo in C — play it in your browser.",
+  "heading": "Blossom",
+  "lede": "Barry Martin's <em>Hopalong</em> strange attractor, rendered live on the Super Nintendo and\n        flown around with the joypad — written in C and compiled to a real <code>.sfc</code> ROM with\n        the <a href=\"https://github.com/llvm-mos/llvm-mos\">llvm-mos</a>-based 65816 toolchain. The\n        attractor accumulates into a hit-count grid in WRAM and shows through Mode&nbsp;7, with the\n        parameter panel spliced in by an HDMA mode-switch.",
+  "keysHtml": [
+    "<b>← ↑ ↓ →</b> pan · <b>Q</b>/<b>W</b> zoom · <b>X</b>/<b>A</b> attractor ·\n<b>Shift</b> colour · <b>Enter</b> reset"
+  ],
+  "doc": "<h2>Controls</h2> <table class=\"rp-table\"> <thead><tr><th>Keys</th><th>Action</th></tr></thead> <tbody><tr><td><kbd>← ↑ ↓ →</kbd></td><td>Pan the view</td></tr><tr><td><kbd>Q / W</kbd></td><td>Zoom out / in</td></tr><tr><td><kbd>X / A</kbd></td><td>Next / previous attractor</td></tr><tr><td><kbd>Shift</kbd></td><td>Cycle colour mode</td></tr><tr><td><kbd>Enter</kbd></td><td>Reset view + attractor</td></tr></tbody> </table> <h2>The three attractors</h2> <p>Cycle them with <kbd>X</kbd> (next) / <kbd>A</kbd> (previous) — each is a distinct bounded\n        Hopalong shape; switching re-blooms the cloud (~10&nbsp;s).</p> <table class=\"rp-table rp-wide\"> <thead><tr><th>Name</th><th>a</th><th>b</th><th>c</th></tr></thead> <tbody><tr><td class=\"rp-mono\">CLASSIC</td><td class=\"rp-mono\">7.17</td><td class=\"rp-mono\">8.44</td><td class=\"rp-mono\">2.56</td></tr><tr><td class=\"rp-mono\">DENSE</td><td class=\"rp-mono\">2.00</td><td class=\"rp-mono\">5.00</td><td class=\"rp-mono\">1.00</td></tr><tr><td class=\"rp-mono\">BLOOM</td><td class=\"rp-mono\">−2.00</td><td class=\"rp-mono\">7.00</td><td class=\"rp-mono\">5.00</td></tr></tbody> </table> <h2>Tips</h2> <ul> <li><b>The bloom is the point.</b> After boot or an attractor switch the cloud fills in over\n          ~10&nbsp;s; once it's in, the motion is the palette shimmer.</li> <li><b>Zoom pivots on the attractor</b> (Q/W), so it stays put as you zoom; the D-pad slides it\n          around and <kbd>Enter</kbd> snaps back.</li> <li><b>Colour modes</b> (Shift) rotate where the hue wheel starts — the shape is unchanged.</li> </ul> <p class=\"rp-foot\">Built in C with an LLVM/65816 SNES toolchain, verified pixel-for-pixel against\n        two emulators. The player above is that exact cycle-accurate core — hit <b>Verify fidelity</b>\nto reproduce the build gate's WRAM assert (grid hash <code>0x9047</code>) live in this tab.</p>"
+}

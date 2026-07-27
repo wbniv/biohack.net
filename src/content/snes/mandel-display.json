@@ -1,0 +1,17 @@
+{
+  "order": 1,
+  "slug": "mandel-display",
+  "title": "Mode 7 Mandelbrot",
+  "desc": "A fixed-point Mandelbrot computed live on the 65816 and revealed through Mode 7 — every pixel round-trips through a 24-bit far pointer into high WRAM, the broadest single codegen exercise the publish gate runs. The canonical #321 tester.",
+  "keys": "Self-running — reveals coarse-to-fine, then spins and zooms",
+  "category": "fractals",
+  "displayMode": 7,
+  "pageTitle": "Mode 7 Mandelbrot — bioHACK•NET",
+  "pageDesc": "A fixed-point Mandelbrot, computed on real SNES hardware and revealed through Mode 7 via 24-bit far pointers — the canonical llvm-mos-65816 codegen exercise, playable in your browser.",
+  "heading": "Mode 7 Mandelbrot",
+  "lede": "A 64&times;56 fixed-point Mandelbrot, computed live on the 65816 and revealed through\n        Mode&nbsp;7 &mdash; written in C and compiled to a real <code>.sfc</code> ROM with the\n<a href=\"https://github.com/llvm-mos/llvm-mos\">llvm-mos</a>-based 65816 toolchain. Every\n        pixel round-trips through a 24-bit <b>far pointer</b> into high WRAM (<code>$7E2000</code>),\n        the broadest single codegen exercise the publish gate runs.",
+  "keysHtml": [
+    "Self-running — the fractal reveals coarse-to-fine, then spins and zooms."
+  ],
+  "doc": "<h2>What it is</h2> <p>\nThe escape-time computation runs entirely on the 65816; the finished 64&times;56 grid lives\n        in a high-WRAM buffer reached only through far (24-bit) pointers &mdash; a feature that\n        requires <code>+mos-a16</code>, the 16-bit-accumulator target this compiler adds. A 4&times;\n        affine matrix magnifies the grid to fill the screen, then animates a spin/zoom.\n</p> <h2>#321 &mdash; the canonical codegen tester</h2> <table class=\"rp-table rp-wide\"> <thead><tr><th>Item</th><th>What it exercises</th></tr></thead> <tbody><tr><td class=\"rp-mono\">far pointers (#320/#321)</td><td>The 65816 computes the fractal and FAR-STORES every pixel into a high-WRAM escape buffer at $7E2000 (sta [dp]) — a 24-bit far pointer, only legal under +mos-a16 — then FAR-LOADS it back (lda [dp]) both to upload each line to Mode 7 character VRAM and to CRC the finished image. This is the broadest single codegen exercise the toolchain’s publish gate runs.</td></tr><tr><td class=\"rp-mono\">64×56, N=15</td><td>The escape-time grid is 64×56 pixels, 15 iterations max (15 = interior = black). A 4× affine matrix magnifies it to exactly fill the 256×224 Mode 7 screen, then spins and zooms it.</td></tr><tr><td class=\"rp-mono\">revealed during vblank</td><td>Each coarse refresh is one Mode 7 tile-row (8 image rows = a contiguous 512-byte character region) — a 512-byte WRAM→VRAM DMA fits comfortably inside one vblank, so the picture fills in and later sharpens with no force-blank flash.</td></tr><tr><td class=\"rp-mono\">result: correct</td><td>corpus_result (the finished-image CRC) matches the host reference tools/mandel-render 64 56 15 exactly — host == +mos-a16 on MAME and bsnes-jg, -verify-machineinstrs clean.</td></tr></tbody> </table> <p class=\"rp-foot\">Written in C with the llvm-mos 65816 toolchain and verified against bsnes-jg and MAME.\n        Hit <b>Verify fidelity</b> to reproduce the build gate's WRAM assert\n        (image CRC <code>0x204F</code>) live in this tab.\n<code>host == +mos-a16</code> on MAME and bsnes-jg, <code>-verify</code> clean.</p>"
+}

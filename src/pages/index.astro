@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { demos } from '../data/snes-demos';
+import { getCollection } from 'astro:content';
+const demos = await getCollection('snes'); // count only — the registry lives in the collection
 ---
 <Base>
   <style>

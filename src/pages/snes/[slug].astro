@@ -1,0 +1,51 @@
+---
+// /snes/<slug> — every playable SNES demo page, rendered from the `snes` content
+// collection (src/content/snes/<slug>.json: gallery metadata + the page prose as
+// rendered-HTML strings). Replaces the 114 hand-written per-page .astro files.
+//
+// The player block is <SnesPlayer/> from @wbniv/bsnes-jg-player — it computes the
+// cache-bust map and boots public/play/app.js (vendored by `pnpm run sync-engine`,
+// drift-gated in CI by `bsnes-jg-player sync --check`). ROM selfchecks and touch
+// nav come from public/play/roms/manifest.json, never from the page.
+import { readFileSync } from 'node:fs';
+import { getCollection } from 'astro:content';
+import SnesPlayer from '@wbniv/bsnes-jg-player/SnesPlayer.astro';
+import Base from '../../layouts/Base.astro';
+import { categoryLabel } from '../../data/snes-categories';
+import '../../styles/snes-page.css';
+
+export async function getStaticPaths() {
+  const demos = await getCollection('snes');
+  // The manifest is updated by the publish flow; the collection is manual. A
+  // mismatch means a ROM shipped without its page/gallery entry — fail the build.
+  const manifest = JSON.parse(readFileSync('public/play/roms/manifest.json', 'utf8'));
+  if (manifest.roms.length !== demos.length) {
+    throw new Error(
+      `SNES demo count mismatch: manifest.json has ${manifest.roms.length} ROMs but ` +
+      `src/content/snes/ holds ${demos.length} entries — add the missing one.`
+    );
+  }
+  return demos.map((d) => ({ params: { slug: d.data.slug }, props: { demo: d.data } }));
+}
+
+const { demo } = Astro.props;
+const [firstKeys, ...moreKeys] = demo.keysHtml;
+---
+
+<Base title={demo.pageTitle} description={demo.pageDesc}>
+  <main class="rp-wrap">
+
+    <header class="rp-hero">
+      <h1 class="rp-title" set:html={demo.heading} />
+      <a href={`/snes/#cat-${demo.category}`} class="rp-cat-chip">{categoryLabel(demo.category)}</a>
+      <p class="rp-lede" set:html={demo.lede} />
+    </header>
+
+    <SnesPlayer slug={demo.slug} title={demo.title} keys={firstKeys}>
+      {moreKeys.map((k) => <p class="rp-keys" set:html={k} />)}
+    </SnesPlayer>
+
+    <section class="rp-doc" set:html={demo.doc} />
+
+  </main>
+</Base>

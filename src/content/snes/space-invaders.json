@@ -1,0 +1,16 @@
+{
+  "order": 79,
+  "slug": "space-invaders",
+  "title": "Space Invaders",
+  "desc": "The arcade classic on Super Nintendo — marching aliens, falling bombs, destructible bunkers, bonus UFO. Written in C on an OOP rendering library; boots into a self-playing attract demo.",
+  "keys": "← → move · Z/X/A fire · Enter play · Shift attract",
+  "category": "classics",
+  "pageTitle": "Space Invaders — bioHACK•NET",
+  "pageDesc": "Space Invaders for the Super Nintendo, written in C on an OOP rendering library and compiled with the llvm-mos 65816 toolchain — play it in your browser.",
+  "heading": "Space Invaders",
+  "lede": "The arcade classic, running live on the Super Nintendo — a marching fleet of three alien\n        kinds, falling bombs, destructible bunkers, a bonus UFO and a score/lives HUD, written in C on a small\n<strong>object-oriented rendering library</strong> (<code>snesgfx</code>) and compiled to a\n        real <code>.sfc</code> ROM with the\n<a href=\"https://github.com/llvm-mos/llvm-mos\">llvm-mos</a>-based 65816 toolchain. Sprites are\n        hardware OAM objects; the art is <a href=\"https://github.com/alekmaul/pvsneslib\">gfx4snes</a>\ntiles linked straight into ROM. It boots into a self-playing demo — press <b>Enter</b> to take\n        over.",
+  "keysHtml": [
+    "<b>← →</b> move · <b>Z</b>/<b>X</b>/<b>A</b> fire · <b>Enter</b> play · <b>Shift</b> attract"
+  ],
+  "doc": "<h2>Controls</h2> <table class=\"rp-table\"> <thead><tr><th>Keys</th><th>Action</th></tr></thead> <tbody><tr><td><kbd>← →</kbd></td><td>Move the cannon</td></tr><tr><td><kbd>Z / X / A</kbd></td><td>Fire</td></tr><tr><td><kbd>Enter</kbd></td><td>Start — take over the demo</td></tr><tr><td><kbd>Shift</kbd></td><td>Select — back to the attract demo</td></tr></tbody> </table> <h2>How it's built</h2> <p>\nThe game is one C program on <code>snesgfx</code>, a header-only OOP-in-C library: a\n<code>Display</code> owns the boot sequence and a v-blank-gated DMA upload queue; a\n<code>SpriteSet</code> wraps the 544-byte OAM (hardware sprite) table; the fleet, player,\n        bullets and UFO are plain typed objects drawn into it. No far pointers, so it builds in three\n        compiler modes — default 8-bit, 16-bit accumulator (<code>+mos-a16</code>) and 16-bit index\n        (<code>+mos-xy16</code>).\n</p> <h2>Verify fidelity</h2> <p>\nThe whole game logic is a portable, deterministic simulation shared between the SNES ROM and a\n        host program. The demo plays a fixed scripted run and folds the evolving game state into a\n        CRC. <strong>Verify fidelity</strong> reruns that here in your tab and checks the CRC equals\n<code>0x9D57</code> — the same value asserted on the host and on two emulators (MAME and\n        bsnes-jg) across all three compiler modes in the build gate. Press it to reproduce the\n        differential check live.\n</p>"
+}

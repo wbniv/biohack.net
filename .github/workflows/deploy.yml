@@ -30,6 +30,21 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # The player engine (app.js + cores/*) is vendored from @wbniv/bsnes-jg-player by
+      # `pnpm run sync-engine`. Byte-for-byte drift against the installed package fails
+      # the deploy — this replaces the old "keep site copies identical by hand" discipline.
+      - name: Check SNES engine drift vs @wbniv/bsnes-jg-player
+        run: npx bsnes-jg-player sync --check public/play
+
+      # Every collection entry must have built a page (and nothing else may squat in /snes/).
+      - name: Check SNES page count
+        run: |
+          set -euo pipefail
+          PAGES=$(find dist/snes -mindepth 2 -name index.html | wc -l)
+          ROMS=$(node -p 'JSON.parse(require("fs").readFileSync("public/play/roms/manifest.json","utf8")).roms.length')
+          [ "$PAGES" -eq "$ROMS" ] || { echo "::error::dist/snes has $PAGES pages but manifest has $ROMS ROMs"; exit 1; }
+          echo "$PAGES SNES pages == $ROMS ROMs"
+
       - name: Check links
         run: node scripts/check-links.js --skip-external --dir dist
 
@@ -45,8 +60,8 @@ jobs:
           for probe in requestFullscreen fullscreenchange; do
             grep -q "$probe" "$app" || {
               echo "::error::$app has no '$probe' — the Fullscreen button would be dead on every"
-              echo "::error::SNES page. Restore the handler in public/play/app.js (source of truth:"
-              echo "::error::llvm-mos-65816/.claude/skills/snes-rom-page/engine/app.js)."
+              echo "::error::SNES page. The engine is vendored from @wbniv/bsnes-jg-player —"
+              echo "::error::run 'pnpm run sync-engine' (source of truth: bsnes-jg-wasm web/app.js)."
               exit 1
             }
           done
