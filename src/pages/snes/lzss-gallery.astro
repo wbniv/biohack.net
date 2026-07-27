@@ -34,15 +34,25 @@ const works = [
   ['After Gao Kegong','Scholar in Landscape','https://www.artic.edu/artworks/12314/scholar-in-landscape'],
   ['Claude Monet','Houses of Parliament, London','https://www.artic.edu/artworks/16584/houses-of-parliament-london'],
   ['John Singer Sargent','Thistles','https://www.artic.edu/artworks/145807/thistles'],
-  ['Vincent van Gogh','The Starry Night','https://www.moma.org/collection/works/79802']
+  ['Vincent van Gogh','The Starry Night','https://www.moma.org/collection/works/79802'],
+  ['Aert van der Neer','River View by Moonlight','https://id.rijksmuseum.nl/200107781'],
+  ['Jacob van Ruisdael','Mountainous Landscape with Waterfall','https://id.rijksmuseum.nl/200108484'],
+  ['Meindert Hobbema','Wooded Landscape with Merrymakers in a Cart','https://id.rijksmuseum.nl/200445746'],
+  ['Jan van Goyen','Panoramic View of a Wide River','https://id.rijksmuseum.nl/200109337'],
+  ['Salomon van Ruysdael','Sailing Vessels on an Inland Body of Water','https://id.rijksmuseum.nl/20026241'],
+  ['Willem van de Velde','Ships near the Coast during a Calm','https://id.rijksmuseum.nl/20026835'],
+  ['Pieter de Hooch','Interior with Women beside a Linen Cupboard','https://id.rijksmuseum.nl/2003051'],
+  ['Pieter Saenredam','Interior of the Sint-Odulphuskerk in Assendelft','https://id.rijksmuseum.nl/200107965'],
+  ['Rachel Ruysch','Still Life with Flowers on a Marble Tabletop','https://id.rijksmuseum.nl/20027537'],
+  ['Jan Davidsz. de Heem','Still Life with Flowers in a Glass Vase','https://id.rijksmuseum.nl/20029045']
 ];
 ---
-<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using 26 public-domain artworks as its visible Mode 7 corpus.">
+<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using 36 public-domain artworks as its visible Mode 7 corpus.">
   <main class="rp-wrap">
     <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
-      65816. Twenty-six artworks form a 404,576-byte corpus: each is decoded, displayed through Mode 7,
+      65816. Thirty-six artworks form a 558,432-byte corpus: each is decoded, displayed through Mode 7,
       recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
       checksummed, and verified.</p></header>
     <section id="bjg-embed" class="rp-player" aria-label="Live SNES LZSS gallery">
@@ -50,21 +60,21 @@ const works = [
       <div class="rp-row"><span id="status" class="rp-status">loading core…</span><span id="checkresult" class="rp-badge"></span>
       <button id="verify" class="rp-btn" disabled>Verify benchmark</button><button id="fullscreen" class="rp-btn">Fullscreen</button></div>
       <p class="rp-keys">Left/Right: previous/next work · the meter advances by bytes processed; D/C/V are measured frames.</p>
-      <p class="rp-keys"><b>Phone:</b> tap the left or right half of the picture to move between works.</p>
+      <p class="rp-keys"><b>Pointer:</b> tap or click the visible Previous/Next chevron to move between works.</p>
       <p id="banner" class="rp-banner"></p>
     </section>
     <section class="rp-doc"><h2>The benchmark</h2>
-      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>404,576</b> to <b>400,142 bytes</b>,
-      a weighted <b>1.10%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>558,432</b> to <b>544,951 bytes</b>,
+      a weighted <b>2.41%</b> reduction—high-color dither is a deliberately difficult LZSS input.
       Every work is rendered at its largest tile-budget fit.
       Left/Right navigation cancels the current stage immediately and starts the selected work
-      without contaminating its benchmark sample. The final WRAM oracle is <code>0x3D44</code>.</p>
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0xBA3A</code>.</p>
       <h2>Public-domain corpus</h2><p>The original ten Art Institute of Chicago images are CC0.
       Each added museum scan is explicitly marked public domain; every title links to its canonical
       museum or collection record.</p>
       <table class="rp-table"><thead><tr><th>Artist</th><th>Work</th></tr></thead>
       <tbody>{works.map(([a,w,url])=><tr><td>{url ? <a href={url}>{a}</a> : a}</td><td>{url ? <a href={url}>{w}</a> : w}</td></tr>)}</tbody></table>
-      <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all 26 Mode 7 gallery artworks" loading="lazy" />
+      <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all 36 Mode 7 gallery artworks" loading="lazy" />
       <p class="rp-foot">8 Mbit (1 MiB) LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
       deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
     </section>
