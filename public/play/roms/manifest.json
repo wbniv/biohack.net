@@ -1113,17 +1113,6 @@
       }
     },
     {
-      "id": "trimerge",
-      "title": "Three-Way Merge Diff",
-      "selfcheck": {
-        "off": "0x20",
-        "len": 2,
-        "want": "0xCCCC",
-        "frames": 500,
-        "label": "trimerge"
-      }
-    },
-    {
       "id": "keycmp64",
       "title": "64-bit Multi-Key Record Sort",
       "selfcheck": {
@@ -1253,6 +1242,17 @@
         "want": "0x3D44",
         "frames": 200000,
         "label": "lzss-gallery"
+      }
+    },
+    {
+      "id": "trimerge",
+      "title": "Three-Way Merge Diff",
+      "selfcheck": {
+        "off": "0x39",
+        "len": 2,
+        "want": "0xCCCC",
+        "frames": 500,
+        "label": "trimerge"
       }
     }
   ]
