@@ -25,7 +25,11 @@ export async function getStaticPaths() {
       `src/content/snes/ holds ${demos.length} entries — add the missing one.`
     );
   }
-  return demos.map((d) => ({ params: { slug: d.data.slug }, props: { demo: d.data } }));
+  // Entries without prose fields keep their own hand-written page (lzss-gallery,
+  // whose corpus gallery derives from a catalog at build time) — skip them here.
+  return demos
+    .filter((d) => d.data.doc !== undefined)
+    .map((d) => ({ params: { slug: d.data.slug }, props: { demo: d.data } }));
 }
 
 const { demo } = Astro.props;

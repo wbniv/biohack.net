@@ -18,12 +18,16 @@ const snes = defineCollection({
     keys: z.string(),           // gallery card key summary
     category: z.enum(categoryIds),
     displayMode: z.number().optional(),
-    pageTitle: z.string(),      // <title> / og:title
-    pageDesc: z.string(),       // meta description
-    heading: z.string(),        // h1 inner HTML
-    lede: z.string(),           // hero paragraph inner HTML
-    keysHtml: z.array(z.string()), // key-help line(s) under the player, inner HTML
-    doc: z.string(),            // the whole notes section inner HTML
+    // Prose fields — present for every entry rendered by [slug].astro. An entry
+    // MAY omit them when the demo keeps its own hand-written page (lzss-gallery:
+    // its gallery/counts derive from src/data/lzss-gallery-catalog.json at build
+    // time); such entries only feed the /snes/ gallery card + the count guard.
+    pageTitle: z.string().optional(),   // <title> / og:title
+    pageDesc: z.string().optional(),    // meta description
+    heading: z.string().optional(),     // h1 inner HTML
+    lede: z.string().optional(),        // hero paragraph inner HTML
+    keysHtml: z.array(z.string()).optional(), // key-help line(s) under the player, inner HTML
+    doc: z.string().optional(),         // the whole notes section inner HTML
   }),
 });
 

@@ -1,0 +1,101 @@
+---
+// /snes/lzss-gallery — the one SNES demo page that stays a real .astro file: its
+// corpus gallery + counts derive from src/data/lzss-gallery-catalog.json at build
+// time (curation edits the catalog, not prose), which a static content-collection
+// entry can't express. The [slug].astro route excludes this slug (a static route
+// would shadow it anyway); the collection entry still feeds the /snes/ gallery
+// card and the count guard.
+//
+// The player block is <SnesPlayer/> from @wbniv/bsnes-jg-player (bust map + boot
+// script live there); chevron touch nav + the 200000-frame benchmark selfcheck
+// come from public/play/roms/manifest.json.
+import { getCollection } from 'astro:content';
+import SnesPlayer from '@wbniv/bsnes-jg-player/SnesPlayer.astro';
+import Base from '../../layouts/Base.astro';
+import catalog from '../../data/lzss-gallery-catalog.json';
+import '../../styles/snes-page.css';
+
+// The gallery card's desc (collection entry) bakes the artwork count as text.
+// Guard it against catalog drift so a stale count can't ship (the reason the
+// old snes-demos.ts derived it dynamically — see commit 304c27b).
+const entry = (await getCollection('snes')).find((e) => e.data.slug === 'lzss-gallery');
+if (!entry || !entry.data.desc.includes(`${catalog.length} public-domain artworks`)) {
+  throw new Error(
+    `lzss-gallery: collection desc is out of sync with the catalog (${catalog.length} works) — ` +
+    'update src/content/snes/lzss-gallery.json.'
+  );
+}
+
+const works = catalog;
+---
+<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description={`An on-SNES LZSS compressor/decompressor benchmark using ${catalog.length} public-domain artworks as its visible Mode 7 corpus.`}>
+  <main class="rp-wrap">
+    <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
+      <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
+      <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
+      65816. {catalog.length} artworks form a 957,841-byte corpus: each is decoded, displayed through Mode 7,
+      recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
+      checksummed, and verified.</p></header>
+
+    <SnesPlayer slug="lzss-gallery" title="LZSS Mode 7 Gallery" verifyLabel="Verify benchmark"
+      keys="Left/Right: previous/next work · the meter advances by bytes processed; D/C/V are measured frames.">
+      <p class="rp-keys"><b>Pointer:</b> tap or click the visible Previous/Next chevron to move between works.</p>
+    </SnesPlayer>
+
+    <section class="rp-doc"><h2>The benchmark</h2>
+      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>957,841</b> to <b>914,349 bytes</b>,
+      a weighted <b>4.54%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      Every work is rendered at its largest tile-budget fit.
+      Left/Right navigation cancels the current stage immediately and starts the selected work
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0x5CF0</code>.</p>
+      <h2>Current candidate corpus</h2><p>All {works.length} current candidates are shown below using
+      the actual indexed image prepared for the SNES. Every title links to its canonical museum or
+      collection record. The cartridge is being curated back to 8 Mbit (1 MiB), so this visual list
+      is intentionally published before the next ROM.</p>
+      <div class="rp-gallery">
+        {works.map((work)=><article class="rp-work">
+          <a class="rp-work-image" href={work.object_url}><img src={work.preview} alt={`${work.title} by ${work.artist}`} loading="lazy" /></a>
+          <div class="rp-work-caption">
+            <h3><a href={work.object_url}>{work.title}</a></h3>
+            <p>{work.artist}<br /><span>{work.date}</span></p>
+          </div>
+        </article>)}
+      </div>
+      <p class="rp-foot">8 Mbit (1 MiB) LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
+      deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
+    </section>
+  </main>
+</Base>
+
+<style>
+  /* Page-specific styles only — the shared .rp-* player/hero/doc styles come from
+     src/styles/snes-page.css (global) + the package's player.css. */
+  .rp-gallery {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin: 1rem 0 2rem;
+  }
+  .rp-work {
+    display: grid; grid-template-rows: 168px auto; position: relative; min-width: 0;
+    overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; background: #151820;
+  }
+  .rp-work-image {
+    display: grid; place-items: center; position: static; width: 100%; height: 168px;
+    overflow: hidden; background: #000;
+  }
+  .rp-work img { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+  .rp-work-caption {
+    position: static; z-index: 1; min-height: 6.25rem; padding: .75rem .8rem .85rem;
+    color: var(--ink); background: #151820;
+  }
+  .rp-work h3 {
+    position: static; margin: 0 0 .3rem; font-size: .9rem; line-height: 1.35; font-weight: 600;
+  }
+  .rp-work p { position: static; margin: 0; color: var(--ink-dim); font-size: .78rem; line-height: 1.45; }
+  .rp-work span { color: #7dd3fc; }
+  @media (max-width: 480px) {
+    .rp-gallery { grid-template-columns: 1fr; }
+    .rp-work { grid-template-rows: min(65vw, 220px) auto; }
+    .rp-work-image { height: 100%; }
+    .rp-work-caption { min-height: 0; }
+  }
+</style>
