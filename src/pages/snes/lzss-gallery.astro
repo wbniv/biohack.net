@@ -101,9 +101,11 @@ const works = catalog;
       is intentionally published before the next ROM.</p>
       <div class="rp-gallery">
         {works.map((work)=><article class="rp-work">
-          <a href={work.object_url}><img src={work.preview} alt={`${work.title} by ${work.artist}`} loading="lazy" /></a>
-          <h3><a href={work.object_url}>{work.title}</a></h3>
-          <p>{work.artist}<br /><span>{work.date}</span></p>
+          <a class="rp-work-image" href={work.object_url}><img src={work.preview} alt={`${work.title} by ${work.artist}`} loading="lazy" /></a>
+          <div class="rp-work-caption">
+            <h3><a href={work.object_url}>{work.title}</a></h3>
+            <p>{work.artist}<br /><span>{work.date}</span></p>
+          </div>
         </article>)}
       </div>
       <p class="rp-foot">8 Mbit (1 MiB) LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
@@ -217,17 +219,28 @@ const works = catalog;
     gap: 1rem; margin: 1rem 0 2rem;
   }
   .rp-work {
-    min-width: 0; overflow: hidden; border: 1px solid var(--rule); border-radius: 6px;
-    background: var(--bg-soft, #151820);
+    display: grid; grid-template-rows: 168px auto; position: relative; min-width: 0;
+    overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; background: #151820;
   }
-  .rp-work > a {
-    display: grid; place-items: center; height: 168px; background: #000;
+  .rp-work-image {
+    display: grid; place-items: center; position: static; width: 100%; height: 168px;
+    overflow: hidden; background: #000;
   }
   .rp-work img { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
-  .rp-work h3 {
-    margin: .75rem .8rem .2rem; font-size: .9rem; line-height: 1.35; font-weight: 600;
+  .rp-work-caption {
+    position: static; z-index: 1; min-height: 6.25rem; padding: .75rem .8rem .85rem;
+    color: var(--ink); background: #151820;
   }
-  .rp-work p { margin: 0 .8rem .85rem; color: var(--ink-dim); font-size: .78rem; line-height: 1.45; }
+  .rp-work h3 {
+    position: static; margin: 0 0 .3rem; font-size: .9rem; line-height: 1.35; font-weight: 600;
+  }
+  .rp-work p { position: static; margin: 0; color: var(--ink-dim); font-size: .78rem; line-height: 1.45; }
   .rp-work span { opacity: .75; }
+  @media (max-width: 480px) {
+    .rp-gallery { grid-template-columns: 1fr; }
+    .rp-work { grid-template-rows: min(65vw, 220px) auto; }
+    .rp-work-image { height: 100%; }
+    .rp-work-caption { min-height: 0; }
+  }
   .rp-foot { margin-top: 1.5rem; font-size: 13px; color: var(--ink-dim); }
 </style>
