@@ -9,18 +9,27 @@ const bust: Record<string,string> = {};
 for (const f of files) try { bust[f]=createHash('sha256').update(readFileSync(`${PLAY}/${f}`)).digest('hex').slice(0,12); } catch {}
 const appV=bust['app.js']??'';
 const works = [
-  ['Katsushika Hokusai','Under the Wave off Kanagawa'],['Vincent van Gogh','The Bedroom'],
-  ['Georges Seurat','A Sunday on La Grande Jatte — 1884'],['Pierre-Auguste Renoir','Two Sisters (On the Terrace)'],
-  ['Claude Monet','Water Lilies'],['Paul Cézanne','The Basket of Apples'],['Claude Monet','Stack of Wheat'],
-  ['Vincent van Gogh','Self-Portrait'],['Gustave Caillebotte','Paris Street; Rainy Day'],['Claude Monet','Poppy Field (Giverny)']
+  ['Katsushika Hokusai','Under the Wave off Kanagawa'], ['Vincent van Gogh','The Bedroom'],
+  ['Georges Seurat','A Sunday on La Grande Jatte — 1884'], ['Pierre-Auguste Renoir','Two Sisters (On the Terrace)'],
+  ['Claude Monet','Water Lilies'], ['Paul Cézanne','The Basket of Apples'], ['Claude Monet','Stack of Wheat'],
+  ['Vincent van Gogh','Self-Portrait'], ['Gustave Caillebotte','Paris Street; Rainy Day'], ['Claude Monet','Poppy Field (Giverny)'],
+  ['Hieronymus Bosch','The Garden of Earthly Delights','https://www.museodelprado.es/en/the-collection/art-work/the-garden-of-earthly-delights-triptych/02388242-6d6a-4e9e-a992-e1311eab3609'],
+  ['Edvard Munch','The Scream','https://www.nasjonalmuseet.no/en/collection/object/NG.M.00939'],
+  ['Francisco de Goya','The Third of May 1808','https://www.museodelprado.es/en/the-collection/art-work/the-3rd-of-may-1808-in-madrid-or-the-executions/5e177409-2993-4240-97fb-847a02c6496c'],
+  ['Gustav Klimt','The Kiss (Lovers)','https://www.belvedere.at/en/kiss-gustav-klimt'],
+  ['Johannes Vermeer','View of Delft','https://www.mauritshuis.nl/en/our-collection/artworks/92-view-of-delft'],
+  ['Jacob van Ruisdael','The Windmill at Wijk bij Duurstede','https://www.rijksmuseum.nl/en/collection/SK-C-211'],
+  ['Ambrosius Bosschaert the Elder','Flower Still Life','https://www.getty.edu/art/collection/object/103REY'],
+  ['Piet Mondriaan','Tableau No. VII','https://commons.wikimedia.org/wiki/File:Piet_Mondrian_Tableau_N_VII.jpg'],
+  ['Hendrick Avercamp','Winter Landscape with Ice Skaters','https://www.rijksmuseum.nl/en/collection/SK-A-1718']
 ];
 ---
-<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using ten public-domain artworks as its visible Mode 7 corpus.">
+<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using nineteen public-domain artworks as its visible Mode 7 corpus.">
   <main class="rp-wrap">
     <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
-      65816. Ten artworks form a 154,840-byte corpus: each is decoded, displayed through Mode 7,
+      65816. Nineteen artworks form a 295,880-byte corpus: each is decoded, displayed through Mode 7,
       recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
       checksummed, and verified.</p></header>
     <section id="bjg-embed" class="rp-player" aria-label="Live SNES LZSS gallery">
@@ -28,23 +37,27 @@ const works = [
       <div class="rp-row"><span id="status" class="rp-status">loading core…</span><span id="checkresult" class="rp-badge"></span>
       <button id="verify" class="rp-btn" disabled>Verify benchmark</button><button id="fullscreen" class="rp-btn">Fullscreen</button></div>
       <p class="rp-keys">Left/Right: previous/next work · the meter advances by bytes processed; D/C/V are measured frames.</p>
+      <p class="rp-keys"><b>Phone:</b> tap the left or right half of the picture to move between works.</p>
       <p id="banner" class="rp-banner"></p>
     </section>
     <section class="rp-doc"><h2>The benchmark</h2>
-      <p>The aspect-preserving 219-color corpus compresses from <b>154,840</b> to <b>154,761 bytes</b>,
-      a weighted <b>0.05%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>295,880</b> to <b>288,631 bytes</b>,
+      a weighted <b>2.45%</b> reduction—high-color dither is a deliberately difficult LZSS input.
       Every work is rendered at its largest tile-budget fit.
       Left/Right navigation cancels the current stage immediately and starts the selected work
-      without contaminating its benchmark sample. The final WRAM oracle is <code>0xBFAB</code>.</p>
-      <h2>Public-domain corpus</h2><p>All images carry the Art Institute of Chicago's CC0 Public
-      Domain Designation. Credits are retained even though CC0 does not require attribution.</p>
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0x9497</code>.</p>
+      <h2>Public-domain corpus</h2><p>The original ten Art Institute of Chicago images are CC0.
+      Each added museum scan is explicitly marked public domain; linked titles retain the canonical
+      object-page provenance.</p>
       <table class="rp-table"><thead><tr><th>Artist</th><th>Work</th></tr></thead>
-      <tbody>{works.map(([a,w])=><tr><td>{a}</td><td>{w}</td></tr>)}</tbody></table>
-      <p class="rp-foot">512 KiB LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
+      <tbody>{works.map(([a,w,url])=><tr><td>{a}</td><td>{url ? <a href={url}>{w}</a> : w}</td></tr>)}</tbody></table>
+      <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all nineteen Mode 7 gallery artworks" loading="lazy" />
+      <p class="rp-foot">1 MiB LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
       deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
     </section>
   </main>
 </Base>
+<style>.rp-contact{display:block;width:min(100%,512px);height:auto;margin:1.5rem auto;border:1px solid #ffffff24;background:#000}</style>
 <script is:inline define:vars={{bust,appV}}>
 function boot(){window.BJG_BASE='/play/';window.BJG_DEFAULT_ROM='lzss-gallery';window.BJG_BUST=bust;
 var s=document.createElement('script');s.id='bjg-appjs';s.src='/play/app.js'+(appV?'?v='+appV:'');document.body.appendChild(s)}
