@@ -20,16 +20,17 @@ const works = [
   ['Johannes Vermeer','View of Delft','https://www.mauritshuis.nl/en/our-collection/artworks/92-view-of-delft'],
   ['Jacob van Ruisdael','The Windmill at Wijk bij Duurstede','https://www.rijksmuseum.nl/en/collection/SK-C-211'],
   ['Ambrosius Bosschaert the Elder','Flower Still Life','https://www.getty.edu/art/collection/object/103REY'],
+  ['Vincent van Gogh','Sunflowers','https://www.nationalgallery.org.uk/paintings/vincent-van-gogh-sunflowers'],
   ['Piet Mondriaan','Tableau No. VII','https://commons.wikimedia.org/wiki/File:Piet_Mondrian_Tableau_N_VII.jpg'],
   ['Hendrick Avercamp','Winter Landscape with Ice Skaters','https://www.rijksmuseum.nl/en/collection/SK-A-1718']
 ];
 ---
-<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using nineteen public-domain artworks as its visible Mode 7 corpus.">
+<Base title="LZSS Mode 7 Gallery — bioHACK•NET" description="An on-SNES LZSS compressor/decompressor benchmark using twenty public-domain artworks as its visible Mode 7 corpus.">
   <main class="rp-wrap">
     <header class="rp-hero"><h1 class="rp-title">LZSS Mode 7 Gallery</h1>
       <a href="/snes/#cat-algorithms" class="rp-cat-chip">Algorithms &amp; Data</a>
       <p class="rp-lede">A complete LZSS compressor and decompressor benchmark running on the 3.58 MHz
-      65816. Nineteen artworks form a 295,880-byte corpus: each is decoded, displayed through Mode 7,
+      65816. Twenty artworks form a 311,784-byte corpus: each is decoded, displayed through Mode 7,
       recompressed on the SNES, compared byte-for-byte with the host golden stream, decoded again,
       checksummed, and verified.</p></header>
     <section id="bjg-embed" class="rp-player" aria-label="Live SNES LZSS gallery">
@@ -41,17 +42,17 @@ const works = [
       <p id="banner" class="rp-banner"></p>
     </section>
     <section class="rp-doc"><h2>The benchmark</h2>
-      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>295,880</b> to <b>288,631 bytes</b>,
-      a weighted <b>2.45%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>311,784</b> to <b>304,426 bytes</b>,
+      a weighted <b>2.36%</b> reduction—high-color dither is a deliberately difficult LZSS input.
       Every work is rendered at its largest tile-budget fit.
       Left/Right navigation cancels the current stage immediately and starts the selected work
-      without contaminating its benchmark sample. The final WRAM oracle is <code>0x9497</code>.</p>
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0xB5D7</code>.</p>
       <h2>Public-domain corpus</h2><p>The original ten Art Institute of Chicago images are CC0.
       Each added museum scan is explicitly marked public domain; linked titles retain the canonical
       object-page provenance.</p>
       <table class="rp-table"><thead><tr><th>Artist</th><th>Work</th></tr></thead>
       <tbody>{works.map(([a,w,url])=><tr><td>{a}</td><td>{url ? <a href={url}>{w}</a> : w}</td></tr>)}</tbody></table>
-      <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all nineteen Mode 7 gallery artworks" loading="lazy" />
+      <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all twenty Mode 7 gallery artworks" loading="lazy" />
       <p class="rp-foot">1 MiB LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
       deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
     </section>
