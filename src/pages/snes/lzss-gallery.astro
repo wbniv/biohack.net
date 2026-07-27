@@ -57,7 +57,7 @@ const works = [
       Each added museum scan is explicitly marked public domain; every title links to its canonical
       museum or collection record.</p>
       <table class="rp-table"><thead><tr><th>Artist</th><th>Work</th></tr></thead>
-      <tbody>{works.map(([a,w,url])=><tr><td>{a}</td><td>{url ? <a href={url}>{w}</a> : w}</td></tr>)}</tbody></table>
+      <tbody>{works.map(([a,w,url])=><tr><td>{url ? <a href={url}>{a}</a> : a}</td><td>{url ? <a href={url}>{w}</a> : w}</td></tr>)}</tbody></table>
       <img class="rp-contact" src="/play/preview/lzss-gallery-contact-sheet.png" alt="Contact sheet of all twenty Mode 7 gallery artworks" loading="lazy" />
       <p class="rp-foot">1 MiB LoROM · +mos-a16 · Mode 7 artwork / HDMA Mode 1 caption split ·
       deterministic 4 KiB-window LZSS · exact target/host stream equality.</p>
