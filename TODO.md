@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] update drdevtools link to github
+- [T1] update drdevtools link to github
 
 ## Done
 
