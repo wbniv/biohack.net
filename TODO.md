@@ -1,12 +1,28 @@
-# TODO
+# TODO — biohack.net
 
-- [T1] update drdevtools link to github
+**Status markers:** `[ ]` open · `[wip]` in progress · `[verify]` implemented, verification
+not yet run+recorded · `[x]` done (`## Done` only). The bracket also carries a delegation
+tier, tier last — `[T4]`, `[wip T2]`, `[verify T3]`. See `~/CLAUDE.md` — Delegation.
+
+## Open
+
+### Housekeeping
+
+- [T1] **Update drdevtools link to GitHub** — point the site's drdevtools reference at the
+  GitHub repo.
+
+## Watch
+
+_Nothing being watched._
+
+## Parked
+
+_Nothing parked._
 
 ## Done
 
-- [x] move SNES demos from `/{slug}/` → `/snes/{slug}/`; old URLs redirect ([plan](docs/plans/2026-06-27-snes-demos-under-snes-prefix.md))
-- [x] willnorris.me → biohack.net/cv/ 301 redirect, live & verified, via new `cloudflare-redirect` skill ([plan](docs/plans/2026-06-13-cloudflare-redirect-skill-willnorris-me-biohack-ne.md))
-
+- [x] 2026-06-27 — [snes-url-prefix] Moved SNES demos from `/{slug}/` to `/snes/{slug}/`; old URLs 301-redirect. See [plan](docs/plans/2026-06-27-snes-demos-under-snes-prefix.md).
+- [x] 2026-06-13 — [willnorris-redirect] willnorris.me → biohack.net/cv/ 301, live and verified, via the new `cloudflare-redirect` skill. See [plan](docs/plans/2026-06-13-cloudflare-redirect-skill-willnorris-me-biohack-ne.md).
 
 ## Inbox — auto-captured plan deferrals
 
