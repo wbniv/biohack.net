@@ -43,15 +43,22 @@ const works = catalog;
     </SnesPlayer>
 
     <section class="rp-doc"><h2>The benchmark</h2>
-      <p>The aspect-preserving, up-to-219-color corpus compresses from <b>957,841</b> to <b>914,349 bytes</b>,
-      a weighted <b>4.54%</b> reduction—high-color dither is a deliberately difficult LZSS input.
+      <p>The aspect-preserving, 223-color corpus compresses from <b>957,841</b> to <b>915,792 bytes</b>,
+      a weighted <b>4.39%</b> reduction—high-color dither is a deliberately difficult LZSS input.
       Every work is rendered at its largest tile-budget fit.
       Left/Right navigation cancels the current stage immediately and starts the selected work
-      without contaminating its benchmark sample. The final WRAM oracle is <code>0x5CF0</code>.</p>
+      without contaminating its benchmark sample. The final WRAM oracle is <code>0x839F</code>.</p>
+      <h2>Inside the cartridge</h2>
+      <p>The final linker map is packed with <code>romopt</code>: compressed artwork streams,
+      512-byte palettes, and shared fonts are placed as indivisible items into the first 32 KiB
+      LoROM bank where they fit. Hover a colored segment for its exact address range, or
+      <a href="/snes/lzss-gallery/romopt-layout.html">open the full cartridge layout</a>.</p>
+      <iframe class="rp-rom-layout" src="/snes/lzss-gallery/romopt-layout.html"
+        title="Interactive romopt cartridge bank layout" loading="lazy"></iframe>
       <h2>Current candidate corpus</h2><p>All {works.length} current candidates are shown below using
       the actual indexed image prepared for the SNES. Every title links to its canonical museum or
-      collection record. The cartridge is being curated back to 8 Mbit (1 MiB), so this visual list
-      is intentionally published before the next ROM.</p>
+      collection record. This visual list and the cartridge layout above reflect the current
+      8 Mbit (1 MiB) ROM.</p>
       <div class="rp-gallery">
         {works.map((work)=><article class="rp-work">
           <a class="rp-work-image" href={work.object_url}><img src={work.preview} alt={`${work.title} by ${work.artist}`} loading="lazy" /></a>
@@ -92,7 +99,12 @@ const works = catalog;
   }
   .rp-work p { position: static; margin: 0; color: var(--ink-dim); font-size: .78rem; line-height: 1.45; }
   .rp-work span { color: #7dd3fc; }
+  .rp-rom-layout {
+    display: block; width: 100%; height: min(76vh, 780px); margin: 1rem 0 2rem;
+    border: 1px solid var(--rule); border-radius: 8px; background: #100f0d;
+  }
   @media (max-width: 480px) {
+    .rp-rom-layout { height: 680px; }
     .rp-gallery { grid-template-columns: 1fr; }
     .rp-work { grid-template-rows: min(65vw, 220px) auto; }
     .rp-work-image { height: 100%; }
