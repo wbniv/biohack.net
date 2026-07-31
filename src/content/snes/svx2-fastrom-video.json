@@ -1,0 +1,17 @@
+{
+  "order": 117,
+  "slug": "svx2-fastrom-video",
+  "title": "SVX2 FastROM Video Proof",
+  "desc": "A real NASA camera frame compressed with SVX2, staged and decoded on the 65816, then displayed through Mode 7. The measured FastROM pipeline reaches 60.5–64.7 fps; this compact proof ROM holds one byte-verified frame.",
+  "keys": "Self-running — decodes and displays the verified Artemis launch frame",
+  "category": "rendering",
+  "displayMode": 7,
+  "pageTitle": "SVX2 FastROM Video Proof — bioHACK•NET",
+  "pageDesc": "Run a real SNES FastROM that decodes an SVX2-compressed NASA Artemis camera frame on the 65816 and displays it through Mode 7.",
+  "heading": "SVX2 FastROM Video Proof",
+  "lede": "A real NASA Artemis launch camera frame, compressed as <b>SVX2</b>, decoded by hand-tuned 65816 assembly, and displayed through Mode&nbsp;7 in a genuine 32&nbsp;KiB FastROM cartridge image.",
+  "keysHtml": [
+    "Self-running &mdash; the ROM decodes, verifies, and holds the Artemis launch frame."
+  ],
+  "doc": "<h2>What this proves</h2><p>The cartridge performs the real ROM-segment staging DMA, decodes a representative SVX2 delta packet, compares all 4,480 output bytes with the host oracle, uploads the result to Mode 7 character VRAM, and only then releases force blank.</p><h2>60 fps result</h2><p>The separate VBlank-counted target gate charges staging, assembly decode, and the 4,480-byte presentation DMA. With FastROM enabled correctly in the cartridge header, <code>MEMSEL</code>, and execution bank, the representative median and worst-size packets reach <b>60.5 and 64.7 fps</b>. This gallery cartridge intentionally holds one verified frame; the full moving reel and functional high-WRAM refill loop remain the next integration step.</p><p class=\"rp-foot\">Source footage: NASA Artemis I press-site camera, November 16, 2022. Hit <b>Verify fidelity</b> to reproduce the ROM's WRAM success gate live in this tab.</p>"
+}
