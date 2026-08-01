@@ -23,7 +23,7 @@ const samples = [
     <section class="try" aria-labelledby="try-heading">
       <div class="section-heading">
         <div><p class="kicker">Try a card</p><h2 id="try-heading">Tap to reveal</h2></div>
-        <button id="next-card" type="button">Next word →</button>
+        <button id="next-card" type="button">Skip →</button>
       </div>
       <button class="flashcard" id="flashcard" type="button" aria-live="polite" aria-label="Reveal answer">
         <span class="card-meta"><span class="card-label">Spanish · Recognition</span><span id="card-count">loading 1,079 words…</span></span>
@@ -37,6 +37,35 @@ const samples = [
         </span>
         <span class="tap-hint" id="tap-hint">tap to show answer</span>
       </button>
+      <div class="grade-controls" id="grade-controls" hidden>
+        <p>Did you remember it?</p>
+        <div class="grade-buttons">
+          <button class="grade again" id="grade-again" type="button"><span aria-hidden="true">👎</span><strong>Again</strong><small>repeat soon</small></button>
+          <button class="grade good" id="grade-good" type="button"><span aria-hidden="true">👍</span><strong>Got it</strong><small>longer interval</small></button>
+        </div>
+      </div>
+      <div class="review-stats" id="review-stats" aria-live="polite">
+        <span><strong id="stat-due">0</strong> due</span>
+        <span><strong id="stat-learning">0</strong> learning</span>
+        <span><strong id="stat-seen">0</strong> seen</span>
+        <span><strong id="stat-new">1,079</strong> new</span>
+      </div>
+    </section>
+
+    <section class="technique" aria-labelledby="technique-heading">
+      <p class="kicker">Why cards come back</p>
+      <h2 id="technique-heading">A schedule built for memory</h2>
+      <p class="technique-lede">Trying to recall an answer strengthens memory. Reviewing it again near the point of forgetting makes that strengthening more efficient. This reviewer combines those two documented ideas: active recall and spaced repetition.</p>
+      <div class="technique-grid">
+        <article><span>01</span><h3>Recall first</h3><p>Try to produce the meaning before tapping the card. Revealing without attempting recall is less useful.</p></article>
+        <article><span>02</span><h3>Expand the spacing</h3><p>A remembered card moves to about one day, then three days, then progressively longer intervals with slight timing variation.</p></article>
+        <article><span>03</span><h3>Relearn without drilling</h3><p>A missed card returns soon—but never immediately. At least two minutes and seven other cards separate attempts.</p></article>
+      </div>
+      <div class="technique-note">
+        <p><strong>Your progress stays in this browser.</strong> No account is required. Anki is the better choice for cross-device sync and its full FSRS scheduler.</p>
+        <button id="reset-progress" type="button">Reset browser progress</button>
+      </div>
+      <p class="references">Technique references: <a href="https://github.com/open-spaced-repetition/ts-fsrs" rel="noreferrer">FSRS scheduler</a> · <a href="https://www.super-memory.com/english/ol/sm2.htm" rel="noreferrer">SuperMemo SM-2</a></p>
     </section>
 
     <section class="downloads" aria-labelledby="download-heading">
@@ -69,36 +98,148 @@ const samples = [
   </main>
 
   <script define:vars={{ samples }}>
+    const STORAGE_KEY = 'biohack:languages:es-en:reviews:v1';
+    const MIN_RETRY_MS = 2 * 60 * 1000;
+    const MIN_INTERVENING = 7;
     const card = document.querySelector('#flashcard');
     const answer = document.querySelector('#card-answer');
     const hint = document.querySelector('#tap-hint');
     const count = document.querySelector('#card-count');
-    let cards = samples;
-    let index = 0;
+    const grades = document.querySelector('#grade-controls');
+    let cards = samples.map((sample, index) => ({ ...sample, id: `sample-${index}` }));
+    let current = cards[0];
+    let recent = [];
+    const storedReview = loadProgress();
+    let reviewSerial = storedReview.serial;
+    let progress = storedReview.cards;
+
+    function loadProgress() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+        const storedCards = stored?.cards && typeof stored.cards === 'object' && !Array.isArray(stored.cards) ? stored.cards : {};
+        const validCards = Object.fromEntries(Object.entries(storedCards).filter(([, state]) =>
+          state && typeof state === 'object' && Number.isFinite(state.due) && Number.isFinite(state.reps)
+        ));
+        return { cards: validCards, serial: Number.isFinite(stored?.serial) ? stored.serial : 0 };
+      } catch {
+        return { cards: {}, serial: 0 };
+      }
+    }
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ serial: reviewSerial, cards: progress }));
+    }
     function decode(value) {
       const textarea = document.createElement('textarea');
       textarea.innerHTML = value;
       return textarea.value;
     }
-    function showSample(sample) {
-      document.querySelector('#card-spanish').textContent = sample.spanish;
-      document.querySelector('#card-english').textContent = sample.english;
-      document.querySelector('#card-example-es').textContent = sample.es;
-      document.querySelector('#card-example-en').textContent = sample.en;
-      document.querySelector('#card-grammar').textContent = sample.grammar;
+    function shuffle(values) {
+      for (let index = values.length - 1; index > 0; index -= 1) {
+        const swap = Math.floor(Math.random() * (index + 1));
+        [values[index], values[swap]] = [values[swap], values[index]];
+      }
+      return values;
+    }
+    function stateFor(id) {
+      return progress[id] || { reps: 0, lapses: 0, interval: 0, ease: 2.35, due: 0, lastReview: 0, eligibleSerial: 0 };
+    }
+    function isRecent(candidate) {
+      return recent.includes(candidate.id);
+    }
+    function chooseCard({ skipCurrent = false } = {}) {
+      const now = Date.now();
+      const eligible = cards.filter((candidate) => !isRecent(candidate) && (!skipCurrent || candidate.id !== current?.id));
+      const due = eligible.filter((candidate) => {
+        const state = progress[candidate.id];
+        return state && state.due <= now && (state.eligibleSerial || 0) <= reviewSerial;
+      }).sort((a, b) => progress[a.id].due - progress[b.id].due);
+      if (due.length) return due[0];
+      const unseen = eligible.filter((candidate) => !progress[candidate.id]);
+      if (unseen.length) return unseen[Math.floor(Math.random() * unseen.length)];
+      const scheduled = eligible.filter((candidate) => progress[candidate.id])
+        .sort((a, b) => progress[a.id].due - progress[b.id].due);
+      return scheduled[0] || cards.find((candidate) => candidate.id !== current?.id) || cards[0];
+    }
+    function intervalLabel(state) {
+      if (!state?.due) return 'new';
+      const remaining = state.due - Date.now();
+      if (remaining <= 0) return 'due';
+      if (remaining < 60 * 60 * 1000) return `${Math.max(1, Math.round(remaining / 60000))}m`;
+      return `${Math.max(1, Math.round(remaining / 86400000))}d`;
+    }
+    function updateStats() {
+      const now = Date.now();
+      const states = Object.values(progress);
+      const due = states.filter((state) => state.due <= now).length;
+      const learning = states.filter((state) => state.lapses > 0 && state.interval < 1).length;
+      document.querySelector('#stat-due').textContent = due.toLocaleString();
+      document.querySelector('#stat-learning').textContent = learning.toLocaleString();
+      document.querySelector('#stat-seen').textContent = states.length.toLocaleString();
+      document.querySelector('#stat-new').textContent = Math.max(0, cards.length - states.length).toLocaleString();
+    }
+    function showCard(next) {
+      current = next;
+      const state = progress[current.id];
+      document.querySelector('#card-spanish').textContent = current.spanish;
+      document.querySelector('#card-english').textContent = current.english;
+      document.querySelector('#card-example-es').textContent = current.es;
+      document.querySelector('#card-example-en').textContent = current.en;
+      document.querySelector('#card-grammar').textContent = current.grammar;
       answer.hidden = true;
       hint.hidden = false;
+      grades.hidden = true;
       card.setAttribute('aria-label', 'Reveal answer');
-      count.textContent = `word ${index + 1} of ${cards.length.toLocaleString()}`;
+      count.textContent = `${intervalLabel(state)} · ${cards.length.toLocaleString()} cards`;
+      updateStats();
     }
     card?.addEventListener('click', () => {
       answer.hidden = !answer.hidden;
       hint.hidden = !answer.hidden;
+      grades.hidden = answer.hidden;
       card.setAttribute('aria-label', answer.hidden ? 'Reveal answer' : 'Hide answer');
     });
     document.querySelector('#next-card')?.addEventListener('click', () => {
-      index = (index + 1) % cards.length;
-      showSample(cards[index]);
+      recent.push(current.id);
+      recent = recent.slice(-MIN_INTERVENING);
+      showCard(chooseCard({ skipCurrent: true }));
+    });
+    function grade(remembered) {
+      const now = Date.now();
+      const state = stateFor(current.id);
+      reviewSerial += 1;
+      if (remembered) {
+        const baseInterval = state.reps === 0 ? 1 : state.reps === 1 ? 3 : Math.max(4, state.interval * state.ease);
+        const fuzz = 0.95 + Math.random() * 0.1;
+        state.interval = Math.max(1, Math.round(baseInterval * fuzz));
+        state.reps += 1;
+        state.ease = Math.min(2.7, state.ease + 0.04);
+        state.due = now + state.interval * 86400000;
+        state.eligibleSerial = reviewSerial;
+      } else {
+        state.lapses += 1;
+        state.reps = Math.max(0, state.reps - 1);
+        state.interval = 0;
+        state.ease = Math.max(1.3, state.ease - 0.2);
+        state.due = now + MIN_RETRY_MS;
+        state.eligibleSerial = reviewSerial + MIN_INTERVENING;
+      }
+      state.lastReview = now;
+      progress[current.id] = state;
+      saveProgress();
+      recent.push(current.id);
+      recent = recent.slice(-MIN_INTERVENING);
+      showCard(chooseCard({ skipCurrent: true }));
+    }
+    document.querySelector('#grade-again')?.addEventListener('click', () => grade(false));
+    document.querySelector('#grade-good')?.addEventListener('click', () => grade(true));
+    document.querySelector('#reset-progress')?.addEventListener('click', () => {
+      if (!confirm('Reset all Spanish browser-review progress on this device?')) return;
+      progress = {};
+      reviewSerial = 0;
+      recent = [];
+      localStorage.removeItem(STORAGE_KEY);
+      shuffle(cards);
+      showCard(cards[0]);
     });
     fetch('/languages/es/download/es-en-dictionary.tsv')
       .then((response) => {
@@ -111,13 +252,12 @@ const samples = [
           .map((line) => line.split('\t'))
           .filter((fields) => fields.length >= 9)
           .map((fields) => ({
-            spanish: decode(fields[1]), english: decode(fields[2]),
+            id: fields[0], spanish: decode(fields[1]), english: decode(fields[2]),
             es: decode(fields[3]), en: decode(fields[4]), grammar: decode(fields[5]),
           }));
         if (loaded.length !== 1079) throw new Error(`Expected 1,079 words, loaded ${loaded.length}`);
-        cards = loaded;
-        index = 0;
-        showSample(cards[index]);
+        cards = shuffle(loaded);
+        showCard(chooseCard({ skipCurrent: true }));
       })
       .catch((error) => {
         console.error(error);
@@ -152,6 +292,31 @@ const samples = [
   .example-en { color: #766e64; font-size: .95rem; margin-top: .25rem; text-align: left; }
   .grammar { color: #a74830; font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .1em; margin-top: 1.5rem; text-align: left; text-transform: uppercase; }
   .tap-hint { color: #8a8176; font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .08em; margin-top: auto; text-transform: uppercase; }
+  .grade-controls { margin: 1.35rem auto 0; width: min(100%, 390px); }
+  .grade-controls[hidden] { display: none; }
+  .grade-controls > p { color: #766e64; font-size: .85rem; margin: 0 0 .65rem; text-align: center; }
+  .grade-buttons { display: grid; gap: .65rem; grid-template-columns: 1fr 1fr; }
+  .grade { align-items: center; background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 14px; color: inherit; cursor: pointer; display: grid; gap: .1rem .55rem; grid-template-columns: auto 1fr; min-height: 68px; padding: .75rem 1rem; text-align: left; }
+  .grade > span { font-size: 1.35rem; grid-row: 1 / 3; }
+  .grade strong { font-size: .95rem; }
+  .grade small { color: #766e64; font-size: .7rem; }
+  .grade.again:hover { border-color: #a74830; }
+  .grade.good { background: #2f6849; border-color: #2f6849; color: white; }
+  .grade.good small { color: #d3e6d9; }
+  .grade:focus-visible, .flashcard:focus-visible, #next-card:focus-visible, #reset-progress:focus-visible { outline: 3px solid #e6b566; outline-offset: 3px; }
+  .review-stats { color: #766e64; display: flex; flex-wrap: wrap; font: 700 .65rem/1.2 'JetBrains Mono', monospace; gap: .75rem 1.25rem; justify-content: center; margin: 1.25rem auto 0; text-transform: uppercase; }
+  .review-stats strong { color: #a74830; }
+  .technique-lede { color: #625b52; font-size: 1.1rem; line-height: 1.65; margin: 1.25rem 0 2rem; max-width: 44rem; }
+  .technique-grid { display: grid; gap: .8rem; grid-template-columns: repeat(3, 1fr); }
+  .technique-grid article { background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 16px; padding: 1.25rem; }
+  .technique-grid article > span { color: #a74830; font: 700 .65rem/1.2 'JetBrains Mono', monospace; }
+  .technique h3 { font-size: 1.05rem; margin: .8rem 0 .45rem; }
+  .technique-grid p { color: #6c645a; font-size: .9rem; line-height: 1.55; margin: 0; }
+  .technique-note { align-items: center; border-bottom: 1px solid #d8d0c3; border-top: 1px solid #d8d0c3; display: flex; gap: 1.25rem; justify-content: space-between; margin-top: 1.5rem; padding: 1.25rem 0; }
+  .technique-note p { color: #625b52; line-height: 1.5; margin: 0; max-width: 34rem; }
+  #reset-progress { background: transparent; border: 1px solid #a74830; border-radius: 8px; color: #a74830; cursor: pointer; flex: 0 0 auto; font: 700 .65rem/1.2 'JetBrains Mono', monospace; padding: .7rem .8rem; text-transform: uppercase; }
+  .references { color: #81796f; font-size: .75rem; margin: 1rem 0 0; }
+  .references a { color: #a74830; }
   .download-grid { display: grid; gap: .8rem; grid-template-columns: repeat(3, 1fr); margin-top: 1.75rem; }
   .download { background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 16px; color: inherit; display: flex; flex-direction: column; min-height: 235px; padding: 1.25rem; text-decoration: none; transition: border-color .15s, transform .15s; }
   .download:hover { border-color: #a74830; transform: translateY(-2px); }
@@ -168,16 +333,20 @@ const samples = [
   footer { border-top: 1px solid #d8d0c3; color: #8a8176; display: flex; flex-wrap: wrap; font: 700 .65rem/1.4 'JetBrains Mono', monospace; gap: 1rem; justify-content: space-between; padding-top: 1.5rem; text-transform: uppercase; }
   @media (max-width: 650px) {
     .hero { grid-template-columns: 1fr; }
+    .technique-grid { grid-template-columns: 1fr; }
+    .technique-note { align-items: start; flex-direction: column; }
     .download-grid { grid-template-columns: 1fr; }
     .download { min-height: 180px; }
   }
   @media (prefers-color-scheme: dark) {
     :global(body) { background: #171717; color: #f4f1ea; }
     nav, .kicker, .card-meta, .tap-hint, footer { color: #bdb8ae; }
-    .lede, .example-en, .install p, .download small { color: #bdb8ae; }
-    section, header, footer, .divider, .install li { border-color: #504b43; }
-    .flashcard, .download { background: #211f1c; border-color: #504b43; }
-    .headword, .grammar, nav a, footer a, #next-card { color: #e6b566; }
+    .lede, .example-en, .install p, .download small, .grade-controls > p, .grade small, .review-stats, .technique-lede, .technique-grid p, .technique-note p, .references { color: #bdb8ae; }
+    section, header, footer, .divider, .install li, .technique-note { border-color: #504b43; }
+    .flashcard, .download, .grade, .technique-grid article { background: #211f1c; border-color: #504b43; }
+    .headword, .grammar, nav a, footer a, #next-card, .review-stats strong, .technique-grid article > span, .references a { color: #e6b566; }
+    #reset-progress { border-color: #e6b566; color: #e6b566; }
     .download.primary { background: #8e452f; border-color: #b95b3e; }
+    .grade.good { background: #285b40; border-color: #3d805c; }
   }
 </style>
