@@ -1310,8 +1310,8 @@
         "off": "0x40",
         "len": 4,
         "want": "0x00000000",
-        "frames": 2400,
-        "label": "300-frame SVX2 stream, two loops, decoder health, and zero deadline slips (composite gate @ WRAM $0040)"
+        "frames": 6500,
+        "label": "two-video 900-frame SVX2 stream, two loops, both keyframes, and zero deadline slips (composite gate @ WRAM $0040)"
       }
     }
   ]
