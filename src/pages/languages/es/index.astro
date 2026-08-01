@@ -26,7 +26,7 @@ const samples = [
         <button id="next-card" type="button">Next word →</button>
       </div>
       <button class="flashcard" id="flashcard" type="button" aria-live="polite" aria-label="Reveal answer">
-        <span class="card-label">Spanish · Recognition</span>
+        <span class="card-meta"><span class="card-label">Spanish · Recognition</span><span id="card-count">loading 1,079 words…</span></span>
         <span class="headword" id="card-spanish">{samples[0].spanish}</span>
         <span class="answer" id="card-answer" hidden>
           <span class="divider"></span>
@@ -72,7 +72,14 @@ const samples = [
     const card = document.querySelector('#flashcard');
     const answer = document.querySelector('#card-answer');
     const hint = document.querySelector('#tap-hint');
+    const count = document.querySelector('#card-count');
+    let cards = samples;
     let index = 0;
+    function decode(value) {
+      const textarea = document.createElement('textarea');
+      textarea.innerHTML = value;
+      return textarea.value;
+    }
     function showSample(sample) {
       document.querySelector('#card-spanish').textContent = sample.spanish;
       document.querySelector('#card-english').textContent = sample.english;
@@ -82,6 +89,7 @@ const samples = [
       answer.hidden = true;
       hint.hidden = false;
       card.setAttribute('aria-label', 'Reveal answer');
+      count.textContent = `word ${index + 1} of ${cards.length.toLocaleString()}`;
     }
     card?.addEventListener('click', () => {
       answer.hidden = !answer.hidden;
@@ -89,9 +97,32 @@ const samples = [
       card.setAttribute('aria-label', answer.hidden ? 'Reveal answer' : 'Hide answer');
     });
     document.querySelector('#next-card')?.addEventListener('click', () => {
-      index = (index + 1) % samples.length;
-      showSample(samples[index]);
+      index = (index + 1) % cards.length;
+      showSample(cards[index]);
     });
+    fetch('/languages/es/download/es-en-dictionary.tsv')
+      .then((response) => {
+        if (!response.ok) throw new Error(`TSV request failed: ${response.status}`);
+        return response.text();
+      })
+      .then((text) => {
+        const loaded = text.split(/\r?\n/)
+          .filter((line) => line && !line.startsWith('#'))
+          .map((line) => line.split('\t'))
+          .filter((fields) => fields.length >= 9)
+          .map((fields) => ({
+            spanish: decode(fields[1]), english: decode(fields[2]),
+            es: decode(fields[3]), en: decode(fields[4]), grammar: decode(fields[5]),
+          }));
+        if (loaded.length !== 1079) throw new Error(`Expected 1,079 words, loaded ${loaded.length}`);
+        cards = loaded;
+        index = 0;
+        showSample(cards[index]);
+      })
+      .catch((error) => {
+        console.error(error);
+        count.textContent = '3-word preview · deck has 1,079';
+      });
   </script>
 </Base>
 
@@ -110,7 +141,8 @@ const samples = [
   .section-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
   #next-card { background: transparent; border: 0; color: #a74830; cursor: pointer; font: 700 .75rem/1.2 'JetBrains Mono', monospace; padding: .75rem 0; text-transform: uppercase; }
   .flashcard { background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 24px; box-shadow: 0 18px 55px rgba(65, 49, 31, .09); color: inherit; cursor: pointer; display: flex; flex-direction: column; font: inherit; margin: 0 auto; min-height: min(560px, 70vh); padding: clamp(1.25rem, 6vw, 2.5rem); text-align: center; width: min(100%, 390px); }
-  .card-label { color: #8a8176; font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+  .card-meta { color: #8a8176; display: flex; font: 700 .65rem/1.2 'JetBrains Mono', monospace; justify-content: space-between; letter-spacing: .08em; text-transform: uppercase; }
+  .card-label { letter-spacing: .12em; }
   .headword { color: #a74830; font-size: clamp(2.4rem, 11vw, 3.5rem); font-weight: 750; letter-spacing: -.04em; line-height: 1.05; margin: auto 0; }
   .answer { display: flex; flex-direction: column; }
   .answer[hidden] { display: none; }
@@ -141,7 +173,7 @@ const samples = [
   }
   @media (prefers-color-scheme: dark) {
     :global(body) { background: #171717; color: #f4f1ea; }
-    nav, .kicker, .card-label, .tap-hint, footer { color: #bdb8ae; }
+    nav, .kicker, .card-meta, .tap-hint, footer { color: #bdb8ae; }
     .lede, .example-en, .install p, .download small { color: #bdb8ae; }
     section, header, footer, .divider, .install li { border-color: #504b43; }
     .flashcard, .download { background: #211f1c; border-color: #504b43; }
