@@ -1,0 +1,29 @@
+---
+/**
+ * Language-neutral Cast receiver URL — this path is what gets bound to the
+ * Custom Receiver application ID in the Cast Developer Console, so it must
+ * never encode a language (plan decision 7).
+ *
+ * Phase 1: browser-only simulator. No Cast SDK is loaded and no registration
+ * is required; the page is a plain web page driven by keyboard mock messages.
+ */
+import Base from '../../../layouts/Base.astro';
+import CastReceiver from '../../../components/languages/CastReceiver.astro';
+---
+<Base
+  title="Cast receiver — biohack.net"
+  description="Television presentation surface for biohack.net language flashcards."
+>
+  <meta slot="head" name="robots" content="noindex" />
+  <CastReceiver
+    simulatorDeckUrl="/languages/th/download/th-en-foundations.tsv"
+    deckLabel="THAI"
+    deviceName="Living Room TV"
+    senderName="phone"
+    simulator={true}
+  />
+</Base>
+<style is:global>
+  html, body { background: #0e0e0d; height: 100%; overflow: hidden; overscroll-behavior: none; }
+  body { margin: 0; max-width: none; padding: 0; }
+</style>

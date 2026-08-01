@@ -1,0 +1,812 @@
+---
+/**
+ * TV-side flashcard receiver surface (language-neutral).
+ *
+ * Plan: ~/spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md
+ * Phase 1 — browser-only simulator. No Cast SDK is loaded here; mock
+ * SenderMessages are injected by the keyboard harness and go through exactly
+ * the same validator the real receiver will use in Phase 2.
+ *
+ * Deliberately does NOT reuse the phone reviewer DOM: this is a ten-foot 16:9
+ * layout. It shares the card types, message validation, palette and the
+ * articulation drawing tokens with the phone.
+ */
+interface Props {
+  /** Deck used to drive the Phase 1 simulator. Data only — the receiver is language-neutral. */
+  simulatorDeckUrl?: string;
+  /** Label shown in the TV header, e.g. "THAI". */
+  deckLabel?: string;
+  /** Friendly Cast device name (no private identifiers). */
+  deviceName?: string;
+  /** Friendly sender name. */
+  senderName?: string;
+  /** Enable the keyboard debug harness. Phase 2 turns this off for published builds. */
+  simulator?: boolean;
+}
+const {
+  simulatorDeckUrl = '',
+  deckLabel = 'LANGUAGES',
+  deviceName = 'Living Room TV',
+  senderName = 'phone',
+  simulator = false,
+} = Astro.props;
+---
+
+<div
+  class="tv"
+  id="tv"
+  data-state="waiting"
+  data-motion="on"
+  data-debug={simulator ? 'on' : 'off'}
+  data-deck-url={simulatorDeckUrl}
+  data-simulator={simulator ? '1' : '0'}
+>
+  <div class="safe">
+    <header class="bar">
+      <span class="brand">biohack · <b>{deckLabel}</b></span>
+      <span class="conn" id="conn">Waiting for a session</span>
+    </header>
+
+    <main class="stage">
+      <!-- waiting / launch -->
+      <section class="view view-waiting">
+        <span class="eyebrow">Ready</span>
+        <h1 class="big">Flashcards</h1>
+        <p class="lede">Start a review on your phone and pick this screen.</p>
+      </section>
+
+      <!-- prompt (card front) -->
+      <section class="view view-prompt">
+        <span class="eyebrow" id="prompt-mode">Say it</span>
+        <p class="prompt" id="prompt-text">—</p>
+        <p class="listen-cue" id="listen-cue" hidden><span class="glyph">◗))</span>Listen, then answer</p>
+        <p class="coach" id="prompt-coach"></p>
+      </section>
+
+      <!-- revealed -->
+      <section class="view view-revealed">
+        <p class="headword" id="headword" lang="th">—</p>
+        <p class="gloss" id="gloss"></p>
+        <div class="panels">
+          <figure class="panel panel-mouth">
+            <figcaption>Mouth · airflow</figcaption>
+            <svg class="mouth" viewBox="0 0 300 190" role="img" aria-label="Side view of lips, tongue, palate, throat and airflow">
+              <path class="head" d="M27 91C37 35 105 12 172 36c40 15 56 55 42 95-6 16-18 29-33 37H76C39 157 17 126 27 91Z"></path>
+              <path class="palate" d="M54 79c48-28 99-23 133 12"></path>
+              <path class="teeth" d="M50 94h42"></path>
+              <path class="lips" d="M29 95c19-11 36-10 54 1-18 10-35 9-54-1Z"></path>
+              <path class="tongue" d="M57 117c50 28 97 16 130-24"></path>
+              <path class="throat" d="M195 89c-8 34-3 58 15 78"></path>
+              <path class="air" d="M12 95h145"></path>
+              <circle class="contact" id="contact" cx="120" cy="62" r="8"></circle>
+              <text x="22" y="150">lips</text>
+              <text x="104" y="156">tongue</text>
+              <text x="186" y="184">throat</text>
+              <text x="116" y="66" id="contact-label">palate</text>
+            </svg>
+          </figure>
+          <figure class="panel panel-tone">
+            <figcaption>Tone · vowel length</figcaption>
+            <svg class="tone" id="tone" viewBox="0 0 300 120" role="img" aria-label="Pitch contour and vowel length per syllable"></svg>
+            <p class="syllables" id="syllables"></p>
+          </figure>
+        </div>
+        <p class="caption" id="caption"></p>
+      </section>
+
+      <!-- reconnecting -->
+      <section class="view view-reconnecting">
+        <span class="eyebrow">Connection</span>
+        <h1 class="big">Reconnecting to phone…</h1>
+        <p class="lede">Keep this screen open. Progress is safe on the phone.</p>
+      </section>
+
+      <!-- session summary -->
+      <section class="view view-summary">
+        <span class="eyebrow">Session complete</span>
+        <h1 class="big"><span id="sum-reviewed">0</span> cards reviewed</h1>
+        <dl class="tallies">
+          <div><dt>Remembered</dt><dd id="sum-good">0</dd></div>
+          <div><dt>Relearning</dt><dd id="sum-again">0</dd></div>
+        </dl>
+        <p class="lede" id="sum-next"></p>
+      </section>
+
+      <!-- error -->
+      <section class="view view-error">
+        <span class="eyebrow err">Problem</span>
+        <h1 class="big" id="err-title">Something went wrong</h1>
+        <p class="lede" id="err-detail"></p>
+      </section>
+    </main>
+
+    <footer class="bar">
+      <span class="device" id="device">{deviceName}</span>
+      <span class="hint" id="hint">controlled by {senderName}</span>
+    </footer>
+  </div>
+
+  <!-- 5% title-safe boundary, toggled with `s` -->
+  <div class="safe-overlay" id="safe-overlay" hidden aria-hidden="true">
+    <span class="safe-tag">title safe · 5%</span>
+  </div>
+
+  <!-- audio activity indicator (no receiver-side controls) -->
+  <div class="audio-badge" id="audio-badge" hidden aria-hidden="true">◗)) <span id="audio-rate">1×</span></div>
+
+  {simulator && (
+    <aside class="debug" id="debug">
+      <h2>Simulator · press <kbd>h</kbd> to hide</h2>
+      <ul class="keys">
+        <li><kbd>n</kbd>/<kbd>p</kbd> next / previous card</li>
+        <li><kbd>t</kbd> cycle direction (produce · recognize · listen)</li>
+        <li><kbd>r</kbd> reveal current card</li>
+        <li><kbd>a</kbd> play audio · <kbd>A</kbd> slow 0.8×</li>
+        <li><kbd>c</kbd> reconnecting · <kbd>o</kbd> resync snapshot</li>
+        <li><kbd>w</kbd> waiting · <kbd>e</kbd> session end</li>
+        <li><kbd>d</kbd> stale/duplicate seq · <kbd>i</kbd> invalid message</li>
+        <li><kbd>b</kbd> off-origin audio url · <kbd>k</kbd> answer leak</li>
+        <li><kbd>x</kbd> receiver error state</li>
+        <li><kbd>m</kbd> toggle reduced motion · <kbd>s</kbd> safe area</li>
+      </ul>
+      <ol class="log" id="log"></ol>
+    </aside>
+  )}
+</div>
+
+<script>
+  import {
+    CastMessageValidator,
+    CAST_NAMESPACE,
+    ack,
+    audioState,
+    ready,
+    resync,
+  } from '../../lib/languages/cast-protocol';
+
+  const root = document.getElementById('tv');
+  if (root) {
+    const $ = (id) => document.getElementById(id);
+    const validator = new CastMessageValidator(location.origin);
+    const state = { revealed: false, reducedMotion: false, audioTimer: 0 };
+
+    /* ---------------- receiver side ---------------- */
+
+    const send = (msg) => {
+      // Phase 2 replaces this with context.sendCustomMessage(CAST_NAMESPACE, msg).
+      log(`↑ ${msg.type}${'seq' in msg ? ' ' + msg.seq : ''}`, 'out');
+    };
+
+    const setState = (name) => root.setAttribute('data-state', name);
+
+    const setConn = (text) => {
+      const el = $('conn');
+      if (el) el.textContent = text;
+    };
+
+    const setHint = (text) => {
+      const el = $('hint');
+      if (el) el.textContent = text;
+    };
+
+    const stopAudio = () => {
+      clearTimeout(state.audioTimer);
+      $('audio-badge').hidden = true;
+    };
+
+    const MODE_LABEL = {
+      produce: 'Say it',
+      recognize: 'Recognize',
+      listen: 'Listening',
+    };
+
+    const PLACE_POINT = {
+      lips: [36, 96],
+      teeth: [62, 82],
+      alveolar: [88, 70],
+      palate: [124, 62],
+      velar: [168, 74],
+      glottal: [198, 102],
+    };
+
+    // y positions inside the 0..1 contour box, top = high pitch
+    const TONE_SHAPE = {
+      mid: [0.5, 0.5],
+      low: [0.6, 0.82],
+      falling: [0.14, 0.86],
+      high: [0.3, 0.08],
+      rising: [0.74, 0.18],
+    };
+
+    function drawArticulation(view) {
+      const syllables = view.syllables;
+      const first = syllables[0];
+      const [cx, cy] = PLACE_POINT[first.place] || PLACE_POINT.palate;
+      const dot = $('contact');
+      dot.setAttribute('cx', String(cx));
+      dot.setAttribute('cy', String(cy));
+      $('contact-label').textContent = first.place;
+      $('contact-label').setAttribute('x', String(Math.min(cx, 200)));
+      $('contact-label').setAttribute('y', String(cy - 12));
+
+      const n = syllables.length;
+      const slot = 300 / n;
+      const parts = [];
+      syllables.forEach((s, i) => {
+        const [a, b] = TONE_SHAPE[s.tone] || TONE_SHAPE.mid;
+        const x0 = i * slot + slot * 0.12;
+        const x1 = (i + 1) * slot - slot * 0.12;
+        const y = (v) => 12 + v * 56;
+        const mid = (x0 + x1) / 2;
+        parts.push(
+          `<path class="trace" d="M${x0} ${y(a)} Q${mid} ${y((a + b) / 2 + (b - a) * 0.35)} ${x1} ${y(b)}"/>`,
+          `<circle class="dot" cx="${x1}" cy="${y(b)}" r="4"/>`,
+        );
+        const w = s.length === 'long' ? slot * 0.76 : slot * 0.34;
+        parts.push(
+          `<rect class="len ${s.length}" x="${x0}" y="88" width="${w.toFixed(1)}" height="8" rx="4"/>`,
+          `<text class="tick" x="${x0}" y="112">${s.length}</text>`,
+        );
+      });
+      $('tone').innerHTML = parts.join('');
+      $('syllables').textContent = syllables
+        .map((s) => `${s.label ? s.label + ' ' : ''}${s.tone}`)
+        .join('  ·  ');
+      $('caption').textContent = view.caption;
+    }
+
+    function showPrompt(card) {
+      state.revealed = false;
+      stopAudio();
+      const listen = card.direction === 'listen';
+      $('prompt-mode').textContent = MODE_LABEL[card.direction] || 'Card';
+      $('prompt-text').hidden = listen;
+      $('listen-cue').hidden = !listen;
+      $('prompt-text').textContent = card.prompt;
+      $('prompt-text').setAttribute('lang', card.direction === 'recognize' ? 'th' : 'en');
+      $('prompt-coach').textContent = card.coach || '';
+      setHint('waiting for reveal on the phone');
+      setState('prompt');
+    }
+
+    function showRevealed(answer) {
+      state.revealed = true;
+      $('headword').textContent = answer.thai;
+      $('gloss').textContent = answer.usage
+        ? `${answer.english} · ${answer.usage}`
+        : answer.english;
+      drawArticulation(answer.articulation);
+      setHint('👎 again  ·  👍 got it  —  on the phone');
+      setState('revealed');
+    }
+
+    /** Single entry point for every inbound payload. Phase 2 wires the Cast
+     *  namespace listener straight into this function. */
+    function receive(raw) {
+      const result = validator.validate(raw);
+      if (!result.ok) {
+        log(`✗ ${result.code}: ${result.reason}`, 'bad');
+        send({ type: 'ERROR', code: result.code, message: result.reason });
+        if (result.code === 'BAD_PROTOCOL') {
+          $('err-title').textContent = 'Unsupported app version';
+          $('err-detail').textContent = 'Reload the phone page to continue casting.';
+          setState('error');
+        }
+        return result;
+      }
+      const msg = result.message;
+      log(`↓ ${msg.type}${'seq' in msg ? ' ' + msg.seq : ''}`, 'in');
+
+      switch (msg.type) {
+        case 'HELLO':
+          setConn('Connected');
+          send(ready());
+          send(resync());
+          break;
+        case 'SHOW_CARD':
+          setConn('Connected');
+          showPrompt(msg.card);
+          if (msg.answer) showRevealed(msg.answer);
+          send(ack(msg.seq));
+          break;
+        case 'REVEAL':
+          showRevealed(msg.answer);
+          send(ack(msg.seq));
+          break;
+        case 'PLAY_AUDIO': {
+          stopAudio();
+          $('audio-rate').textContent = msg.rate === 1 ? '1×' : '0.8×';
+          $('audio-badge').hidden = false;
+          send(audioState(msg.seq, 'playing'));
+          // Phase 4 swaps this for a real <audio> element on the validated path.
+          state.audioTimer = window.setTimeout(() => {
+            $('audio-badge').hidden = true;
+            send(audioState(msg.seq, 'ended'));
+          }, 1600);
+          send(ack(msg.seq));
+          break;
+        }
+        case 'SETTINGS':
+          state.reducedMotion = msg.reducedMotion;
+          root.setAttribute('data-motion', msg.reducedMotion ? 'off' : 'on');
+          send(ack(msg.seq));
+          break;
+        case 'SESSION_END':
+          stopAudio();
+          $('sum-reviewed').textContent = String(msg.summary.reviewed);
+          $('sum-good').textContent = String(msg.summary.good);
+          $('sum-again').textContent = String(msg.summary.again);
+          $('sum-next').textContent = msg.summary.nextDue || '';
+          setHint('nothing is stored on this screen');
+          setConn('Session ended');
+          setState('summary');
+          send(ack(msg.seq));
+          break;
+      }
+      return result;
+    }
+
+    /* ---------------- Phase 1 debug harness ---------------- */
+
+    const isSimulator = root.dataset.simulator === '1';
+    const logEl = $('log');
+
+    function log(text, kind) {
+      if (!logEl) return;
+      const li = document.createElement('li');
+      li.className = kind;
+      li.textContent = text;
+      logEl.prepend(li);
+      while (logEl.children.length > 7) logEl.lastChild.remove();
+    }
+
+    if (isSimulator) {
+      let deck = [];
+      let index = 0;
+      let seq = 0;
+      let direction = 'produce';
+      let lastSent = null;
+      const DIRECTIONS = ['produce', 'recognize', 'listen'];
+      const next = () => ++seq;
+
+      // Simulator-only articulation. Real per-syllable metadata is Phase 4;
+      // this derives a stable, plausible view from the card so every tone,
+      // vowel length and place of articulation gets exercised on screen.
+      const TONES = ['mid', 'low', 'falling', 'high', 'rising'];
+      const PLACES = ['lips', 'teeth', 'alveolar', 'palate', 'velar', 'glottal'];
+      function mockArticulation(card) {
+        const code = [...card.thai].reduce((a, c) => a + c.charCodeAt(0), 0);
+        const count = Math.max(1, Math.min(4, Math.round(card.thai.length / 3)));
+        const syllables = [];
+        for (let i = 0; i < count; i++) {
+          syllables.push({
+            label: String(i + 1),
+            tone: TONES[(code + i * 3) % TONES.length],
+            length: (code + i) % 2 ? 'long' : 'short',
+            place: PLACES[(code + i * 2) % PLACES.length],
+            airflow: (code + i) % 3 === 0 ? 'nasal' : 'continuant',
+          });
+        }
+        return { caption: card.coach, syllables };
+      }
+
+      const promptOf = (card) => {
+        const view = mockArticulation(card);
+        const payload = {
+          id: card.id,
+          direction,
+          prompt:
+            direction === 'produce'
+              ? card.english
+              : direction === 'recognize'
+                ? card.thai
+                : 'Listen and answer',
+          coach:
+            direction === 'listen'
+              ? 'Play the clip on the phone, then say what you heard.'
+              : card.coach,
+        };
+        // Pre-reveal articulation only where the drawing cannot give the answer away.
+        if (direction === 'recognize') payload.articulation = view;
+        return payload;
+      };
+
+      const answerOf = (card) => ({
+        thai: card.thai,
+        english: card.english,
+        usage: card.usage || undefined,
+        articulation: mockArticulation(card),
+      });
+
+      const current = () => deck[index % deck.length];
+
+      function sendShowCard(withAnswer) {
+        const card = current();
+        if (!card) return;
+        const msg = { type: 'SHOW_CARD', seq: next(), card: promptOf(card) };
+        if (withAnswer) msg.answer = answerOf(card);
+        lastSent = msg;
+        setConn(`Connected · card ${(index % deck.length) + 1} of ${deck.length}`);
+        receive(msg);
+      }
+
+      const keymap = {
+        n: () => {
+          index++;
+          sendShowCard(false);
+        },
+        p: () => {
+          index = (index - 1 + deck.length) % deck.length;
+          sendShowCard(false);
+        },
+        t: () => {
+          direction = DIRECTIONS[(DIRECTIONS.indexOf(direction) + 1) % DIRECTIONS.length];
+          sendShowCard(false);
+        },
+        r: () => {
+          const card = current();
+          if (card) receive({ type: 'REVEAL', seq: next(), cardId: card.id, answer: answerOf(card) });
+        },
+        a: () =>
+          receive({
+            type: 'PLAY_AUDIO',
+            seq: next(),
+            audioUrl: `/languages/th/audio/${(current()?.id || 'card').split(':').pop()}.v1.mp3`,
+            rate: 1,
+          }),
+        A: () =>
+          receive({
+            type: 'PLAY_AUDIO',
+            seq: next(),
+            audioUrl: `/languages/th/audio/${(current()?.id || 'card').split(':').pop()}.v1.mp3`,
+            rate: 0.8,
+          }),
+        c: () => {
+          stopAudio();
+          setConn('Link lost');
+          setHint('the phone still owns your progress');
+          setState('reconnecting');
+        },
+        o: () => {
+          // reconnect resync: sender replies with a full snapshot, including the
+          // answer when the card was already revealed
+          send(resync());
+          sendShowCard(state.revealed);
+        },
+        w: () => {
+          stopAudio();
+          setConn('Waiting for a session');
+          setHint('no session');
+          setState('waiting');
+        },
+        e: () =>
+          receive({
+            type: 'SESSION_END',
+            seq: next(),
+            summary: { reviewed: 18, good: 14, again: 4, nextDue: 'Next card due in 3h.' },
+          }),
+        d: () => {
+          // stale / duplicate: replay the last accepted message unchanged
+          if (lastSent) receive(lastSent);
+          else receive({ type: 'REVEAL', seq: 1, cardId: 'x', answer: {} });
+        },
+        i: () => receive({ type: 'HELLO', protocol: 99, sessionId: 'bad-version' }),
+        k: () => {
+          // answer material smuggled into a pre-reveal prompt payload
+          const card = current();
+          if (!card) return;
+          receive({
+            type: 'SHOW_CARD',
+            seq: next(),
+            card: { ...promptOf(card), english: card.english },
+          });
+        },
+        b: () =>
+          receive({
+            type: 'PLAY_AUDIO',
+            seq: next(),
+            audioUrl: 'https://evil.example.com/languages/th/audio/leak.mp3',
+            rate: 1,
+          }),
+        x: () => {
+          $('err-title').textContent = 'Audio unavailable';
+          $('err-detail').textContent = 'The clip could not be played. Use the phone to retry.';
+          setState('error');
+        },
+        m: () => receive({ type: 'SETTINGS', seq: next(), reducedMotion: !state.reducedMotion }),
+        s: () => {
+          const o = $('safe-overlay');
+          o.hidden = !o.hidden;
+        },
+        h: toggleLegend,
+        '?': toggleLegend,
+      };
+
+      function toggleLegend() {
+        const d = $('debug');
+        if (!d) return;
+        d.hidden = !d.hidden;
+        root.setAttribute('data-debug', d.hidden ? 'off' : 'on');
+      }
+
+      addEventListener('keydown', (ev) => {
+        if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+        const fn = keymap[ev.key];
+        if (!fn) return;
+        ev.preventDefault();
+        fn();
+      });
+
+      const deckUrl = root.dataset.deckUrl;
+      if (deckUrl) {
+        fetch(deckUrl)
+          .then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))
+          .then((text) => {
+            deck = text
+              .split(/\r?\n/)
+              .filter((l) => l && !l.startsWith('#'))
+              .map((l) => l.split('\t'))
+              .map((f) => ({
+                id: f[0],
+                thai: f[1],
+                english: f[2],
+                usage: f[3],
+                coach: f[4],
+                tags: f[5],
+              }));
+            log(`deck loaded · ${deck.length} cards`, 'in');
+            receive({ type: 'HELLO', protocol: 1, sessionId: 'simulator' });
+            sendShowCard(false);
+            // Deterministic state driving for screenshots: /receiver/#keys=r,s
+            const m = /(?:^|[#&])keys=([^&]+)/.exec(location.hash);
+            if (m) {
+              for (const k of decodeURIComponent(m[1]).split(',')) keymap[k]?.();
+            }
+            document.documentElement.dataset.simReady = '1';
+          })
+          .catch((err) => {
+            log(`deck load failed: ${err.message}`, 'bad');
+            $('err-title').textContent = 'Deck unavailable';
+            $('err-detail').textContent = 'The simulator could not load its card data.';
+            setState('error');
+          });
+      }
+
+      // Expose for automated screenshot/state driving.
+      window.castSim = { receive, keymap, namespace: CAST_NAMESPACE };
+    }
+  }
+</script>
+
+<style>
+  /* Shared palette with the phone reviewer; TV-specific scale. */
+  .tv {
+    --bg: #100f0e;
+    --surface: #1e1c19;
+    --ink: #fbf7ee;
+    --muted: #aaa294;
+    --rule: #3c382f;
+    --gold: #efb958;
+    --air: #7bc6c6;
+    --contact: #ef735f;
+    background: radial-gradient(circle at 50% 38%, #29261f 0%, #0e0e0d 78%);
+    color: var(--ink);
+    font-family: system-ui, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    width: 100vw;
+  }
+  /* 5% title-safe inset — nothing meaningful reaches the overscan edge. */
+  .safe {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100%;
+    padding: 5vh 5vw;
+    width: 100%;
+  }
+  /* Reserve a gutter while the simulator legend is open so it never covers
+     card content. Production (simulator off) uses the full safe area. */
+  .tv[data-debug='on'] .safe { padding-right: 24vw; }
+  .tv[data-debug='on'] .panels, .tv[data-debug='on'] .view-revealed { width: 55vw; max-width: 55vw; }
+
+  .bar {
+    align-items: baseline;
+    display: flex;
+    font: 700 1.9vh/1 ui-monospace, monospace;
+    justify-content: space-between;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .brand { color: var(--gold); }
+  .brand b { color: var(--gold); font-weight: 800; }
+  .conn, .device, .hint { color: var(--muted); }
+  footer.bar { border-top: 1px solid var(--rule); padding-top: 1.6vh; }
+  header.bar { border-bottom: 1px solid var(--rule); padding-bottom: 1.6vh; }
+
+  .stage { display: grid; min-height: 0; place-items: center; }
+  .view {
+    display: none;
+    flex-direction: column;
+    gap: 1.6vh;
+    max-width: 84vw;
+    text-align: center;
+  }
+  .tv[data-state='waiting'] .view-waiting,
+  .tv[data-state='prompt'] .view-prompt,
+  .tv[data-state='revealed'] .view-revealed,
+  .tv[data-state='reconnecting'] .view-reconnecting,
+  .tv[data-state='summary'] .view-summary,
+  .tv[data-state='error'] .view-error { display: flex; }
+
+  .eyebrow {
+    color: var(--gold);
+    font: 700 1.9vh/1 ui-monospace, monospace;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+  }
+  .eyebrow.err { color: #e8897a; }
+  .big { font-size: 6.4vh; font-weight: 750; margin: 0; }
+  .lede { color: var(--muted); font-size: 2.6vh; margin: 0; }
+
+  /* prompt */
+  .prompt { color: var(--gold); font-size: 9vh; font-weight: 780; line-height: 1.12; margin: 0; }
+  .prompt[hidden] { display: none; }
+  .listen-cue {
+    align-items: center;
+    color: var(--gold);
+    display: flex;
+    flex-direction: column;
+    font-size: 3vh;
+    gap: 1.4vh;
+    margin: 0;
+  }
+  .listen-cue[hidden] { display: none; }
+  .listen-cue .glyph { font-size: 9vh; letter-spacing: -0.05em; }
+  .coach { color: var(--muted); font-size: 2.4vh; line-height: 1.45; margin: 0; }
+
+  /* revealed */
+  .headword { font-size: 8.6vh; font-weight: 750; line-height: 1.24; margin: 0; }
+  .gloss { color: var(--muted); font-size: 2.8vh; margin: 0; }
+  .panels {
+    display: grid;
+    gap: 2vw;
+    grid-template-columns: 1.35fr 1fr;
+    margin-top: 0.8vh;
+    width: 62vw;
+  }
+  .view-revealed { max-width: 62vw; }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 1.6vh;
+    margin: 0;
+    padding: 1.6vh 1.6vw;
+    text-align: left;
+  }
+  .panel figcaption {
+    color: var(--gold);
+    font: 700 1.7vh/1 ui-monospace, monospace;
+    letter-spacing: 0.2em;
+    margin-bottom: 1vh;
+    text-transform: uppercase;
+  }
+  .mouth, .tone { display: block; height: 22vh; width: 100%; }
+  .head { fill: #34302a; stroke: #8f8678; stroke-width: 2; }
+  .palate, .teeth, .throat { fill: none; stroke: #d8d0c3; stroke-width: 4; }
+  .lips { fill: #d77b6f; }
+  .tongue { fill: none; stroke: var(--gold); stroke-linecap: round; stroke-width: 11; }
+  .air { fill: none; stroke: var(--air); stroke-dasharray: 6 7; stroke-width: 4; }
+  .contact { fill: var(--contact); }
+  .mouth text { fill: var(--muted); font-size: 13px; }
+  /* :global — these nodes are injected by the receiver script, so they never
+     carry Astro's scope attribute and scoped selectors would not match them. */
+  .tone :global(.trace) { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; }
+  .tone :global(.dot) { fill: var(--gold); }
+  .tone :global(.len) { fill: var(--air); }
+  .tone :global(.tick) { fill: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .syllables {
+    color: var(--muted);
+    font: 700 1.6vh/1.4 ui-monospace, monospace;
+    letter-spacing: 0.14em;
+    margin: 0.6vh 0 0;
+    text-transform: uppercase;
+  }
+  .caption { font-size: 2.4vh; line-height: 1.45; margin: 0.6vh 0 0; }
+
+  /* summary */
+  .tallies { display: flex; gap: 6vw; justify-content: center; margin: 0; }
+  .tallies dt {
+    color: var(--muted);
+    font: 700 1.8vh/1 ui-monospace, monospace;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .tallies dd { font-size: 5vh; font-weight: 750; margin: 0.6vh 0 0; }
+
+  /* motion: only airflow and the tone trace move, and only when allowed */
+  @keyframes drift { to { stroke-dashoffset: -26; } }
+  .tv[data-motion='on'] .air { animation: drift 2.4s linear infinite; }
+  .tv[data-motion='on'] .tone :global(.trace) {
+    animation: draw 1.1s ease-out 1 both;
+    stroke-dasharray: 260;
+  }
+  @keyframes draw { from { stroke-dashoffset: 260; } to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .tv .air { animation: none !important; }
+    .tv .tone :global(.trace) { animation: none !important; stroke-dasharray: none; }
+  }
+
+  /* safe-area overlay */
+  .safe-overlay {
+    border: 2px dashed rgba(239, 185, 88, 0.65);
+    bottom: 5vh;
+    left: 5vw;
+    pointer-events: none;
+    position: absolute;
+    right: 5vw;
+    top: 5vh;
+  }
+  .safe-overlay[hidden] { display: none; }
+  .safe-tag {
+    background: rgba(239, 185, 88, 0.85);
+    color: #191712;
+    font: 700 1.4vh/1 ui-monospace, monospace;
+    left: 0;
+    letter-spacing: 0.18em;
+    padding: 0.5vh 0.8vw;
+    position: absolute;
+    text-transform: uppercase;
+    top: 0;
+  }
+
+  .audio-badge {
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    color: var(--gold);
+    font: 700 1.7vh/1 ui-monospace, monospace;
+    left: 5vw;
+    padding: 1vh 1.4vw;
+    position: absolute;
+    top: 12vh;
+  }
+  .audio-badge[hidden] { display: none; }
+
+  /* debug harness (Phase 1 only) */
+  .debug {
+    background: rgba(12, 12, 11, 0.92);
+    border: 1px solid var(--rule);
+    border-radius: 1.2vh;
+    bottom: 5vh;
+    color: var(--muted);
+    font: 1.3vh/1.55 ui-monospace, monospace;
+    max-width: 17vw;
+    padding: 1.2vh 1vw;
+    position: absolute;
+    right: 5vw;
+  }
+  .debug[hidden] { display: none; }
+  .debug h2 {
+    color: var(--gold);
+    font-size: 1.3vh;
+    letter-spacing: 0.12em;
+    margin: 0 0 1vh;
+    text-transform: uppercase;
+  }
+  .keys, .log { list-style: none; margin: 0; padding: 0; }
+  .keys li { text-indent: -1.4vw; padding-left: 1.4vw; }
+  kbd {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 0.5vh;
+    color: var(--ink);
+    padding: 0 0.4vw;
+  }
+  .log { border-top: 1px solid var(--rule); margin-top: 1vh; padding-top: 1vh; }
+  .log :global(li) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .log :global(.in) { color: var(--ink); }
+  .log :global(.out) { color: var(--air); }
+  .log :global(.bad) { color: #e8897a; }
+</style>
