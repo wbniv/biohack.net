@@ -847,7 +847,7 @@ packages:
     resolution: {integrity: sha512-mUFwbeTqrVgDQxFveS+df2yfap6iuP20NAKAsBt5jDEoOTDew+zwLAOilHCeQJOVSvmgCX4ogqIrA0mnyr08yQ==}
 
   '@wbniv/bsnes-jg-player@https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1915b14ec9d0145733c92c6445d1527afdacdc4f':
-    resolution: {gitHosted: true, integrity: sha512-r6xUt0vScQ2cHAPU4qb+yuWJfaDuoFZrFWnvNY11dh2xzOMOWEK/KOHcW2Ne+4StQQtXFJgU82wm+P0kTEWSdA==, tarball: https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1915b14ec9d0145733c92c6445d1527afdacdc4f}
+    resolution: {gitHosted: true, integrity: sha512-5AodlAH2EE03ua01yriZqrdk4DJaxBN+Wvdm+G4M0F0DqQ7WObFp23WBf5+Q2QpeV65P2iddywdBOO5psOZAUg==, tarball: https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1915b14ec9d0145733c92c6445d1527afdacdc4f}
     version: 1.0.0
     engines: {node: '>=20'}
     hasBin: true
