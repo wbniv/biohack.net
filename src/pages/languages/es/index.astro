@@ -17,6 +17,7 @@ const samples = [
         <p class="kicker">Spanish · English</p>
         <h1>A pocket dictionary<br>that remembers with you.</h1>
         <p class="lede">1,079 words with definitions and examples, built as phone-friendly Anki cards and portable source data.</p>
+        <div class="hero-actions"><a class="start-review" href="/languages/es/review/">Start reviewing</a><a href="/languages/es/download/es-en-dictionary.apkg" download>Download for Anki</a></div>
       </div>
     </header>
 
@@ -276,6 +277,9 @@ const samples = [
   .kicker { color: #8a8176; font: 700 .7rem/1.2 'JetBrains Mono', monospace; letter-spacing: .14em; margin: 0 0 .75rem; text-transform: uppercase; }
   h1 { font-size: clamp(2.3rem, 8vw, 5rem); letter-spacing: -.055em; line-height: .98; margin: 0; }
   .lede { color: #625b52; font-size: clamp(1.05rem, 2.8vw, 1.3rem); line-height: 1.55; margin: 1.4rem 0 0; max-width: 38rem; }
+  .hero-actions { align-items: center; display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; margin-top: 1.5rem; }
+  .hero-actions a { color: #a74830; font: 700 .72rem/1 'JetBrains Mono', monospace; text-decoration: none; text-transform: uppercase; }
+  .hero-actions .start-review { background: #a74830; border-radius: 10px; color: white; padding: .9rem 1.1rem; }
   section { border-top: 1px solid #d8d0c3; padding: clamp(2.5rem, 8vw, 4.5rem) 0; }
   h2 { font-size: clamp(1.8rem, 5vw, 2.8rem); letter-spacing: -.04em; line-height: 1.05; margin: 0; }
   .section-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 1.5rem; }

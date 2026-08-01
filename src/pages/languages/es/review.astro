@@ -1,0 +1,13 @@
+---
+import Base from '../../../layouts/Base.astro';
+import FocusedReviewer from '../../../components/languages/FocusedReviewer.astro';
+---
+
+<Base title="Review Spanish — biohack.net" description="A focused Spanish–English spaced-repetition flashcard reviewer.">
+  <FocusedReviewer deckUrl="/languages/es/download/es-en-dictionary.tsv" exitUrl="/languages/es/" storageKey="biohack:languages:es-en:reviews:v1" expectedCards={1079} />
+</Base>
+
+<style is:global>
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  body { margin: 0; max-width: none; padding: 0; }
+</style>
