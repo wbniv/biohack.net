@@ -1307,11 +1307,11 @@
       "id": "svx2-fastrom-video",
       "title": "SVX2 FastROM Animated Video",
       "selfcheck": {
-        "off": "0x44",
+        "off": "0x49",
         "len": 1,
         "want": "0x00",
         "frames": 1200,
-        "label": "SVX2 CRC validation and two animated loops passed (video_reel_loop_gate @ WRAM $0044)"
+        "label": "SVX2 CRC validation and two animated loops passed (video_reel_loop_gate @ WRAM $0049)"
       }
     }
   ]
