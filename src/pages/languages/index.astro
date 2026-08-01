@@ -20,18 +20,14 @@ import Base from '../../layouts/Base.astro';
         </span>
         <span class="arrow" aria-hidden="true">→</span>
       </a>
-    </section>
-
-    <section aria-labelledby="planned-heading">
-      <h2 id="planned-heading">Planned</h2>
-      <div class="language-card planned">
+      <a class="language-card" href="/languages/th/" hreflang="en">
         <span class="code">th</span>
         <span>
           <strong>Thai</strong>
-          <small>Thai–English edition</small>
+          <small>110 Thai–English foundation notes · listening and pronunciation coach</small>
         </span>
-        <span class="status">later</span>
-      </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
     </section>
   </main>
 </Base>
@@ -46,7 +42,7 @@ import Base from '../../layouts/Base.astro';
   .lede { color: #625b52; font-size: clamp(1.1rem, 3vw, 1.35rem); line-height: 1.55; max-width: 34rem; }
   section { margin-top: 2.5rem; }
   h2 { margin-bottom: .75rem; }
-  .language-card { align-items: center; background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 16px; color: inherit; display: grid; gap: 1rem; grid-template-columns: auto 1fr auto; padding: 1.25rem; text-decoration: none; transition: border-color .15s, transform .15s; }
+  .language-card { align-items: center; background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 16px; color: inherit; display: grid; gap: 1rem; grid-template-columns: auto 1fr auto; margin-bottom: .75rem; padding: 1.25rem; text-decoration: none; transition: border-color .15s, transform .15s; }
   a.language-card:hover { border-color: #a74830; transform: translateY(-2px); }
   .code { align-items: center; background: #a74830; border-radius: 10px; color: white; display: flex; font: 700 1rem/1 'JetBrains Mono', monospace; height: 3rem; justify-content: center; width: 3rem; }
   strong { display: block; font-size: 1.15rem; }

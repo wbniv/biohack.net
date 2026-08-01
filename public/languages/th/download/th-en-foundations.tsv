@@ -1,0 +1,113 @@
+#separator:tab
+#html:false
+#columns:ID	Thai	English	Usage	Coach	Tags
+biohack:th-en:number:00000	ศูนย์	0	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00001	หนึ่ง	1	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00002	สอง	2	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00003	สาม	3	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00004	สี่	4	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00005	ห้า	5	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00006	หก	6	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00007	เจ็ด	7	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00008	แปด	8	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00009	เก้า	9	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00010	สิบ	10	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 0-10
+biohack:th-en:number:00011	สิบเอ็ด	11	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00012	สิบสอง	12	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00013	สิบสาม	13	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00014	สิบสี่	14	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00015	สิบห้า	15	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00016	สิบหก	16	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00017	สิบเจ็ด	17	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00018	สิบแปด	18	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00019	สิบเก้า	19	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00020	ยี่สิบ	20	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers 11-20
+biohack:th-en:number:00021	ยี่สิบเอ็ด	21	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00022	ยี่สิบสอง	22	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00023	ยี่สิบสาม	23	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00024	ยี่สิบสี่	24	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00025	ยี่สิบห้า	25	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00026	ยี่สิบหก	26	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00027	ยี่สิบเจ็ด	27	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00028	ยี่สิบแปด	28	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00029	ยี่สิบเก้า	29	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00030	สามสิบ	30	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00031	สามสิบเอ็ด	31	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00032	สามสิบสอง	32	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00033	สามสิบสาม	33	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00034	สามสิบสี่	34	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00035	สามสิบห้า	35	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00036	สามสิบหก	36	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00037	สามสิบเจ็ด	37	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00038	สามสิบแปด	38	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00039	สามสิบเก้า	39	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00040	สี่สิบ	40	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00041	สี่สิบเอ็ด	41	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00042	สี่สิบสอง	42	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00043	สี่สิบสาม	43	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00044	สี่สิบสี่	44	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00045	สี่สิบห้า	45	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00046	สี่สิบหก	46	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00047	สี่สิบเจ็ด	47	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00048	สี่สิบแปด	48	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00049	สี่สิบเก้า	49	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00050	ห้าสิบ	50	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00051	ห้าสิบเอ็ด	51	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00052	ห้าสิบสอง	52	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00053	ห้าสิบสาม	53	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00054	ห้าสิบสี่	54	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00055	ห้าสิบห้า	55	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00056	ห้าสิบหก	56	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00057	ห้าสิบเจ็ด	57	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00058	ห้าสิบแปด	58	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00059	ห้าสิบเก้า	59	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00060	หกสิบ	60	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00061	หกสิบเอ็ด	61	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00062	หกสิบสอง	62	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00063	หกสิบสาม	63	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00064	หกสิบสี่	64	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00065	หกสิบห้า	65	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00066	หกสิบหก	66	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00067	หกสิบเจ็ด	67	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00068	หกสิบแปด	68	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00069	หกสิบเก้า	69	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00070	เจ็ดสิบ	70	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00071	เจ็ดสิบเอ็ด	71	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00072	เจ็ดสิบสอง	72	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00073	เจ็ดสิบสาม	73	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00074	เจ็ดสิบสี่	74	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00075	เจ็ดสิบห้า	75	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00076	เจ็ดสิบหก	76	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00077	เจ็ดสิบเจ็ด	77	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00078	เจ็ดสิบแปด	78	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00079	เจ็ดสิบเก้า	79	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00080	แปดสิบ	80	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00081	แปดสิบเอ็ด	81	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00082	แปดสิบสอง	82	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00083	แปดสิบสาม	83	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00084	แปดสิบสี่	84	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00085	แปดสิบห้า	85	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00086	แปดสิบหก	86	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00087	แปดสิบเจ็ด	87	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00088	แปดสิบแปด	88	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00089	แปดสิบเก้า	89	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00090	เก้าสิบ	90	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00091	เก้าสิบเอ็ด	91	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00092	เก้าสิบสอง	92	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00093	เก้าสิบสาม	93	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00094	เก้าสิบสี่	94	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00095	เก้าสิบห้า	95	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00096	เก้าสิบหก	96	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00097	เก้าสิบเจ็ด	97	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00098	เก้าสิบแปด	98	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00099	เก้าสิบเก้า	99	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers compounds
+biohack:th-en:number:00100	หนึ่งร้อย	100	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers landmarks
+biohack:th-en:number:01000	หนึ่งพัน	1,000	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers landmarks
+biohack:th-en:number:10000	หนึ่งหมื่น	10,000	number	Listen for vowel length and the tone of each syllable; replay slowly, then imitate the whole number.	numbers landmarks
+biohack:th-en:word:water	น้ำ	water	general noun	Round the lips lightly. Sustain the vowel and follow the falling tone.	survival noun
+biohack:th-en:word:ice	น้ำแข็ง	ice	literally “hard water”	Keep the two syllables distinct; imitate the tone contour rather than English stress.	survival noun
+biohack:th-en:word:cat	แมว	cat	general noun	Open the jaw for the vowel, then glide smoothly into the final w sound.	survival noun
+biohack:th-en:word:door	ประตู	door; gate	door or gate depending on context	Release the initial consonant cluster cleanly and keep the final vowel long.	survival noun
+biohack:th-en:word:wall-interior	ผนัง	wall (room or building)	an interior wall or wall surface	Use a clear puff of air at the start; finish through the nose.	survival noun wall
+biohack:th-en:word:wall-barrier	กำแพง	wall (barrier or exterior)	a freestanding, exterior, or defensive wall	Keep the syllables joined and let the final sound resonate through the nose.	survival noun wall
+biohack:th-en:phrase:how-much	เท่าไหร่?	how much?	For price: ราคาเท่าไหร่?	Copy the two-part rhythm and tone movement; do not pronounce it with English question intonation.	survival phrase

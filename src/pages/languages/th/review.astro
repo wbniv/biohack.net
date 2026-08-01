@@ -1,0 +1,8 @@
+---
+import Base from '../../../layouts/Base.astro';
+import ThaiReviewer from '../../../components/languages/ThaiReviewer.astro';
+---
+<Base title="Review Thai — biohack.net" description="Focused Thai–English flashcards with listening and pronunciation guidance.">
+  <ThaiReviewer deckUrl="/languages/th/download/th-en-foundations.tsv" exitUrl="/languages/th/" storageKey="biohack:languages:th-en:reviews:v1" expectedCards={110} />
+</Base>
+<style is:global>html,body{height:100%;overflow:hidden;overscroll-behavior:none}body{margin:0;max-width:none;padding:0}</style>
