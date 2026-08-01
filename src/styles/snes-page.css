@@ -17,10 +17,6 @@
 .rp-screen { width: 100%; background: #000; border-radius: 6px; line-height: 0; border: 1px solid var(--rule); }
 .rp-screen canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
 .rp-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: .85rem; font: 12px/1.4 'JetBrains Mono', ui-monospace, monospace; color: var(--ink-dim); }
-.rp-status { flex: 1 1 190px; }
-.rp-telemetry { display: inline-flex; gap: .75rem; white-space: nowrap; color: var(--ink); font-variant-numeric: tabular-nums; }
-.rp-telemetry strong { color: #ffd45c; font-weight: 650; }
-.rp-telemetry-health { color: #ff6b6b; font-weight: 650; }
 .rp-btn { margin-left: auto; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px; font-family: 'JetBrains Mono', ui-monospace, monospace; border: 1px solid var(--accent-soft); border-radius: 6px; padding: .4rem .85rem; transition: border-color .15s, color .15s; }
 .rp-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 .rp-btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -82,8 +78,6 @@
 .rp-m { color: #6f9cef; font-weight: 600; }
 
 @media (max-width: 480px) {
-    .rp-status { flex-basis: 100%; }
-    .rp-telemetry { order: 2; }
     .rp-gallery { grid-template-columns: 1fr; }
     .rp-work { grid-template-rows: min(65vw, 220px) auto; }
     .rp-work-image { height: 100%; }
