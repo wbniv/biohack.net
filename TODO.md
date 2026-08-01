@@ -6,6 +6,10 @@ tier, tier last — `[T4]`, `[wip T2]`, `[verify T3]`. See `~/CLAUDE.md` — Del
 
 ## Open
 
+### Languages
+
+- [T3] [cast-receiver-phase2] Custom receiver protocol over the Cast Receiver SDK — blocked on deferred Phase 0 (app ID + device). See [plan](../spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md).
+
 ### Housekeeping
 
 ## Watch
@@ -18,6 +22,7 @@ _Nothing parked._
 
 ## Done
 
+- [x] 2026-08-01 — [cast-receiver-phase1] Language-neutral Cast receiver simulator + protocol, verified 720p–4K. See [plan](../spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md).
 - [x] 2026-07-27 — [drdevtools-github] Homepage drdevtools link now points at github.com/developer-resources-co/drdevtools (was SourceForge).
 - [x] 2026-07-26 — [homepage-demo-count] Homepage SNES count derives from shared `src/data/snes-demos.ts`; build fails on manifest drift. See [plan](docs/plans/2026-07-26-homepage-snes-demo-count.md).
 - [x] 2026-06-27 — [snes-url-prefix] Moved SNES demos from `/{slug}/` to `/snes/{slug}/`; old URLs 301-redirect. See [plan](docs/plans/2026-06-27-snes-demos-under-snes-prefix.md).
