@@ -287,6 +287,13 @@ export class CastMessageValidator {
       if (!isNonEmptyString(value.sessionId)) {
         return this.reject('BAD_SHAPE', 'HELLO.sessionId must be a string');
       }
+      // A sender page reload starts its sequence at one again while the Cast
+      // receiver page may remain alive. A genuinely new sender session owns a
+      // fresh sequence space; repeated HELLOs from the same session do not.
+      if (this.sessionId !== null && this.sessionId !== value.sessionId) {
+        this.lastSeq = 0;
+        this.currentCardId = null;
+      }
       this.sessionId = value.sessionId;
       return { ok: true, message: { type: 'HELLO', protocol: 1, sessionId: value.sessionId } };
     }

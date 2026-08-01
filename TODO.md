@@ -8,7 +8,7 @@ tier, tier last — `[T4]`, `[wip T2]`, `[verify T3]`. See `~/CLAUDE.md` — Del
 
 ### Languages
 
-- [T3] [cast-receiver-phase2] Custom receiver protocol over the Cast Receiver SDK — blocked on deferred Phase 0 (app ID + device). See [plan](../spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md).
+- [verify T3] [cast-receiver-phase2] CAF receiver + Thai Android Chrome sender implemented for application `27730439`; deploy and verify the full flow on registered Chromecast hardware. See [plan](../spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md).
 
 ### Housekeeping
 

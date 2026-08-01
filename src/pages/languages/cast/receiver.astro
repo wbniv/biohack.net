@@ -4,8 +4,9 @@
  * Custom Receiver application ID in the Cast Developer Console, so it must
  * never encode a language (plan decision 7).
  *
- * Phase 1: browser-only simulator. No Cast SDK is loaded and no registration
- * is required; the page is a plain web page driven by keyboard mock messages.
+ * The production route is registered as Custom Receiver application 27730439.
+ * CastReceiver retains its browser simulator behind a prop for local QA, but
+ * this route starts the real Cast Application Framework receiver.
  */
 import Base from '../../../layouts/Base.astro';
 import CastReceiver from '../../../components/languages/CastReceiver.astro';
@@ -15,6 +16,11 @@ import CastReceiver from '../../../components/languages/CastReceiver.astro';
   description="Television presentation surface for biohack.net language flashcards."
 >
   <meta slot="head" name="robots" content="noindex" />
+  <script
+    slot="head"
+    is:inline
+    src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"
+  ></script>
   <CastReceiver
     simulatorDeckUrl="/languages/th/download/th-en-foundations.tsv"
     deckLabel="THAI"
@@ -22,7 +28,7 @@ import CastReceiver from '../../../components/languages/CastReceiver.astro';
     baseLang="en"
     deviceName="Living Room TV"
     senderName="phone"
-    simulator={true}
+    simulator={false}
   />
 </Base>
 <style is:global>

@@ -3,9 +3,9 @@
  * TV-side flashcard receiver surface (language-neutral).
  *
  * Plan: ~/spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md
- * Phase 1 — browser-only simulator. No Cast SDK is loaded here; mock
- * SenderMessages are injected by the keyboard harness and go through exactly
- * the same validator the real receiver will use in Phase 2.
+ * The production route connects this surface to the Cast Application
+ * Framework. The optional simulator injects keyboard messages through the
+ * exact same receive/validation path for browser QA.
  *
  * Deliberately does NOT reuse the phone reviewer DOM: this is a ten-foot 16:9
  * layout. It shares the card types, message validation, palette and the
@@ -179,12 +179,17 @@ const {
     const contentLang = root.dataset.contentLang || 'und';
     const baseLang = root.dataset.baseLang || 'en';
     const state = { revealed: false, reducedMotion: false, audioTimer: 0 };
+    const isSimulator = root.dataset.simulator === '1';
+    let castContext = null;
+    let activeSenderId = null;
 
     /* ---------------- receiver side ---------------- */
 
     const send = (msg) => {
-      // Phase 2 replaces this with context.sendCustomMessage(CAST_NAMESPACE, msg).
       log(`↑ ${msg.type}${'seq' in msg ? ' ' + msg.seq : ''}`, 'out');
+      if (castContext && activeSenderId) {
+        castContext.sendCustomMessage(CAST_NAMESPACE, activeSenderId, msg);
+      }
     };
 
     const setState = (name) => root.setAttribute('data-state', name);
@@ -294,8 +299,7 @@ const {
       setState('revealed');
     }
 
-    /** Single entry point for every inbound payload. Phase 2 wires the Cast
-     *  namespace listener straight into this function. */
+    /** Single entry point for simulator and real Cast namespace payloads. */
     function receive(raw) {
       const result = validator.validate(raw);
       if (!result.ok) {
@@ -362,7 +366,6 @@ const {
 
     /* ---------------- Phase 1 debug harness ---------------- */
 
-    const isSimulator = root.dataset.simulator === '1';
     const logEl = $('log');
 
     function log(text, kind) {
@@ -372,6 +375,38 @@ const {
       li.textContent = text;
       logEl.prepend(li);
       while (logEl.children.length > 7) logEl.lastChild.remove();
+    }
+
+    if (!isSimulator) {
+      const castApi = window.cast;
+      if (!castApi?.framework) {
+        $('err-title').textContent = 'Receiver SDK unavailable';
+        $('err-detail').textContent = 'Reload this Cast application to try again.';
+        setState('error');
+      } else {
+        castContext = castApi.framework.CastReceiverContext.getInstance();
+        castContext.addCustomMessageListener(CAST_NAMESPACE, (event) => {
+          activeSenderId = event.senderId;
+          receive(event.data);
+        });
+        castContext.addEventListener(
+          castApi.framework.system.EventType.SENDER_DISCONNECTED,
+          () => {
+            const senders = castContext.getSenders();
+            activeSenderId = null;
+            stopAudio();
+            if (!senders.length) {
+              setConn('Link lost');
+              setHint('the phone still owns your progress');
+              setState('reconnecting');
+            }
+          },
+        );
+        castContext.start({
+          disableIdleTimeout: true,
+          statusText: 'Ready for language practice',
+        });
+      }
     }
 
     if (isSimulator) {

@@ -3,6 +3,15 @@ import Base from '../../../layouts/Base.astro';
 import ThaiReviewer from '../../../components/languages/ThaiReviewer.astro';
 ---
 <Base title="Review Thai — biohack.net" description="Focused Thai–English flashcards with listening and pronunciation guidance.">
+  <script slot="head" is:inline>
+    window.__onGCastApiAvailable = (available) =>
+      window.dispatchEvent(new CustomEvent('biohack-cast-api', { detail: available }));
+  </script>
+  <script
+    slot="head"
+    is:inline
+    src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"
+  ></script>
   <ThaiReviewer deckUrl="/languages/th/download/th-en-foundations.tsv" exitUrl="/languages/th/" storageKey="biohack:languages:th-en:reviews:v1" expectedCards={110} />
 </Base>
 <style is:global>html,body{height:100%;overflow:hidden;overscroll-behavior:none}body{margin:0;max-width:none;padding:0}</style>
