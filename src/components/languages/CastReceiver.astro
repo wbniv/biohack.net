@@ -14,8 +14,12 @@
 interface Props {
   /** Deck used to drive the Phase 1 simulator. Data only — the receiver is language-neutral. */
   simulatorDeckUrl?: string;
-  /** Label shown in the TV header, e.g. "THAI". */
+  /** Label shown in the TV header, e.g. "THAI". Branding, not protocol. */
   deckLabel?: string;
+  /** BCP 47 tag for the target-language script (headword). Supplied as data. */
+  contentLang?: string;
+  /** BCP 47 tag for the base-language gloss. */
+  baseLang?: string;
   /** Friendly Cast device name (no private identifiers). */
   deviceName?: string;
   /** Friendly sender name. */
@@ -26,6 +30,8 @@ interface Props {
 const {
   simulatorDeckUrl = '',
   deckLabel = 'LANGUAGES',
+  contentLang = 'und',
+  baseLang = 'en',
   deviceName = 'Living Room TV',
   senderName = 'phone',
   simulator = false,
@@ -38,6 +44,8 @@ const {
   data-state="waiting"
   data-motion="on"
   data-debug={simulator ? 'on' : 'off'}
+  data-content-lang={contentLang}
+  data-base-lang={baseLang}
   data-deck-url={simulatorDeckUrl}
   data-simulator={simulator ? '1' : '0'}
 >
@@ -65,7 +73,7 @@ const {
 
       <!-- revealed -->
       <section class="view view-revealed">
-        <p class="headword" id="headword" lang="th">—</p>
+        <p class="headword" id="headword">—</p>
         <p class="gloss" id="gloss"></p>
         <div class="panels">
           <figure class="panel panel-mouth">
@@ -168,6 +176,8 @@ const {
   if (root) {
     const $ = (id) => document.getElementById(id);
     const validator = new CastMessageValidator(location.origin);
+    const contentLang = root.dataset.contentLang || 'und';
+    const baseLang = root.dataset.baseLang || 'en';
     const state = { revealed: false, reducedMotion: false, audioTimer: 0 };
 
     /* ---------------- receiver side ---------------- */
@@ -263,7 +273,10 @@ const {
       $('prompt-text').hidden = listen;
       $('listen-cue').hidden = !listen;
       $('prompt-text').textContent = card.prompt;
-      $('prompt-text').setAttribute('lang', card.direction === 'recognize' ? 'th' : 'en');
+      $('prompt-text').setAttribute(
+        'lang',
+        card.direction === 'recognize' ? contentLang : baseLang,
+      );
       $('prompt-coach').textContent = card.coach || '';
       setHint('waiting for reveal on the phone');
       setState('prompt');
@@ -271,10 +284,11 @@ const {
 
     function showRevealed(answer) {
       state.revealed = true;
-      $('headword').textContent = answer.thai;
+      $('headword').textContent = answer.headword;
+      $('headword').setAttribute('lang', contentLang);
       $('gloss').textContent = answer.usage
-        ? `${answer.english} · ${answer.usage}`
-        : answer.english;
+        ? `${answer.translation} · ${answer.usage}`
+        : answer.translation;
       drawArticulation(answer.articulation);
       setHint('👎 again  ·  👍 got it  —  on the phone');
       setState('revealed');
@@ -375,8 +389,8 @@ const {
       const TONES = ['mid', 'low', 'falling', 'high', 'rising'];
       const PLACES = ['lips', 'teeth', 'alveolar', 'palate', 'velar', 'glottal'];
       function mockArticulation(card) {
-        const code = [...card.thai].reduce((a, c) => a + c.charCodeAt(0), 0);
-        const count = Math.max(1, Math.min(4, Math.round(card.thai.length / 3)));
+        const code = [...card.headword].reduce((a, c) => a + c.charCodeAt(0), 0);
+        const count = Math.max(1, Math.min(4, Math.round(card.headword.length / 3)));
         const syllables = [];
         for (let i = 0; i < count; i++) {
           syllables.push({
@@ -397,9 +411,9 @@ const {
           direction,
           prompt:
             direction === 'produce'
-              ? card.english
+              ? card.translation
               : direction === 'recognize'
-                ? card.thai
+                ? card.headword
                 : 'Listen and answer',
           coach:
             direction === 'listen'
@@ -412,8 +426,8 @@ const {
       };
 
       const answerOf = (card) => ({
-        thai: card.thai,
-        english: card.english,
+        headword: card.headword,
+        translation: card.translation,
         usage: card.usage || undefined,
         articulation: mockArticulation(card),
       });
@@ -498,7 +512,7 @@ const {
           receive({
             type: 'SHOW_CARD',
             seq: next(),
-            card: { ...promptOf(card), english: card.english },
+            card: { ...promptOf(card), translation: card.translation },
           });
         },
         b: () =>
@@ -546,10 +560,12 @@ const {
               .split(/\r?\n/)
               .filter((l) => l && !l.startsWith('#'))
               .map((l) => l.split('\t'))
+              // TSV columns are ID / Thai / English / Usage / Coach / Tags —
+              // mapped onto the neutral protocol names on the way in.
               .map((f) => ({
                 id: f[0],
-                thai: f[1],
-                english: f[2],
+                headword: f[1],
+                translation: f[2],
                 usage: f[3],
                 coach: f[4],
                 tags: f[5],

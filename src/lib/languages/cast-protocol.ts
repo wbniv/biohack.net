@@ -68,14 +68,16 @@ export type CastCardPrompt = {
   audio?: { normal: string; slow?: string };
 };
 
+/**
+ * Field names are language-neutral per plan decision 7 — Spanish reuses this
+ * payload unchanged. (The plan's protocol section originally wrote `thai` /
+ * `english`; that was an error, corrected before anything shipped.)
+ */
 export type CastCardAnswer = {
-  /**
-   * Target-language headword. Field names follow the plan's protocol section
-   * verbatim; see the note in the Phase 1 verification about `thai` vs plan
-   * decision 7's language-neutrality rule.
-   */
-  thai: string;
-  english: string;
+  /** Target-language script — the Thai or Spanish headword. */
+  headword: string;
+  /** Base-language gloss. */
+  translation: string;
   usage?: string;
   articulation: ArticulationView;
 };
@@ -149,7 +151,7 @@ export const AUDIO_PATH_PATTERN =
   /^\/languages\/[a-z]{2,3}\/audio\/[A-Za-z0-9._-]{1,120}\.(mp3|m4a|ogg|wav)$/;
 
 /** Answer-bearing keys must never appear on a pre-reveal prompt payload. */
-const ANSWER_KEYS = ['thai', 'english', 'usage', 'answer', 'translation'];
+const ANSWER_KEYS = ['headword', 'translation', 'usage', 'answer'];
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -222,8 +224,8 @@ function checkArticulation(v: unknown): string | null {
 
 function checkAnswer(v: unknown): string | null {
   if (!isObject(v)) return 'answer must be an object';
-  if (!isNonEmptyString(v.thai)) return 'answer.thai must be a string';
-  if (!isNonEmptyString(v.english)) return 'answer.english must be a string';
+  if (!isNonEmptyString(v.headword)) return 'answer.headword must be a string';
+  if (!isNonEmptyString(v.translation)) return 'answer.translation must be a string';
   if (v.usage !== undefined && typeof v.usage !== 'string') {
     return 'answer.usage must be a string';
   }
