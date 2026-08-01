@@ -2,16 +2,16 @@
   "order": 117,
   "slug": "svx2-fastrom-video",
   "title": "SVX2 FastROM Animated Video",
-  "desc": "A real NASA Artemis camera reel compressed with SVX2, staged and decoded on the 65816, and animated through Mode 7 at a verified 30 fps.",
+  "desc": "A real NASA Artemis camera reel with an animated title, SVX2 decoding on the 65816, and cartridge-measured time and FPS telemetry.",
   "keys": "Self-running — continuously plays the verified Artemis launch reel",
   "category": "rendering",
   "displayMode": 7,
   "pageTitle": "SVX2 FastROM Animated Video — bioHACK•NET",
-  "pageDesc": "Run a real SNES FastROM that continuously decodes an SVX2-compressed NASA Artemis camera reel at a verified 30 fps.",
+  "pageDesc": "Run a real SNES FastROM with an animated title, SVX2-compressed Artemis video, and cartridge-measured time and FPS telemetry.",
   "heading": "SVX2 FastROM Animated Video",
   "lede": "A real NASA Artemis launch camera reel, compressed as <b>SVX2</b>, decoded by hand-tuned 65816 assembly, and animated at a verified 30&nbsp;fps through Mode&nbsp;7 in a genuine 32&nbsp;KiB FastROM cartridge image.",
   "keysHtml": [
     "Self-running &mdash; the ROM validates every embedded frame, then continuously plays the Artemis launch reel."
   ],
-  "doc": "<h2>What this proves</h2><p>The cartridge performs real ROM-to-high-WRAM packet staging, decodes one SVX2 keyframe followed by in-place delta frames, validates every 4,480-byte output CRC, and only then releases force blank. An NMI-counted scheduler uploads each completed frame to Mode 7 VRAM on its exact presentation VBlank.</p><h2>30 fps full-pipeline result</h2><p>The emulator regression charges packet DMA, assembly decode, and the 4,480-byte presentation DMA. It records <b>482 presentations in 1,200 VBlanks</b> after boot validation, with zero CRC failures, zero deadline slips, and many complete reel loops. A 60 fps attempt missed 160 deadlines in the same window, so this cartridge deliberately ships at the proven 30 fps cadence.</p><p class=\"rp-foot\">Source footage: NASA Artemis I press-site camera, November 16, 2022. Hit <b>Verify fidelity</b> to require the cartridge's two-loop target gate live in this tab.</p>"
+  "doc": "<h2>What this proves</h2><p>The cartridge immediately animates a Mode 7 title while it performs real ROM-to-high-WRAM packet staging and validates every embedded 4,480-byte frame. After the title spins out, one SVX2 keyframe and in-place deltas play through an NMI-counted scheduler.</p><h2>30 fps full-pipeline result</h2><p>The post-title emulator regression charges packet DMA, assembly decode, and presentation DMA. It records <b>397 presentations in 1,200 VBlanks</b>, with zero CRC failures, zero deadline slips, and many complete reel loops. The dashboard reads 32-bit presentation and VBlank counters from the cartridge: <b>TIME</b> advances only for presented video and <b>FPS</b> is measured rather than inferred from browser refresh.</p><p class=\"rp-foot\">Source footage: NASA Artemis I press-site camera, November 16, 2022. Hit <b>Verify fidelity</b> to require the cartridge's two-loop target gate live in this tab.</p>"
 }
