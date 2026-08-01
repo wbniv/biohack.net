@@ -1,0 +1,1084 @@
+#separator:Tab
+#html:true
+#deck:biohack::languages::es-en
+#columns:ID	Spanish	English	SpanishExample	EnglishExample	Grammar	SortKey	Tags	Checksum
+#tags column:8
+biohack:es-en:0001	a	to,at	Vamos a Granada mañana.	We're going to Granada tomorrow.		a	biohack es-en letter-a	975bc3d29e45
+biohack:es-en:0002	abajo	down, downstairs, below	Te espero abajo.	I'll wait for you downstairs.		abajo	biohack es-en letter-a	22ea3a71c5e6
+biohack:es-en:0003	el abanico	m. fan	Las damas usan abanicos cuando hace calor.	Ladies use fans when it's hot.	masculine noun	abanico	biohack es-en letter-a noun	7bde15a9e93e
+biohack:es-en:0004	abierto	open	El banco queda abierto desde las ocho hasta las dos.	The bank stays open from eight until two.		abierto	biohack es-en letter-a	715de36be91d
+biohack:es-en:0005	abrazar	to embrace	Abrazó a sus parientes antes de salir.	He embraced his relatives before he left.	verb	abrazar	biohack es-en letter-a verb	827aa4c80e4a
+biohack:es-en:0006	el abrazo	m. embrace, hug	Abrazos para los niños de todos nosotros.	Hugs for the children from all of us.	masculine noun	abrazo	biohack es-en letter-a noun	2c26da9a92ad
+biohack:es-en:0007	el abrigo	m. overcoat	Siempre llevo un abrigo cuando hace frío.	I always wear an overcoat when it's cold.	masculine noun	abrigo	biohack es-en letter-a noun	df62a2a6b4d4
+biohack:es-en:0008	abrir	to open	“Abra la boca,” dijo el dentista.	“Open your mouth,” said the dentist.	verb	abrir	biohack es-en letter-a verb	efb81811b5b3
+biohack:es-en:0009	acá	here	Venga acá, rápido.	Come here quickly.		aca	biohack es-en letter-a	78e908a1222b
+biohack:es-en:0010	acabar	to finish	Nuestro trabajo nunca acaba.	Our work never ends.	verb	acabar	biohack es-en letter-a verb	39f2e7dcd348
+biohack:es-en:0011	la acción	f. action	Sus acciones me confunden.	His actions confuse me.	feminine noun	accion	biohack es-en letter-a noun	090c93c5237a
+biohack:es-en:0012	aceptar	to accept	¿Aceptan ustedes cheques de viajero?	Do you accept traveler's checks?	verb	aceptar	biohack es-en letter-a verb	0be06a5b5a82
+biohack:es-en:0013	acerca de	about	Busco un libro acerca de la España medieval.	I'm looking for a book about medieval Spain.		acerca de	biohack es-en letter-a	db98416db887
+biohack:es-en:0014	acercarse	to approach	Acérquense y podrán ver mejor.	Come closer and you'll be able to see better.	verb	acercarse	biohack es-en letter-a verb	b20f7112709f
+biohack:es-en:0015	acompañar	to accompany, go with	¿Me permiten acompañarlos?	Will you allow me to go with you?	verb	acompanar	biohack es-en letter-a verb	5cc9045c4f70
+biohack:es-en:0016	aconsejar	to advise	¿Qué me aconsejan hacer?	What do you advise me to do?	verb	aconsejar	biohack es-en letter-a verb	805e55495019
+biohack:es-en:0017	acordarse	to remember	¿Se acuerdan ustedes de nosotros?	Do you remember us?	verb	acordarse	biohack es-en letter-a verb	d118c10b14ec
+biohack:es-en:0018	acostarse	to go to bed	Siempre nos acostamos tarde cuando visitamos un país extranjero.	We always go to bed late when we visit a foreign country.	verb	acostarse	biohack es-en letter-a verb	a3f92bdf3e12
+biohack:es-en:0019	actual	present, current	El gobierno actual tiene muchos problemas.	The present government has many problems.		actual	biohack es-en letter-a	cfeefb0b1011
+biohack:es-en:0020	el acuerdo	m. agreement	Estamos de acuerdo con usted.	We agree with you.	masculine noun	acuerdo	biohack es-en letter-a noun	27f0b0ac0dcd
+biohack:es-en:0021	adelante	ahead, forward	De hoy en adelante, traten de llegar a tiempo.	From now on, try to arrive on time.		adelante	biohack es-en letter-a	1835edb67b67
+biohack:es-en:0022	además	moreover, besides	No tengo tiempo para eso, y además no tengo dinero.	I have no time for that, and moreover I don't have any money.		ademas	biohack es-en letter-a	e792f4093028
+biohack:es-en:0023	adentro	inside	Quiero ver lo que hay adentro.	I want to see what there is inside.		adentro	biohack es-en letter-a	83a25e0cc2a8
+biohack:es-en:0024	adiós	goodbye	Adiós y buena suerte.	Goodbye and good luck.		adios	biohack es-en letter-a	5f8219c264d0
+biohack:es-en:0025	adónde	where	¿Adónde van ustedes esta tarde?	Where are you going this afternoon?		adonde	biohack es-en letter-a	a7965f1d9f2f
+biohack:es-en:0026	la aduana	f. customs house	Hay que pasar por la aduana al llegar.	It’s necessary to go through customs on arriving.	feminine noun	aduana	biohack es-en letter-a noun	acb05ed6d157
+biohack:es-en:0027	el aeropuerto	m. airport	Hay muchas líneas aéreas en este aeropuerto.	There are many airlines in this airport.	masculine noun	aeropuerto	biohack es-en letter-a noun	7e1d3a225954
+biohack:es-en:0028	afeitar(se)	to shave	Me afeito todas las mañanas.	I shave every morning.	verb	afeitar(se)	biohack es-en letter-a verb	cc308fcd4a05
+biohack:es-en:0029	afuera	outside	Mire qué pasa afuera.	See what's going on outside.		afuera	biohack es-en letter-a	e397488fa903
+biohack:es-en:0030	el agente	m. agent	Un agente de viajes le arreglará una excursión a Andalucía.	A travel agent will arrange an excursion to Andalusia for you.	masculine noun	agente	biohack es-en letter-a noun	18fdf5087317
+biohack:es-en:0031	agradable	pleasant	Nuestra visita ha sido muy agradable.	Our visit has been very pleasant.		agradable	biohack es-en letter-a	2cc1b9754cba
+biohack:es-en:0032	agradecer	to thank	Le agradezco mucho su amabilidad.	I thank you very much for your kindness.	verb	agradecer	biohack es-en letter-a verb	dbfe5957d66e
+biohack:es-en:0033	el agua	f. water	Es una buena idea beber agua embotellada.	It's a good idea to drink bottled water.	feminine noun	agua	biohack es-en letter-a noun	6032501bc157
+biohack:es-en:0034	aguantar	to stand (bear)	No puedo aguantar el ruido de la calle.	I can’t stand the noise from the street.	verb	aguantar	biohack es-en letter-a verb	e0320b4b4725
+biohack:es-en:0035	la aguja	f. needle	Siempre traigo una aguja en caso de emergencia.	I always carry a needle in case of an emergency.	feminine noun	aguja	biohack es-en letter-a noun	eca94b5f664c
+biohack:es-en:0036	ahora	now	Estoy ocupado ahora y no puedo salir.	I am busy now and can’t go out.		ahora	biohack es-en letter-a	e9a406504a19
+biohack:es-en:0037	el aire	m. air	Abra la ventana y tendrá aire fresco.	Open the window and you'll have fresh air.	masculine noun	aire	biohack es-en letter-a noun	21e93aee3899
+biohack:es-en:0038	al + infinitive	on, upon	Al ver lo que pasaba, decidimos salir.	Upon seeing what was happening, we decided to leave.		al + infinitive	biohack es-en letter-a	b62801341216
+biohack:es-en:0039	el alcalde	m. mayor	La oficina del alcalde está en el ayuntamiento.	The mayor's office is in the city hall.	masculine noun	alcalde	biohack es-en letter-a noun	d5cedd2b2b71
+biohack:es-en:0040	la alcoba	f. bedroom	Buscamos un apartamiento con dos alcobas.	We're looking for an apartment with two bedrooms.	feminine noun	alcoba	biohack es-en letter-a noun	68fcdf919341
+biohack:es-en:0041	la aldea	f. village	Sugiero que visiten algunas aldeas en las montañas.	I suggest that you visit some villages in the mountains.	feminine noun	aldea	biohack es-en letter-a noun	44d7af44c6cc
+biohack:es-en:0042	alegrarse	to be glad	Me alegro de verlos otra vez.	I'm glad to see you again.	verb	alegrarse	biohack es-en letter-a verb	71a9bb6f924c
+biohack:es-en:0043	alegre	glad, happy	Parece que está usted muy alegre hoy.	It seems that you are very happy today.		alegre	biohack es-en letter-a	cbc2bb0b4e8c
+biohack:es-en:0044	algo	something, anything	¿Tiene usted algo que declarar?	Do you have something to declare?		algo	biohack es-en letter-a	d24893d689f3
+biohack:es-en:0045	el algodón	m. cotton	Prefiero una blusa de algodón.	I prefer a cotton blouse.	masculine noun	algodon	biohack es-en letter-a noun	0b69c540b980
+biohack:es-en:0046	alguien	someone, somebody	Creo que alguien llama a la puerta.	I think someone is knocking at the door.		alguien	biohack es-en letter-a	a47d46a038c3
+biohack:es-en:0047	alguno	some, any	Algunos de ustedes ya me conocen.	Some of you already know me.		alguno	biohack es-en letter-a	b992f14cc01d
+biohack:es-en:0048	el almacén	m. department store	Se puede comprar casi todo en los almacenes grandes.	You can buy almost everything in the big department stores.	masculine noun	almacen	biohack es-en letter-a noun	9603c53f23c7
+biohack:es-en:0049	la almohada	f. pillow	¿Me pueden subir otra almohada, por favor?	Would you please bring up another pillow?	feminine noun	almohada	biohack es-en letter-a noun	d5ade941f5db
+biohack:es-en:0050	almorzar	to eat lunch	Trato de almorzar con la familia si puedo.	I try to eat lunch with my family if I can.	verb	almorzar	biohack es-en letter-a verb	0d90b995f350
+biohack:es-en:0051	el almuerzo	m. lunch	En España sirven el almuerzo a eso de las dos.	In Spain they serve lunch at about two o'clock.	masculine noun	almuerzo	biohack es-en letter-a noun	bc0dc0af3625
+biohack:es-en:0052	alquilar	to rent	¿Dónde puedo alquilar un coche?	Where can I rent a ear?	verb	alquilar	biohack es-en letter-a verb	c2b79cf45b96
+biohack:es-en:0053	alto	tall, high; stop	Hay muchos edificios altos en el centro.	There are many tall buildings downtown.		alto	biohack es-en letter-a	bb98b1723b63
+biohack:es-en:0054	alumno (-a)	Student, pupil	Lleva un grupo de alumnos a España cada verano.	He takes a group of students to Spain every summer.		alumno (-a)	biohack es-en letter-a	2c8bd2751fd1
+biohack:es-en:0055	allí	there	No me gustaría vivir allí.	I wouldn't like to live there.		alli	biohack es-en letter-a	b0e50e41a89e
+biohack:es-en:0056	amable	likeable, kind	Es usted muy amable.	You're very kind.		amable	biohack es-en letter-a	3ddca3c9485f
+biohack:es-en:0057	amar	to love	La amo tanto que no puedo separarme de ella.	I love her so much that I can’t leave her.	verb	amar	biohack es-en letter-a verb	7ecb20ec3e82
+biohack:es-en:0058	amigo (-a)	friend	Quiero presentar algunos amigos míos.	I'd like to introduce some friends of mine.		amigo (-a)	biohack es-en letter-a	a16455998e96
+biohack:es-en:0059	la amistad	f. friendship	Nuestra amistad va a durar mucho tiempo.	Our friendship will last a long time.	feminine noun	amistad	biohack es-en letter-a noun	845fd218e491
+biohack:es-en:0060	ambos	both	Vale la pena de visitar ambos lugares.	It’s worthwhile to visit both places.		ambos	biohack es-en letter-a	9172e47e0b2f
+biohack:es-en:0061	el amor	m. love	Por tu amor, haría cualquier cosa.	For your love, I would do anything.	masculine noun	amor	biohack es-en letter-a noun	c704a2b32c1a
+biohack:es-en:0062	ancho	wide	Las avenidas principales son muy anchas.	The main streets are very wide.		ancho	biohack es-en letter-a	a4fedcbe8e43
+biohack:es-en:0063	andar	to walk	Los viejos andan despacio.	Old people walk slowly.	verb	andar	biohack es-en letter-a verb	5ac7c6389cf3
+biohack:es-en:0064	el andén	m. platform	¿En qué andén llega el tren de Barcelona?	On which platform does the train from Barcelona arrive?	masculine noun	anden	biohack es-en letter-a noun	2be5c2861e22
+biohack:es-en:0065	el anillo	m. ring	Su novio le dio un anillo muy grande.	Her fiancé gave her a very big ring.	masculine noun	anillo	biohack es-en letter-a noun	24861ea21cda
+biohack:es-en:0066	anoche	last night	Anoche llegué tarde.	Last night I arrived late.		anoche	biohack es-en letter-a	2f136e0ae279
+biohack:es-en:0067	los anteojos	m. pl. eyeglasses	Usa anteojos para leer.	He wears eyeglasses to read.	masculine plural noun	anteojos	biohack es-en letter-a noun	2bc768c99024
+biohack:es-en:0068	antes de	before	Antes de ir a Francia decidimos estudiar francés.	Before going to France we decided to study French.		antes de	biohack es-en letter-a	c8aab48f0310
+biohack:es-en:0069	el anuncio	m. announcement, advertisement	Lea la sección de anuncios si busca empleo.	Read the advertisement section if you're looking for a job.	masculine noun	anuncio	biohack es-en letter-a noun	4febbab24579
+biohack:es-en:0070	añadir	to add	No puedo añadir nada más.	I can't add anything else.	verb	anadir	biohack es-en letter-a verb	804d47fb6917
+biohack:es-en:0071	el año	m. year	Esperamos volver el año que viene.	We hope to return next year.	masculine noun	ano	biohack es-en letter-a noun	bd07868e1fa1
+biohack:es-en:0072	apagar	to turn off, extinguish	Apague la luz al salir del cuarto.	Turn off the light on leaving the room.	verb	apagar	biohack es-en letter-a verb	188df719dd41
+biohack:es-en:0073	el aparato	m. appliance	Hay muchos aparatos útiles en la ferretería.	There are many useful appliances in the hardware store.	masculine noun	aparato	biohack es-en letter-a noun	b66bef0ef219
+biohack:es-en:0074	aparecer	to appear	De repente apareció después de tres años de ausencia.	He suddenly appeared after a three-year absence.	verb	aparecer	biohack es-en letter-a verb	d3c373d60ef0
+biohack:es-en:0075	el apellido	m. surname	¿Cuál es su apellido?	What is your surname?	masculine noun	apellido	biohack es-en letter-a noun	ebbdeaf8544a
+biohack:es-en:0076	aprender	to learn	Aprendemos mucho en nuestros viajes al extranjero.	We learn a lot in our trips abroad..	verb	aprender	biohack es-en letter-a verb	fab089ac878b
+biohack:es-en:0077	apresurarse	to hurry	Ya es tarde. ¡Apresúrense!	It's late already. Hurry up!	verb	apresurarse	biohack es-en letter-a verb	f6805276faa1
+biohack:es-en:0078	aprovechar	to take advantage of	Quiero aprovechar la oportunidad de hablar con el gobernador.	I want to take advantage of the opportunity to speak to the governor.	verb	aprovechar	biohack es-en letter-a verb	da662dec0eb9
+biohack:es-en:0079	el aquel	m. (aquella f.; aquellos m. pl.; aquellas f. pl.) that, those	Me acuerdo de aquellos tiempos.	I remember those times.	masculine noun	aquel	biohack es-en letter-a noun	d0d8c408e3ad
+biohack:es-en:0080	aquí	here	Aquí se habla español.	Spanish is spoken here.		aqui	biohack es-en letter-a	2cc3f112e2f9
+biohack:es-en:0081	el árbol	m. tree	Su casa está rodeada de árboles.	His house is surrounded	masculine noun	arbol	biohack es-en letter-a noun	5febb5092ff9
+biohack:es-en:0082	la arena	f. sand	“Sangre y arena” es el título de una novela de Blasco Ibáñez.	“Blood and Sand” is the title of a novel by Blasco Ibáñez.	feminine noun	arena	biohack es-en letter-a noun	d4a0bef4b02c
+biohack:es-en:0083	el arete	m. earring	Tienen una buena selección de aretes en esta joyería.	They have a good choice of earrings in this jewelry store.	masculine noun	arete	biohack es-en letter-a noun	d7fad1fe2c37
+biohack:es-en:0084	el armario	m. closet	Esta habitación tiene dos armarios para la ropa.	This room has two closets for clothing.	masculine noun	armario	biohack es-en letter-a noun	683a8e37edcf
+biohack:es-en:0085	arreglar	to fix, repair, arrange	¿Está todo arreglado para mañana?	Is everything arranged for tomorrow?	verb	arreglar	biohack es-en letter-a verb	a372c8518e64
+biohack:es-en:0086	arriba	up, above	Las alcobas están arriba.	The bedrooms are upstairs.		arriba	biohack es-en letter-a	7778bd76145e
+biohack:es-en:0087	arrojar	to throw	Se prohibe arrojar objetos por la ventanilla.	It is forbidden to throw things out of the window.	verb	arrojar	biohack es-en letter-a verb	7e93bdad9495
+biohack:es-en:0088	el/la arte	m., f. art	Este museo tiene una magnifica coleccién de arte moderno.	This museum has a magnificent collection of modern art.	masculine or feminine noun	arte	biohack es-en letter-a noun	8113b5f8c96d
+biohack:es-en:0089	el arte	m. art	¿Dónde está el Palacio de Bellas Artes?	Where is the Palace of Fine Arts?	masculine noun	arte	biohack es-en letter-a noun	afdf7e1adb8c
+biohack:es-en:0090	el/la artista	m. &amp; f.	artist Estos artistas van a ser famosos algún día.	These artists are going to be famous some day.	masculine or feminine noun	artista	biohack es-en letter-a noun	bfe5c5d2feff
+biohack:es-en:0091	asado	roasted	Me gustan las castañas asadas.	I like roasted chestnuts.		asado	biohack es-en letter-a	1b8d95e67424
+biohack:es-en:0092	el ascensor	m. elevator	El ascensor no funciona hoy.	The elevator is out of order today.	masculine noun	ascensor	biohack es-en letter-a noun	1e3b1c1c3456
+biohack:es-en:0093	asegurar	to insure	Quisiera asegurar mi equipaje.	I'd like to insure my luggage.	verb	asegurar	biohack es-en letter-a verb	a9463a398bca
+biohack:es-en:0094	los aseos	m. pl. (Spain) restroom, toilet	Los aseos están a la izquierda.	The restrooms are to the left.	masculine plural noun	aseos	biohack es-en letter-a noun	981c11a05ea8
+biohack:es-en:0095	así	thus, this way	Usted debe hacerlo así.	You should do it this way.		asi	biohack es-en letter-a	f6c9f3613110
+biohack:es-en:0096	el asiento	m. seat	Tomen asiento, por favor.	Please be seated.	masculine noun	asiento	biohack es-en letter-a noun	c08428aa763e
+biohack:es-en:0097	asistir a	to attend	(Queremos asistir al concierto de esta noche.	We want to attend tonight's concert.	verb	asistir a	biohack es-en letter-a verb	6084de56be56
+biohack:es-en:0098	el asunto	m. matter, affair	Es un asunto muy delicado.	It’s a very delicate matter.	masculine noun	asunto	biohack es-en letter-a noun	3569927dfd69
+biohack:es-en:0099	atrás	back, behind, backward	Se quedó atrás porque caminaba muy despacio.	She remained behind because she was walking very slowly.		atras	biohack es-en letter-a	2d94ea63554b
+biohack:es-en:0100	atrasado	slow	Mi reloj debe estar atrasado.	Muy watch must be slow.		atrasado	biohack es-en letter-a	49b6295d44ac
+biohack:es-en:0101	atravesar	to cross	Espere la señal verde antes de empezar a atravesar.	Wait for the green signal before starting to cross.	verb	atravesar	biohack es-en letter-a verb	247104b3509d
+biohack:es-en:0102	atreverse	to dare	No me atrevo a decirle tal cosa.	I don’t dare tell him such a thing.	verb	atreverse	biohack es-en letter-a verb	334b25220a40
+biohack:es-en:0103	aunque	although	Aunque no tenemos mucho dinero, quiero comprar esta pintura.	Although we don’t have much money, I want to buy this painting.		aunque	biohack es-en letter-a	c963e3fd3554
+biohack:es-en:0104	el autobús	m. bus	El autobús para en la próxima esquina.	The bus stops at the next comer.	masculine noun	autobus	biohack es-en letter-a noun	d181d8790347
+biohack:es-en:0105	el automóvil	m. automobile, car	Si quiere, le puedo llevar en mi autómovil.	If you wish, I can take you in my automobile.	masculine noun	automovil	biohack es-en letter-a noun	ae46ebede4b5
+biohack:es-en:0106	la autoridad	f. authority	No se sabe quién tiene la autoridad en este asunto.	It is not known who has the authority in this matter.	feminine noun	autoridad	biohack es-en letter-a noun	6d9f112542ba
+biohack:es-en:0107	la avenida	f. avenue	La Quinta Avenida es una calle elegante.	Fifth Avenue is an elegant street.	feminine noun	avenida	biohack es-en letter-a noun	e9fbc589ce72
+biohack:es-en:0108	averiguar	to ascertain, find out	Trate de averiguar si es verdad todo lo que dijo.	Try to find out if everything he said is true.	verb	averiguar	biohack es-en letter-a verb	25a48578a57e
+biohack:es-en:0109	el avión	m. airplane	¿A qué hora debe llegar el avión de Guadalajara?	At what time should the plane from Guadalajara arrive?	masculine noun	avion	biohack es-en letter-a noun	134cb2bbeb29
+biohack:es-en:0110	avisar	to inform, warn	Haga el favor de avisarme cuando debo bajar.	Please let me know when I should get off.	verb	avisar	biohack es-en letter-a verb	d30edcf6318a
+biohack:es-en:0111	el aviso	m. notice, warning	Leí el aviso en el periódico.	I read the notice in the paper.	masculine noun	aviso	biohack es-en letter-a noun	11cc35ec856b
+biohack:es-en:0112	ayer	yesterday	Ayer hicimos mucho y estamos cansados hoy.	We did a lot yesterday and are tired today.		ayer	biohack es-en letter-a	b6557a87809a
+biohack:es-en:0113	ayudar	to help	¿Puede usted ayudarme?	Can you help me?	verb	ayudar	biohack es-en letter-a verb	91feecac57c3
+biohack:es-en:0114	el ayuntamiento	m. town hall	Muchas oficinas del gobierno municipal están en el ayuntamiento.	Many offices of the municipal government are in the town hall.	masculine noun	ayuntamiento	biohack es-en letter-a noun	0246d3a83c00
+biohack:es-en:0115	bailar	to dance	;Me permite bailar con usted?	May I dance with you?	verb	bailar	biohack es-en letter-b verb	b0a638096aba
+biohack:es-en:0116	el baile	m. dance	Mi baile favorito es el tango.	My favorite dance is the tango.	masculine noun	baile	biohack es-en letter-b noun	080ac4fda783
+biohack:es-en:0117	bajar	to go down, get off	Creo que bajamos en la próxima parada.	I think we get off at the next stop.	verb	bajar	biohack es-en letter-b verb	4a202d772691
+biohack:es-en:0118	bajo	low, short (stature)	Es más bajo que su padre.	He's shorter than his father.		bajo	biohack es-en letter-b	7effaaa0f479
+biohack:es-en:0119	el banco	m. bank, bench	Vamos al banco para cobrar estos cheques.	Let's go to the bank to cash these checks.	masculine noun	banco	biohack es-en letter-b noun	cc80f520ec29
+biohack:es-en:0120	la bandera	f. flag	Los colores de la bandera americana son rojo, blanco y azul.	The colors of the American flag are red, white and blue.	feminine noun	bandera	biohack es-en letter-b noun	c74b7c20e8b9
+biohack:es-en:0121	bañar(se)	to bathe	Prefiero bañarme por la mañana.	I prefer to bathe in the morning.	verb	banar(se)	biohack es-en letter-b verb	308f5ac5fd29
+biohack:es-en:0122	el baño	m. bath, bathroom	Una habitación para dos con baño, por favor.	A room for two with bath, please.	masculine noun	bano	biohack es-en letter-b noun	5c97a021692d
+biohack:es-en:0123	barato	cheap, inexpensive	Cómprelo; es muy barato.	Buy it; it's very cheap.		barato	biohack es-en letter-b	73de1d4b77a3
+biohack:es-en:0124	la barba	f. chin, beard	Aunque es joven, tiene la barba gris.	Although he's young, he has a gray beard.	feminine noun	barba	biohack es-en letter-b noun	c0a2140fddd0
+biohack:es-en:0125	el barco	m. boat, ship	Me gusta cruzar el lago en barco de vela.	I like to go across the lake in a sailboat.	masculine noun	barco	biohack es-en letter-b noun	b55a378e3ff4
+biohack:es-en:0126	el barrio	m. district, neighborhood	Mucha gente rica vive en este barrio.	Many rich people live in this neighborhood.	masculine noun	barrio	biohack es-en letter-b noun	a75682cb6652
+biohack:es-en:0127	bastante	enough, sufficient	No sé si tengo bastante dinero.	I don't know if I have enough money.		bastante	biohack es-en letter-b	1f51c6e19b05
+biohack:es-en:0128	bastar	to suffice, be enough	Ya basta.	No quiero más. That's enough. I don't want any more.	verb	bastar	biohack es-en letter-b verb	c2f79c648678
+biohack:es-en:0129	el baúl	m. trunk	Creo que el baúl es demasiado pesado.	I think the trunk is too heavy.	masculine noun	baul	biohack es-en letter-b noun	a691c63f6324
+biohack:es-en:0130	beber	to drink	Es peligroso beber y conducir.	It’s dangerous to drink and drive.	verb	beber	biohack es-en letter-b verb	131528c9e3d6
+biohack:es-en:0131	la bebida	f. drink, beverage	¿Qué bebidas frías tiene?	What cold drinks do you have?	feminine noun	bebida	biohack es-en letter-b noun	2de38f2e2acf
+biohack:es-en:0132	bello	beautiful	Madrid es una de las capitales más bellas de Europa.	Madrid is one of the most beautiful capitals in Europe.		bello	biohack es-en letter-b	a71c5c9550c1
+biohack:es-en:0133	besar	to kiss	Los novios se besaron cuando terminó la ceremonia.	The bride and groom kissed when the ceremony ended.	verb	besar	biohack es-en letter-b verb	2170b52dd7b6
+biohack:es-en:0134	el beso	m. kiss	Como no puedo estar contigo, te mando un beso.	Since can't be with you, I send you a kiss.	masculine noun	beso	biohack es-en letter-b noun	4df425fbd619
+biohack:es-en:0135	la biblioteca	f. library	Se puede aprender tanto en la biblioteca como en la escuela.	You can learn as much in the library as in school.	feminine noun	biblioteca	biohack es-en letter-b noun	59cb8963b390
+biohack:es-en:0136	bien	well	Usted habla español muy bien.	You speak Spanish very well.		bien	biohack es-en letter-b	9c5ea0e41ccf
+biohack:es-en:0137	bienvenido	welcome	¡Bienvenido a nuestra casa!	Welcome to our house!		bienvenido	biohack es-en letter-b	08ed98a84531
+biohack:es-en:0138	el billete	m. ticket, bill	(bank note) ¿Cuánto cuesta un billete a Segovia?	How much is a ticket to Segovia?	masculine noun	billete	biohack es-en letter-b noun	6741fd85abc9
+biohack:es-en:0139	la blusa	f. blouse	Tenemos blusas de algodón o de seda.	We have blouses of cotton or silk.	feminine noun	blusa	biohack es-en letter-b noun	d99c752c0d1f
+biohack:es-en:0140	la boca	f. mouth	No abrió la boca para protestar.	He didn’t open his mouth to protest.	feminine noun	boca	biohack es-en letter-b noun	cc3100c94063
+biohack:es-en:0141	la boda	f. wedding	Se celebró la boda en el hotel Ritz.	The wedding took place in the Ritz Hotel.	feminine noun	boda	biohack es-en letter-b noun	c576c76c6e0a
+biohack:es-en:0142	el boleto	m. (Spanish America) ticket	Un boleto sencillo, por favor.	A one-way ticket, please.	masculine noun	boleto	biohack es-en letter-b noun	84e1f462fcb3
+biohack:es-en:0143	la bolsa	f. bag, purse	Se le perdió la bolsa.	She lost her purse.	feminine noun	bolsa	biohack es-en letter-b noun	2c1d821a8c43
+biohack:es-en:0144	el bolsillo	m. pocket	Andaba con las manos en los bolsillos.	He was walking with his hands in his pockets.	masculine noun	bolsillo	biohack es-en letter-b noun	baafd82debf8
+biohack:es-en:0145	bonito	pretty	¡Qué bonita estás hoy!	How pretty you look today!		bonito	biohack es-en letter-b	8a19f33ab770
+biohack:es-en:0146	borracho	drunk; drunkard	Si sigues bebiendo así, estarás borracho muy pronto.	If you keep on drinking like that, you'll be drunk very soon.		borracho	biohack es-en letter-b	5097e187bcd0
+biohack:es-en:0147	el bosque	m. forest, woods	Cuidado con el fuego en el bosque.	Be careful with fire in the woods.	masculine noun	bosque	biohack es-en letter-b noun	5aef20e41bdb
+biohack:es-en:0148	botar (Spanish America)	to throw out, discard	No bote esos papeles todavía.	Don't throw those papers out yet.	verb	botar (spanish america)	biohack es-en letter-b verb	fe3e4525d452
+biohack:es-en:0149	la botella	f. bottle	Se me rompió la botella.	My bottle broke.	feminine noun	botella	biohack es-en letter-b noun	14c3546f7cbe
+biohack:es-en:0150	el brazo	m. arm	Se lastimó el brazo levantando tanto peso.	He hurt his am lifting so much weight.	masculine noun	brazo	biohack es-en letter-b noun	db1609f6b43a
+biohack:es-en:0151	breve	brief	Dígame, en breve, qué pasó.	Tell me, briefly, what happened.		breve	biohack es-en letter-b	3c067bb2395d
+biohack:es-en:0152	la broma	f. joke, jest	Lo dijo en broma.	He said it as a joke.	feminine noun	broma	biohack es-en letter-b noun	093d938adf0f
+biohack:es-en:0153	buen, bueno	good	Buenos días.	Hace buen tiempo hoy. Good morning. We have good weather today.		buen, bueno	biohack es-en letter-b	3484e5059ebf
+biohack:es-en:0154	el bulto	m. package, bundle	Salió llevando un bulto de ropa.	He went out carrying a bundle of clothing.	masculine noun	bulto	biohack es-en letter-b noun	2b863b450691
+biohack:es-en:0155	el buque	m. ship, boat	Es muy agradable cruzar el océano en buque.	It is very pleasant to cross the ocean by ship.	masculine noun	buque	biohack es-en letter-b noun	ac41c8282747
+biohack:es-en:0156	buscar	to look for	Lo buscaron en todas partes pero no lo encontraron.	They looked for him everywhere but didn't find him.	verb	buscar	biohack es-en letter-b verb	a00a0cb4c4d5
+biohack:es-en:0157	el caballero	m. gentleman, sir	Es un verdadero caballero.	He's a real gentleman.	masculine noun	caballero	biohack es-en letter-c noun	bcb5caa2d8fc
+biohack:es-en:0158	caber	to fit in, to be room for	Caben ocho personas en este ascensor.	There's room for eight people in this elevator.	verb	caber	biohack es-en letter-c verb	f03f394aae6f
+biohack:es-en:0159	la cabeza	f. head	Me duele la cabeza.	My head aches.	feminine noun	cabeza	biohack es-en letter-c noun	57e8d66649c2
+biohack:es-en:0160	cada	each	Cada uno hace lo que quiere.	Each one does what he wishes.		cada	biohack es-en letter-c	6e3a0cf246cd
+biohack:es-en:0161	caer	to fall	Se acercó y cayó de rodillas.	He approached and fell on his knees.	verb	caer	biohack es-en letter-c verb	eb4e2630f2f2
+biohack:es-en:0162	la cafetería	f. bar with food service	Las cafeterías están llenas hacia las siete de la tarde.	The “bars” are full at about seven P.M.	feminine noun	cafeteria	biohack es-en letter-c noun	5cb25b2420a3
+biohack:es-en:0163	la caja	f. box, cash register	Pague en la caja, por favor.	Pay at the register, please.	feminine noun	caja	biohack es-en letter-c noun	fc73121dc8c8
+biohack:es-en:0164	cajero (-a)	cashier	La cajera le dará el descuento.	The cashier will give you the discount.		cajero (-a)	biohack es-en letter-c	f7d622e53b88
+biohack:es-en:0165	el calcetín	m. sock	¿Dónde puedo comprar un par de calcetines?	Where can I buy a pair of socks?	masculine noun	calcetin	biohack es-en letter-c noun	77baa5887257
+biohack:es-en:0166	la calentura	f. fever	Tienes una calentura y no debes salir.	You have a fever and should not go out.	feminine noun	calentura	biohack es-en letter-c noun	041d767f7df2
+biohack:es-en:0167	caliente	warm, hot	¡Ay,el café está muy caliente!	Ow, the coffee is very hot!		caliente	biohack es-en letter-c	f685d7ae263e
+biohack:es-en:0168	el calor	m. heat, warmth	En el verano hace mucho calor en el sur de España.	In the summer it's very hot in southern Spain.	masculine noun	calor	biohack es-en letter-c noun	6109a519bddc
+biohack:es-en:0169	la calle	f. street	Nuestro hotel está en la próxima calle.	Our hotel is on the next street.	feminine noun	calle	biohack es-en letter-c noun	fd2fe8bb2760
+biohack:es-en:0170	la cama	f. bed	Una habitación con dos camas.	A room with two beds.	feminine noun	cama	biohack es-en letter-c noun	01887039968e
+biohack:es-en:0171	la cámara	f. camera	Podrás sacar muchas fotos con tu nueva cámara.	You'll be able to take many pictures with your new camera.	feminine noun	camara	biohack es-en letter-c noun	a8f841f78373
+biohack:es-en:0172	la camarera	f. chambermaid, waitress	Si necesita algo, pídaselo a la camarera.	If you need anything, ask the chambermaid.	feminine noun	camarera	biohack es-en letter-c noun	3373ca6ad426
+biohack:es-en:0173	el camarero	m. waiter	(Camarero, la cuenta, por favor.	Waiter, the check, please.	masculine noun	camarero	biohack es-en letter-c noun	dfac2d5d412a
+biohack:es-en:0174	cambiar	to change, exchange	Quisiera cambiar esta camisa que compré ayer.	I would like to exchange this shirt that I bought yesterday.	verb	cambiar	biohack es-en letter-c verb	3e07b2420e40
+biohack:es-en:0175	el cambio	m. change, exchange	Perdone, pero no tengo cambio.	Forgive me, but I have no change.	masculine noun	cambio	biohack es-en letter-c noun	51bf8b8aba01
+biohack:es-en:0176	caminar	to walk	Es bueno para la salud caminar todos los días.	It’s good for your health to walk every day.	verb	caminar	biohack es-en letter-c verb	8c7e94c86e50
+biohack:es-en:0177	el camino	m. road	Este camino es muy largo.	This road is very long.	masculine noun	camino	biohack es-en letter-c noun	b1000f73bd04
+biohack:es-en:0178	el camión	m. truck; bus (Mexico)	Algunos camiones son grandísimos.	Some trucks are very big.	masculine noun	camion	biohack es-en letter-c noun	2ac565f28658
+biohack:es-en:0179	la camisa	f. shirt	Enel verano llevo camisas de mangas cortas.	In the summer wear short-sleeved shirts.	feminine noun	camisa	biohack es-en letter-c noun	c488823f2106
+biohack:es-en:0180	la camiseta	f. T-shirt, undershirt	Muchos jóvenes usan camiseta en vez de camisa.	Many young men wear T-shirts instead of shirts.	feminine noun	camiseta	biohack es-en letter-c noun	3ccc1029e4f6
+biohack:es-en:0181	la campana	f. bell	Podemos oír la campana de la iglesia todas las, mañanas.	We can hear the church bell every morning.	feminine noun	campana	biohack es-en letter-c noun	5434a7c67716
+biohack:es-en:0182	el campo	m. country, field	Pasamos los fines de semana en nuestra casa de campo.	We spend the weekends in our country house.	masculine noun	campo	biohack es-en letter-c noun	c8c6780d7452
+biohack:es-en:0183	la canción	f. song	Las canciones de amor me emocionan.	Love songs move me.	feminine noun	cancion	biohack es-en letter-c noun	c5cbb8f23911
+biohack:es-en:0184	cansado	tired	Después de cuatro horas en el museo estamos cansados.	After four hours in the museum we're tired.		cansado	biohack es-en letter-c	bbbc56e1232a
+biohack:es-en:0185	cantar	to sing	Como es tu cumpleaños, vamos a cantarte una canción.	Asit's your birthday, we're going to sing you a song.	verb	cantar	biohack es-en letter-c verb	013fbf14070a
+biohack:es-en:0186	la capital	f. capital (city)	Madrid es la capital de España.	Madrid is the capital of Spain.	feminine noun	capital	biohack es-en letter-c noun	a59a2f767a2b
+biohack:es-en:0187	el capital	m. capital (money)	Invirtié todo su capital en ese negocio.	He invested all his capital in that business.	masculine noun	capital	biohack es-en letter-c noun	cf72a9a3b7fe
+biohack:es-en:0188	la cara	f. face	Tiene una cara muy bonita.	She has a very pretty face.	feminine noun	cara	biohack es-en letter-c noun	81e1301a9458
+biohack:es-en:0189	¡caramba!	gosh!, good heavens!, darn it!	¡Caramba! Estamos perdidos.	Darn it! We're lost.		caramba!	biohack es-en letter-c	b121b621ea5b
+biohack:es-en:0190	la cárcel	f. jail	Dice que es inocente, pero le metieron en la cárcel.	He says he's innocent, but they put him in jail.	feminine noun	carcel	biohack es-en letter-c noun	998dd938326f
+biohack:es-en:0191	el cariño	m. affection, love	Muchos cariños para los niños.	Much love to the children.	masculine noun	carino	biohack es-en letter-c noun	1b0b4eaa8976
+biohack:es-en:0192	cariñoso	affectionate	Siempre ha sido muy cariñoso con sus cuñados.	He's always been very affectionate with his in-laws.		carinoso	biohack es-en letter-c	89456da2f2ba
+biohack:es-en:0193	caro	expensive	Todo es muy caro en esta tienda.	Everything is very expensive in this store.		caro	biohack es-en letter-c	1389f4c75cef
+biohack:es-en:0194	el carro	m. car (Spanish America)	Vamos en tu carro.	Let's go in your car.	masculine noun	carro	biohack es-en letter-c noun	a43843755d12
+biohack:es-en:0195	la carta	f. letter, playing card	¿Dónde puedo echar estas cartas?	Where can I mail these letters?	feminine noun	carta	biohack es-en letter-c noun	adf9871d71be
+biohack:es-en:0196	la cartera	f. wallet, purse	Creo que se me perdió la cartera.	I think I lost my wallet. “	feminine noun	cartera	biohack es-en letter-c noun	0ed84bf3d625
+biohack:es-en:0197	la carretera	f. highway	Las nuevas carreteras son magníficas.	The new highways are magnificent.	feminine noun	carretera	biohack es-en letter-c noun	4e5cf510fcd7
+biohack:es-en:0198	la casa	f. house, home	Nuestra casa es su casa.	Our house is your house.	feminine noun	casa	biohack es-en letter-c noun	074d22856bd7
+biohack:es-en:0199	casado	married	Su hija mayor no está casada todavía.	Their oldest daughter isn't married yet.		casado	biohack es-en letter-c	f3c84eac9ec5
+biohack:es-en:0200	casarse	to get married	Se casó con una muchacha mucho más joven que él.	He married a girl much younger than he.	verb	casarse	biohack es-en letter-c verb	f5428810d4d1
+biohack:es-en:0201	casi	almost	Casi todos llegaron a tiempo.	Almost everyone arrived on time.		casi	biohack es-en letter-c	83a73d62ae80
+biohack:es-en:0202	el caso	m. case, matter, thing	Es un caso muy curioso.	It's a very strange case.	masculine noun	caso	biohack es-en letter-c noun	c8b41d1a7ea5
+biohack:es-en:0203	el castillo	m. castle	Vale la pena visitar los antiguos castillos.	It's worthwhile visiting the old castles.	masculine noun	castillo	biohack es-en letter-c noun	e7568ecfab60
+biohack:es-en:0204	la casualidad	f. chance, coincidence	Por casualidad, ¿conoce usted al profesor López?	Do you know Professor López, by any chance?	feminine noun	casualidad	biohack es-en letter-c noun	d3d07159fc55
+biohack:es-en:0205	el catarro	m. cold (respiratory)	Ha cogido un catarro horrible.	He's caught a terrible cold.	masculine noun	catarro	biohack es-en letter-c noun	f10aa71327f0
+biohack:es-en:0206	la catedral	f. cathedral	Cada ciudad tiene una catedral imponente.	Every city has an imposing cathedral.	feminine noun	catedral	biohack es-en letter-c noun	315042fce368
+biohack:es-en:0207	la cena	f. supper, dinner	Se sirve la cena a las nueve y media.	Supper is served at nine-thirty.	feminine noun	cena	biohack es-en letter-c noun	cbfe30fa989f
+biohack:es-en:0208	cenar	to eat supper (dinner)	Se cena muy tarde en España.	People dine very late in Spain.	verb	cenar	biohack es-en letter-c verb	2c923195e66a
+biohack:es-en:0209	el centro	m. center, business district	Vamos de compras al centro.	Let's go shopping downtown.	masculine noun	centro	biohack es-en letter-c noun	2f90b9a325d3
+biohack:es-en:0210	el cepillo	m. brush	¿Dónde puedo comprar un cepillo de dientes?	Where can I buy a toothbrush?	masculine noun	cepillo	biohack es-en letter-c noun	1bebecf398e7
+biohack:es-en:0211	cerca de	near	Deme una habitación cerca del ascensor.	Give me a room near the elevator.		cerca de	biohack es-en letter-c	e455225c9c01
+biohack:es-en:0212	cerrado	closed	Muchos museos están cerrados los lunes.	Many museums are closed on Mondays.		cerrado	biohack es-en letter-c	4f77e0f46732
+biohack:es-en:0213	cerrar	to close	Haga el favor de cerrar la puerta cuando sale.	Please close the door when you leave.	verb	cerrar	biohack es-en letter-c verb	9ada86998043
+biohack:es-en:0214	la cesta	f. basket	Eche los papeles en la cesta.	Throw the papers in the basket.	feminine noun	cesta	biohack es-en letter-c noun	7d8bb3b78c51
+biohack:es-en:0215	ciego	blind	En muchos lugares los ciegos venden billetes de lotería.	In many places blind persons sell lottery tickets.		ciego	biohack es-en letter-c	2672994d2a76
+biohack:es-en:0216	el cielo	m. sky, heaven	El cielo está lleno de nubes oscuras.	The sky is full of dark clouds.	masculine noun	cielo	biohack es-en letter-c noun	c9b5f407a4fe
+biohack:es-en:0217	cierto	certain, sure, true	¿Es cierto que vendrá mañana?	Is it certain that he will come tomorrow?		cierto	biohack es-en letter-c	be179e98ea9c
+biohack:es-en:0218	el cine	m. movie theater, movies	Me gusta ir al cine para ver películas extranjeras.	I like to go to the movies to see foreign films.	masculine noun	cine	biohack es-en letter-c noun	5d0770a8d0c7
+biohack:es-en:0219	la cinta	f. tape (audio), ribbon	Compré varias cintas de los cantantes populares.	I bought several audios of the popular singers.	feminine noun	cinta	biohack es-en letter-c noun	e7771eada927
+biohack:es-en:0220	el cinturón	m. belt	Abróchense los cinturones.	Fasten your seat belts.	masculine noun	cinturon	biohack es-en letter-c noun	c2ffb36da4ed
+biohack:es-en:0221	la cita	f. appointment, date	Hay que llamar al médico y fijar cita.	You have to call the doctor and make an appointment.	feminine noun	cita	biohack es-en letter-c noun	1a076b0d3058
+biohack:es-en:0222	la ciudad	f. city	La capital de México es la ciudad más grande de Latinoamérica.	The capital of Mexico is the largest city in Latin America.	feminine noun	ciudad	biohack es-en letter-c noun	3d31b7cdd3fb
+biohack:es-en:0223	claro	clear, light (color), of course	Prefiero un color más claro.	I prefer a lighter color. Claro que sí! Of course!		claro	biohack es-en letter-c	c1708db0b100
+biohack:es-en:0224	la clase	f. class, kind, type	Tiene dos clases por la mañana y una por la tarde.	He has two classes in the morning and one in the afternoon.	feminine noun	clase	biohack es-en letter-c noun	317ff9b1837d
+biohack:es-en:0225	el/la cliente	m. &amp; f. client, customer	El cliente siempre tiene razón.	The customer is always right.	masculine or feminine noun	cliente	biohack es-en letter-c noun	2bf3ce4b452b
+biohack:es-en:0226	el clima	m. climate	Esta isla tiene un clima ideal.	This island has an ideal climate.	masculine noun	clima	biohack es-en letter-c noun	538d9ceb8f62
+biohack:es-en:0227	cobrar	to collect, charge, cash	¿Cuánto cobra usted por hora?	How much do you charge by the hour?	verb	cobrar	biohack es-en letter-c verb	5c91a7b66e3d
+biohack:es-en:0228	la cocina	f. kitchen	Mi mujer prepara comidas muy buenas en esta cocina.	My wife prepares very good meals in this kitchen.	feminine noun	cocina	biohack es-en letter-c noun	6e1ec6f14cdd
+biohack:es-en:0229	cocinar	to cook	¿Dónde aprendió a cocinar tan bien?	Where did she learn to cook so well?	verb	cocinar	biohack es-en letter-c verb	fcac0f6941a3
+biohack:es-en:0230	cocinero (-a)	cook	El cocinero prepara platos diferentes todos los días.	The cook prepares different dishes every day.		cocinero (-a)	biohack es-en letter-c	a9260e8d0c84
+biohack:es-en:0231	el coche	m. car, coach	Como no tengo coche, tengo que usar un taxi.	Since I don't have a car, I have to use a taxi.	masculine noun	coche	biohack es-en letter-c noun	3da37caf5ba0
+biohack:es-en:0232	coger	to take, catch	Tiene que coger el autobús número 12.	You have to take bus number 12.	verb	coger	biohack es-en letter-c verb	496208c14567
+biohack:es-en:0233	la cola	f. line (queue), tail	La cola para la taquilla es muy larga.	The line to the ticket office is very long.	feminine noun	cola	biohack es-en letter-c noun	bc3bac2e5526
+biohack:es-en:0234	el collar	m. necklace	Quiere comprar un collar de perlas para su mujer.	He wants to buy a pearl necklace for his wife.	masculine noun	collar	biohack es-en letter-c noun	021b0c1d4977
+biohack:es-en:0235	la comedia	f. play, comedy	Las comedias de Calderón son muy interesantes.	Calderón's plays are very interesting.	feminine noun	comedia	biohack es-en letter-c noun	b5f6407e0508
+biohack:es-en:0236	el comedor	m. dining room	Para la cena comemos en el comedor.	For dinner we eat in the dining room.	masculine noun	comedor	biohack es-en letter-c noun	f4c2c0d86d5c
+biohack:es-en:0237	comenzar	to begin	Comenzamos a comprender mejor.	We're beginning to understand better.	verb	comenzar	biohack es-en letter-c verb	32d848262c0c
+biohack:es-en:0238	comer	to eat	¿Dónde desean comer esta noche?	Where do you want to eat tonight?	verb	comer	biohack es-en letter-c verb	8bd401e91b6f
+biohack:es-en:0239	los comestibles	m. pl. foods, groceries	Se puede comprar toda clase de comestibles en un supermercado.	You can buy all kinds of groceries in a supermarket.	masculine plural noun	comestibles	biohack es-en letter-c noun	a50de1b97ce3
+biohack:es-en:0240	la comida	f. food, meal	¿Cuáles son las horas de comida?	What are the meal hours?	feminine noun	comida	biohack es-en letter-c noun	bbe680d92096
+biohack:es-en:0241	como	as, like	No es como su hermano.	He isn't like his brother.		como	biohack es-en letter-c	54a831e41abb
+biohack:es-en:0242	cómodo	comfortable	No me siento cómodo aquí.	I don’t feel comfortable here.		comodo	biohack es-en letter-c	80c1696ae610
+biohack:es-en:0243	compañero	(-a)	companion, friend Quisiera presentar mi buen compañero, Luis.	I'd like to introduce my good friend Luis.		companero	biohack es-en letter-c	459f77116b9f
+biohack:es-en:0244	la compañía	f. company	Trabaja para una compañía de seguros.	He works for an insurance company.	feminine noun	compania	biohack es-en letter-c noun	135059fbe761
+biohack:es-en:0245	comprar	to buy	¿Dónde compró usted ese vestido?	Where did you buy that dress?	verb	comprar	biohack es-en letter-c verb	19c0c6cf2a26
+biohack:es-en:0246	comprender	to understand	No comprendo muy bien el plan que presentaron.	I really don't understand the plan they presented.	verb	comprender	biohack es-en letter-c verb	256818a14c3d
+biohack:es-en:0247	el compromiso	m. engagement	No puedo aceptar la invitación porque tengo otro compromiso.	I can't accept the invitation because I have another engagement.	masculine noun	compromiso	biohack es-en letter-c noun	2b33f3bbc442
+biohack:es-en:0248	con	with	Quisiera salir con ella.	I'd like to go out with her.		con	biohack es-en letter-c	372289113988
+biohack:es-en:0249	conducir	to drive, conduct	¿Quién va a conducir, usted o yo?	Who's going to drive, you or I?	verb	conducir	biohack es-en letter-c verb	0072bdf18258
+biohack:es-en:0250	la conferencia	f. conference, lecture	La conferencia sobre el presupuesto fue muy interesante.	The lecture on the budget was very interesting.	feminine noun	conferencia	biohack es-en letter-c noun	e78a5a9d3a4d
+biohack:es-en:0251	confuso	confused	Estoy confuso. ¿Qué hago ahora?	I'm confused. What do I do now?		confuso	biohack es-en letter-c	30f1ee6c6aac
+biohack:es-en:0252	conmigo	with me	¿Quiere usted ir al cine conmigo?	Will you go to the movies with me?		conmigo	biohack es-en letter-c	7b17ac648a3f
+biohack:es-en:0253	conocer	to know, to meet	No conozco al alcalde, pero me gustaría conocerlo.	I don't know the mayor but I'd like to meet him.	verb	conocer	biohack es-en letter-c verb	284c43b02b81
+biohack:es-en:0254	conseguir	to get, obtain	No conseguirá nada gritando.	You won't get anything by shouting.	verb	conseguir	biohack es-en letter-c verb	0f963641890c
+biohack:es-en:0255	el consulado	m. consulate	Vaya al consulado si tiene problemas.	Go to the consulate if you have problems.	masculine noun	consulado	biohack es-en letter-c noun	37929de534d0
+biohack:es-en:0256	contar	to count, tell	Cuente el cambio siempre.	Always count your change.	verb	contar	biohack es-en letter-c verb	e9f97d37214c
+biohack:es-en:0257	contento	content, glad	Estoy muy contento de verlos.	I'm very glad to see you.		contento	biohack es-en letter-c	02d51bd8f476
+biohack:es-en:0258	contestar	to answer, reply	Me complace contestar a su última carta.	I am happy to reply to your last letter.	verb	contestar	biohack es-en letter-c verb	8b0b91b465b1
+biohack:es-en:0259	continuar	to continue, go on	Estoy tan cansado que no puedo continuar.	I'm so tired that I can’t go on.	verb	continuar	biohack es-en letter-c verb	9aa34ec92068
+biohack:es-en:0260	contra	against	Yo estoy contra esa resolución.	I'm against that resolution.		contra	biohack es-en letter-c	840c91f66731
+biohack:es-en:0261	contrario	contrary	Al contrario, nunca he dicho tal cosa.	On the contrary, I've never said such a thing.		contrario	biohack es-en letter-c	47b612feb853
+biohack:es-en:0262	la copa	f. (wine) glass, drink	Vamos a tomar una copa.	Let's have a drink.	feminine noun	copa	biohack es-en letter-c noun	6ed9016fd412
+biohack:es-en:0263	el corazón	m. heart	Se lo agradezco de todo corazón.	I thank you with all my heart.	masculine noun	corazon	biohack es-en letter-c noun	11a5f9c20b66
+biohack:es-en:0264	la corbata	f. tie	Le dio una corbata a su padre.	She gave her father a tie.	feminine noun	corbata	biohack es-en letter-c noun	8dfc4b41d73d
+biohack:es-en:0265	correcto	correct	¿Es correcto decirlo asi?	Is it correct to say it like this?		correcto	biohack es-en letter-c	411e541ffe73
+biohack:es-en:0266	el correo	m. mail, post office	¿Ha llegado ya el correo?	Has the mail come yet?	masculine noun	correo	biohack es-en letter-c noun	4c8ffb218279
+biohack:es-en:0267	corregir	to correct	Haga el favor de corregir todos mis errores.	Please correct all my errors.	verb	corregir	biohack es-en letter-c verb	ebd8b54ad3d4
+biohack:es-en:0268	correr	to run	Tenemos que correr para llegar a tiempo.	We have to run to arrive on time.	verb	correr	biohack es-en letter-c verb	d24ba1fc9c12
+biohack:es-en:0269	corrida	(de toros)	f. bullfight La corrida de hoy empieza a las siete.	Today's bullfight begins at seven.		corrida	biohack es-en letter-c	941f36b07a9d
+biohack:es-en:0270	cortar	to cut	Este cuchillo no corta bien.	This knife doesn't cut well.	verb	cortar	biohack es-en letter-c verb	62cfb62c42fc
+biohack:es-en:0271	cortés	polite	Todos los niños en esta clase son muy corteses.	All the children in this class are very polite.		cortes	biohack es-en letter-c	74e5ab29aae7
+biohack:es-en:0272	corto	short	¿Hay un camino más corto para llegar allí?	Is there a shorter road to get there?		corto	biohack es-en letter-c	7b71d2b3fe29
+biohack:es-en:0273	la cosa	f. thing	Quiero decirte una cosa curiosa.	I want to tell you a strange thing.	feminine noun	cosa	biohack es-en letter-c noun	9e035cc28c09
+biohack:es-en:0274	coser	to sew	¿Me puede coser estos botones?	Can you sew on these buttons for me?	verb	coser	biohack es-en letter-c verb	363cb9216d42
+biohack:es-en:0275	costar	to cost	¿Cuánto va a costar?	How much is it going to cost?	verb	costar	biohack es-en letter-c verb	65011a8ef63d
+biohack:es-en:0276	costar	to cost	¿Cuánto va a costar?	How much is it going to cost?	verb	costar	biohack es-en letter-c verb	65011a8ef63d
+biohack:es-en:0277	la costumbre	f. custom	Nos interesa observar las costumbres de las diferentes regiones.	We're interested in observing the customs of different regions.	feminine noun	costumbre	biohack es-en letter-c noun	477ae2367806
+biohack:es-en:0278	creer	to believe, think	¿Cree usted que valga la pena? No lo creo.	Do you think it's worth while? I don't think so.	verb	creer	biohack es-en letter-c verb	ed04ca3cc73a
+biohack:es-en:0279	criado (-a)	servant	Los ricos tienen muchos criados.	Rich people have many servants.		criado (-a)	biohack es-en letter-c	6c65b26bebeb
+biohack:es-en:0280	el crimen	m. crime	Lo mandaron a la cárcel por todos los crímenes que había cometido.	They sent him to jail for all the crimes he had committed.	masculine noun	crimen	biohack es-en letter-c noun	d7aa416a6859
+biohack:es-en:0281	crudo	raw	Dice que los vegetales crudos son más saludables.	He says that raw vegetables are more healthful.		crudo	biohack es-en letter-c	108c5bc6dce5
+biohack:es-en:0282	la cruz	f. cross	Hay una cruz enorme sobre el Valle de los Caídos.	There is an enormous cross above the Valley of the Fallen.	feminine noun	cruz	biohack es-en letter-c noun	99ed98c2d31b
+biohack:es-en:0283	cruzar	to cross	Cuidado al cruzar la calle.	Be careful crossing the street.	verb	cruzar	biohack es-en letter-c verb	17786e92c3bf
+biohack:es-en:0284	el cuaderno	m. notebook	Necesito un cuaderno para escribir mis notas.	I need a notebook to write my notes.	masculine noun	cuaderno	biohack es-en letter-c noun	16749612e16f
+biohack:es-en:0285	la cuadra	f. (city) block	Está a dos cuadras de aquí.	It’s two blocks from here.	feminine noun	cuadra	biohack es-en letter-c noun	46b5e40dbcff
+biohack:es-en:0286	el cuadro	m. picture	El Prado tiene los mejores cuadros de Velázquez y Goya.	The Prado has the best paintings by Velázquez and Goya.	masculine noun	cuadro	biohack es-en letter-c noun	7ddbca23358e
+biohack:es-en:0287	cuando	when	Escribame cuando llegue.	Write me when you arrive.		cuando	biohack es-en letter-c	ea0570ce70b9
+biohack:es-en:0288	el cuarto	m. room, quarter, fourth	Cada niño tiene su propio cuarto.	Each child has his own room.	masculine noun	cuarto	biohack es-en letter-c noun	41d842d8da07
+biohack:es-en:0289	cubrir	to cover	Una espesa neblina cubrió el campo.	A thick mist covered the countryside.	verb	cubrir	biohack es-en letter-c verb	8fc01686089b
+biohack:es-en:0290	la cuchara	f. tablespoon	Camarero, por favor.	Me hace falta una cuchara para la sopa. Waiter, please. I need a spoon for the soup.	feminine noun	cuchara	biohack es-en letter-c noun	c1e5ba9e72c7
+biohack:es-en:0291	la cucharita	f. teaspoon	Tomo dos cucharitas de azúcar con mi café.	I take two teaspoons of sugar with my coffee.	feminine noun	cucharita	biohack es-en letter-c noun	07fad79e1a99
+biohack:es-en:0292	el cuchillo	m. knife	Necesitamos un cuchillo para la mantequilla.	We need a knife for the butter.	masculine noun	cuchillo	biohack es-en letter-c noun	64ff50541a59
+biohack:es-en:0293	el cuello	m. neck, collar	Me levanté hoy con un dolor de cuello.	I got up today with a pain in my neck.	masculine noun	cuello	biohack es-en letter-c noun	c80043ea47a3
+biohack:es-en:0294	la cuenta	f. check, bill (restaurant)	La cuenta, por favor.	The check, please.	feminine noun	cuenta	biohack es-en letter-c noun	ac6046581785
+biohack:es-en:0295	el cuento	m. story, tale	Es un autor famoso por sus novelas y cuentos.	He is an author famous for his novels and stories.	masculine noun	cuento	biohack es-en letter-c noun	3758fb26178e
+biohack:es-en:0296	el cuero	m. leather	Busca un cinturón de cuero.	He's looking for a leather belt.	masculine noun	cuero	biohack es-en letter-c noun	9e52191c3d51
+biohack:es-en:0297	el cuerpo	m. body	Sacaron varios cuerpos después de la explosión.	They carried out several bodies after the explosion.	masculine noun	cuerpo	biohack es-en letter-c noun	47d00dc164e0
+biohack:es-en:0298	el cuidado	m. care	¡Cuidado; Es peligroso.	Take care! It's dangerous.	masculine noun	cuidado	biohack es-en letter-c noun	eb9869bebde5
+biohack:es-en:0299	cuidarse	to take care (of oneself)	Cuídese.	No se enferme. Take care of yourself. Don't get sick.	verb	cuidarse	biohack es-en letter-c verb	6b0091c483df
+biohack:es-en:0300	el cumpleaños	m. birthday	¿Qué le compramos para su cumpleaños?	What shall we buy him for his birthday?	masculine noun	cumpleanos	biohack es-en letter-c noun	7c04599a5c64
+biohack:es-en:0301	cumplir	to complete, fulfill	Cumplió su promesa y ayudó a sus hermanos.	He kept his promise and helped his brothers.	verb	cumplir	biohack es-en letter-c verb	750f8378a3db
+biohack:es-en:0302	el cura	m. priest	El cura que los casó es el tío de la novia.	The priest who married them is the bride's uncle.	masculine noun	cura	biohack es-en letter-c noun	9a3487f5ebe0
+biohack:es-en:0303	el curso	m. course, class	El curso de historia es interesante.	The history course is interesting.	masculine noun	curso	biohack es-en letter-c noun	72062c630a48
+biohack:es-en:0304	la chaqueta	f. jacket	Quitese la chaqueta si tiene calor.	Take off your jacket if you're warm.	feminine noun	chaqueta	biohack es-en letter-c noun	eaf6b11bec36
+biohack:es-en:0305	el cheque	m. check	¿Le pago con cheque personal?	Can I pay you with a personal check?	masculine noun	cheque	biohack es-en letter-c noun	22f27db0bacd
+biohack:es-en:0306	chico	(-a)	boy, girl, kid Los chicos están haciendo demasiado ruido.	The kids are making too much noise.		chico	biohack es-en letter-c	1da1cd83a389
+biohack:es-en:0307	el chiste	m. joke	Nos pusimos a reir cuando contó el chiste.	We began to laugh when he told the joke.	masculine noun	chiste	biohack es-en letter-c noun	f129d9f3ab30
+biohack:es-en:0308	chocar	to collide, crash, shock	Los dos coches chocaron en la intersección.	The two cars collided at the intersection.	verb	chocar	biohack es-en letter-c verb	c534dae709f2
+biohack:es-en:0309	chófer	driver	El chófer estaba gritando porque el auto delante de él no se movía.	The driver was shouting because the car in front of him wasn't moving.		chofer	biohack es-en letter-c	91fb947d84ae
+biohack:es-en:0310	la dama	f. lady	Damas y caballeros, siéntense por favor.	Ladies and gentlemen, please sit down.	feminine noun	dama	biohack es-en letter-d noun	add3ae5b5a96
+biohack:es-en:0311	el daño	m. harm, damage	Se hizo daño cuando cayó.	He hurt himself when he fell.	masculine noun	dano	biohack es-en letter-d noun	8686884d89cd
+biohack:es-en:0312	dar	to give	Siempre doy algo a los mendigos.	I always give something to the beggars.	verb	dar	biohack es-en letter-d verb	f5a3f189b648
+biohack:es-en:0313	de	of, from	¿Cuántos kilómetros hay de aquí a la estación de ferrocarril?	How many kilometers is it from here to the railroad station?		de	biohack es-en letter-d	a1a60d59b9df
+biohack:es-en:0314	debajo de	under, beneath	Lo dejaron debajo de la mesa.	They left it under the table.		debajo de	biohack es-en letter-d	44b3b745a7e5
+biohack:es-en:0315	deber	should, ought to, to owe	Los estudiantes deben estudiar más.	The students ought to study more.,		deber	biohack es-en letter-d	37e24f47f7b9
+biohack:es-en:0316	débil	weak	Se siente débil después de su enfermedad.	He feels weak after his illness.		debil	biohack es-en letter-d	a7a7ccfe6f1e
+biohack:es-en:0317	decidir	to decide	Bueno, ¿han decidido ustedes?	Well, have you decided?	verb	decidir	biohack es-en letter-d verb	d5c8e122ae50
+biohack:es-en:0318	decir	to say, tell	Todo lo que dice es cierto.	Everything he says is true.	verb	decir	biohack es-en letter-d verb	8f3ae02995e2
+biohack:es-en:0319	el dedo	m. finger	Se cortó el dedo con el cuchillo.	He cut his finger with the knife.	masculine noun	dedo	biohack es-en letter-d noun	389689318f26
+biohack:es-en:0320	dejar	to let, permit, allow, leave	No dejan entrar a nadie sin permiso especial.	They don't let anyone enter without special permission.	verb	dejar	biohack es-en letter-d verb	ae8074dfeed1
+biohack:es-en:0321	delante de	in front of	Espero que nadie se siente delante de nosotros.	I hope no one sits down in front of us.		delante de	biohack es-en letter-d	1f8673009023
+biohack:es-en:0322	delgado	slim, thin	Si quiere estar delgada, siga esta dieta.	If you want to be slim, follow this diet.		delgado	biohack es-en letter-d	4f7aae856f02
+biohack:es-en:0323	demás	(the) rest	Los demás vendrán muy pronto.	The rest of them will come very soon.		demas	biohack es-en letter-d	30c2ca796c0c
+biohack:es-en:0324	demasiado	to o, too much	Esto cuesta demasiado.	This costs too much.	verb	demasiado	biohack es-en letter-d verb	61b4598e0dd0
+biohack:es-en:0325	dentro	inside, within	Es más cómodo aquí dentro.	It's more comfortable here inside.		dentro	biohack es-en letter-d	ed8b70319cee
+biohack:es-en:0326	depender	to depend	No sé.	Depende del precio. I don't know. It de-	verb	depender	biohack es-en letter-d verb	c8e79114ffa3
+biohack:es-en:0327	el/la dependiente	m. &amp; f. salesclerk	Uno de los dependientes le atenderá en seguida.	One of the salesclerks will take care of you at once.	masculine or feminine noun	dependiente	biohack es-en letter-d noun	8340405e4060
+biohack:es-en:0328	el deporte	m. sport	El béisbol es un deporte popular en varios países de Latinoamérica.	Baseball is a popular sport in several Latin American	masculine noun	deporte	biohack es-en letter-d noun	e2adcbd8b36e
+biohack:es-en:0329	derecho	right, straight	La biblioteca está a la derecha. Siga usted todo derecho.	The library is to the right. Continue straight ahead.		derecho	biohack es-en letter-d	d8f655332f53
+biohack:es-en:0330	desarrollar	to develop	El gobierno trata de desarrollar nuevas industrias.	The government is trying to develop new industries.	verb	desarrollar	biohack es-en letter-d verb	85bfe320be6a
+biohack:es-en:0331	desayunar(se)	to eat breakfast	¿Dónde desayunamos hoy?	Where shall we have breakfast today?	verb	desayunar(se)	biohack es-en letter-d verb	31527a77c64a
+biohack:es-en:0332	el desayuno	m. breakfast	Sirven un desayuno continental en este, hotel.	They serve a continental breakfast in this hotel. 4	masculine noun	desayuno	biohack es-en letter-d noun	475d8af4be6c
+biohack:es-en:0333	descansar	to rest	Después de tantas visitas queremos descansar un poco.	After so many visits, we want to rest a little.	verb	descansar	biohack es-en letter-d verb	c76120bd0867
+biohack:es-en:0334	descubrir	to discover	¿Descubrió algo nuevo hoy?	Did you discover 3 something new today?	verb	descubrir	biohack es-en letter-d verb	d0333f4996e3
+biohack:es-en:0335	el descuento	m. discount	Muchas tiendas ofrecen descuentos en el mes de E agosto.	Many stores offer discounts in the month of August.	masculine noun	descuento	biohack es-en letter-d noun	3ae962750db9
+biohack:es-en:0336	desde	since	No he oído de él desde junio pasado.	I haven't heard from: him since last June.		desde	biohack es-en letter-d	a43e80956432
+biohack:es-en:0337	desear	to desire, wish	¿Qué desean ustedes pedir, señores?	What do you wish to order, gentlemen?	verb	desear	biohack es-en letter-d verb	20cfc12f893f
+biohack:es-en:0338	la desgracia	f. misfortune	¡Cuántas desgracias han sufrido estos pobres: niños!	Por desgracia, no los puedo ayudar. How many misfortunes these 4 poor children have suffered! Unfortunately, I cannot help them.	feminine noun	desgracia	biohack es-en letter-d noun	cde930c57f28
+biohack:es-en:0339	desmayarse	to faint	Al oír la noticia se demayó.	On hearing the news she fainted.	verb	desmayarse	biohack es-en letter-d verb	c4e9747e74b8
+biohack:es-en:0340	despacio	slowly	Hable usted más despacio, por favor.	Speak more slowly, please.		despacio	biohack es-en letter-d	a21cb672f4b4
+biohack:es-en:0341	despedirse	to say goodbye	Siempre lloro cuando nos despedimos.	I always cry when we say goodbye.	verb	despedirse	biohack es-en letter-d verb	2ffe96fe61f6
+biohack:es-en:0342	despertar(se)	to awaken, wake up	¿Quieren despertarme a las 3 siete?	Will you wake me at seven?	verb	despertar(se)	biohack es-en letter-d verb	f3692279542f
+biohack:es-en:0343	después (de)	after	Podemos salir después del almuerzo.	We can leave 4 after lunch.		despues (de)	biohack es-en letter-d	6f4e12c9fb58
+biohack:es-en:0344	el destino	m. destination, destiny	Tome el tren con destino a Moncloa.	E Take the train that's going to Moncloa.	masculine noun	destino	biohack es-en letter-d noun	ed7fc2a21d0c
+biohack:es-en:0345	detrás (de)	behind, in back of	Hay un jardín elegante detrás del palacio.	There's an elegant garden behind the palace.		detras (de)	biohack es-en letter-d	ff040273b8ce
+biohack:es-en:0346	devolver	to return, give back	Mañana te devuelvo el dinero que me E. prestaste.	Tomorrow I'll return the money you lent me.	verb	devolver	biohack es-en letter-d verb	920054826e5b
+biohack:es-en:0347	el día	m. day	¿Cuál es su día favorito?	What's your favorite day?	masculine noun	dia	biohack es-en letter-d noun	8b4633a574fe
+biohack:es-en:0348	el dibujo	m. drawing, sketch	Hay una exposición especial de los dibujos A de Picasso.	There's a special exhibit of Picasso's sketches.	masculine noun	dibujo	biohack es-en letter-d noun	b3082d6520ad
+biohack:es-en:0349	el diente	m. tooth	Tengo un dolor de dientes y quiero ir al dentista.	I have a toothache and I want to go to the dentist.	masculine noun	diente	biohack es-en letter-d noun	08a0a18bae7a
+biohack:es-en:0350	difícil	difficult, hard	No es difícil si estudias.	It’s not difficult if you		dificil	biohack es-en letter-d	e63dd4dc3e3e
+biohack:es-en:0351	el dinero	m. money	¿Dónde puedo cambiar dinero?	Where can I exchange money?; Dios m. God Gracias a Dios, por fin llegaron. Thank God, they finally: arrived.	masculine noun	dinero	biohack es-en letter-d noun	4f9c2025da0b
+biohack:es-en:0352	la dirección	f. direction, address	¿Cuál es la dirección de su casa?	What's your home address?	feminine noun	direccion	biohack es-en letter-d noun	2f8999768cd4
+biohack:es-en:0353	la distancia	f. distance	¿Qué distancia hay de aquí a Salamanca?	What's a the distance from here to Salamanca?:	feminine noun	distancia	biohack es-en letter-d noun	a0a24fd50e21
+biohack:es-en:0354	divertirse	to have a good time, to enjoy oneself	Nos divertimos mucho Te anoche.	We had a good time last night.	verb	divertirse	biohack es-en letter-d verb	bb91f7b5e7d5
+biohack:es-en:0355	doblar	to turn, fold	Doble la esquina y verá la tienda que busca.	Turn the corner and you'll see the store you're looking for.	verb	doblar	biohack es-en letter-d verb	d5fcaddf24d5
+biohack:es-en:0356	la docena	f. dozen	Una docena de huevos nos bastará.	A dozen eggs will ] be enough for us.	feminine noun	docena	biohack es-en letter-d noun	a53bb329e502
+biohack:es-en:0357	el dólar	m. dollar	El valor del dólar está subiendo.	The value of the dollar: is going up.	masculine noun	dolar	biohack es-en letter-d noun	abb5b3d0913d
+biohack:es-en:0358	doler	to hurt, ache	Muéstreme donde le duele.	Show me where it hurts you.	verb	doler	biohack es-en letter-d verb	bf3db6e1758b
+biohack:es-en:0359	el dolor	m. pain, ache	Siento un dolor en la espalda.	I feel a pain in my E back.	masculine noun	dolor	biohack es-en letter-d noun	2c0679366f96
+biohack:es-en:0360	donde	where	Yo no sé donde están.	I don't know where they are.		donde	biohack es-en letter-d	a29b3b099ad0
+biohack:es-en:0361	dormir	to sleep	Con tanto ruido no pude dormir anoche.	With so much noise I couldn't sleep last night.	verb	dormir	biohack es-en letter-d verb	6088ee6f1c77
+biohack:es-en:0362	la ducha	f. shower	Prefiero tomar una ducha por la mañana.	I prefer to take a shower in the morning.	feminine noun	ducha	biohack es-en letter-d noun	ab57afab8d4d
+biohack:es-en:0363	dudar	to doubt	No dudo que lo ha hecho.	I don't doubt that he's done it.	verb	dudar	biohack es-en letter-d verb	7fccbaf07a78
+biohack:es-en:0364	dueño (-a)	owner	¿Quién es el dueño de esta propiedad?	Who's the it. i owner of this property?		dueno (-a)	biohack es-en letter-d	fbf09befa6c2
+biohack:es-en:0365	dulce	sweet	No me gustan los postres dulces.	I don’t like sweet desserts.		dulce	biohack es-en letter-d	dfccc5a5ed36
+biohack:es-en:0366	durante	during	Sufrieron mucho durante los años de la guerra.	They suffered a lot during the war years.		durante	biohack es-en letter-d	0fa3da2b5f17
+biohack:es-en:0367	durar	to last	El reinado de Felipe II [segundo] duró cuarenta años.	The reign of Philip II lasted forty years.	verb	durar	biohack es-en letter-d verb	42b93d99660c
+biohack:es-en:0368	duro	hard, difficult	Ha llevado una vida dura.	She's had a hard life.		duro	biohack es-en letter-d	92e47979620e
+biohack:es-en:0369	echar	to throw, pour	No eche nada al suelo.	Don’t throw anything on the floor.	verb	echar	biohack es-en letter-e verb	30abf4bfaefa
+biohack:es-en:0370	la edad	f. age	¿Qué edad tiene su hijo?	How old is your son?	feminine noun	edad	biohack es-en letter-e noun	bd73e26c9c55
+biohack:es-en:0371	el edificio	m. building	El edificio es viejo pero sólido.	The building is old E but solid.	masculine noun	edificio	biohack es-en letter-e noun	6f00d140c12f
+biohack:es-en:0372	el efectivo	m. cash	Quiero que me paguen en efectivo.	I want to be paid in cash.	masculine noun	efectivo	biohack es-en letter-e noun	a5572998b019
+biohack:es-en:0373	el efecto	m. effect	En efecto, es la primera vez que estoy aquí.	As a matter of fact, this is the first time I've been here.	masculine noun	efecto	biohack es-en letter-e noun	285550a5e026
+biohack:es-en:0374	el ejemplo	m. example	Este es un ejemplo del progreso que estamos:, haciendo.	This is an example of the progress that we're making.	masculine noun	ejemplo	biohack es-en letter-e noun	2ef5a7e74584
+biohack:es-en:0375	el ejército	m. army	El ejército está en el norte para proteger la frontera.	The army is in the north to protect the border.	masculine noun	ejercito	biohack es-en letter-e noun	580c4d4269de
+biohack:es-en:0376	el	m.; (la f.; los m. pl.; las f. pl.) the	La maestra y los alumnos están en el museo.	The teacher and the pupils are in the museum.	masculine noun	el	biohack es-en letter-e noun	58933ebc1618
+biohack:es-en:0377	el él	m. he	¿Quiénes él?	Who is he?	masculine noun	el	biohack es-en letter-e noun	e70c016e6393
+biohack:es-en:0378	la ella	f. she	;Quiénesella?	Who is she?	feminine noun	ella	biohack es-en letter-e noun	7529222aff2b
+biohack:es-en:0379	el ellos	m. (ellas f.) they	Espero que ellos lleguen pronto.	I hope they ar-	masculine noun	ellos	biohack es-en letter-e noun	a38aaa1797f4
+biohack:es-en:0380	la embajada	f. embassy	Todos los países tienen sus embajadas en la capital.	All countries have their embassies in the capital.	feminine noun	embajada	biohack es-en letter-e noun	6fd88af9966c
+biohack:es-en:0381	embargo, sin	nevertheless	Sin embargo, quiero ir allí.	Nevertheless; I want to go there.		embargo, sin	biohack es-en letter-e	aed213f90fa2
+biohack:es-en:0382	empezar	to begin	Ya empieza a hablar.	He's already beginning to talk.	verb	empezar	biohack es-en letter-e verb	ca4ad6ae3cdd
+biohack:es-en:0383	empleado (-a)	employee	Los empleados amenazan salir en huelga.	The E employees threaten to go out on strike.		empleado (-a)	biohack es-en letter-e	73df133b349d
+biohack:es-en:0384	el empleo	m. employment, job	¿Qué clase de empleo busca usted?	What type of job are you looking for?	masculine noun	empleo	biohack es-en letter-e noun	4e060164afbd
+biohack:es-en:0385	empujar	to push	Empuje la puerta con cuidado.	Push the door carefully.	verb	empujar	biohack es-en letter-e verb	d87022e7b548
+biohack:es-en:0386	en	in,	on, at Se porta bien en la escuela, pero en casa causa problemas.	He behaves well in school but at home he causes problems.		en	biohack es-en letter-e	67dc91b0a1f2
+biohack:es-en:0387	enamorado	in love	Estoy enamorado de ti y quiero casarme contigo.	I'm in love with you and I want to marry you.		enamorado	biohack es-en letter-e	89de49e91616
+biohack:es-en:0388	encantado	delighted, charmed, “pleased to meet you”	Encantado de conocerle.	Delighted to meet you.		encantado	biohack es-en letter-e	aa2e70a6e7bd
+biohack:es-en:0389	encender	to light, turn on	Encienda la luz, por favor.	Turn on the light, please.	verb	encender	biohack es-en letter-e verb	ee39ff9be347
+biohack:es-en:0390	encima de	above, ontop of	Lo dejé encima de la mesa. left it on the	I left it on the		encima de	biohack es-en letter-e	1af310f0ff44
+biohack:es-en:0391	encontrar	to find, meet	La encontré por casualidad en la biblioteca.	I met her by chance in the library.	verb	encontrar	biohack es-en letter-e verb	e172a58ab5e1
+biohack:es-en:0392	enfermo	sick, ill	No pudo venir porque estaba enfermo.	He couldn't come because he was ill.		enfermo	biohack es-en letter-e	c14fe5465536
+biohack:es-en:0393	enfrente	opposite, facing	Enfrente hay un edificio de seis pisos.	Opposite there is a six-story building.		enfrente	biohack es-en letter-e	1a09b65a49b7
+biohack:es-en:0394	engañar	to deceive	Espero que no me engañen.	I hope they aren't dea	verb	enganar	biohack es-en letter-e verb	de12ab5eafb2
+biohack:es-en:0395	enojar	to annoy	El humo de los cigarrillos enojó a los otros pasajeros.	The cigarette smoke annoyed the other passengers. pi	verb	enojar	biohack es-en letter-e verb	21f68698df91
+biohack:es-en:0396	enseñar	to teach, show	Quiero enseñarles una vista espectacular.	I want to show you a spectacular view.	verb	ensenar	biohack es-en letter-e verb	0e54e7f825d9
+biohack:es-en:0397	entender	to understand	No entendí porque hablaban en voz baja.	I A didn't understand because they spoke in a low voice. Sa	verb	entender	biohack es-en letter-e verb	e5250b60fd8f
+biohack:es-en:0398	entonces	then, at that time	Entonces éramos bastante ricos.	At that time we were quite rich.		entonces	biohack es-en letter-e	d44b52ca4427
+biohack:es-en:0399	la entrada	f. entrance, admission	La entrada es gratis para los niños. a Admission is free for children. 3 Se	E Admission is free for children. 3	feminine noun	entrada	biohack es-en letter-e noun	6c0ec913c895
+biohack:es-en:0400	entrar	to enter, come in	¿Se puede entrar?	May I come in?	verb	entrar	biohack es-en letter-e verb	ffdc4de4681a
+biohack:es-en:0401	entre	between, among	Entre nosotros no hay problema.	Between us there is no problem.		entre	biohack es-en letter-e	8ed553a6030b
+biohack:es-en:0402	entregar	to deliver, hand over	Me entregó la carta y salió.	He handed me the letter and left.	verb	entregar	biohack es-en letter-e verb	6d387a0d9b31
+biohack:es-en:0403	el entremés	m. appetizer, intermission	Durante el entremés me levanté paraestirar las piernas.	During the intermission I got up to stretch my legs. 5	masculine noun	entremes	biohack es-en letter-e noun	5850fb5002fc
+biohack:es-en:0404	enviar	to send	Quiero enviar estas cartas por correo aéreo.	I want to send these letters by airmail.	verb	enviar	biohack es-en letter-e verb	9153db7f7d35
+biohack:es-en:0405	envolver	to wrap	¿Me quiere envolver bien este paquete?	Will you wrap this package neatly for me?	verb	envolver	biohack es-en letter-e verb	88f01249ffa3
+biohack:es-en:0406	el equipaje	m. luggage, baggage	No puedo encontrar mi equipaje. lIcant find my luggage.	I can't find my luggage.	masculine noun	equipaje	biohack es-en letter-e noun	884229824b8a
+biohack:es-en:0407	el equipo	m. team	Mi equipo favorito perdió ayer.	My favorite team lost yesterday.	masculine noun	equipo	biohack es-en letter-e noun	69cf87e802f1
+biohack:es-en:0408	equivocarse	to be mistaken, to be wrong	Perdone, pero creo que se equivoca usted.	Excuse me, but I believe you're mistaken.	verb	equivocarse	biohack es-en letter-e verb	0f9f08df0760
+biohack:es-en:0409	la escalera	f. staircase, stairs	Para bajar, siempre uso la escalera.	To go E down, I always use the stairs.	feminine noun	escalera	biohack es-en letter-e noun	c1f2a9e9271b
+biohack:es-en:0410	escoger	to choose, select	Escogimos un hotel cerca de los museos.	We E chose a hotel near the museums.	verb	escoger	biohack es-en letter-e verb	719b81f966c1
+biohack:es-en:0411	esconder	to hide	Los ladrones se escondieron en el bosque.	The thieves Ros	verb	esconder	biohack es-en letter-e verb	06aec87e64e1
+biohack:es-en:0412	escribir	to write	Prometió escribir todos los días.	He promised to write 2 every day.	verb	escribir	biohack es-en letter-e verb	fd6212af9638
+biohack:es-en:0413	escuchar	to listen	Escuchen lo que dice el profesor.	Listen to what the teacher says.	verb	escuchar	biohack es-en letter-e verb	bb94b160cff6
+biohack:es-en:0414	la escuela	f. school	Los niños van a la escuela por la mañana.	The children go to school in the morning.	feminine noun	escuela	biohack es-en letter-e noun	70067a8072c5
+biohack:es-en:0415	el ese	m. (esa f.; esos m. pl.; esas f. pl.; eso [neuter pronoun])	that, those ¿Quiénes son esos niños?	Who are those children? Eso es. That's it.	masculine noun	ese	biohack es-en letter-e noun	1aa51a8f8e10
+biohack:es-en:0416	el esfuerzo	m. effort	Hay que hacer un esfuerzo.	You must make an effort.	masculine noun	esfuerzo	biohack es-en letter-e noun	97c264b8f99b
+biohack:es-en:0417	el espacio	m. space	No hay bastante espacio aquí para cuarenta personas.	There isn't enough space here for forty people.:	masculine noun	espacio	biohack es-en letter-e noun	b7b4bbc81d04
+biohack:es-en:0418	la espalda	f. back, shoulder	Sintió un golpe en la espalda.	He felt a blow on his shoulder. España f. Spain Fueron a España para estudiar en la universidad. They went to Spain to study in the university.	feminine noun	espalda	biohack es-en letter-e noun	21743f776fa2
+biohack:es-en:0419	el español	m. Spanish	Se habla español en veinte países.	Spanish is spoken in twenty countries.	masculine noun	espanol	biohack es-en letter-e noun	e7f6c88ad4b1
+biohack:es-en:0420	el espectáculo	m. spectacle, show	Es un espectáculo que no va a a olvidar.	It's a spectacle you won't forget.	masculine noun	espectaculo	biohack es-en letter-e noun	d39a38aff171
+biohack:es-en:0421	el espejo	m. mirror	Necesito un espejo para peinarme.	I need a mirror to E comb my hair.	masculine noun	espejo	biohack es-en letter-e noun	6dd94a24f67d
+biohack:es-en:0422	esperar	to hope, wait (for)	Tendremos que esperar algunos minutos.	E We'll have to wait a few minutes.	verb	esperar	biohack es-en letter-e verb	7394af2927d6
+biohack:es-en:0423	la esquina	f. (street) corner	Está en la próxima esquina.	It's on the next z comer.	feminine noun	esquina	biohack es-en letter-e noun	51f68fd2d59e
+biohack:es-en:0424	la estación	f. station, season	Es dificil conseguir un taxi fuera de la estación.	It’s hard to get a taxi outside the station.	feminine noun	estacion	biohack es-en letter-e noun	cc0cd5a90161
+biohack:es-en:0425	estacionar	to park	¿Dónde podemos estacionar el coche?	Where can we park the car?	verb	estacionar	biohack es-en letter-e verb	23568878fda8
+biohack:es-en:0426	el estado	m. state, condition	Trabaja para el estado.	He works for the state. Estados Unidos m. pl. United States Muchos habitantes de los Estados Unidos hablan español. Many inhabitants of the United States speak Spanish.	masculine noun	estado	biohack es-en letter-e noun	08de2fa78bcd
+biohack:es-en:0427	estar	to be	No está aquí porque está enfermo.	He isn't here because he's ill.	verb	estar	biohack es-en letter-e verb	6594283dad28
+biohack:es-en:0428	la estatua	f. statue	Hay muchas estatuas romanas en la próxima sala.	There are many Roman statues in the next room.	feminine noun	estatua	biohack es-en letter-e noun	dda1947a67ae
+biohack:es-en:0429	el este	m. east	Muchos puertos están en el este.	Many ports are in the east.	masculine noun	este	biohack es-en letter-e noun	577136f022a1
+biohack:es-en:0430	el este	m. (esta f.; estos m. pl.; estas f. pl.; esto [neuter pronoun]) this, these	Estas señoras son mis tías. Esto es muy importante.	These ladies are my aunts. This is very important.	masculine noun	este	biohack es-en letter-e noun	34519e803dc2
+biohack:es-en:0431	el estómago	m. stomach	Tiene un dolor de estómago.	He has a stomach-	masculine noun	estomago	biohack es-en letter-e noun	f9f25d6634a2
+biohack:es-en:0432	estrecho	narrow, tight	Este traje me queda estrecho.	This suit is tight on me.		estrecho	biohack es-en letter-e	02b946333df9
+biohack:es-en:0433	la estrella	f. star	Las estrellas salen de noche. Es una estrella de Hollywood.	The stars come out at night. He (she) is a Hollywood star.	feminine noun	estrella	biohack es-en letter-e noun	62db5e77f10f
+biohack:es-en:0434	el/la estudiante	m. &amp; f. student	Algunos estudiantes no van a volver el semestre que viene.	Some students aren't going to come back next semester.	masculine or feminine noun	estudiante	biohack es-en letter-e noun	0f9693393624
+biohack:es-en:0435	estudiar	to study	Es una buena idea estudiar la lengua y cultura del país que va a visitar. ltsa good idea to study the language and culture of the country you're going to visit.	It’s a good idea to study the language and culture of the country you're going to visit.	verb	estudiar	biohack es-en letter-e verb	6f12cc128a22
+biohack:es-en:0436	estupendo	stupendous, wonderful	Nuestra visita fue estupenda.	Our visit was wonderful. Europa f. Europe Hay tantos países en Europa que quisiera visitar. There are so many countries in Europe that I 'd like to visit.		estupendo	biohack es-en letter-e	e950dfeb852c
+biohack:es-en:0437	el examen	m. exam	El profesor dijo que no nos daría un examen esta semana.	The teacher said that he wouldn't give us an exam this week.	masculine noun	examen	biohack es-en letter-e noun	a08074237f2e
+biohack:es-en:0438	exigir	to demand, require	Exige que todos entreguen sus papeles a tiempo.	He demands that they all turn in their papers on time.	verb	exigir	biohack es-en letter-e verb	6da0bf549e20
+biohack:es-en:0439	el éxito	m. success	Su última comedia tuvo un gran éxito.	His last play was a great success.:	masculine noun	exito	biohack es-en letter-e noun	69f799e6edab
+biohack:es-en:0440	explicar	to explain	Déjeme explicar por qué llegué tarde.	Let me explain why I arrived late.	verb	explicar	biohack es-en letter-e verb	fc05e73a081f
+biohack:es-en:0441	el extranjero	m. foreigner, stranger, foreign	Me gusta estudiar las lenguas extranjeras.	I like to study foreign languages.	masculine noun	extranjero	biohack es-en letter-e noun	452ca9e09ef9
+biohack:es-en:0442	extrañar (Spanish America)	to miss	Extraña mucho a su familia.	She misses her family a lot.	verb	extranar (spanish america)	biohack es-en letter-e verb	0eb142820af4
+biohack:es-en:0443	extraño	strange	Es extraño que nadie nos conozca.	It's strange that nobody knows us.		extrano	biohack es-en letter-e	14130045f269
+biohack:es-en:0444	la fábrica	f. factory	Se han abierto muchas nuevas fábricas.	Many new factories have opened.	feminine noun	fabrica	biohack es-en letter-f noun	8cbb59a3500e
+biohack:es-en:0445	fácil	easy	No es fácil aprender un idioma extranjero.	It isn't easy to learn a foreign language.		facil	biohack es-en letter-f	504bf8aec95d
+biohack:es-en:0446	la falda	f. skirt	Las muchachas llevan faldas cortas estos días.	Girls are wearing short skirts these days.	feminine noun	falda	biohack es-en letter-f noun	5983173ec0d4
+biohack:es-en:0447	la falta	f. mistake, lack	¿Hay faltas en este ejercicio?	Are there any mistakes in this exercise? Me hace falta un martillo. I need a hammer.	feminine noun	falta	biohack es-en letter-f noun	1dff3ad323b4
+biohack:es-en:0448	la familia	f. family	Somos cinco en nuestra familia.	There are five in our family.	feminine noun	familia	biohack es-en letter-f noun	35fa964150b5
+biohack:es-en:0449	famoso	famous	Es uno de los autores mas famosos de España.	He is one of Spain's most famous authors.		famoso	biohack es-en letter-f	c5f86b35d579
+biohack:es-en:0450	la fe	f. faith	Hay que tener fe en el presidente.	We must have faith in the president.	feminine noun	fe	biohack es-en letter-f noun	b40b36515a3c
+biohack:es-en:0451	la fecha	f. date (in time)	¿Cuál es la fecha hoy?	What is today's date?	feminine noun	fecha	biohack es-en letter-f noun	4f197d728eb7
+biohack:es-en:0452	las felicitaciones	f. pl. congratulations	Felicitaciones en su aniversario.: Congratulations on your anniversary.	E Congratulations on your anniversary.	feminine plural noun	felicitaciones	biohack es-en letter-f noun	fbde9424794d
+biohack:es-en:0453	feliz	happy	¡Feliz año nuevo!	Happy new year!		feliz	biohack es-en letter-f	172b2d137caf
+biohack:es-en:0454	feo	ugly	Noesniguaponifeo.	He is neither handsome nor ugly.		feo	biohack es-en letter-f	f63d9a0d0307
+biohack:es-en:0455	el ferrocarril	m. railroad	Algunos nuevos trenes de ferrocarril van muy idos.	Some new railroad trains go very fast.	masculine noun	ferrocarril	biohack es-en letter-f noun	9779999694c3
+biohack:es-en:0456	fiar	to trust	No se puede fiar de nadie.	You can't trust anybody.	verb	fiar	biohack es-en letter-f verb	846c2454ebc1
+biohack:es-en:0457	la fiebre	f. fever	Con la fiebre que tienes no puedes salir de casa.	With the fever that you have you cannot go out of the house.	feminine noun	fiebre	biohack es-en letter-f noun	0ae8980a0e30
+biohack:es-en:0458	la fiesta	f. holiday, party	Mañana es día de fiesta.	Tomorrow is a holiday.	feminine noun	fiesta	biohack es-en letter-f noun	02332951f618
+biohack:es-en:0459	el fin	m. end	Pronto llega el fin del semestre.	The end of the semester will come soon.	masculine noun	fin	biohack es-en letter-f noun	13434550196f
+biohack:es-en:0460	la firma	f. signature, firm (business)	Necesitamos su firma, por favor.	We E need your signature, please.	feminine noun	firma	biohack es-en letter-f noun	68cb197f0d0b
+biohack:es-en:0461	firmar	to sign	Firme usted aquí, por favor.	Sign here, please.	verb	firmar	biohack es-en letter-f verb	69b1fb65da71
+biohack:es-en:0462	flamenco	flamenco, Gypsy dancing and music	Los espectáculos flamena cos son populares en el sur de España.	Flamenco shows are popular in the south of Spain.		flamenco	biohack es-en letter-f	50e5ece4bf51
+biohack:es-en:0463	la flor	f. flower	Mandó flores a su madre.	He sent flowers to his mother.	feminine noun	flor	biohack es-en letter-f noun	b764716b583f
+biohack:es-en:0464	fósforo	Do	3 you have a match?	I'm sorry, but I don’t smoke.		fosforo	biohack es-en letter-f	b41c177b2666
+biohack:es-en:0465	la foto(grafía)	f. photo	¿Dónde puedo revelar estas fotos?	Where can I 3 develop these photos?	feminine noun	foto(grafia)	biohack es-en letter-f noun	b5d1d9bbe680
+biohack:es-en:0466	fracasar	to fail	Habrían fracasado sin la ayuda del gobierno.	They would have failed without help from the government.	verb	fracasar	biohack es-en letter-f verb	1459ecdd0b02
+biohack:es-en:0467	francés	French	No hablo francés, pero lo entiendo un poco.	I don’t 3 speak French, but I understand it a little.: Francia f. France Francia está separada de España por los Pirineos. 3 France is separated from Spain by the Pyrenees.		frances	biohack es-en letter-f	c3129a6d4b1d
+biohack:es-en:0468	la frase	f. sentence, phrase	Escriban una composición de diez frases.	Write a composition of ten sentences.	feminine noun	frase	biohack es-en letter-f noun	4506a97719c5
+biohack:es-en:0469	la frazada	f. (Spanish America) blanket	Pida otra frazada si hace frío esta noche.	Ask for another blanket if it's cold tonight.	feminine noun	frazada	biohack es-en letter-f noun	d2c0e91af4a4
+biohack:es-en:0470	el frente	m. front (political, military)	Perdieron la guerra en el frente del este.	They lost the war on the eastern front.	masculine noun	frente	biohack es-en letter-f noun	9e46fcf59793
+biohack:es-en:0471	la frente	f. forehead	Al oír eso, arrugó la frente.	On hearing that, he knitted his brow.	feminine noun	frente	biohack es-en letter-f noun	fdcc7064fdd5
+biohack:es-en:0472	frío	cold	El café está frío.	The coffee is cold. frito fried Dos huevos fritos y un café, por favor. Two fried eggs and coffee, please.		frio	biohack es-en letter-f	b2bc7c4154dd
+biohack:es-en:0473	la frontera	f. border	¿Tenemos que bajar del tren en la frontera?	Do we have to get off the train at the border?	feminine noun	frontera	biohack es-en letter-f noun	a94035735a9e
+biohack:es-en:0474	el fuego	m. fire	El fuego fue tan intenso que los bomberos no pudieron 3. entrar en la casa.	The fire was so intense that the firemen couldn't get into 3 the house.	masculine noun	fuego	biohack es-en letter-f noun	0c3277baacb9
+biohack:es-en:0475	fuera (de)	outside	Esta carretera los llevará fuera de la ciudad.	This highway will take you out of the city.		fuera (de)	biohack es-en letter-f	3b3ea2aeaba0
+biohack:es-en:0476	fuerte	strong	El toro es más fuerte que el torero, pero casi siempre pierde.	The bull is stronger than the bullfighter, but he almost always loses.:		fuerte	biohack es-en letter-f	16e6b7e7a105
+biohack:es-en:0477	fumar	to smoke	No se permite fumar en clase.	Smoking is not permitted in class.	verb	fumar	biohack es-en letter-f verb	4ed46179103b
+biohack:es-en:0478	la función	f. function, show, performance	La última función empieza a las once.	The last show goes on at eleven.	feminine noun	funcion	biohack es-en letter-f noun	c3df750edc47
+biohack:es-en:0479	funcionar	to function, work	El ascensor no funciona.	The elevator is out of order.	verb	funcionar	biohack es-en letter-f verb	2ba2562b8520
+biohack:es-en:0480	el fútbol	m. soccer	El fútbol es muy popular en España.	Soccer is very popular in Spain.	masculine noun	futbol	biohack es-en letter-f noun	a71d5fd7f98e
+biohack:es-en:0481	las gafas	f. pl. eyeglasses	Uso gafas solamente para leer.	I use glasses only for reading.	feminine plural noun	gafas	biohack es-en letter-g noun	9f124c9504a4
+biohack:es-en:0482	la gana	f. desire	No tengo ganas de salir esta noche.	I don't feel like going out tonight.	feminine noun	gana	biohack es-en letter-g noun	2d1869549ef7
+biohack:es-en:0483	ganar	to earn, win	;Quién ganó el partido?	Who won the game?	verb	ganar	biohack es-en letter-g verb	e678c7845554
+biohack:es-en:0484	la ganga	f. bargain	Mucha gente busca gangas en el Rastro los domingos por la mañana.	Many people look for bargains in the Rastro [flea market in Madrid] on Sunday mornings.	feminine noun	ganga	biohack es-en letter-g noun	c0912544881b
+biohack:es-en:0485	la garganta	f. throat	Tiene un dolor de garganta y no puede hablar.	He has a sore throat and can't speak.	feminine noun	garganta	biohack es-en letter-g noun	2b8db184f43c
+biohack:es-en:0486	gastar	to spend	No me gusta gastar dinero en tonterías.	I don't like to spend money on foolishness.	verb	gastar	biohack es-en letter-g verb	a82f2a8ccdb3
+biohack:es-en:0487	la gente	f. people	Mucha gente vino a la ceremonia.	Many people came to the ceremony.	feminine noun	gente	biohack es-en letter-g noun	252a3aa24ff5
+biohack:es-en:0488	el gerente	m. manager	Quiero hablar con el gerente.	I want to talk to the manager.	masculine noun	gerente	biohack es-en letter-g noun	7387ab34494b
+biohack:es-en:0489	el gobierno	m. government	El neuvo gobierno tiene el apoyo del pueblo.	The new government has the support of the people.	masculine noun	gobierno	biohack es-en letter-g noun	6a7b15acdfee
+biohack:es-en:0490	el golpe	m. blow, knock	Fue como un golpe a la cabeza.	It was like a blow to the head. H:	masculine noun	golpe	biohack es-en letter-g noun	2bc3a66f0fb8
+biohack:es-en:0491	gordo	fat	Si sigues comiendo así, te pondrás gordo.	If you keep on eating like that, you'll get fat.		gordo	biohack es-en letter-g	48fdf43a15bb
+biohack:es-en:0492	la gota	f. drop	No queda ni una gota de agua.	There's not a drop of water left.	feminine noun	gota	biohack es-en letter-g noun	952502b6a0f6
+biohack:es-en:0493	gozar (de)	to enjoy	Gozan de buena salud.	They're enjoying good health.	verb	gozar (de)	biohack es-en letter-g verb	537fe23dcc85
+biohack:es-en:0494	gracias	thanks	Muchas gracias por su amabilidad.	Thank you very much for your kindness.		gracias	biohack es-en letter-g	7e29493c9664
+biohack:es-en:0495	gran, grande	big, large, great	El presidente Lincoln fue un gran hombre y también un hombre grande.	President Lincoln was a great man and also a big man.		gran, grande	biohack es-en letter-g	d9b2aef8fbe8
+biohack:es-en:0496	gritar	to shout	No hay que gritar.	Ya vienen. There is no need to shout. Boe They're coming already.	verb	gritar	biohack es-en letter-g verb	ba9b18bde091
+biohack:es-en:0497	el grito	m. shout	Me despertó un grito en la calle.	A shout in the street awakened me.	masculine noun	grito	biohack es-en letter-g noun	80ba6247aefb
+biohack:es-en:0498	el grupo	m. group	Hay dos profesores y treinta alumnos en nuestro grupo.	There are two teachers and thirty pupils in our group.	masculine noun	grupo	biohack es-en letter-g noun	35664d834f00
+biohack:es-en:0499	el guante	m. glove	Cuando hace frío me pongo guantes.	When it's cold put on gloves.	masculine noun	guante	biohack es-en letter-g noun	8ccdb7b77687
+biohack:es-en:0500	guapo	handsome	En su familia, todos los hombres son guapos y las mujeres bonitas.	In his family, all the men are handsome and the women pretty.		guapo	biohack es-en letter-g	ef66b44d5c91
+biohack:es-en:0501	el/la guardia	m. &amp; f. guard, police officer	Los guardias protegen al:. público.	The police officers protect the public.	masculine or feminine noun	guardia	biohack es-en letter-g noun	358f9e4de74d
+biohack:es-en:0502	la guerra	f. war	La Guerra Civil en España duró casi tres años.	The Gil War in Spain lasted almost three years.	feminine noun	guerra	biohack es-en letter-g noun	3bb845708470
+biohack:es-en:0503	el/la guía	m. &amp; f. guide	Nuestra guía nos llevó a todos los puntos de interés.	Our guide took us to all the points of interest.	masculine or feminine noun	guia	biohack es-en letter-g noun	51165acb30f7
+biohack:es-en:0504	la guía	f. guidebook	¿Cuánto cuesta esta guía de México?	How much is: this guide to Mexico? Sa	feminine noun	guia	biohack es-en letter-g noun	8e5ecebf578a
+biohack:es-en:0505	gustar	to please, like	Nos gusta viajar en el verano.	We like to travel: in the summer.	verb	gustar	biohack es-en letter-g verb	c84ec5e7e74e
+biohack:es-en:0506	el gusto	m. pleasure	Mucho gusto en conocerle.	El gusto es mio. Pleased “€ to meet you. The pleasure is mine.:	masculine noun	gusto	biohack es-en letter-g noun	00e0dec21c39
+biohack:es-en:0507	la habitación	f. room	Todas las habitaciones tienen baño y teléfono.	All the rooms have a bath and telephone.	feminine noun	habitacion	biohack es-en letter-h noun	79bba5feff75
+biohack:es-en:0508	hablar	to speak, talk	Yo hablo español un poco. ¿Habla usted inglés?	I speak Spanish a little. Do you speak English?	verb	hablar	biohack es-en letter-h verb	7c2a085e2b70
+biohack:es-en:0509	hacer	to do, make	Hay tantas cosas que hacer.	There are so many things: to do.	verb	hacer	biohack es-en letter-h verb	c04419836853
+biohack:es-en:0510	hacia	to ward	Caminaba hacia la aldea.	He was walking toward the	verb	hacia	biohack es-en letter-h verb	fa3cc8405190
+biohack:es-en:0511	hallar	to find	¿Dónde se puede hallar un restaurante vegetariano?	Where can one find a vegetarian restaurant?	verb	hallar	biohack es-en letter-h verb	88b669bd8b7f
+biohack:es-en:0512	el hambre	f. hunger	No tengo hambre todavía.	I'm not hungry yet.	feminine noun	hambre	biohack es-en letter-h noun	069135597cb9
+biohack:es-en:0513	hasta	until	Los esperamos hasta las cuatro.	We waited for them until four 3 o'clock.		hasta	biohack es-en letter-h	e3449fd856f2
+biohack:es-en:0514	hay	there is, there are	Hay muchos lugares que visitar.	There are many places to visit.		hay	biohack es-en letter-h	e4ed65ea130f
+biohack:es-en:0515	hermoso	beautiful	¡Qué vista tan hermosa!	What a beautiful view!		hermoso	biohack es-en letter-h	3704a3fa7318
+biohack:es-en:0516	el hielo	m. ice	Eche un poco de hielo en mi vaso.	Put a little ice in my	masculine noun	hielo	biohack es-en letter-h noun	527a0a600884
+biohack:es-en:0517	hola	hi, hello	Hola, ¿qué tal?	Hi, how are you?		hola	biohack es-en letter-h	54e1e7120095
+biohack:es-en:0518	el hombre	m. man	Había más hombres que mujeres en la reunión.	There were more men than women at the meeting.	masculine noun	hombre	biohack es-en letter-h noun	86fedff98a65
+biohack:es-en:0519	la hora	f. hour, time	¿Qué hora es?	What time is it?	feminine noun	hora	biohack es-en letter-h noun	340d592f22ca
+biohack:es-en:0520	el horario	m. schedule, timetable	Busco el horario de los autobuses.	I am looking for the bus schedule. EA strike Los obreros municipales se declararon en huelga. The	masculine noun	horario	biohack es-en letter-h noun	e6670cb2c0fd
+biohack:es-en:0521	hoy	today	Hoy es el primer día de clases.	Today is the first day of classes.		hoy	biohack es-en letter-h	54d8576cc82b
+biohack:es-en:0522	la huelga	f. strike	Los obreros municipales se declararon en huelga.	The municipal workers went out on strike.	feminine noun	huelga	biohack es-en letter-h noun	890c719f17fa
+biohack:es-en:0523	el huésped	m. Si f. guest	Ya han llegado todos los huéspedes.	All the guests have already arrived.	masculine noun	huesped	biohack es-en letter-h noun	07c11b16e060
+biohack:es-en:0524	el humo	m. smoke	Se podía ver el humo desde lejos.	You could see the: smoke from far away.	masculine noun	humo	biohack es-en letter-h noun	9616203c1eed
+biohack:es-en:0525	la ida	f. going, leaving	Un billete de ida y vuelta, por favor.	A round-trip ticket, please.	feminine noun	ida	biohack es-en letter-i noun	a9c3e22511db
+biohack:es-en:0526	el idioma	m. language	Me encanta aprender nuevos idiomas.	I love to learn new languages.	masculine noun	idioma	biohack es-en letter-i noun	2c90d6ec9f5b
+biohack:es-en:0527	la iglesia	f. church	Van a la iglesia todos los domingos.	They go to church every Sunday.	feminine noun	iglesia	biohack es-en letter-i noun	693a7aa9baa8
+biohack:es-en:0528	igual	equal, same	Yo te amo igual que ama la flor la luz del día.	I love you the same as a flower loves the light of day.		igual	biohack es-en letter-i	35abed82f077
+biohack:es-en:0529	igualmente	likewise	Mucho gusto en conocerle.	Igualmente. Pleased to meet you. Likewise.		igualmente	biohack es-en letter-i	4618dffd920b
+biohack:es-en:0530	el permet:	m. raincoat	Va a llover.	Lleva tu impermeable. It's going to ram. Take your raincoat.	masculine noun	permet:	biohack es-en letter-p noun	6776e02d5db5
+biohack:es-en:0531	importar	to import, to matter	No me importa lo que dicen.	It doesn’t matter to me what they say.	verb	importar	biohack es-en letter-i verb	4d272cbca229
+biohack:es-en:0532	el impuesto	m. tax	Los impuestos siempre suben.	The taxes always go up.	masculine noun	impuesto	biohack es-en letter-i noun	dedd2a043819
+biohack:es-en:0533	el incendio	m. fire	En caso de incendio, no use el ascensor.	In case of fire, do not use the elevator.	masculine noun	incendio	biohack es-en letter-i noun	f7c94aa86220
+biohack:es-en:0534	indicar	to indicate, show	¿Quiere indicarme la ruta en el mapa?	Would you show me the route on the map?	verb	indicar	biohack es-en letter-i verb	ddfa24d8deb8
+biohack:es-en:0535	el ingeniero	m. engineer	Mis dos hermanos son ingenieros.	My two brothers are engineers. Inglaterra f. England Inglaterra y España eran rivales en la colonización del Nuevo Mundo. England and Spain were rivals in the colonization of the New World.	masculine noun	ingeniero	biohack es-en letter-i noun	c013f01e2b2d
+biohack:es-en:0536	el inglés	m. English	No soy inglés pero sí hablo inglés.	I'm not English but I do speak English.	masculine noun	ingles	biohack es-en letter-i noun	a6b51bfe5349
+biohack:es-en:0537	inmediatamente	immediately	Salgan de aquí inmediatamente.	Get out of here immediately.		inmediatamente	biohack es-en letter-i	a28e20468cf4
+biohack:es-en:0538	el interés	m. interest	Quisiera visitar todos los puntos de interés.	I'd like to visit all the points of interest.	masculine noun	interes	biohack es-en letter-i noun	6863af0613cf
+biohack:es-en:0539	inútil	useless	Es inútil protestar.	It’s useless to protest.		inutil	biohack es-en letter-i	6fd6878c8f07
+biohack:es-en:0540	ir	to go	No podemos ir mañana.	We can’t go tomorrow.	verb	ir	biohack es-en letter-i verb	57aca1957f67
+biohack:es-en:0541	izquierda	left	Doble a la izquierda en la primera esquina.	Turn to your: left at the first comer.		izquierda	biohack es-en letter-i	eba6d52ab6e4
+biohack:es-en:0542	el jabón	m. soap	¿Nos puede dejar otra barra de jabón?	Can you leave us another bar of soap?	masculine noun	jabon	biohack es-en letter-j noun	0ca753f1e2fd
+biohack:es-en:0543	jamás	never, ever	No hemos visto jamás tanta riqueza.	We've never seen such wealth.		jamas	biohack es-en letter-j	b7930df8fc20
+biohack:es-en:0544	el jardín	m. garden	El palacio está rodeado de jardines.	The palace is sur-, rounded by gardens.	masculine noun	jardin	biohack es-en letter-j noun	d446957e7662
+biohack:es-en:0545	el jefe	m. boss, chief, head	Nuestro jefe siempre llega temprano.	Our boss always arrives early. ho	masculine noun	jefe	biohack es-en letter-j noun	1978c8686ca2
+biohack:es-en:0546	joven	young	Es muy joven para ocupar un puesto tan importante.	He's very young to occupy such an important position.		joven	biohack es-en letter-j	88848a839fef
+biohack:es-en:0547	la joya	f. jewel	Quería comprar una joya elegante para su esposa.	He wanted to buy an elegant jewel for his wife.	feminine noun	joya	biohack es-en letter-j noun	063ff1898d99
+biohack:es-en:0548	judío (-a)	Jew	Muchos judíos sefarditas hablan español.	Many: Sephardic Jews speak Spanish.		judio (-a)	biohack es-en letter-j	2b36dd1c6acf
+biohack:es-en:0549	el juego	m. game	El ajedrez es un juego difícil.	Chess is a difficult game.	masculine noun	juego	biohack es-en letter-j noun	798422223b23
+biohack:es-en:0550	el/la juez	m. &amp; f. judge	Todo el mundo se levanta cuando entra el juez.	Everyone stands up when the judge enters.	masculine or feminine noun	juez	biohack es-en letter-j noun	bf950c8533d9
+biohack:es-en:0551	jugar	to play	¿Quiénes juegan esta tarde?	Who are the ones playing this afternoon?	verb	jugar	biohack es-en letter-j verb	da0f822d89c3
+biohack:es-en:0552	el juguete	m. toy	¡Cuántos juguetes tienen los niños estos días!	How many toys children have these days!	masculine noun	juguete	biohack es-en letter-j noun	3a7ef2f18455
+biohack:es-en:0553	juntos	to gether	Será mejor si vamos juntos. lt will be better if we go: together.	It will be better if we go; together.	verb	juntos	biohack es-en letter-j verb	1604ae541032
+biohack:es-en:0554	jurar	to swear	Juran que no lo robaron.	They swear that they didn't steal it.	verb	jurar	biohack es-en letter-j verb	0f3597549bf5
+biohack:es-en:0555	el kilo(-gramo)	m. kilo(gram) (2.2 lbs)	Se vende a doscientas pesetas el kilo.	It’s sold at 200 pesetas a kilo.	masculine noun	kilo(-gramo)	biohack es-en letter-k noun	f30dcd20046f
+biohack:es-en:0556	el kilómetro	m. kilometer (5/8 of a mile)	La velocidad máxima es ochenta 3 kilómetros por hora.	The speed limit is 80 kilometers (50 miles) an hour.	masculine noun	kilometro	biohack es-en letter-k noun	cba6846163d6
+biohack:es-en:0557	la la	f. the, her, it	Es la voz de mi madre; yo la reconocería en cualquier 2 parte.	It's my mother’s voice; I'd recognize it anywhere.	feminine noun	la	biohack es-en letter-l noun	88fe51221dfe
+biohack:es-en:0558	las	f. pl. the, them	¿Quién escribió las notas?	La secretaria las escribió.. Who wrote the notes? The secretary wrote them.	feminine plural noun	las	biohack es-en letter-l noun	961ced9d105e
+biohack:es-en:0559	el labio	m. lip	Ella tiene labios de rubí.	She has ruby-red lips.	masculine noun	labio	biohack es-en letter-l noun	cbf5cb9162dd
+biohack:es-en:0560	el lado	m. side	Su casa está al otro lado de la calle.	His house is on the other side of the street.	masculine noun	lado	biohack es-en letter-l noun	2ac583b305d4
+biohack:es-en:0561	el ladrón	m. thief	El ladrón se escapó en la confusión.	The thief escaped in the confusion.	masculine noun	ladron	biohack es-en letter-l noun	e4ce2a06870a
+biohack:es-en:0562	el lago	m. lake	Hay un gran lago en el parque.	There's a big lake in the park.	masculine noun	lago	biohack es-en letter-l noun	31c433e2d458
+biohack:es-en:0563	la lámpara	f. lamp	Necesitamos una lámpara para leer.	We need a reading lamp.	feminine noun	lampara	biohack es-en letter-l noun	27bc0191c621
+biohack:es-en:0564	la lana	f. wool	Quiero un suéter de lana.	I want a wool sweater.	feminine noun	lana	biohack es-en letter-l noun	347301eed98d
+biohack:es-en:0565	el lápiz	m. pencil	No podía tomar notas porque se me perdió el lápiz.	I couldn't take notes because I lost my pencil.	masculine noun	lapiz	biohack es-en letter-l noun	e58b956335bf
+biohack:es-en:0566	largo	long	Dio un discurso muy largo.	He gave a very long talk.		largo	biohack es-en letter-l	68b2d2a08015
+biohack:es-en:0567	la lástima	f. pity	¡Qué lástima que no hayan venido!	What a pity that they haven't come!	feminine noun	lastima	biohack es-en letter-l noun	82f71cdfd838
+biohack:es-en:0568	la lavabo	f. sink, lavatory	¿Dónde están los lavabos?	Where are the lavatories?	feminine noun	lavabo	biohack es-en letter-l noun	60c9ef2f37c0
+biohack:es-en:0569	lavar(se)	to wash (oneself)	¿Dónde podemos lavar la ropa?	Where can we wash our clothes? le to him, to her, to you Le hablo como amigo. I'm speaking to you as a friend.	verb	lavar(se)	biohack es-en letter-l verb	3242632df7a8
+biohack:es-en:0570	la lección	f. lesson	Esta lección es más complicada que la anterior.	This lesson is more complicated than the previous one.	feminine noun	leccion	biohack es-en letter-l noun	80871f7f4d2d
+biohack:es-en:0571	leer	to read	Me gustaría leer todo lo que ha escrito.	I'd like to read everything he's written.	verb	leer	biohack es-en letter-l verb	ae51e4acac81
+biohack:es-en:0572	lejos	far (away)	Está muy lejos de aquí.	It’s very far from here.		lejos	biohack es-en letter-l	3413a90d7ef1
+biohack:es-en:0573	la lengua	f. language, tongue	Se hablan varias lenguas en la península ibérica.	Several languages are spoken on the Iberian Peninsula.	feminine noun	lengua	biohack es-en letter-l noun	2d72065a2d20
+biohack:es-en:0574	lentamente	slowly	Más lentamente, por favor.	More slowly, please.		lentamente	biohack es-en letter-l	5043b6130246
+biohack:es-en:0575	los lentes	m. pl. eyeglasses	Si pierdo mis lentes, no puedo ver nada.	If I lose my glasses, I can’t see a thing. 5	masculine plural noun	lentes	biohack es-en letter-l noun	e49ed064ce78
+biohack:es-en:0576	la letra	f. letter (of alphabet), handwriting	El tiene tan mala letra que no puedo leer su carta.	He has such a bad handwriting that I can't read his letter.	feminine noun	letra	biohack es-en letter-l noun	198f0dd2e20c
+biohack:es-en:0577	letrero	The sign	says: “Discounts today and tomorrow.”	The sign says: “Discounts today and tomorrow.”		letrero	biohack es-en letter-l	71df4be3d36d
+biohack:es-en:0578	levantar	to lift, raise	Levante la mano si quiere hablar.	Raise your hand if you want to speak.	verb	levantar	biohack es-en letter-l verb	fea52da2554f
+biohack:es-en:0579	levantarse	to get up, stand up	Levántese, por favor, y hable en voz alta.	Stand up, please, and speak in a loud voice.	verb	levantarse	biohack es-en letter-l verb	8437e8527ca8
+biohack:es-en:0580	la ley	f. law	El juez explicó la ley a los miembros del jurado.	The judge explained the law to the members of the jury.	feminine noun	ley	biohack es-en letter-l noun	803f2aa05c4b
+biohack:es-en:0581	libre	free	Por fin quedaron libres del tirano.	Finally they were free from the tyrant.		libre	biohack es-en letter-l	8b93b4633b76
+biohack:es-en:0582	el libro	m. book	Tenemos que leer tantos libros en este curso.	We have to read so many books in this course.	masculine noun	libro	biohack es-en letter-l noun	ee1c2bfb402d
+biohack:es-en:0583	ligero	light (weight)	Un abrigo ligero es ideal para noviembre.	A light coat is ideal for November.		ligero	biohack es-en letter-l	6c57a8213979
+biohack:es-en:0584	el limite	m. limit, boundary	¿Cuáles son los límites de su propiedad?	What are the boundaries of your property?	masculine noun	limite	biohack es-en letter-l noun	45e62f1ff3c3
+biohack:es-en:0585	limpiar	to clean	¿Limpian las habitaciones todos los días?	Do they clean the rooms every day?	verb	limpiar	biohack es-en letter-l verb	0623578c4815
+biohack:es-en:0586	limpio	clean	Nuestra habitación siempre está limpia.	Our room is always clean.		limpio	biohack es-en letter-l	dbfeac143e9f
+biohack:es-en:0587	lindo	pretty	Tienen una casa muy linda.	They have a very pretty home.		lindo	biohack es-en letter-l	38a06c3f0e67
+biohack:es-en:0588	la línea	f. line	Lean con cuidado la tercera línea.	Read the third line carefully.	feminine noun	linea	biohack es-en letter-l noun	4ab0fbe774c0
+biohack:es-en:0589	la lista	f. list, menu	Su nombre no está en la lista de invitados.	Your name isn't on the guest list.	feminine noun	lista	biohack es-en letter-l noun	cdef8d404a5a
+biohack:es-en:0590	listo	ready, smart, bright	Es muy lista pero casi nunca está lista a tiempo.	She is very bright but is almost never ready on time.		listo	biohack es-en letter-l	fb6f355d1562
+biohack:es-en:0591	el litro	m. liter (1.06 quarts)	Echeme veinte litros, por favor.	Put in twenty liters, please.	masculine noun	litro	biohack es-en letter-l noun	a841f44b3f9c
+biohack:es-en:0592	el lo	m. it, him, you	No lo he visto todavia.	I haven't seen him yet.	masculine noun	lo	biohack es-en letter-l noun	be1fee0b458f
+biohack:es-en:0593	loco	crazy	¿Estás loco? No puedes hacer eso.	Are you crazy? You can't do that.		loco	biohack es-en letter-l	d3844a466995
+biohack:es-en:0594	los	the, them	¿Quiénes comieron los pasteles? Los niños los comieron.	Who ate the pies? The children ate them.		los	biohack es-en letter-l	4abe137a2f9b
+biohack:es-en:0595	la lucha	f. struggle, fight	Fue una lucha larga y cruel.	It was a long, cruel struggle.	feminine noun	lucha	biohack es-en letter-l noun	785988d31d03
+biohack:es-en:0596	luego	then, after	Almorzamos y luego dimos un paseo.	We ate lunch and then took a walk.		luego	biohack es-en letter-l	a764b3cc10db
+biohack:es-en:0597	el lugar	m. place	Esun lugar muy ameno.	It’s a very pleasant place.	masculine noun	lugar	biohack es-en letter-l noun	9220d21584eb
+biohack:es-en:0598	el lujo	m. luxury	El Ritz es un hotel de lujo.	The Ritz is a deluxe hotel.	masculine noun	lujo	biohack es-en letter-l noun	ab25618edd8a
+biohack:es-en:0599	la luna	f. moon	La luna está llena esta noche.	The moon is full tonight.	feminine noun	luna	biohack es-en letter-l noun	f1b2b19d41e4
+biohack:es-en:0600	la luz	f. light	Es romántico caminar a la luz de la luna.	It's romantic to, walk in the moonlight.	feminine noun	luz	biohack es-en letter-l noun	c810ab060b86
+biohack:es-en:0601	la llamada	f. call	Hubo una llamada para usted.	There was a call for you.	feminine noun	llamada	biohack es-en letter-l noun	4053b7b2d007
+biohack:es-en:0602	llamar(se)	to call, to be called	Se llama Francisco, pero todo el mundo le llama Paco.	His name is Francisco, but everyone calls him Paco.	verb	llamar(se)	biohack es-en letter-l verb	98ea5f16bb05
+biohack:es-en:0603	la llave	f. key	Perdí la llave y no puedo abrir la puerta.	I lost my key and I can't open the door.	feminine noun	llave	biohack es-en letter-l noun	845ad77939bc
+biohack:es-en:0604	la llegada	f. arrival	Estamos esperando la llegada de mi primo.	We're awaiting my cousin's arrival.	feminine noun	llegada	biohack es-en letter-l noun	bd73c504813d
+biohack:es-en:0605	llegar	to arrive	¿Cuándo llega el tren de Barcelona?	When does the train from Barcelona arrive?	verb	llegar	biohack es-en letter-l verb	dd93d9e27b3b
+biohack:es-en:0606	llenar	to fill	Llene el tanque, por favor.	Fill the tank, please.	verb	llenar	biohack es-en letter-l verb	e6871978c9a0
+biohack:es-en:0607	lleno	full	El vaso está medio lleno.	The glass is half full.		lleno	biohack es-en letter-l	dc579b8e4d96
+biohack:es-en:0608	llevar	to carry, wear, take	Nos llevaron a todas partes.	They took us everywhere.	verb	llevar	biohack es-en letter-l verb	3ee264b8ea02
+biohack:es-en:0609	llorar	to cry	Una canción popular dice: “Canta y no llores.”	A popular song says: “Sing and don’t cry.”	verb	llorar	biohack es-en letter-l verb	715ca3be8373
+biohack:es-en:0610	llover	to rain	Casi nunca llueve en Madrid en el verano.	It almost never rains in Madrid in the summer.	verb	llover	biohack es-en letter-l verb	90cc2d5698c7
+biohack:es-en:0611	la lluvia	f. rain	La lluvia de anoche no refrescó nada.	Last night's rain	feminine noun	lluvia	biohack es-en letter-l noun	a2f9dc479a1f
+biohack:es-en:0612	la madera	f. wood	Guardo mis papeles importantes en esta caja de madera.	I keep my important papers in this wooden box.	feminine noun	madera	biohack es-en letter-m noun	74de2c9671eb
+biohack:es-en:0613	maduro	ripe	Las uvas no están maduras todavía.	The grapes aren't ripe yet.		maduro	biohack es-en letter-m	defbcdd3019a
+biohack:es-en:0614	maestro (-a)	teacher	Los maestros tienen mucha paciencia.	Teachers have a lot of patience.		maestro (-a)	biohack es-en letter-m	e17e37ea802d
+biohack:es-en:0615	mal(o)	bad, badly, ill	Hace mal tiempo y me siento mal.	The weather is bad and I feel bad.		mal(o)	biohack es-en letter-m	58ff3c75497f
+biohack:es-en:0616	la maleta	f. suitcase	Permiten dos maletas en el avión.	They allow two suitcases on the plane.	feminine noun	maleta	biohack es-en letter-m noun	16f91a9e6db5
+biohack:es-en:0617	mandar	to send, command	Lo mandaré por correo aéreo.	I'll send it by airmail.	verb	mandar	biohack es-en letter-m verb	73bd69eeeff3
+biohack:es-en:0618	la manera	f. manner, way	Me encanta su manera de hablar.	I'm charmed by his way of speaking.	feminine noun	manera	biohack es-en letter-m noun	3ae456b9a41a
+biohack:es-en:0619	la mano	f. hand	Perdió el uso de la mano izquierda en una batalla.	He lost the use of his left hand in a battle.	feminine noun	mano	biohack es-en letter-m noun	e88f26ec460e
+biohack:es-en:0620	la manta	f. (Spain) blanket	Deje dos mantas en la cama, por favor.	Please leave two blankets on the bed.	feminine noun	manta	biohack es-en letter-m noun	69fd452bdf7a
+biohack:es-en:0621	mantener	to maintain, support	Mantiene a sus tres hermanos menores.	He supports his three younger brothers.	verb	mantener	biohack es-en letter-m verb	144875a0ed87
+biohack:es-en:0622	la mañana	f. morning, tomorrow	Visitaremos el palacio mañana por la mañana.	We'll visit the palace tomorrow morning.	feminine noun	manana	biohack es-en letter-m noun	68cbd64f6f39
+biohack:es-en:0623	el mapa	m. map	Un mapa de carreteras es útil.	A highway map is useful.	masculine noun	mapa	biohack es-en letter-m noun	eefb9fd279ac
+biohack:es-en:0624	el mar	m. sea	Me gusta caminar por las orillas del mar.	I like to walk along the seashore.	masculine noun	mar	biohack es-en letter-m noun	b008e9aac992
+biohack:es-en:0625	más	more	Esto es mejor pero es más caro.	This is better but it's more expensive.		mas	biohack es-en letter-m	c20cd1f9d1ba
+biohack:es-en:0626	me	(to) me	Me dijo que me ayudaría.	He told me he would help me.		me	biohack es-en letter-m	b7b5a184b431
+biohack:es-en:0627	la media	f. stocking	Las medias de nilón son populares hoy día.	Nylon	feminine noun	media	biohack es-en letter-m noun	e3406cb6276f
+biohack:es-en:0628	la medianoche	f. midnight	En muchas discotecas la acción empieza a medianoche.	In many discotheques the action begins at midnight.	feminine noun	medianoche	biohack es-en letter-m noun	b676fb6ab594
+biohack:es-en:0629	el médico	m. doctor	No me siento bien. Llame al médico, por favor.	I don't feel well. Call the doctor, please.	masculine noun	medico	biohack es-en letter-m noun	ef78522c1b72
+biohack:es-en:0630	la medida	f. size, measurement	¿Qué medida lleva usted?	What size do you wear?	feminine noun	medida	biohack es-en letter-m noun	a9061cbf70df
+biohack:es-en:0631	medio	half	Vinieron a las diez y media.	They came at half past ten.		medio	biohack es-en letter-m	752dbfc8ea86
+biohack:es-en:0632	el mediodía	m. noon	Podemos almorzar a mediodía.	We can have lunch at noon.	masculine noun	mediodia	biohack es-en letter-m noun	e10621428189
+biohack:es-en:0633	mejor	better, best	Será mejor dejarlo para mañana.	It will be better to leave it for tomorrow.		mejor	biohack es-en letter-m	08492b13af30
+biohack:es-en:0634	mejorar	to improve, feel better	Espero que mejore pronto.	I hope you feel better soon.	verb	mejorar	biohack es-en letter-m verb	58e499daa75a
+biohack:es-en:0635	menor	smaller, smallest; younger, youngest	Tengo dos hermanas menores.	I have two younger sisters.		menor	biohack es-en letter-m	70643c214e3c
+biohack:es-en:0636	menos	less, least	¿Tiene usted algo menos caro?	Do you have something less expensive?		menos	biohack es-en letter-m	c7c8e005a1d6
+biohack:es-en:0637	la mentira	f. lie	No hagas caso de las mentiras que dicen de ti.	Don't pay attention to the lies they tell about you.	feminine noun	mentira	biohack es-en letter-m noun	720741e95b6a
+biohack:es-en:0638	menudo, a	often	A menudo llegaba tarde.	He would often arrive late.		menudo, a	biohack es-en letter-m	509671d19c86
+biohack:es-en:0639	el mercado	m. market	Este mercado tiene todo lo que usted necesita.	This market has everything you need.	masculine noun	mercado	biohack es-en letter-m noun	70f67482078a
+biohack:es-en:0640	merecer	to deserve	Merece un premio por lo que ha hecho.	He deserves a prize for what he's done.	verb	merecer	biohack es-en letter-m verb	c3827968ca38
+biohack:es-en:0641	la merienda	f. afternoon or morning snack	Como cenan tan tarde, toman una merienda a eso de las seis.	Since they dine so late, they have an afternoon snack at about six.	feminine noun	merienda	biohack es-en letter-m noun	0aa36aa6fcd3
+biohack:es-en:0642	el mes	m. month	Vamos a pasar el mes de enero en el sur.	We're going to spend the month of January in the south.	masculine noun	mes	biohack es-en letter-m noun	8ed3ee90bbe7
+biohack:es-en:0643	la mesa	f. table	La mesa en el comedor es más grande.	The table in the dining room is bigger.	feminine noun	mesa	biohack es-en letter-m noun	ee4ce4b852fd
+biohack:es-en:0644	mesero (-a)	waiter, waitress	Los meseros tratan de servir rápidamente.	The waiters are trying to serve quickly.		mesero (-a)	biohack es-en letter-m	8ecd8f73bfe9
+biohack:es-en:0645	meter	to put (in)	No sé donde metí mi cartera.	I don’t know where put my wallet.	verb	meter	biohack es-en letter-m verb	8f9bb81b0f6f
+biohack:es-en:0646	el método	m. method	Buscan un método más eficaz.	They are looking for a more efficient method.	masculine noun	metodo	biohack es-en letter-m noun	aba6a34e538b
+biohack:es-en:0647	el metro	m. meter (1.1 yards); subway (Spain)	Hay mil metros en un kilómetro.	There are a thousand meters in a kilometer.	masculine noun	metro	biohack es-en letter-m noun	2f5777271776
+biohack:es-en:0648	mi, mis	my	Quiero presentarle mi esposa y mis hijos.	I want to introduce my wife and my children to you.		mi, mis	biohack es-en letter-m	b5bbe703b559
+biohack:es-en:0649	el miedo	m. fear	Tiene miedo de salir de noche.	He's afraid to go out at	masculine noun	miedo	biohack es-en letter-m noun	b2d0e3c75b1e
+biohack:es-en:0650	el miembro	m. member	¿Es usted miembro de esta sociedad?	Are you a member of this society?	masculine noun	miembro	biohack es-en letter-m noun	c4476c9a4790
+biohack:es-en:0651	mientras	(que)	while Ella salió con el grupo mientras que yo descansaba.	She went out with the group while I was resting.		mientras	biohack es-en letter-m	c2cc42b0f860
+biohack:es-en:0652	el milagro	m. miracle	Es un milagro que no haya muerto.	It’s a miracle that I didn't die.	masculine noun	milagro	biohack es-en letter-m noun	c001c8b05f7d
+biohack:es-en:0653	la milla	f. mile	¿Cuántos kilómetros hay en diez millas?	How many kilometers are there in ten miles?	feminine noun	milla	biohack es-en letter-m noun	c8f0b2415bc3
+biohack:es-en:0654	mío	mine	Estas maletas no son mías.	These suitcases aren't mine.		mio	biohack es-en letter-m	208bddc5be88
+biohack:es-en:0655	mirar	to look (at)	¡Miren la hermosa puesta de sol!	Look at the beautiful sunset!	verb	mirar	biohack es-en letter-m verb	02b030aa27a1
+biohack:es-en:0656	mismo	same, oneself	El guía mismo nos dijo la misma cosa.	The guide himself told us the same thing.		mismo	biohack es-en letter-m	cc092d6bd78d
+biohack:es-en:0657	la mitad	f. half	Le daré la mitad de todo lo que tengo.	I will give you half of everything I have.	feminine noun	mitad	biohack es-en letter-m noun	fc314ba649c5
+biohack:es-en:0658	la moda	f. style, fashion	Estos vestidos ya no están de moda.	These dresses are no longer in fashion.	feminine noun	moda	biohack es-en letter-m noun	204733d6e5db
+biohack:es-en:0659	el modo	m. way, manner	¿De qué modo podemos arreglarlo?	In what way can we arrange it?	masculine noun	modo	biohack es-en letter-m noun	60caffa4c313
+biohack:es-en:0660	mojar	to wet	Lleva un paraguas si no quieres mojarte.	Take an umbrella if you don't want to get wet.	verb	mojar	biohack es-en letter-m verb	4f42289ebffd
+biohack:es-en:0661	molestar	to disturb, bother, molest	Perdone si le molesto.	Forgive me if I am disturbing you.	verb	molestar	biohack es-en letter-m verb	7f8963a319e9
+biohack:es-en:0662	la molestia	f. bother	No es ninguna molestia.	It's no bother at all.	feminine noun	molestia	biohack es-en letter-m noun	06d6b93c0ab6
+biohack:es-en:0663	la moneda	f. coin	Dale una moneda al mendigo.	Give the beggar a coin.	feminine noun	moneda	biohack es-en letter-m noun	ab7b8542fb0c
+biohack:es-en:0664	la montaña	f. mountain	Hace más fresco en las montañas.	It is cooler in the mountains.	feminine noun	montana	biohack es-en letter-m noun	6802bdfce5b3
+biohack:es-en:0665	moreno	brunette, dark-complexioned	Dice que tiene muchas novias, rubias y morenas.	He says he has many girlfriends, blondes and brunettes.		moreno	biohack es-en letter-m	5d265161da3f
+biohack:es-en:0666	morir	to die	El general murió en 1975.	The general died in 1975.	verb	morir	biohack es-en letter-m verb	c05c910cb7a8
+biohack:es-en:0667	mostrar	to show	Muéstreme lo que tiene.	Show me what you have.	verb	mostrar	biohack es-en letter-m verb	943a254b1c6e
+biohack:es-en:0668	el mozo	m. porter, young man	Busco un mozo para llevar mi equipaje.	I am looking for a porter to take my luggage.	masculine noun	mozo	biohack es-en letter-m noun	9f58b4ad612f
+biohack:es-en:0669	muchacho (-a)	boy, girl	Los muchachos están jugando en la calle.	The boys are playing in the street.		muchacho (-a)	biohack es-en letter-m	4af60db705c2
+biohack:es-en:0670	mucho	much	Me diverti mucho.	Muchas gracias. I enjoyed myself very much. Thanks a lot.		mucho	biohack es-en letter-m	4bfd29dc56f5
+biohack:es-en:0671	mudar	to change, move	Lo siento, pero tenemos que mudar su habitación.	I'm sorry, but we have to change your room.	verb	mudar	biohack es-en letter-m verb	555bf7770d5f
+biohack:es-en:0672	los muebles	m. pl. furniture	Los muebles me parecen muy modernos.	The furniture looks very modern to me.	masculine plural noun	muebles	biohack es-en letter-m noun	64c016bfe7f6
+biohack:es-en:0673	la muerte	f. death	Vi el anuncio de su muerte en el periódico.	I saw the	feminine noun	muerte	biohack es-en letter-m noun	448647e5bcdb
+biohack:es-en:0674	muerto	dead	Estoy muerto de hambre.	I'm starving to death.		muerto	biohack es-en letter-m	81ff2a725353
+biohack:es-en:0675	la muestra	f. sample	Aqui tiene usted una muestra de nuestro trabajo.	Here you have a sample of our work.	feminine noun	muestra	biohack es-en letter-m noun	541cee7f9703
+biohack:es-en:0676	la mujer	f. woman, wife	Buscan una mujer alta y delgada.	They are looking for a tall, slender woman.	feminine noun	mujer	biohack es-en letter-m noun	1f9c595adbd7
+biohack:es-en:0677	la multa	f. fine	Tuvo que pagar una multa.	He had to pay a fine.	feminine noun	multa	biohack es-en letter-m noun	ac4502f1b588
+biohack:es-en:0678	el mundo	m. world	Me gustaría viajar por todo el mundo.	I'd like to travel all over the world.	masculine noun	mundo	biohack es-en letter-m noun	89eb4f590cd6
+biohack:es-en:0679	la muñeca	f. doll	Estoy buscando una muñeca para mi sobrina.	I'm looking for a doll for my niece.	feminine noun	muneca	biohack es-en letter-m noun	81c0942c6ef1
+biohack:es-en:0680	el museo	m. museum	No hay bastante tiempo para visitar todos los museos.	There isn't enough time to visit all the museums.	masculine noun	museo	biohack es-en letter-m noun	be8d3697a97f
+biohack:es-en:0681	la música	f. music	Hay muchos programas de música en varios teatros.	There are many musical programs in a number of theaters.	feminine noun	musica	biohack es-en letter-m noun	7b04215d5cee
+biohack:es-en:0682	muy	very	Estamos muy bien, gracias.	We are very well, thank you.		muy	biohack es-en letter-m	14297a05c712
+biohack:es-en:0683	nacer	to be born	¿En qué año nació usted?	In what year were you born?	verb	nacer	biohack es-en letter-n verb	6e23edd0a74a
+biohack:es-en:0684	nada	nothing	No le dije nada.	I didn't tell him anything.		nada	biohack es-en letter-n	df0281c6e362
+biohack:es-en:0685	nadar	to swim	Dice que no sabe nadar.	He says he doesn’t know how to swim.	verb	nadar	biohack es-en letter-n verb	37916c549935
+biohack:es-en:0686	nadie	no one, nobody	No he visto a nadie todavía.	I haven't seen anyone yet.		nadie	biohack es-en letter-n	ce55273c298c
+biohack:es-en:0687	la nariz	f. nose	Tiene una nariz romana.	She has a Roman nose.	feminine noun	nariz	biohack es-en letter-n noun	e113195434b3
+biohack:es-en:0688	necesario	necessary	¿Son necesarias todas estas preparaciones?	Are all these preparations necessary?		necesario	biohack es-en letter-n	a871587ad342
+biohack:es-en:0689	necesitar	to need	Necesitamos más tiempo para verlo todo.	We need more time to see everything.	verb	necesitar	biohack es-en letter-n verb	79e8102d1f37
+biohack:es-en:0690	negar	to deny	Niegan que lo hayan robado.	They deny that they stole it.	verb	negar	biohack es-en letter-n verb	f582cd4dea76
+biohack:es-en:0691	el negociante	m. businessman	Muchos negociantes usan este hotel.	Many businessmen use this hotel.	masculine noun	negociante	biohack es-en letter-n noun	c790d034d697
+biohack:es-en:0692	los negocios	m. pl. business	Mi compañía tiene muchos negocios en su país.	My company has a lot of business dealings in your country.	masculine plural noun	negocios	biohack es-en letter-n noun	dab041b86480
+biohack:es-en:0693	nevar	to snow	Nieva sólo en las montañas.	It snows only in the mountains.	verb	nevar	biohack es-en letter-n verb	3ef0a2cdbe19
+biohack:es-en:0694	ni	neither, nor	No habla ni español ni francés.	He speaks neither Spanish nor French.		ni	biohack es-en letter-n	d70d3c995ace
+biohack:es-en:0695	la niebla	f. fog	Una espesa niebla cubría la montaña por la mañana.	A thick fog was covering the mountain in the morning.	feminine noun	niebla	biohack es-en letter-n noun	74db65cb9869
+biohack:es-en:0696	la nieve	f. snow	Al norte de Madrid, hay bastante nieve para esquiar.	To	feminine noun	nieve	biohack es-en letter-n noun	6a28a348b543
+biohack:es-en:0697	ningún, ninguno	none	Ninguno de ellos sabía la respuesta.	None of them knew the answer.		ningun, ninguno	biohack es-en letter-n	ae81c9bd42a2
+biohack:es-en:0698	niño (-a)	child, boy, girl	Es una niña muy mona.	She's a very cute child.		nino (-a)	biohack es-en letter-n	acc700e00c6b
+biohack:es-en:0699	el nivel	m. level	Estamos a mil metros sobre el nivel del mar.	We're at a thousand meters above sea level.	masculine noun	nivel	biohack es-en letter-n noun	9f41d8f26d2c
+biohack:es-en:0700	no	no, not	No, no puedo salir esta noche.	No, I can’t go out tonight.		no	biohack es-en letter-n	687ebf1613eb
+biohack:es-en:0701	la noche	f. night	¿Qué vamos a hacer esta noche?	What shall we do tonight?	feminine noun	noche	biohack es-en letter-n noun	977e93ea43ae
+biohack:es-en:0702	el nombre	m. name	¿Cuál es su nombre?	What is your name?	masculine noun	nombre	biohack es-en letter-n noun	364ea6d18c0b
+biohack:es-en:0703	el norte	m. north	No conocemos todavía el norte del país.	We do not yet know the north of the country.	masculine noun	norte	biohack es-en letter-n noun	752810388de7
+biohack:es-en:0704	nos	(to)us	Nos llamaron y nos invitaron a la fiesta.	They called us and invited us to the party.		nos	biohack es-en letter-n	0c03068b0861
+biohack:es-en:0705	nosotros (-as)	we	Nosotros queremos dormir pero ellos no nos dejan.	We want to sleep but they don't let us.		nosotros (-as)	biohack es-en letter-n	5b7a895bae66
+biohack:es-en:0706	la noticia	f. news, piece of news	Nos dio una mala noticia.	He gave us a piece of bad news.	feminine noun	noticia	biohack es-en letter-n noun	98cb9a13f487
+biohack:es-en:0707	novio (-a)	boyfriend, fiancé; girlfriend, fiancée	Mi hijo está muy enamorado de su novia.	My son is very much in love with his girlfriend.		novio (-a)	biohack es-en letter-n	e65842c36db0
+biohack:es-en:0708	la nube	f. cloud	No hay ni una nube en el cielo.	There's not a cloud in the sky.	feminine noun	nube	biohack es-en letter-n noun	85687a3fd2f4
+biohack:es-en:0709	nublado	cloudy	Está nublado y parece que va a llover.	It’s cloudy and it looks as if it's going to rain.		nublado	biohack es-en letter-n	572665f0a2e4
+biohack:es-en:0710	nuestro	our	Nuestro guía está muy bien preparado.	Our guide is very well prepared.		nuestro	biohack es-en letter-n	b68d6d01b5f4
+biohack:es-en:0711	nuevo	new	¿Qué hay de nuevo?	What's new?		nuevo	biohack es-en letter-n	bbae2ee51743
+biohack:es-en:0712	el número	m. number	¿Cuál es su número de teléfono?	What's your telephone number?	masculine noun	numero	biohack es-en letter-n noun	d1c45b024039
+biohack:es-en:0713	nunca	never	No he estado nunca en Guatemala.	I have never been to Guatemala.		nunca	biohack es-en letter-n	bcf5360c4905
+biohack:es-en:0714	o	or, either	Estaremos aquí cuatro o cinco días.	We'll be here four or five days.		o	biohack es-en letter-o	07425e4e8b5d
+biohack:es-en:0715	el objeto	m. object, purpose	¿Cuál es el objeto de su visita?	What is the purpose of your visit?	masculine noun	objeto	biohack es-en letter-o noun	ca0c5042c153
+biohack:es-en:0716	obligar	to oblige, force	Nos obligaron a tomar otra ruta.	They forced us to take another route.	verb	obligar	biohack es-en letter-o verb	4100ed0421d0
+biohack:es-en:0717	la obra	f. work	Sus mejores obras están en este museo.	His best works are in this museum.	feminine noun	obra	biohack es-en letter-o noun	f70a6ea00afa
+biohack:es-en:0718	obtener	to obtain, get	¿Dónde podemos obtener un pase?	Where can we get a pass?	verb	obtener	biohack es-en letter-o verb	f33b93a626a0
+biohack:es-en:0719	el océano	m. ocean	El Océano Atlántico está entre América y Europa.	The Atlantic Ocean is between America and Europe.	masculine noun	oceano	biohack es-en letter-o noun	fd6ea71f75a3
+biohack:es-en:0720	ocupado	busy, occupied	Si no estoy ocupado mañana, tendré mucho gusto en ir con ustedes.	If I'm not busy tomorrow, I'll be very pleased to go with you.		ocupado	biohack es-en letter-o	0a0ea6e60379
+biohack:es-en:0721	ocurrir	to happen, occur	Ay, ¿qué ocurrió?	Wow, what happened?	verb	ocurrir	biohack es-en letter-o verb	b0112948f8da
+biohack:es-en:0722	odiar	to hate	Odio a los políticos corruptos. hate corrupt politicians.	I hate corrupt politicians.	verb	odiar	biohack es-en letter-o verb	970258ca467d
+biohack:es-en:0723	el oeste	m. west	En el oeste tenemos los Andes.	To the west we have the Andes.	masculine noun	oeste	biohack es-en letter-o noun	715e19f43ff9
+biohack:es-en:0724	la oficina	f. office	Venga a verme en mi oficina.	Come to see me in my E office.	feminine noun	oficina	biohack es-en letter-o noun	b79d69cd24c6
+biohack:es-en:0725	el oído	m. ear, hearing	No tengo oído para la música.	I have no ear for music.	masculine noun	oido	biohack es-en letter-o noun	6e14efe1e54c
+biohack:es-en:0726	oír	to hear	No oigo nada porque el tren está pasando.	I can't hear a thing because the train is going by.	verb	oir	biohack es-en letter-o verb	b3dd524c395f
+biohack:es-en:0727	ojalá!	I wish (that)!	¡Ojalá que lleguen pronto!	I wish they'd arrive soon!		ojala!	biohack es-en letter-o	11c295b887ff
+biohack:es-en:0728	el ojo	m. eye	Tengo algo enelojo.	I have something in my eye.	masculine noun	ojo	biohack es-en letter-o noun	d1cc797ce126
+biohack:es-en:0729	oler	to smell	Todo huele muy bien.	Everything smells very good.	verb	oler	biohack es-en letter-o verb	4cf77bb44875
+biohack:es-en:0730	el olor	m. odor, smell	Hay un mal olor de tabaco aquí.	There is a bad tobacco odor here.	masculine noun	olor	biohack es-en letter-o noun	f637cf0f1f3b
+biohack:es-en:0731	olvidar	to forget	Recuerdo su cara pero olvidé su nombre.	I remember. his face but I forgot his name.	verb	olvidar	biohack es-en letter-o verb	cc6259a7ec73
+biohack:es-en:0732	onza	ounce	Una onza de este perfume cuesta cincuenta dólares.	An ounce of this perfume costs fifty dollars.		onza	biohack es-en letter-o	b16bbdd9b01d
+biohack:es-en:0733	la oportunidad	f. opportunity	No pierdan esta oportunidad.	Don't miss 3 this opportunity.	feminine noun	oportunidad	biohack es-en letter-o noun	200e60c52972
+biohack:es-en:0734	el orden	m. order, sequence	Los arregló en orden alfabético.	He arranged them in alphabetical order.	masculine noun	orden	biohack es-en letter-o noun	48cd99e5a0ca
+biohack:es-en:0735	la orden	f. command, order (business)	Lo hizo según la orden que le dio 3 su jefe.	He did it in accordance with the order that his boss gave him.	feminine noun	orden	biohack es-en letter-o noun	dc2a7f14b5b6
+biohack:es-en:0736	el ordenador	m. computer	Hasta los nifios en la escuela primaria aprenden a usar el ordenador.	Even children in elementary school learn to use the computer.	masculine noun	ordenador	biohack es-en letter-o noun	73e81b165a13
+biohack:es-en:0737	la oreja	f. ear	Tiene las orejas muy grandes.	He has very big ears.	feminine noun	oreja	biohack es-en letter-o noun	313849486f1c
+biohack:es-en:0738	el oro	m. gold	Los aretes de oro cuestan más.	The gold earrings cost more.	masculine noun	oro	biohack es-en letter-o noun	78c6022bee18
+biohack:es-en:0739	otro	other, another	No puedo comer otra cosa.	I can't eat another thing.		otro	biohack es-en letter-o	1057346ee84c
+biohack:es-en:0740	pagar	to pay	Hay que pagar la cuenta.	We have to pay the bill.	verb	pagar	biohack es-en letter-p verb	91946f311b95
+biohack:es-en:0741	la página	f. page	En qué página está?	On what page is it?	feminine noun	pagina	biohack es-en letter-p noun	41ab39666df9
+biohack:es-en:0742	el país	m. country	Me gustaria visitar todos los paises de Latinoamérica.	I'd like to visit all the countries of Latin America.	masculine noun	pais	biohack es-en letter-p noun	a6696076cc95
+biohack:es-en:0743	el paisaje	m. landscape	Es un paisaje muy pintoresco.	It's a very picturesque landscape.	masculine noun	paisaje	biohack es-en letter-p noun	aee9d161c531
+biohack:es-en:0744	la palabra	f. word	Nunca he oído esa palabra.	I've never heard that word.	feminine noun	palabra	biohack es-en letter-p noun	e9dc460b86d0
+biohack:es-en:0745	el palacio	m. palace	No dejen de visitar el Palacio Real.	Don't fail to visit the Royal Palace.	masculine noun	palacio	biohack es-en letter-p noun	4a69e28c3d5c
+biohack:es-en:0746	pálido	pale	Se puso pálido cuando oyó la noticia.	He became pale when he heard the news.		palido	biohack es-en letter-p	bc4cb3f27736
+biohack:es-en:0747	los pantalones	m. pl. pants, trousers	¿Venden pantalones en una camisería?	Do they sell pants in a haberdashery?	masculine plural noun	pantalones	biohack es-en letter-p noun	d8bb390d7adb
+biohack:es-en:0748	el pañuelo	m. handkerchief	Mete el pañuelo en tu bolsillo.	Put your handkerchief in your pocket.	masculine noun	panuelo	biohack es-en letter-p noun	c59101782808
+biohack:es-en:0749	el papel	m. paper	No deje los papeles en la mesa.	Don't leave the papers on the table.	masculine noun	papel	biohack es-en letter-p noun	3c29885ce4a3
+biohack:es-en:0750	el paquete	m. package	¿Puedo dejar aqui este paquete?	May I leave this package here?	masculine noun	paquete	biohack es-en letter-p noun	c6483a945604
+biohack:es-en:0751	el par	m. pair	Necesito un par de calcetines.	I need a pair of socks.	masculine noun	par	biohack es-en letter-p noun	d4c2ceef565a
+biohack:es-en:0752	para	for, in order to	Salió para España para estudiar en la universidad.	He left for Spain in order to study at the university.		para	biohack es-en letter-p	66c217afe99a
+biohack:es-en:0753	la parada	f. stop	La parada del autobús está en la próxima esquina.	The bus stop is on the next corner.	feminine noun	parada	biohack es-en letter-p noun	47388f8cfbe0
+biohack:es-en:0754	el paraguas	m. umbrella	Cuando está nublado, es una buena idea llevar un paraguas.	When it's cloudy, it's a good idea to take an umbrella.	masculine noun	paraguas	biohack es-en letter-p noun	5ddf56ce5d6d
+biohack:es-en:0755	parar	to stop	Pare aqui por un minuto.	Stop here for a minute.	verb	parar	biohack es-en letter-p verb	44a1c5038ffb
+biohack:es-en:0756	parecer	to seem	Parece que no vienen.	It seems that they're not coming.	verb	parecer	biohack es-en letter-p verb	248aa265b2a3
+biohack:es-en:0757	la pared	f. wall	Yo colgaría un cuadro en esa pared.	I would hang a picture on that wall.	feminine noun	pared	biohack es-en letter-p noun	cef68670a6fc
+biohack:es-en:0758	el/la pariente	m. &amp; f. relative	Tiene parientes en todas partes del mundo.	He has relatives all over the world.	masculine or feminine noun	pariente	biohack es-en letter-p noun	bda9c213e6af
+biohack:es-en:0759	el parque	m. park	No corras en el parque por la noche.	Don't run in the park at night.	masculine noun	parque	biohack es-en letter-p noun	3031f10093bf
+biohack:es-en:0760	el párrafo	m. paragraph	Podemos eliminar el último párrafo.	We can drop the last paragraph.	masculine noun	parrafo	biohack es-en letter-p noun	5146b244cbe9
+biohack:es-en:0761	la parte	f. part	¿Qué parte quiere usted?	What part do you want?	feminine noun	parte	biohack es-en letter-p noun	62bc07598811
+biohack:es-en:0762	el partido	m. game (match), party (political)	Creo que el partido republicano va a ganar.	I think the Republican party is going to win.	masculine noun	partido	biohack es-en letter-p noun	5d6b0da793fc
+biohack:es-en:0763	pasado	past, last	Vinimos la semana pasada.	We came last week.		pasado	biohack es-en letter-p	b062b6df4959
+biohack:es-en:0764	el pasajero	m. passenger	Todos los pasajeros tienen que bajar aquí.	All passengers have to get off here.	masculine noun	pasajero	biohack es-en letter-p noun	8d6955919169
+biohack:es-en:0765	pasar	to pass, spend	No sabemos todavía donde vamos a pasar las vacaciones.	We still don't know where we're going to spend our vacation.	verb	pasar	biohack es-en letter-p verb	55d8e45ffd4f
+biohack:es-en:0766	el paseo	m. walk, ride	Vamos a dar un paseo por el parque.	Let's take a walk through the park.	masculine noun	paseo	biohack es-en letter-p noun	9f1fcd600748
+biohack:es-en:0767	el pasillo	m. aisle, corridor	El pasillo es muy estrecho.	The aisle is very narrow.	masculine noun	pasillo	biohack es-en letter-p noun	16648e5022be
+biohack:es-en:0768	el paso	m. pace, opening	Después de dar dos pasos tropezó y cayó.	After taking two steps, he tripped and fell.	masculine noun	paso	biohack es-en letter-p noun	fdf7a8b9ba65
+biohack:es-en:0769	la pastilla	f. tablet, lozenge	Tome dos pastillas y llámeme por la mañana.	Take two tablets and call me in the morning.	feminine noun	pastilla	biohack es-en letter-p noun	5c02b57ca273
+biohack:es-en:0770	el patrón	m. boss, owner	El patrón trabaja tanto como sus obreros.	The boss works as hard as his workers.	masculine noun	patron	biohack es-en letter-p noun	6a9490890146
+biohack:es-en:0771	la paz	f. peace	Déjenme en paz; estoy cansado.	Leave me in peace; I'm tired.	feminine noun	paz	biohack es-en letter-p noun	0351e77901af
+biohack:es-en:0772	el peatón	m. pedestrian	El tráfico para para dejar pasar a los peatones.	The traffic stops to let the pedestrians cross.	masculine noun	peaton	biohack es-en letter-p noun	2d02b852bda2
+biohack:es-en:0773	el pecado	m. sin	No es un pecado tan grave.	It is not such a serious sin.	masculine noun	pecado	biohack es-en letter-p noun	3b066475e016
+biohack:es-en:0774	el pecho	m. chest (human body)	Si siente un dolor en el pecho, llame en seguida al médico.	If you feel a pain in the chest, call the doctor at once.	masculine noun	pecho	biohack es-en letter-p noun	4e3c697a3848
+biohack:es-en:0775	el pedazo	m. piece	Se cortó la mano en un pedazo de metal.	He cut his hand on a piece of metal.	masculine noun	pedazo	biohack es-en letter-p noun	632f73734830
+biohack:es-en:0776	pedir	to ask for, order	Quisiera pedirle un favor.	I'd like to ask you for a favor.	verb	pedir	biohack es-en letter-p verb	1f5853c1288d
+biohack:es-en:0777	pegar	to hit, paste	Pegaron un cartel en la pared.	They pasted a sign on the wall.	verb	pegar	biohack es-en letter-p verb	f45581d223a8
+biohack:es-en:0778	la película	f. movie, film	Me gusta ir al cine cuando dan una buena película.	I like to go to the movies when they show a good film.	feminine noun	pelicula	biohack es-en letter-p noun	44c07a3989ed
+biohack:es-en:0779	el peligro	m. danger	No comprendió el peligro que le amenazaba.	He didn't understand the danger that was threatening him.	masculine noun	peligro	biohack es-en letter-p noun	b846e665a8c7
+biohack:es-en:0780	peligroso	dangerous	Es peligroso estar en el parque de noche.	It's dangerous to be in the park at night.		peligroso	biohack es-en letter-p	538f9e138bc9
+biohack:es-en:0781	el pelo	m. hair	Tengo que cortarme el pelo.	I have to have my hair cut.	masculine noun	pelo	biohack es-en letter-p noun	a8b0151cbc5f
+biohack:es-en:0782	la pelota	f. ball	Los niños están jugando a la pelota.	The children are playing ball.	feminine noun	pelota	biohack es-en letter-p noun	e45a4bb4efb5
+biohack:es-en:0783	la pena	f. ache, grief	Me da pena verte asi.	It grieves me to see you like this.	feminine noun	pena	biohack es-en letter-p noun	475f9bb89cf0
+biohack:es-en:0784	los pendientes	m. pl. earrings	Busco unos pendientes como regalo para mi novia.	I'm looking for earrings as a gift for my girlfriend.	masculine plural noun	pendientes	biohack es-en letter-p noun	bc4497c325d4
+biohack:es-en:0785	pensar	to think, intend	¿Qué piensan ustedes hacer esta noche? Yo pienso que nos quedamos en casa.	What do you intend to do tonight? I think we'll stay home.	verb	pensar	biohack es-en letter-p verb	5848296ec926
+biohack:es-en:0786	la pensión	f. boardinghouse	Por lo general, las pensiones son más baratas que los hoteles.	In general, boardinghouses are cheaper than hotels.	feminine noun	pension	biohack es-en letter-p noun	cb290cd159bb
+biohack:es-en:0787	peor	worse, worst	¿Cómo se siente usted, mejor o peor?	How do you feel, better or worse?		peor	biohack es-en letter-p	1a5df558ea1d
+biohack:es-en:0788	pequeño	small, little	Esta habitación es demasiado pequeña.	This room is too small.		pequeno	biohack es-en letter-p	6a9cf0c73e85
+biohack:es-en:0789	perder	to lose, miss	Perdí el tren y tuve que tomar un autobús.	I missed	verb	perder	biohack es-en letter-p verb	0466a214d680
+biohack:es-en:0790	el perdón	m. pardon (me), forgiveness	Me pidió perdón por lo que había hecho. Perdón, no quería interrumpir.	He asked me for forgiveness for what he had done. Pardon me, I didn't mean to interrupt.	masculine noun	perdon	biohack es-en letter-p noun	e40ba6484f29
+biohack:es-en:0791	el periódico	m. newspaper	Voy a comprar dos periódicos, uno en inglés y otro en español.	I'm going to buy two newspapers, one in English and another in Spanish.	masculine noun	periodico	biohack es-en letter-p noun	bb2ba2474a50
+biohack:es-en:0792	permanecer	to remain, stay	¿Cuánto tiempo piensan permanecer aqui?	How long do you plan to stay here?	verb	permanecer	biohack es-en letter-p verb	e1d7d207b4b8
+biohack:es-en:0793	el permiso	m. permission, pass	Con permiso, déjenme pasar.	With your permission (excuse me), let me through.	masculine noun	permiso	biohack es-en letter-p noun	af778b3fb971
+biohack:es-en:0794	permitir	to permit, allow	No nos permitieron entrar.	They didn't let us in.	verb	permitir	biohack es-en letter-p verb	2fd1e9e33e4b
+biohack:es-en:0795	pero	but	Quisiéramos visitar otras ciudades, pero no tenemos tiempo.	We'd like to visit other cities, but we don't have time.		pero	biohack es-en letter-p	4c8c07899374
+biohack:es-en:0796	pertenecer	to belong	¿A quién pertenecen estos documentos?	To whom do these documents belong?	verb	pertenecer	biohack es-en letter-p verb	96d9180ba676
+biohack:es-en:0797	pesado	heavy	No puedo levantar una maleta tan pesada.	I can’t lift such a heavy suitcase.		pesado	biohack es-en letter-p	0f7d69991dc9
+biohack:es-en:0798	pesar	to weigh	Tenemos que pesar el equipaje.	We have to weigh the luggage.	verb	pesar	biohack es-en letter-p verb	08b45c528998
+biohack:es-en:0799	el peso	m. weight	En España el peso se expresa en kilos.	In Spain weight is expressed in kilos.	masculine noun	peso	biohack es-en letter-p noun	dfc5e318bec4
+biohack:es-en:0800	picante	hot, spicy	Dígale al camarero si quiere un plato menos picante.	Tell the waiter if you want a less spicy dish.		picante	biohack es-en letter-p	04f69b6acbcf
+biohack:es-en:0801	pico	peak, a little	Son las siete y pico.	It's a little after seven.		pico	biohack es-en letter-p	81cf684aeb1e
+biohack:es-en:0802	el pie	m. foot	Me duelen los pies después de caminar tanto.	My feet hurt after walking so much.	masculine noun	pie	biohack es-en letter-p noun	a69277d291ef
+biohack:es-en:0803	la piedra	f. stone	La casa está construida de piedra.	The house is built of stone.	feminine noun	piedra	biohack es-en letter-p noun	4da2ee86e527
+biohack:es-en:0804	la piel	f. skin	Cuida mucho de su piel.	She takes good care of her skin.	feminine noun	piel	biohack es-en letter-p noun	bd495a0cdaab
+biohack:es-en:0805	la pierna	f. leg	Me duele la pierna izquierda.	My left leg hurts.	feminine noun	pierna	biohack es-en letter-p noun	a867f840d5d6
+biohack:es-en:0806	la píldora	f. pill	El médico me recetó algunas píldoras.	The doctor prescribed some pills for me.	feminine noun	pildora	biohack es-en letter-p noun	c3eb78179c4d
+biohack:es-en:0807	pintar	to paint	Un artista inspirado pinta día y noche.	An inspired artist paints day and night.	verb	pintar	biohack es-en letter-p verb	d68f0c17d8b0
+biohack:es-en:0808	pintoresco	picturesque	Estas aldeas son muy pintorescas.	These villages are very picturesque.		pintoresco	biohack es-en letter-p	78f3663ad83b
+biohack:es-en:0809	la pintura	f. painting	En estas salas tenemos las pinturas de Goya.	In these rooms we have the paintings of Goya.	feminine noun	pintura	biohack es-en letter-p noun	1d9af08513e5
+biohack:es-en:0810	la piscina	f. swimming pool	Cuando hace calor, me refresco en la piscina.	When it’s hot, I cool off in the pool.	feminine noun	piscina	biohack es-en letter-p noun	73b098dd7917
+biohack:es-en:0811	el piso	m. floor, apartment	Este edificio tiene seis pisos.	This building has	masculine noun	piso	biohack es-en letter-p noun	08a7aad5b8d6
+biohack:es-en:0812	planchar	to	iron, press ¿Me pueden limpiar y planchar estos pantalones?	Can you clean and press these pants for me?		planchar	biohack es-en letter-p	f304de76df77
+biohack:es-en:0813	el plano	m. map	Siempre llevo conmigo el plano del metro.	I always carry the subway map with me.	masculine noun	plano	biohack es-en letter-p noun	88a2c7c76c6b
+biohack:es-en:0814	la plata	f. silver, money	Encontraron minas de plata en México y Perú.	They found silver mines in Mexico and Peru.	feminine noun	plata	biohack es-en letter-p noun	069bc573f56d
+biohack:es-en:0815	el plátano	m. banana	Para el desayuno hoy comí dos plátanos.	For breakfast today I ate two bananas.	masculine noun	platano	biohack es-en letter-p noun	9954e87b1a24
+biohack:es-en:0816	el plato	m. plate, dish	El plato del día tiene un precio reducido.	The daily special has a lower price.	masculine noun	plato	biohack es-en letter-p noun	77c07e7c1d46
+biohack:es-en:0817	la playa	f. beach	Vayaala playa si quiere nadar en el mar.	Go to the beach if you want to swim in the ocean.	feminine noun	playa	biohack es-en letter-p noun	d85704bfd880
+biohack:es-en:0818	la plaza	f. plaza, public square	Algunas de las plazas tienen monumentos á impresionantes.	Some of the plazas have impressive monuments.	feminine noun	plaza	biohack es-en letter-p noun	9eceec63123d
+biohack:es-en:0819	la pluma	f. pen, feather	Firme con pluma, por favor.	Sign with a pen, please.	feminine noun	pluma	biohack es-en letter-p noun	076fbc17529f
+biohack:es-en:0820	pobre	poor	Son tan pobres que no tienen bastante para comer.	They: are so poor that they don’t have enough to eat.		pobre	biohack es-en letter-p	a2545dc814ee
+biohack:es-en:0821	poco	little, small amount	Un poco más, por favor.	A little more, please.		poco	biohack es-en letter-p	73807bcc7607
+biohack:es-en:0822	poder	to be able to, can	¿Podemos contar con usted?	Can we count on you?	verb	poder	biohack es-en letter-p verb	9ccbcd7f52ed
+biohack:es-en:0823	la poesía	f. poetry	La poesía de Lope es bellísima.	The poetry of Lope is most beautiful.	feminine noun	poesia	biohack es-en letter-p noun	3869a0d39036
+biohack:es-en:0824	la policía	f. police	La policía vino en seguida.	The police came at once:	feminine noun	policia	biohack es-en letter-p noun	cef313be29b6
+biohack:es-en:0825	el/la policía	m. &amp; f. police officer	Dos policías arrestaron al criminal.	Two: policemen arrested the criminal.	masculine or feminine noun	policia	biohack es-en letter-p noun	29f722504875
+biohack:es-en:0826	poner	to put, place	¿Puedo poner mis cosas aquí?	Can I put my things here?	verb	poner	biohack es-en letter-p verb	5ad3466f2001
+biohack:es-en:0827	por	for, by, in exchange for	La carta fue escrita por su amigo.	The letter was written by his friend.		por	biohack es-en letter-p	25b7c7201ad3
+biohack:es-en:0828	porque	because	No voy porque no quiero ir.	I'm not going because I don't want to go.		porque	biohack es-en letter-p	9f75283d276b
+biohack:es-en:0829	¿por qué?	why?	¿Por qué no me avisaron?	Why didn't they let me know?		por que?	biohack es-en letter-p	a1dbbb354531
+biohack:es-en:0830	el portero	m. doorman, porter	El portero nos buscará un taxi.	The doorman will get us a cab.	masculine noun	portero	biohack es-en letter-p noun	f43a1b166178
+biohack:es-en:0831	el precio	m. price	Buscamos un restaurante con precios módicos.	We are looking for a restaurant with moderate prices.	masculine noun	precio	biohack es-en letter-p noun	70528d4e3554
+biohack:es-en:0832	la pregunta	f. question	Es una pregunta que no pudo contestar.	It’s a question he couldn't answer.	feminine noun	pregunta	biohack es-en letter-p noun	90d9111fa83b
+biohack:es-en:0833	preguntar	to ask	Pregúntele al policía donde está el banco.	Ask the policeman where the bank is.	verb	preguntar	biohack es-en letter-p verb	f98508f011fe
+biohack:es-en:0834	el premio	m. prize, award	Su novela recibió el premio de literatura el año. pasado.	His novel received the literature prize last year.	masculine noun	premio	biohack es-en letter-p noun	0683b1718e3f
+biohack:es-en:0835	preocuparse	to worry	No se preocupe por eso.	Don't worry about that.	verb	preocuparse	biohack es-en letter-p verb	04f792dfacbe
+biohack:es-en:0836	preparar	to prepare	Ya han preparado las habitaciones.	They ve already prepared the rooms.	verb	preparar	biohack es-en letter-p verb	35403bba29b9
+biohack:es-en:0837	prestar	to lend	¿Me puede prestar cien dólares?	Can you lend a hundred dollars?	verb	prestar	biohack es-en letter-p verb	9d3c20539460
+biohack:es-en:0838	el presupuesto	m. budget	Tuvieron que cancelar algunos programas por problemas del presupuesto.	They had to cancel some programs because of budget problems.	masculine noun	presupuesto	biohack es-en letter-p noun	551f8388f0ba
+biohack:es-en:0839	primer, primero	first	El primero de enero es el primer día del año nuevo.	January 1st is the first day of the new year.		primer, primero	biohack es-en letter-p	6a636ca567d4
+biohack:es-en:0840	la prisa	f. hurry	Tengo prisa porque ya es tarde.	I'm in a hurry because it’s late already.	feminine noun	prisa	biohack es-en letter-p noun	8e5d450e5332
+biohack:es-en:0841	probar	to taste, prove	Pruebe usted esto; a ver si le gusta.	Try this; let's see if you like it.	verb	probar	biohack es-en letter-p verb	19fe21a1887a
+biohack:es-en:0842	el problema	m. problem	;Cémo vamos a resolver todos estos problemas?	How are we going to resolve all these problems?	masculine noun	problema	biohack es-en letter-p noun	61f84b6943cd
+biohack:es-en:0843	prohibir	to prohibit, forbid	Se prohibe fijar carteles.	Post no bills.	verb	prohibir	biohack es-en letter-p verb	0cf0a41745f0
+biohack:es-en:0844	la promesa	f. promise	Nunca cumple su promesa.	He never keeps his promise.	feminine noun	promesa	biohack es-en letter-p noun	931e4be54797
+biohack:es-en:0845	prometer	to promise	Prometo volver temprano.	I promise to return early.	verb	prometer	biohack es-en letter-p verb	aa83713f9fea
+biohack:es-en:0846	pronto	soon	Deben llegar muy pronto.	They should arrive very soon.		pronto	biohack es-en letter-p	9cb7251ae5ee
+biohack:es-en:0847	la propiedad	f. property	Es una propiedad muy valiosa.	It's a very valuable property.	feminine noun	propiedad	biohack es-en letter-p noun	ffcc094bad6b
+biohack:es-en:0848	el propietario	m. owner, proprietor	El propietario no quiere vender.	The owner doesn't want to sell.	masculine noun	propietario	biohack es-en letter-p noun	ed5e28f8e473
+biohack:es-en:0849	la propina	f. tip	Una propina de diez por ciento basta.	A ten percent tip is enough.	feminine noun	propina	biohack es-en letter-p noun	d7212a37b35e
+biohack:es-en:0850	el propósito	m. purpose	¿Cuál es el propósito de su visita?	What is the purpose of your visit?	masculine noun	proposito	biohack es-en letter-p noun	307edbf68ad1
+biohack:es-en:0851	proteger	to protect	(Quiere proteger nuestros intereses.	He wants to protect our interests.	verb	proteger	biohack es-en letter-p verb	d07a3d485deb
+biohack:es-en:0852	el provecho	m. profit, benefit	No saco ningún provecho de este negocio.	I don’t make any profit from this deal.	masculine noun	provecho	biohack es-en letter-p noun	795cb71e11f9
+biohack:es-en:0853	próximo	next	Hay un banco en la próxima esquina.	There is a bank at the next corner.		proximo	biohack es-en letter-p	c26f39396865
+biohack:es-en:0854	el proyecto	m. project	El senado aprobó este proyecto.	The senate approved this project.	masculine noun	proyecto	biohack es-en letter-p noun	7578437b31e3
+biohack:es-en:0855	la prueba	f. proof, test	¿Qué prueba tiene usted”.	What proof do you have?	feminine noun	prueba	biohack es-en letter-p noun	b57196fc96c2
+biohack:es-en:0856	el pueblo	m. village, town	Hay muchos pueblos tranquilos y pintorescos enel sur.	There are many quiet, picturesque villages in the south.	masculine noun	pueblo	biohack es-en letter-p noun	bb9eb78b40fb
+biohack:es-en:0857	el puente	m. bridge	El puente fue destruido durante la guerra.	The bridge was destroyed during the war.	masculine noun	puente	biohack es-en letter-p noun	da3fa32b5c22
+biohack:es-en:0858	la puerta	f. door	La puerta estaba cerrada cuando llegamos.	The door was closed when we arrived.	feminine noun	puerta	biohack es-en letter-p noun	38905eba9320
+biohack:es-en:0859	el puerto	m. port, harbor	Barcelona es el puerto principal de España.	Barcelona is the principal port of Spain.	masculine noun	puerto	biohack es-en letter-p noun	e40ff8deea04
+biohack:es-en:0860	el puesto	m. post, stand, job, position	¿Qué clase de puesto busca?	What kind of job are you looking for?	masculine noun	puesto	biohack es-en letter-p noun	355fbcb01298
+biohack:es-en:0861	la pulsera	f. bracelet	Una pulsera de plata es un bonito regalo.	A silver bracelet is a pretty gift.	feminine noun	pulsera	biohack es-en letter-p noun	c0b0ac76cc61
+biohack:es-en:0862	el punto	m. point, dot	Tienen que aclarar varios puntos.	They have to clarify several points. Llegué a las dos en punto. I arrived at two o'clock sharp.	masculine noun	punto	biohack es-en letter-p noun	7623b23b90c8
+biohack:es-en:0863	que	that, which, who	Yo no sabía que ellos estaban aquí.	I didn't know that they were here.		que	biohack es-en letter-q	0c9bec7c7142
+biohack:es-en:0864	¿qué?	what?	¿Qué quiere usted saber?	What do you want to know?		que?	biohack es-en letter-q	323e0113511e
+biohack:es-en:0865	quedar	to remain, be left	¿Cuánto tiempo nos queda?	How much time do we have left?	verb	quedar	biohack es-en letter-q verb	f33c5721ceed
+biohack:es-en:0866	la queja	f. complaint	Hay más quejas en este departamento que en ningún otro.	There are more complaints in this department than in any other.	feminine noun	queja	biohack es-en letter-q noun	2227a542f706
+biohack:es-en:0867	quejarse	to complain	¿De qué se quejan ustedes?	What are you complaining about?	verb	quejarse	biohack es-en letter-q verb	b9ce21069428
+biohack:es-en:0868	quemar	to burn	Cuidado, no quemes la comida.	Careful, don’t bum the meal.	verb	quemar	biohack es-en letter-q verb	9aa344eb6441
+biohack:es-en:0869	querer	to want, wish, love	¿Qué quieren hacer hoy?	What do you want to do today?:	verb	querer	biohack es-en letter-q verb	435fa6e9e092
+biohack:es-en:0870	quien	who, whom	La chica con quien salí anoche se llama Luisa.	The girl I went out with last night is called Luisa.		quien	biohack es-en letter-q	5cce8d99bf05
+biohack:es-en:0871	¿quién?	who, whom?	¿Quién llamó?	Who called up?		quien?	biohack es-en letter-q	1eacd5a9169e
+biohack:es-en:0872	quitar	to take away	Por favor, quite este plato sucio.	Please take away this dirty plate.	verb	quitar	biohack es-en letter-q verb	d1dc75e75bf0
+biohack:es-en:0873	quitarse	to take off (clothing)	Se quitaron los zapatos antes de entrar. 3.	E They took off their shoes before entering.	verb	quitarse	biohack es-en letter-q verb	ead1cdf735d8
+biohack:es-en:0874	quizás	perhaps	Ella siempre me contesta: quizás, quizás.	She always answers me: perhaps, perhaps.		quizas	biohack es-en letter-q	0ddfb991ecbe
+biohack:es-en:0875	rápido	rapid, quick	Fue una decisión muy rápida.	It was a very quick decision.		rapido	biohack es-en letter-r	16851717f8f4
+biohack:es-en:0876	rato	while	Tuvimos que esperar un rato.	We had to wait for a while.		rato	biohack es-en letter-r	5c8364e28770
+biohack:es-en:0877	la razón	f. reason	Tendrá sus razones por haberlo hecho así.	He must have his reasons for having done it this way.	feminine noun	razon	biohack es-en letter-r noun	0136a7ffb4df
+biohack:es-en:0878	razón, tener	to be right	El cree que siempre tiene razón.	He thinks he's always right.	verb	razon, tener	biohack es-en letter-r verb	c2748abed392
+biohack:es-en:0879	real	royal	La familia real se va de Madrid en el verano.	The royal family leaves Madrid in the summer.		real	biohack es-en letter-r	e7aa8a3ad286
+biohack:es-en:0880	el recado	m. message	Deje un recado en la recepción.	Leave a message at the (hotel) desk.	masculine noun	recado	biohack es-en letter-r noun	c1f9aec06a55
+biohack:es-en:0881	la receta	f. recipe, prescription	Lleve la receta a una farmacia.	Bring the prescription to a pharmacy.	feminine noun	receta	biohack es-en letter-r noun	9d8563cd0fb8
+biohack:es-en:0882	recibir	to receive	Espero recibir una carta importante hoy.	I expect to receive an important letter today.	verb	recibir	biohack es-en letter-r verb	9a1731406320
+biohack:es-en:0883	el recibo	m. receipt	Necesito un recibo para la aduana.	I need a receipt for customs.	masculine noun	recibo	biohack es-en letter-r noun	4523b38e2578
+biohack:es-en:0884	reconocer	to recognize	Le reconocí en seguida pero no recuerdo su nombre.	I recognized him at once but I don’t remember his name.	verb	reconocer	biohack es-en letter-r verb	bb1424c4193b
+biohack:es-en:0885	recordar	to remember	¿Recuerda usted lo que dijo el guía?	Do you remember what the guide said?	verb	recordar	biohack es-en letter-r verb	29f4ccb4a322
+biohack:es-en:0886	recuerdo	remembrance, regards, souvenir	Recuerdos a todos en casa.	Regards to all at home.		recuerdo	biohack es-en letter-r	6ea0615c710e
+biohack:es-en:0887	rechazar	to reject	Rechazaron nuestra solicitud.	They rejected our request.	verb	rechazar	biohack es-en letter-r verb	9dd6664a9b1b
+biohack:es-en:0888	el regalo	m. gift	Hay muchas tiendas donde se pueden comprar regalos.	There are many stores where you can buy gifts.	masculine noun	regalo	biohack es-en letter-r noun	0127619515df
+biohack:es-en:0889	el régimen	m. regime, diet	Bajo el antiguo régimen no había tanto crimen.	Under the old regime there wasn't so much crime.	masculine noun	regimen	biohack es-en letter-r noun	369a1391023e
+biohack:es-en:0890	la regla	f. rule, regulation	Tenemos que obedecer las reglas.	We have to obey the rules.	feminine noun	regla	biohack es-en letter-r noun	e0f0d23d2408
+biohack:es-en:0891	regresar	to return, come back, go back	Esperamos regresar el año que viene.	We hope to return next year.	verb	regresar	biohack es-en letter-r verb	654563b4ec47
+biohack:es-en:0892	regular	regular, OK.	¿Cómo se siente usted?	Regular. How do you feel? O.K.		regular	biohack es-en letter-r	1b1b744d7315
+biohack:es-en:0893	la reina	f. queen	Recomiendo una visita al museo Reina Soffa.	I recommend a visit to the Queen Sophia Museum.	feminine noun	reina	biohack es-en letter-r noun	e12946577b9e
+biohack:es-en:0894	reír(se)	to laugh	¿De qué se ríe usted?	What are you laughing at?	verb	reir(se)	biohack es-en letter-r verb	017f658454aa
+biohack:es-en:0895	el reloj	m. clock, watch	Mi reloj no anda bien.	My watch isn't going right.	masculine noun	reloj	biohack es-en letter-r noun	d393b382122d
+biohack:es-en:0896	el remedio	m. remedy, cure	No hay remedio para esa enfermedad.	There is no remedy for that illness.	masculine noun	remedio	biohack es-en letter-r noun	810272af2ce8
+biohack:es-en:0897	el renglón	m. line	¿En qué renglón está esa frase?	On what line is that sentence?	masculine noun	renglon	biohack es-en letter-r noun	d9b5ae66745c
+biohack:es-en:0898	repente, de	suddenly	De repente apareció el niño.	Suddenly the child appeared.		repente, de	biohack es-en letter-r	fac0a9ede82f
+biohack:es-en:0899	repetir	to repeat	¿Quiere usted repetir lo que dijo?	Will you repeat what you said?	verb	repetir	biohack es-en letter-r verb	327f323deea1
+biohack:es-en:0900	el resfriado	m. cold (respiratory)	No se acerque; tengo un resfriado contagioso.	Don't come near me; I have a contagious cold.	masculine noun	resfriado	biohack es-en letter-r noun	20465a7e96fa
+biohack:es-en:0901	respirar	to breathe	Respire usted fuerte, por favor.	Breathe deeply, please.	verb	respirar	biohack es-en letter-r verb	b0e5898d6f9d
+biohack:es-en:0902	responder	to answer, reply	Les escribí varias veces, pero no respondieron.	I wrote to them several times, but they didn't answer.	verb	responder	biohack es-en letter-r verb	c51b2141d093
+biohack:es-en:0903	la respuesta	f. answer, reply	Esperamos su respuesta.	We are awaiting their reply.	feminine noun	respuesta	biohack es-en letter-r noun	dda6b23a9fc4
+biohack:es-en:0904	el retraso	m. delay	El tren llegó con un retraso de dos horas.	The train arrived with a two-hour delay.	masculine noun	retraso	biohack es-en letter-r noun	469162a43788
+biohack:es-en:0905	el retrato	m. picture (of people), portrait	Lleva un retrato de su esposa e hijos en su cartera.	He carries a picture of his wife and children in his wallet.	masculine noun	retrato	biohack es-en letter-r noun	3e43d01895d6
+biohack:es-en:0906	la reunión	f. meeting, reunion	Es una reunión de profesores de lenguas modernas.	It's a meeting of modern-language teachers.	feminine noun	reunion	biohack es-en letter-r noun	3a947127cb1d
+biohack:es-en:0907	revelar	to reveal, develop (film)	¿Cuánto cuesta revelar un rollo?	How much does it cost to develop a roll?	verb	revelar	biohack es-en letter-r verb	f8242bca40a9
+biohack:es-en:0908	la revista	f. magazine	Se venden revistas de todas partes en esta tienda.	They sell magazines from all over in this store.	feminine noun	revista	biohack es-en letter-r noun	2d31c1207c90
+biohack:es-en:0909	el rey	m. king	El Rey Juan Carlos es el nieto del Rey Alfonso XIII (trece).	King Juan Carlos is the grandson of King Alfonso XIII.	masculine noun	rey	biohack es-en letter-r noun	a0f66cd7a53e
+biohack:es-en:0910	rico	rich, delicious	Deben ser ricos si viven en este palacio.	They must be rich if they live in this palace.		rico	biohack es-en letter-r	81a6a7f47390
+biohack:es-en:0911	el rincón	m. corner	Pueden poner una silla pequeña en este rincón.	You can put a small chair in this comer.	masculine noun	rincon	biohack es-en letter-r noun	c032c82f5635
+biohack:es-en:0912	el río	m. river	No hay muchos ríos navegables en España.	There aren't many navigable rivers in Spain.	masculine noun	rio	biohack es-en letter-r noun	28f04ee0c5c3
+biohack:es-en:0913	robar	to rob, steal	Le robaron todo lo que tenía.	They robbed him of everything he had.	verb	robar	biohack es-en letter-r verb	0f6655830704
+biohack:es-en:0914	la rodilla	f. knee	Se puso de rodillas y pidió perdón.	He got down on his knees and asked for forgiveness.	feminine noun	rodilla	biohack es-en letter-r noun	d0691261cb16
+biohack:es-en:0915	romper	to break, tear	Cuidado, no rompa nada.	Be careful, don't break anything.	verb	romper	biohack es-en letter-r verb	1f1b95f01028
+biohack:es-en:0916	la ropa	f. clothing, clothes	No es necesario traer mucha ropa.	It isn’t necessary to bring a lot of clothes.	feminine noun	ropa	biohack es-en letter-r noun	1aaab65ca1a9
+biohack:es-en:0917	roto	broken	Esasilla está rota.	That chair is broken.		roto	biohack es-en letter-r	0919201149dc
+biohack:es-en:0918	el ruido	m. noise	El ruido de los aviones me vuelve loco.	The airplane noise drives me crazy.	masculine noun	ruido	biohack es-en letter-r noun	ec3b12205a08
+biohack:es-en:0919	la ruta	f. route	Tuvimos que cambiar de ruta por la construcción.	We had to change our route because of the construction.	feminine noun	ruta	biohack es-en letter-r noun	34d75e7128b5
+biohack:es-en:0920	la sábana	f. (bed)sheet	No cambian las sábanas todos los dias.	They don't change the sheets everyday.	feminine noun	sabana	biohack es-en letter-s noun	77d2eed4479e
+biohack:es-en:0921	saber	to know	No sabemos si viene o no.	We don't know if he's coming or not.	verb	saber	biohack es-en letter-s verb	28d8afb62982
+biohack:es-en:0922	sacar	to take out	Sacó todo el dinero que tenía.	He took out all the money he had.	verb	sacar	biohack es-en letter-s verb	dd4bce3cc465
+biohack:es-en:0923	el saco	m. bag, sack; jacket (Spanish America)	Examinan todos los sacos al entrar en ese edificio.	They examine all bags on entering that building.	masculine noun	saco	biohack es-en letter-s noun	a097cee659fe
+biohack:es-en:0924	la sala	f. living room	Recibimos a nuestros huéspedes en la sala.	We receive our guests in the living room.	feminine noun	sala	biohack es-en letter-s noun	bb3f84635810
+biohack:es-en:0925	la salida	f. exit	Lasalida está a la izquierda.	The exit is on the left.	feminine noun	salida	biohack es-en letter-s noun	8a1c186de06b
+biohack:es-en:0926	salir	to leave, go out	¿Cuándo sale el último tren?	When does the last train leave?	verb	salir	biohack es-en letter-s verb	02b16a903b07
+biohack:es-en:0927	el salón	m. salon, classroom	Nuestra clase de matemáticas está en el salón 12 (doce).	Our math class is in room 12.	masculine noun	salon	biohack es-en letter-s noun	42d708f19f8f
+biohack:es-en:0928	la salud	f. health	Come bien y goza de buena salud.	He eats well and en-	feminine noun	salud	biohack es-en letter-s noun	96fe1f69acd2
+biohack:es-en:0929	saludar	to greet	Nos saludó y hablamos por algunos minutos.	He	verb	saludar	biohack es-en letter-s verb	3510aa302c71
+biohack:es-en:0930	el saludo	m. greeting, regards	Saludos a la familia.	Regards to the family.	masculine noun	saludo	biohack es-en letter-s noun	d481252c1557
+biohack:es-en:0931	la sangre	f. blood	Perdió mucha sangre durante la operación.	He lost a lot of blood during the operation.	feminine noun	sangre	biohack es-en letter-s noun	785be30d31df
+biohack:es-en:0932	satisfecho	satisfied	No estamos satisfechos con la excursión de hoy.	We aren't satisfied with today's excursion.		satisfecho	biohack es-en letter-s	8d54ea796ce9
+biohack:es-en:0933	se	himself, herself, yourself, themselves, yourselves, oneself, one	another No.se ven mucho pero se escriben todos los días.	They don't see each other often but they write to each other every day.		se	biohack es-en letter-s	22373de7e20d
+biohack:es-en:0934	secar	to dry	Tenemos que lavar y secar los platos.	We have to wash-and dry the dishes.	verb	secar	biohack es-en letter-s verb	142f1a59087d
+biohack:es-en:0935	seco	dry	Laropayaestdseca.	The clothing is dry already.		seco	biohack es-en letter-s	a67a48c91682
+biohack:es-en:0936	la sed	f. thirst	Cuando hace calor siempre tengo sed.	When it's hot I'm always thirsty.	feminine noun	sed	biohack es-en letter-s noun	9813b5ee1922
+biohack:es-en:0937	la seda	f. silk	Busca unas corbatas de seda.	She is looking for some silk ties.	feminine noun	seda	biohack es-en letter-s noun	385ff272737c
+biohack:es-en:0938	seguir	to follow, continue	Sígame y le indicaré el número que busca.	Follow me and I'll point out the number you're looking for. Siga leyendo. Go on reading.	verb	seguir	biohack es-en letter-s verb	830a87b3eb6d
+biohack:es-en:0939	según	according to	Según el presidente, no hay nada que temer.	According to the president, there is nothing to fear.		segun	biohack es-en letter-s	964ff444514d
+biohack:es-en:0940	el segundo	m. second	Un segundo, por favor.	Estoy ocupado. One second, please. I'm busy.	masculine noun	segundo	biohack es-en letter-s noun	2ab62cc6ca3f
+biohack:es-en:0941	seguro	sure, certain	Estaba seguro de que lo tenía conmigo.	I was sure that I had it with me.		seguro	biohack es-en letter-s	a9dbf8de8b4a
+biohack:es-en:0942	el seguro	m. insurance	¿Tiene seguro sobre la vida?	Do you have life insurance?	masculine noun	seguro	biohack es-en letter-s noun	f0022d03885d
+biohack:es-en:0943	el sello	m. stamp	Cinco sellos de correo aéreo para los Estados Unidos.	Five airmail stamps to the United States.	masculine noun	sello	biohack es-en letter-s noun	aff5d93a7f18
+biohack:es-en:0944	la semana	f. week	Vamos a pasar dos semanas en la capital.	We're going to spend two weeks in the capital.	feminine noun	semana	biohack es-en letter-s noun	fc50875f8a86
+biohack:es-en:0945	sencillo	simple, plain	Nuestro plan es muy sencillo.	Our plan is very simple.		sencillo	biohack es-en letter-s	cd0800352045
+biohack:es-en:0946	sentarse	to sit down	Siéntense, por favor, empezamos pronto.	Sit down, please, we're beginning soon.	verb	sentarse	biohack es-en letter-s verb	a4d670591878
+biohack:es-en:0947	sentir	to be sorry	Lo siento, pero no puedo venir.	I'm sorry, but I can't come.	verb	sentir	biohack es-en letter-s verb	b6d5e70196d8
+biohack:es-en:0948	sentirse	to feel	Como no se sentía bien, decidió quedarse en casa.	Since he wasn't feeling well, he decided to stay home.	verb	sentirse	biohack es-en letter-s verb	8ee42455f46c
+biohack:es-en:0949	la señal	f. signal	Vamos a arreglar una señal en caso de emergencia.	Let's arrange a signal in case of emergency.	feminine noun	senal	biohack es-en letter-s noun	6b739d83cda7
+biohack:es-en:0950	el señor	m. gentleman, sir, Mr.	¿Está el señor López?	Sí, señor. ls Mr. López in? Yes, sir.	masculine noun	senor	biohack es-en letter-s noun	0437acf5cfd4
+biohack:es-en:0951	la señora	f. lady, madam, Mrs.	La señora Blanco es mi profesora de arte.	Mrs. Blanco is my art teacher.	feminine noun	senora	biohack es-en letter-s noun	14d246defb26
+biohack:es-en:0952	la señorita	f. young lady, Miss	¿Puedo hablar con la señorita Ortiz?	May I speak with Miss Ortiz?	feminine noun	senorita	biohack es-en letter-s noun	f910cf65da27
+biohack:es-en:0953	separar	to separate	Los Pirineos separan España de Francia.	The Pyrenees separate Spain from France.	verb	separar	biohack es-en letter-s verb	e53d6b859bda
+biohack:es-en:0954	ser	to be	¿Cuáles su profesión?	Soy arquitecto. What's your profession? I am an architect.	verb	ser	biohack es-en letter-s verb	56566c7b9ce5
+biohack:es-en:0955	serio	serious	Es un problema muy serio.	It’s a very serious problem.		serio	biohack es-en letter-s	3269dc0d0706
+biohack:es-en:0956	el servicio	m. service, restroom	El servicio es muy lento hoy.	The service is very slow today.	masculine noun	servicio	biohack es-en letter-s noun	f857dc1346e8
+biohack:es-en:0957	la servilleta	f. napkin	Se me cayó la servilleta.	I dropped my napkin.	feminine noun	servilleta	biohack es-en letter-s noun	1b102fa686bf
+biohack:es-en:0958	servir	to serve	¡A quién sirvo primero!	Whom shall I serve first?	verb	servir	biohack es-en letter-s verb	a8989bf2ea46
+biohack:es-en:0959	si	if, whether	No sé si vienen con nosotros.	I don’t know if they're coming with us.		si	biohack es-en letter-s	8ff6aaed1827
+biohack:es-en:0960	sí	yes	El dijo que sí, pero yo tengo mis dudas.	He said yes, but I have my doubts.		si	biohack es-en letter-s	c149cfcf23ed
+biohack:es-en:0961	siempre	always	Siempre llega a las nueve en punto.	He always arrives at nine sharp.		siempre	biohack es-en letter-s	6122a805964c
+biohack:es-en:0962	el siglo	m. century	Es especialista en la literatura del siglo XX (viente).	He is a specialist in twentieth-century literature.	masculine noun	siglo	biohack es-en letter-s noun	6db2e12c5e87
+biohack:es-en:0963	significar	to mean	;Qué significa esta palabra?	What does this word mean’	verb	significar	biohack es-en letter-s verb	ec4f942b1cf3
+biohack:es-en:0964	siguiente	following, next	Primero visitamos el palacio, y el dia siguiente fuimos al museo.	First we visited the palace, and the next day we went to the museum.		siguiente	biohack es-en letter-s	4a7f2ec3f50a
+biohack:es-en:0965	la silla	f. chair	Esta silla no es muy cómoda.	This chair isn't very comfort-	feminine noun	silla	biohack es-en letter-s noun	9ba0f8a16095
+biohack:es-en:0966	simpático	nice, pleasant, congenial	Todos sus parientes parecen muy simpáticos.	All of your relatives seem very nice.		simpatico	biohack es-en letter-s	befa111e76e4
+biohack:es-en:0967	sin	without	No se vayan sin mi.	Don’t leave without me.		sin	biohack es-en letter-s	d9f9fb317c29
+biohack:es-en:0968	el sitio	m. place, spot	Es un sitio ideal para pasar las vacaciones.	It’s an ideal place to spend a vacation.	masculine noun	sitio	biohack es-en letter-s noun	0296761c5222
+biohack:es-en:0969	sobre	over, about, on	Hablaron sobre un tema que me interesa mucho.	They spoke about a topic that interests me very much.		sobre	biohack es-en letter-s	a9cfb39c9904
+biohack:es-en:0970	el sobre	m. envelope	Necesito un sobre para esta carta.	I need an envelope for this letter.	masculine noun	sobre	biohack es-en letter-s noun	3d9071c35bae
+biohack:es-en:0971	el sol	m. sun	Hay que cuidarse cuando hace mucho sol.	You have to be careful when it’s very sunny.	masculine noun	sol	biohack es-en letter-s noun	4698b1459470
+biohack:es-en:0972	solamente	only	Solamente una vez y nada más.	Only once and no more.		solamente	biohack es-en letter-s	2cb4e296760a
+biohack:es-en:0973	solo	alone	La dejaron sola por dos días.	They left her alone for two days.		solo	biohack es-en letter-s	577467ad1a78
+biohack:es-en:0974	sólo	only	Sólo usted puede ayudarme.	Only you can help me.		solo	biohack es-en letter-s	3ad099653e86
+biohack:es-en:0975	el soltero	m. bachelor, unmarried	Mi hermano mayor es soltero pero contento.	My older brother is unmarried but happy.	masculine noun	soltero	biohack es-en letter-s noun	14f7eda55833
+biohack:es-en:0976	la sombra	f. shade, shadow	Busque un lugar a la sombra.	Look for a place in the shade.	feminine noun	sombra	biohack es-en letter-s noun	f0d7a204d28d
+biohack:es-en:0977	el sombrero	m. hat	Los jóvenes casi nunca llevan sombrero.	Young men almost never wear hats.	masculine noun	sombrero	biohack es-en letter-s noun	e52371252655
+biohack:es-en:0978	sonreír	to smile	Hay que sonrefr cuando sacan una foto.	You have to smile when they take a picture.	verb	sonreir	biohack es-en letter-s verb	4e98b11fe05e
+biohack:es-en:0979	su	his, her, your, their	Me presentó a su cuñado.	He introduced me to his brother-in-law.:		su	biohack es-en letter-s	02aa107ff797
+biohack:es-en:0980	subir	to go up	Tengo que usar el ascensor para subir.	I have to use the elevator to go up.	verb	subir	biohack es-en letter-s verb	d157a72e82e7
+biohack:es-en:0981	sucio	dirty	Estos platos están sucios.	These dishes are dirty.		sucio	biohack es-en letter-s	d59832cbe1b2
+biohack:es-en:0982	el suelo	m. floor	No tires los papeles al suelo.	Don't throw the papers on the floor.	masculine noun	suelo	biohack es-en letter-s noun	1d288c8af9e4
+biohack:es-en:0983	el sueño	m. sleep, dream	Tengo sueño pero no puedo dormir.	I'm sleepy but I can't sleep.	masculine noun	sueno	biohack es-en letter-s noun	6c6e187a2f2e
+biohack:es-en:0984	la suerte	f. luck	¡Qué suerte encontrarte aquí!	What luck to find you here!	feminine noun	suerte	biohack es-en letter-s noun	7842efba9f97
+biohack:es-en:0985	supuesto, por	of course	Por supuesto iré con usted.	Of course I'll go with you.		supuesto, por	biohack es-en letter-s	6b48586708c7
+biohack:es-en:0986	el sur	m. south	Pensamos pasar el invierno en el sur.	We intend to spend the summer in the south.	masculine noun	sur	biohack es-en letter-s noun	48cac9d46092
+biohack:es-en:0987	el tabaco	m. tobacco	Generalmente, uno puede comprar sellos en una tienda de tabacos.	Generally, one can buy stamps in a tobacco shop.	masculine noun	tabaco	biohack es-en letter-t noun	271904f86076
+biohack:es-en:0988	tal	such	Nunca hemos visto tal cosa.	We've never seen such a thing.		tal	biohack es-en letter-t	f1b8cab31484
+biohack:es-en:0989	la talla	f. size	¿Qué talla busca usted?	What size are you looking for?	feminine noun	talla	biohack es-en letter-t noun	27052953de95
+biohack:es-en:0990	el tamaño	m. size	¿Qué tamaño usa usted?	What size do you wear?	masculine noun	tamano	biohack es-en letter-t noun	52044fc06fa1
+biohack:es-en:0991	también	also, too	Habla inglés, español y también un poco de 3 francés.	He speaks English, Spanish and also a little French.		tambien	biohack es-en letter-t	505c1f2b8bd4
+biohack:es-en:0992	tampoco	neither	Yo no entendí nada. Ni yo tampoco.	I didn't understand a thing. Neither did I.		tampoco	biohack es-en letter-t	af72477f8140
+biohack:es-en:0993	las tapas	f. pl. snacks, appetizers (at a bar)	Van de cafetería en cafetería probando las tapas.	They're going from bar to bar tasting the appetizers.	feminine plural noun	tapas	biohack es-en letter-t noun	5663d0f1b25c
+biohack:es-en:0994	la taquilla	f. ticket office, box office	Es la cola para la taquilla.	It’s the line for the box office.	feminine noun	taquilla	biohack es-en letter-t noun	0d06f7093931
+biohack:es-en:0995	tarde	late	No llegue tarde.	Don't arrive late.		tarde	biohack es-en letter-t	cffefbd41c53
+biohack:es-en:0996	la tarde	f. afternoon	Empezamos a las cuatro de la tarde.	We begin at four P.M.	feminine noun	tarde	biohack es-en letter-t noun	048ad78fad79
+biohack:es-en:0997	la tarjeta	f. card	Mandaré un tarjeta postal cada semana.	I'll send a postcard every week.	feminine noun	tarjeta	biohack es-en letter-t noun	0f48f0b7fccc
+biohack:es-en:0998	la taza	f. cup	Una taza de té con limón, por favor.	A cup of tea with lemon, please.	feminine noun	taza	biohack es-en letter-t noun	d45683587135
+biohack:es-en:0999	el teatro	m. theater	¿En qué teatro dan la última comedia de Buero?	In what theater are they performing Buero's latest play?	masculine noun	teatro	biohack es-en letter-t noun	fa3dc0f0637f
+biohack:es-en:1000	el techo	m. ceiling, roof	Tenemos que pintar el techo cada cinco años.	We have to paint the ceiling every five years.	masculine noun	techo	biohack es-en letter-t noun	68e40f674fef
+biohack:es-en:1001	la tela	f. cloth, material	Es una tela muy fina.	It's a very fine material.	feminine noun	tela	biohack es-en letter-t noun	434843e2aeaa
+biohack:es-en:1002	el teléfono	m. telephone	Busco una cabina de teléfonos.	I am looking for a telephone booth.	masculine noun	telefono	biohack es-en letter-t noun	f46b06c2a8f0
+biohack:es-en:1003	temprano	early	Nos levantamos temprano en el verano.	We get up early in the summer.		temprano	biohack es-en letter-t	77761749314a
+biohack:es-en:1004	el tenedor	m. fork	Trdigame otro tenedor, por favor.	Please bring me another fork.	masculine noun	tenedor	biohack es-en letter-t noun	b70230ad2f18
+biohack:es-en:1005	tener	to have	Tengo mucho que hacer.	I have a lot to do.	verb	tener	biohack es-en letter-t verb	5cf568139471
+biohack:es-en:1006	el tiempo	m. time, weather	No tengo tiempo para verlo todo.	I don't have: time to see it all.	masculine noun	tiempo	biohack es-en letter-t noun	30fd1747ac99
+biohack:es-en:1007	la tienda	f. store, shop	Hay muchas tiendas en esta calle.	There are many stores on this street.	feminine noun	tienda	biohack es-en letter-t noun	a6ebe3b92b76
+biohack:es-en:1008	la tierra	f. land, earth	Es difícil cultivar esta tierra.	It’s difficult to cultivate this land.	feminine noun	tierra	biohack es-en letter-t noun	f32aa2c6d2b8
+biohack:es-en:1009	las tijeras	f. pl. scissors	Es útil traer tijeras si hay que cortar algo.	It’s useful to bring scissors in case you have to cut something.	feminine plural noun	tijeras	biohack es-en letter-t noun	4de6cc8572c9
+biohack:es-en:1010	la tinta	f. ink	Hay que firmar con tinta.	You have to sign in ink.	feminine noun	tinta	biohack es-en letter-t noun	7426b0ce968e
+biohack:es-en:1011	típico	typical	Quisiéramos probar una comida típica de esta región. 3 We'd like to try a typical meal of this region.	E We'd like to try a typical meal of this region.		tipico	biohack es-en letter-t	6a222e01a056
+biohack:es-en:1012	tirar	to throw, pull	No tires arena, chico.	Don't throw sand, kid.	verb	tirar	biohack es-en letter-t verb	8e85064e2a8e
+biohack:es-en:1013	la toalla	f. towel	;Cudndo cambian las toallas?	When do they change the towels?	feminine noun	toalla	biohack es-en letter-t noun	38824f4f14c1
+biohack:es-en:1014	tocar	to touch, play (an instrument)	No le toque cuando está tocando: el piano.	Don't touch him when he's playing the piano.:	verb	tocar	biohack es-en letter-t verb	00cc8a6d730a
+biohack:es-en:1015	todavia	still, yet	No han llegado todavía.	They haven't arrived yet.		todavia	biohack es-en letter-t	9fd5b838af8a
+biohack:es-en:1016	todo	all, everything	Nos enseñó todo lo que sabía.	He taught us all that he knew.:		todo	biohack es-en letter-t	18134bf9c0e5
+biohack:es-en:1017	todos pl.	all, everybody	Ya estamos todos.	We're all here now.		todos pl.	biohack es-en letter-t	58bfcf3478f7
+biohack:es-en:1018	tomar	to take, eat, drink	¿Qué vamos a tomar?	What are we going to have (to eat, drink)?	verb	tomar	biohack es-en letter-t verb	7989d9f871c3
+biohack:es-en:1019	la tormenta	f. storm	Necesitamos una tormenta para romper el calor.	We need a storm to break the heat.	feminine noun	tormenta	biohack es-en letter-t noun	8c1e2e2c048b
+biohack:es-en:1020	el toro	m. bull	La corrida de toros es popular en algunos países.	Bullfighting is popular in some countries.	masculine noun	toro	biohack es-en letter-t noun	b6207aa1e178
+biohack:es-en:1021	la torre	f. tower	Lo encarcelaron en la torre.	They imprisoned him in the tower.	feminine noun	torre	biohack es-en letter-t noun	dcd7eb60caf0
+biohack:es-en:1022	la tos	f. cough	Tienes que tomar algo para esa tos.	You must take something for that cough.	feminine noun	tos	biohack es-en letter-t noun	e01ca499abf0
+biohack:es-en:1023	trabajar	to work	Trabaja más de cuarenta horas por semana.	He works more than forty hours a week.	verb	trabajar	biohack es-en letter-t verb	accceb66e639
+biohack:es-en:1024	el trabajo	m. work	No puedo terminar todo este trabajo en dos días.	I can't finish all this work in two days.	masculine noun	trabajo	biohack es-en letter-t noun	712b208e0104
+biohack:es-en:1025	traducir	to translate	¿Puede usted traducir lo que él ha dicho?	Can you translate what he said?	verb	traducir	biohack es-en letter-t verb	0b2f1db9e8e9
+biohack:es-en:1026	traer	to bring	Creo que he traído demasiada ropa.	I think I brought too much clothing.	verb	traer	biohack es-en letter-t verb	2ba153a3925d
+biohack:es-en:1027	el traje	m. suit, attire	Un traje basta para este viaje.	One suit is sufficient ] for this trip.	masculine noun	traje	biohack es-en letter-t noun	25a6cda89810
+biohack:es-en:1028	tranquilo	tranquil, calm, quiet	Todo estd muy tranquilo ahora.	Everything is very quiet now.		tranquilo	biohack es-en letter-t	047362928ffe
+biohack:es-en:1029	tratar	to try	Traten de escribir claramente.	Try to write clearly.	verb	tratar	biohack es-en letter-t verb	97f4df74fb6c
+biohack:es-en:1030	el tren	m. train	Los trenes generalmente llegan a tiempo.	The trains generally arrive on time.	masculine noun	tren	biohack es-en letter-t noun	66d2f100dd3a
+biohack:es-en:1031	triste	sad	Se puso triste cuando oyó la noticia.	He became sad when he heard the news.		triste	biohack es-en letter-t	cf2eae615200
+biohack:es-en:1032	tu	your	Tienes tu pasaporte?	Do you have your passport?		tu	biohack es-en letter-t	67be00bc93b5
+biohack:es-en:1033	tú	you	El último en llegar eres siempre tú.	You're always the last to arrive.		tu	biohack es-en letter-t	ae147c528370
+biohack:es-en:1034	último	last	Esla última vez que vengo aquí.	It’s the last time I'm coming here.		ultimo	biohack es-en letter-u	d2dca0446b33
+biohack:es-en:1035	un	m., una f. a, an	Tengo un lápiz y una pluma.	I have a pencil and a pen.	masculine noun	un	biohack es-en letter-u noun	458c2b171578
+biohack:es-en:1036	unos	m., unas f. some	Busco unos guantes de cuero.	I'm looking for some leather gloves.	masculine noun	unos	biohack es-en letter-u noun	19cbf103e1cf
+biohack:es-en:1037	usar	to use	Hace años que uso este producto.	Tuve been using this product for years.	verb	usar	biohack es-en letter-u verb	c6f8935cb3a4
+biohack:es-en:1038	usted (Ud., Vd.); ustedes (Uds., Vds.) pl.	you	¿Cómo está usted hoy?	How are you today?		usted (ud., vd.); ustedes (uds., vds.) pl.	biohack es-en letter-u	3a82f8595004
+biohack:es-en:1039	útil	useful	Es útil saber varios idiomas.	It's useful to know several languages.		util	biohack es-en letter-u	4246274f4e5d
+biohack:es-en:1040	las vacaciones	f. pl. vacation	Vamos a tomar nuestras vacaciones en agosto.	We're going to take our vacation in August.	feminine plural noun	vacaciones	biohack es-en letter-v noun	99b28e9a7332
+biohack:es-en:1041	vacío	empty	El restaurante está medio vacío hoy.	The restaurant is half empty today.		vacio	biohack es-en letter-v	3bf3c96d5585
+biohack:es-en:1042	vale (Spain)	O.K., goodbye	Dijo “vale” y se fue.	He said “O.K.” and left.		vale (spain)	biohack es-en letter-v	789bb6ea86bc
+biohack:es-en:1043	valer	to be worth, to cost	¿Cuánto vale esta camisa?	How much does this shirt cost?	verb	valer	biohack es-en letter-v verb	e8bd5d4bf468
+biohack:es-en:1044	el valle	m. valley	El Valle de los Caídos es un monumento a los soldados de la Guerra Civil.	The Valley of the Fallen is a monument to the soldiers of the Civil War.	masculine noun	valle	biohack es-en letter-v noun	a836558834b1
+biohack:es-en:1045	varios	several	Varios amigos nuestros han recomendado este hotel.	Several friends of ours have recommended this hotel.		varios	biohack es-en letter-v	034a9089bd0c
+biohack:es-en:1046	el vaso	m. glass (tumbler)	Un vaso de agua mineral, por favor.	A glass of mineral water, please.	masculine noun	vaso	biohack es-en letter-v noun	85b3ddc75ccf
+biohack:es-en:1047	el vecino	m. neighbor	Tenemos muy buenos vecinos.	We have very good neighbors.	masculine noun	vecino	biohack es-en letter-v noun	f8ba794feabc
+biohack:es-en:1048	la velocidad	f. speed	¿Cuál es la velocidad máxima?	What's the speed limit?	feminine noun	velocidad	biohack es-en letter-v noun	390a948efb87
+biohack:es-en:1049	vender	to sell	La tela que venden aquí es de buena calidad.	The material that they sell here is of good quality.	verb	vender	biohack es-en letter-v verb	9a2a7c14b50d
+biohack:es-en:1050	venir	to come	¿Por qué no vienen ustedes con nosotros?	Why don’t you come with us?	verb	venir	biohack es-en letter-v verb	2cd507943661
+biohack:es-en:1051	la ventaja	f. advantage	Tiene una ventaja porque habla español.	She has an advantage because she speaks Spanish.	feminine noun	ventaja	biohack es-en letter-v noun	974b9775f2f7
+biohack:es-en:1052	la ventana	f. window	Las ventanas de nuestra sala dan al parque.	Our living-room windows face the park.	feminine noun	ventana	biohack es-en letter-v noun	c282af589101
+biohack:es-en:1053	ver	to see	¿Vieron ustedes lo que pasó?	Did you see what happened?	verb	ver	biohack es-en letter-v verb	58ce061ba6a3
+biohack:es-en:1054	veras, de	really	De veras, yo no sé nada.	Really, I don't know anything.		veras, de	biohack es-en letter-v	97445251e31e
+biohack:es-en:1055	la verdad	f. truth	No sabemos si nos dijo la verdad o no.	We don't know if he told us the truth or not.	feminine noun	verdad	biohack es-en letter-v noun	958e60393732
+biohack:es-en:1056	verdadero	true, real	Es un verdadero placer estar aquí con ustedes.	It’s a real pleasure to be here with you.		verdadero	biohack es-en letter-v	ba81b4c1111c
+biohack:es-en:1057	la vergienza	f. shame	Tengo vergiienza de decir que no lo he terminado.	I'm ashamed to say that I haven't finished it.	feminine noun	vergienza	biohack es-en letter-v noun	8736ab13fc3a
+biohack:es-en:1058	el vestido	m. dress	¡Qué vestido elegante lleva!	What an elegant dress she's wearing!	masculine noun	vestido	biohack es-en letter-v noun	1f48fae45355
+biohack:es-en:1059	vestirse	to get dressed	Me vestí rápidamente porque era tarde.	I got dressed quickly because it was late.	verb	vestirse	biohack es-en letter-v verb	d2e20dc3ca00
+biohack:es-en:1060	la vez	f. time (occasion)	Una vez no basta.	Once isn’t enough.	feminine noun	vez	biohack es-en letter-v noun	8ea5ffec010f
+biohack:es-en:1061	viajar	to travel	Se aprende mucho viajando.	You lean a lot by traveling.	verb	viajar	biohack es-en letter-v verb	2ec89c4aa2fa
+biohack:es-en:1062	el viaje	m. trip	Fue un viaje lleno de aventuras.	It was a trip full of adventures.	masculine noun	viaje	biohack es-en letter-v noun	f5157efd05cf
+biohack:es-en:1063	el viajero	m. traveler, passenger	Los viajeros tienen que conservar sus billetes.	The passengers have to hold onto their tickets.	masculine noun	viajero	biohack es-en letter-v noun	502b4597f00c
+biohack:es-en:1064	la vida	f. life	¿Qué es la vida?	La vida es sueño. What is life? Life is a dream.	feminine noun	vida	biohack es-en letter-v noun	aed9031ec181
+biohack:es-en:1065	viejo	old	Es una vieja costumbre de esta región.	It's an old custom of this region.		viejo	biohack es-en letter-v	072fab974233
+biohack:es-en:1066	el viento	m. wind	Hay mucho viento en el mes de marzo.	It’s very windy in the month of March.	masculine noun	viento	biohack es-en letter-v noun	75fcec38ed5a
+biohack:es-en:1067	la vista	f. sight, view	Tenemos una vista magnífica de las montañas.	We have a magnificent view of the mountains.	feminine noun	vista	biohack es-en letter-v noun	9010e33efdef
+biohack:es-en:1068	vivir	to live	Vivimos aquí todo el año.	We live here all year long.	verb	vivir	biohack es-en letter-v verb	f753c659dc90
+biohack:es-en:1069	volar	to fly	Si volamos, estaremos allí en tres horas.	If we fly, we'll be there in three hours.	verb	volar	biohack es-en letter-v verb	0c0f21281f27
+biohack:es-en:1070	volver	to come back, return	Vuelva usted mañana.	Come back tomorrow.	verb	volver	biohack es-en letter-v verb	66d54c564ccf
+biohack:es-en:1071	votar	to vote	Todos los ciudadanos tienen la obligación de votar.	All citizens have the obligation to vote.	verb	votar	biohack es-en letter-v verb	af2c873a9bc4
+biohack:es-en:1072	la voz	f. voice	Hable en voz más alta, por favor.	Speak louder, please.	feminine noun	voz	biohack es-en letter-v noun	03f6f047ffb9
+biohack:es-en:1073	el vuelo	m. flight	Espero que llegue en el próximo vuelo.	I hope he arrives on the next flight.	masculine noun	vuelo	biohack es-en letter-v noun	eac809f38467
+biohack:es-en:1074	la vuelta	f. change, turn, stroll	Quédese con la vuelta.	Keep the change.	feminine noun	vuelta	biohack es-en letter-v noun	26e1d1b9c73a
+biohack:es-en:1075	vuelta, de	back	Estaré de vuelta alas cinco.	I'll be back at five.		vuelta, de	biohack es-en letter-v	68a13fc143e3
+biohack:es-en:1076	y	and	Es para usted y su familia.	It’s for you and your family.		y	biohack es-en letter-y	d50846f6e5fa
+biohack:es-en:1077	ya	already	Ya lo sabíamos antes de leer la noticia en el periódico.	We already knew it before reading the item in the newspaper.		ya	biohack es-en letter-y	56b28fabcd7d
+biohack:es-en:1078	yo	I	Yo no sé qué hacer.	I don't know what to do.		yo	biohack es-en letter-y	da8a19064b3a
+biohack:es-en:1079	el zapato	m. shoe	Quitese los zapatos porque están sucios.	Take off your shoes because they're dirty.	masculine noun	zapato	biohack es-en letter-z noun	35dc663ff6f0

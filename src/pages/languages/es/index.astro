@@ -1,0 +1,151 @@
+---
+import Base from '../../../layouts/Base.astro';
+
+const samples = [
+  { spanish: 'la casa', english: 'f. house, home', es: 'Nuestra casa es su casa.', en: 'Our house is your house.', grammar: 'feminine noun' },
+  { spanish: 'el agua', english: 'f. water', es: 'Es una buena idea beber agua embotellada.', en: "It's a good idea to drink bottled water.", grammar: 'feminine noun' },
+  { spanish: 'abrir', english: 'to open', es: '“Abra la boca,” dijo el dentista.', en: '“Open your mouth,” said the dentist.', grammar: 'verb' },
+];
+---
+<Base title="Spanish–English flashcards — biohack.net" description="1,079 Spanish–English dictionary flashcards for Anki, plus portable TSV and printable editions.">
+  <main class="page">
+    <nav aria-label="Breadcrumb"><a href="/">biohack.net</a><span>/</span><a href="/languages/">languages</a><span>/</span><strong>es</strong></nav>
+
+    <header class="hero">
+      <div class="language-code" aria-hidden="true">es</div>
+      <div>
+        <p class="kicker">Spanish · English</p>
+        <h1>A pocket dictionary<br>that remembers with you.</h1>
+        <p class="lede">1,079 words with definitions and examples, built as phone-friendly Anki cards and portable source data.</p>
+      </div>
+    </header>
+
+    <section class="try" aria-labelledby="try-heading">
+      <div class="section-heading">
+        <div><p class="kicker">Try a card</p><h2 id="try-heading">Tap to reveal</h2></div>
+        <button id="next-card" type="button">Next word →</button>
+      </div>
+      <button class="flashcard" id="flashcard" type="button" aria-live="polite" aria-label="Reveal answer">
+        <span class="card-label">Spanish · Recognition</span>
+        <span class="headword" id="card-spanish">{samples[0].spanish}</span>
+        <span class="answer" id="card-answer" hidden>
+          <span class="divider"></span>
+          <span class="meaning" id="card-english">{samples[0].english}</span>
+          <span class="example-es" id="card-example-es">{samples[0].es}</span>
+          <span class="example-en" id="card-example-en">{samples[0].en}</span>
+          <span class="grammar" id="card-grammar">{samples[0].grammar}</span>
+        </span>
+        <span class="tap-hint" id="tap-hint">tap to show answer</span>
+      </button>
+    </section>
+
+    <section class="downloads" aria-labelledby="download-heading">
+      <p class="kicker">Choose your format</p>
+      <h2 id="download-heading">Take it with you</h2>
+      <div class="download-grid">
+        <a class="download primary" href="/languages/es/download/es-en-dictionary.apkg" download>
+          <span class="format">APKG</span><strong>Anki deck</strong><small>Best for studying on a phone</small><span class="action">Download · 163 KB</span>
+        </a>
+        <a class="download" href="/languages/es/download/es-en-dictionary.tsv" download>
+          <span class="format">TSV</span><strong>Portable source</strong><small>UTF-8 data for Anki or another app</small><span class="action">Download · 185 KB</span>
+        </a>
+        <a class="download" href="/languages/es/download/es-en-dictionary-legal.pdf" download>
+          <span class="format">PDF</span><strong>Compact print</strong><small>Two sides of one legal-size sheet</small><span class="action">Download · 435 KB</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="install" aria-labelledby="install-heading">
+      <p class="kicker">Phone setup</p>
+      <h2 id="install-heading">Install once. Review anywhere.</h2>
+      <ol>
+        <li><span>1</span><div><strong>Get Anki</strong><p>Use AnkiMobile on iPhone/iPad or AnkiDroid on Android.</p></div></li>
+        <li><span>2</span><div><strong>Open the APKG</strong><p>Download the deck above and open it with your Anki app.</p></div></li>
+        <li><span>3</span><div><strong>Start small</strong><p>Recognition cards are active. Production cards are included but suspended until you want them.</p></div></li>
+      </ol>
+    </section>
+
+    <footer><a href="/languages/">← All languages</a><span>Deck ID · biohack::languages::es-en</span></footer>
+  </main>
+
+  <script define:vars={{ samples }}>
+    const card = document.querySelector('#flashcard');
+    const answer = document.querySelector('#card-answer');
+    const hint = document.querySelector('#tap-hint');
+    let index = 0;
+    function showSample(sample) {
+      document.querySelector('#card-spanish').textContent = sample.spanish;
+      document.querySelector('#card-english').textContent = sample.english;
+      document.querySelector('#card-example-es').textContent = sample.es;
+      document.querySelector('#card-example-en').textContent = sample.en;
+      document.querySelector('#card-grammar').textContent = sample.grammar;
+      answer.hidden = true;
+      hint.hidden = false;
+      card.setAttribute('aria-label', 'Reveal answer');
+    }
+    card?.addEventListener('click', () => {
+      answer.hidden = !answer.hidden;
+      hint.hidden = !answer.hidden;
+      card.setAttribute('aria-label', answer.hidden ? 'Reveal answer' : 'Hide answer');
+    });
+    document.querySelector('#next-card')?.addEventListener('click', () => {
+      index = (index + 1) % samples.length;
+      showSample(samples[index]);
+    });
+  </script>
+</Base>
+
+<style>
+  :global(body) { background: #f3efe7; color: #211d18; max-width: none; padding: 0; }
+  .page { margin: 0 auto; max-width: 900px; padding: clamp(1.1rem, 4vw, 2.5rem) 1.1rem 4rem; }
+  nav { align-items: center; color: #8a8176; display: flex; font: 700 .7rem/1.2 'JetBrains Mono', monospace; gap: .55rem; letter-spacing: .06em; text-transform: uppercase; }
+  nav a, footer a { color: #a74830; text-decoration: none; }
+  .hero { align-items: start; display: grid; gap: clamp(1rem, 4vw, 2rem); grid-template-columns: auto 1fr; margin: clamp(3rem, 10vw, 6rem) 0; }
+  .language-code { align-items: center; background: #a74830; border-radius: 18px; color: white; display: flex; font: 700 clamp(1.1rem, 4vw, 1.5rem)/1 'JetBrains Mono', monospace; height: clamp(4rem, 12vw, 5.5rem); justify-content: center; width: clamp(4rem, 12vw, 5.5rem); }
+  .kicker { color: #8a8176; font: 700 .7rem/1.2 'JetBrains Mono', monospace; letter-spacing: .14em; margin: 0 0 .75rem; text-transform: uppercase; }
+  h1 { font-size: clamp(2.3rem, 8vw, 5rem); letter-spacing: -.055em; line-height: .98; margin: 0; }
+  .lede { color: #625b52; font-size: clamp(1.05rem, 2.8vw, 1.3rem); line-height: 1.55; margin: 1.4rem 0 0; max-width: 38rem; }
+  section { border-top: 1px solid #d8d0c3; padding: clamp(2.5rem, 8vw, 4.5rem) 0; }
+  h2 { font-size: clamp(1.8rem, 5vw, 2.8rem); letter-spacing: -.04em; line-height: 1.05; margin: 0; }
+  .section-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+  #next-card { background: transparent; border: 0; color: #a74830; cursor: pointer; font: 700 .75rem/1.2 'JetBrains Mono', monospace; padding: .75rem 0; text-transform: uppercase; }
+  .flashcard { background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 24px; box-shadow: 0 18px 55px rgba(65, 49, 31, .09); color: inherit; cursor: pointer; display: flex; flex-direction: column; font: inherit; margin: 0 auto; min-height: min(560px, 70vh); padding: clamp(1.25rem, 6vw, 2.5rem); text-align: center; width: min(100%, 390px); }
+  .card-label { color: #8a8176; font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+  .headword { color: #a74830; font-size: clamp(2.4rem, 11vw, 3.5rem); font-weight: 750; letter-spacing: -.04em; line-height: 1.05; margin: auto 0; }
+  .answer { display: flex; flex-direction: column; }
+  .answer[hidden] { display: none; }
+  .divider { border-top: 1px solid #d8d0c3; margin: 0 0 1.8rem; }
+  .meaning { font-size: 1.5rem; font-weight: 700; }
+  .example-es { font-size: 1.05rem; font-weight: 600; margin-top: 1.75rem; text-align: left; }
+  .example-en { color: #766e64; font-size: .95rem; margin-top: .25rem; text-align: left; }
+  .grammar { color: #a74830; font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .1em; margin-top: 1.5rem; text-align: left; text-transform: uppercase; }
+  .tap-hint { color: #8a8176; font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .08em; margin-top: auto; text-transform: uppercase; }
+  .download-grid { display: grid; gap: .8rem; grid-template-columns: repeat(3, 1fr); margin-top: 1.75rem; }
+  .download { background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 16px; color: inherit; display: flex; flex-direction: column; min-height: 235px; padding: 1.25rem; text-decoration: none; transition: border-color .15s, transform .15s; }
+  .download:hover { border-color: #a74830; transform: translateY(-2px); }
+  .download.primary { background: #a74830; border-color: #a74830; color: white; }
+  .format { font: 700 .65rem/1.2 'JetBrains Mono', monospace; letter-spacing: .12em; opacity: .72; }
+  .download strong { font-size: 1.25rem; margin-top: 1.2rem; }
+  .download small { color: #766e64; line-height: 1.4; margin-top: .4rem; }
+  .download.primary small { color: #f0d8d0; }
+  .action { font: 700 .7rem/1.2 'JetBrains Mono', monospace; margin-top: auto; padding-top: 1.25rem; text-transform: uppercase; }
+  .install ol { list-style: none; margin: 2rem 0 0; padding: 0; }
+  .install li { align-items: start; border-top: 1px solid #d8d0c3; display: grid; gap: 1rem; grid-template-columns: auto 1fr; padding: 1.2rem 0; }
+  .install li > span { align-items: center; border: 1px solid #a74830; border-radius: 50%; color: #a74830; display: flex; font: 700 .7rem/1 'JetBrains Mono', monospace; height: 2rem; justify-content: center; width: 2rem; }
+  .install p { color: #6c645a; margin: .25rem 0 0; }
+  footer { border-top: 1px solid #d8d0c3; color: #8a8176; display: flex; flex-wrap: wrap; font: 700 .65rem/1.4 'JetBrains Mono', monospace; gap: 1rem; justify-content: space-between; padding-top: 1.5rem; text-transform: uppercase; }
+  @media (max-width: 650px) {
+    .hero { grid-template-columns: 1fr; }
+    .download-grid { grid-template-columns: 1fr; }
+    .download { min-height: 180px; }
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(body) { background: #171717; color: #f4f1ea; }
+    nav, .kicker, .card-label, .tap-hint, footer { color: #bdb8ae; }
+    .lede, .example-en, .install p, .download small { color: #bdb8ae; }
+    section, header, footer, .divider, .install li { border-color: #504b43; }
+    .flashcard, .download { background: #211f1c; border-color: #504b43; }
+    .headword, .grammar, nav a, footer a, #next-card { color: #e6b566; }
+    .download.primary { background: #8e452f; border-color: #b95b3e; }
+  }
+</style>

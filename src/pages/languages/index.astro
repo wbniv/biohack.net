@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Languages — biohack.net" description="Language-learning dictionaries, flashcards, and printable references.">
+  <main class="languages-shell">
+    <a class="back" href="/">← biohack.net</a>
+    <header>
+      <p class="kicker">biohack · languages</p>
+      <h1>Languages</h1>
+      <p class="lede">Portable dictionaries and phone-ready flashcards, built to remain useful outside any single app.</p>
+    </header>
+
+    <section aria-labelledby="available-heading">
+      <h2 id="available-heading">Available now</h2>
+      <a class="language-card" href="/languages/es/" hreflang="en">
+        <span class="code">es</span>
+        <span>
+          <strong>Spanish</strong>
+          <small>1,079 Spanish–English notes · Anki, TSV, and print</small>
+        </span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
+
+    <section aria-labelledby="planned-heading">
+      <h2 id="planned-heading">Planned</h2>
+      <div class="language-card planned">
+        <span class="code">th</span>
+        <span>
+          <strong>Thai</strong>
+          <small>Thai–English edition</small>
+        </span>
+        <span class="status">later</span>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  :global(body) { background: #f3efe7; color: #211d18; max-width: none; padding: 0; }
+  .languages-shell { margin: 0 auto; max-width: 760px; padding: clamp(1.25rem, 5vw, 3rem) 1.25rem 5rem; }
+  .back { color: #a74830; font: 700 .75rem/1.2 'JetBrains Mono', monospace; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; }
+  header { border-bottom: 1px solid #d8d0c3; margin: 3.5rem 0 2.5rem; padding-bottom: 2rem; }
+  .kicker, h2 { color: #847b70; font: 700 .7rem/1.2 'JetBrains Mono', monospace; letter-spacing: .14em; text-transform: uppercase; }
+  h1 { font-size: clamp(3rem, 12vw, 6rem); letter-spacing: -.055em; line-height: .95; margin: .65rem 0 1.25rem; }
+  .lede { color: #625b52; font-size: clamp(1.1rem, 3vw, 1.35rem); line-height: 1.55; max-width: 34rem; }
+  section { margin-top: 2.5rem; }
+  h2 { margin-bottom: .75rem; }
+  .language-card { align-items: center; background: #fffdf8; border: 1px solid #d8d0c3; border-radius: 16px; color: inherit; display: grid; gap: 1rem; grid-template-columns: auto 1fr auto; padding: 1.25rem; text-decoration: none; transition: border-color .15s, transform .15s; }
+  a.language-card:hover { border-color: #a74830; transform: translateY(-2px); }
+  .code { align-items: center; background: #a74830; border-radius: 10px; color: white; display: flex; font: 700 1rem/1 'JetBrains Mono', monospace; height: 3rem; justify-content: center; width: 3rem; }
+  strong { display: block; font-size: 1.15rem; }
+  small { color: #746c62; display: block; line-height: 1.4; margin-top: .2rem; }
+  .arrow { color: #a74830; font-size: 1.5rem; }
+  .planned { background: transparent; border-style: dashed; }
+  .planned .code { background: #8d867d; }
+  .status { color: #847b70; font: 700 .65rem/1 'JetBrains Mono', monospace; letter-spacing: .1em; text-transform: uppercase; }
+</style>
