@@ -9,19 +9,19 @@
   "pageTitle": "SVX2 FastROM Animated Video — bioHACK•NET",
   "pageDesc": "Run a real SNES FastROM with an animated title, SVX2-compressed Artemis video, and a non-Mode-7 tiled dashboard.",
   "heading": "SVX2 FastROM Animated Video",
-  "lede": "Two complete Artemis videos: <b>600 frames</b> of NASA SVS launch-and-return animation followed by <b>300 frames</b> of real launch-camera footage, sustained at a verified <b>60 SVX2 packets/s</b> by a 4&nbsp;MiB Fast HiROM.",
+  "lede": "Two complete Artemis videos: <b>600 frames</b> of NASA SVS launch-and-return animation followed by <b>300 frames</b> of real launch-camera footage, sustained at a verified <b>60 SVX2 packets/s</b> by a 32&nbsp;Mbit (4&nbsp;MiB) Fast HiROM.",
   "keysHtml": [
     "Start pauses/resumes; A resumes; L/R step one frame; Left/Right seek one second or shuttle at 2&times;/4&times;/8&times; when held. Keyboard and touch use the matching on-screen SNES controls."
   ],
   "doc": "<h2>Two videos, one cartridge</h2><p>Frames 0–599 are NASA SVS Artemis animation; frames 600–899 are real launch-camera footage. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. Browser keyboards and phone touch controllers use the matching on-screen SNES controls.</p><p class=\"rp-foot\">Sources: NASA SVS 14191 animation and NASA Artemis I press-site camera footage. No <em>Duck and Cover</em> footage or animated turtle sequence is present.</p>",
   "technical": {
-    "artifactSha256": "d1b7b37aba4f28d546a63337a7f2c7d5c9d717dca3586ab6cfab4a7c5b1e70ff",
-    "artifactLabel": "Published 4 MiB Fast HiROM · 900-frame two-video stream",
+    "artifactSha256": "da677c2ea2b824112fbc1500eabb82d0f827c8128b96fded541930306a5d0200",
+    "artifactLabel": "Published 32 Mbit (4 MiB) Fast HiROM · 900-frame two-video stream",
     "stats": [
-      {"value":"3,819 / 3,819","label":"eligible presentations"},
+      {"value":"3,822 / 3,822","label":"eligible presentations"},
       {"value":"0 / 0","label":"deadline slips / decode errors"},
       {"value":"4,480 B","label":"70-tile visible frame"},
-      {"value":"4 MiB","label":"Fast HiROM cartridge"}
+      {"value":"32 Mbit (4 MiB)","label":"Fast HiROM cartridge"}
     ],
     "codecs": [
       {"name":"Raw block copy","size":"1,368,600 B","ratio":"101.83%","rate":"87.6 fps"},

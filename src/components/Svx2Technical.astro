@@ -11,7 +11,7 @@ const repo = 'https://github.com/wbniv/llvm-mos-65816/blob/main/';
 
   <h2>How one frame moves</h2>
   <figure class="svx-pipeline">
-    <div>FastROM packet table<small>code + stream in 4 MiB HiROM</small></div><i aria-hidden="true">→</i>
+    <div>FastROM packet table<small>code + stream in 32 Mbit (4 MiB) HiROM</small></div><i aria-hidden="true">→</i>
     <div>Bank $7F staging<small>DMA during active display</small></div><i aria-hidden="true">→</i>
     <div>SVX2 in-place decode<small>replacement + retained spans</small></div><i aria-hidden="true">→</i>
     <div>Mode 7 VRAM<small>4,480-byte DMA in VBlank</small></div>
@@ -37,7 +37,7 @@ const repo = 'https://github.com/wbniv/llvm-mos-65816/blob/main/';
     </table>
   </div>
   <figure class="svx-budget"><div><span style={`width:${(89088 / data.intervalDots * 100).toFixed(2)}%`}></span></div><figcaption>p99 combined: 89,088 / {data.intervalDots.toLocaleString()} dots. The 275,456-dot maximum is a seek keyframe, intentionally absent from sequential playback.</figcaption></figure>
-  <p>The integrated gate presented <strong>3,819 frames in 3,819 eligible intervals</strong> during a 4,000-frame run, with zero decoder errors and zero deadline slips. The current published cartridge is a 60-packet/s throughput proof using 900 distinct frames authored at 30 fps, so motion runs at twice its authored speed. That is not a claim of native 60 fps source capture.</p>
+  <p>The integrated gate presented <strong>3,822 frames in 3,822 eligible intervals</strong> during a 4,000-frame run, with zero decoder errors and zero deadline slips. The current published cartridge is a 60-packet/s throughput proof using 900 distinct frames authored at 30 fps, so motion runs at twice its authored speed. That is not a claim of native 60 fps source capture.</p>
 
   <h2>Verification and source</h2>
   <ul>
