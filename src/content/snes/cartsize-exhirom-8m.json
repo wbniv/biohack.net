@@ -4,7 +4,7 @@
   "title": "ExHiROM 64 Mbit Cartridge Test",
   "desc": "An 8 MiB ExHiROM cartridge at the extended map's ceiling — including the 64 KiB that is physically present but addressable by nothing, because banks $7E/$7F are WRAM. The model reports those holes and refuses to place data in them.",
   "keys": "Self-running — no controls",
-  "category": "algorithms",
+  "category": "cartridge",
   "pageTitle": "ExHiROM 64 Mbit Cartridge Test — bioHACK•NET",
   "pageDesc": "An 8 MiB ExHiROM Super Nintendo cartridge at the ceiling of the extended map, including the two 32 KiB regions that are physically present but unreachable because banks $7E/$7F are Work RAM — reached instead through the $3E/$3F upper-half mirrors.",
   "heading": "ExHiROM 64 Mbit Cartridge Test",

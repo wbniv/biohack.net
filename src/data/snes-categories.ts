@@ -12,6 +12,7 @@ export const categories = [
   { id: 'bignums',    label: 'Big Numbers' },
   { id: 'ciphers',    label: 'Ciphers & Bit Tricks' },
   { id: 'classics',   label: 'Games & Classics' },
+  { id: 'cartridge',  label: 'Cartridge & Mapping Tests' },
 ] as const;
 
 export const categoryIds = categories.map((c) => c.id) as unknown as [string, ...string[]];

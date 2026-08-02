@@ -4,7 +4,7 @@
   "title": "HiROM 32 Mbit Cartridge Test",
   "desc": "A 4 MiB HiROM cartridge that proves its own address decoder: every decoded window, every accepted mirror, and byte runs crossing one and several 64 KiB banks, all checked against a host model of the bsnes-jg cartridge bus. Green screen = every byte landed where the model said.",
   "keys": "Self-running — no controls",
-  "category": "algorithms",
+  "category": "cartridge",
   "pageTitle": "HiROM 32 Mbit Cartridge Test — bioHACK•NET",
   "pageDesc": "A 4 MiB HiROM Super Nintendo cartridge that tests its own address decoding: 64 KiB linear banks, the LoROM-area mirrors, and cross-bank reads, each verified against an authoritative host model. The ordinary-map baseline for the extended-cartridge work.",
   "heading": "HiROM 32 Mbit Cartridge Test",

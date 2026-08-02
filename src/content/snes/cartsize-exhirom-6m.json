@@ -4,7 +4,7 @@
   "title": "ExHiROM 48 Mbit Cartridge Test",
   "desc": "A 6 MiB extended-mapping cartridge — physically 32 Mbit + 16 Mbit — that reads across the 4 MiB device boundary the ordinary SNES maps cannot reach past. The Tales of Phantasia configuration, generated from a port of the bsnes-jg cartridge bus.",
   "keys": "Self-running — no controls",
-  "category": "algorithms",
+  "category": "cartridge",
   "pageTitle": "ExHiROM 48 Mbit Cartridge Test — bioHACK•NET",
   "pageDesc": "A 48 Mbit (6 MiB) ExHiROM Super Nintendo cartridge, physically two mask ROMs of 32 and 16 Mbit, that verifies its own extended address decoding — including a byte run spanning the physical 4 MiB device boundary, which is a discontinuity in CPU space.",
   "heading": "ExHiROM 48 Mbit Cartridge Test",
