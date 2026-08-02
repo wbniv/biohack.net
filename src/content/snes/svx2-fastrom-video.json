@@ -15,7 +15,7 @@
   ],
   "doc": "<h2>Two videos, one cartridge</h2><p>Frames 0–599 are NASA SVS Artemis animation; frames 600–899 are real launch-camera footage. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. Browser keyboards and phone touch controllers use the matching on-screen SNES controls.</p><p class=\"rp-foot\">Sources: NASA SVS 14191 animation and NASA Artemis I press-site camera footage. No <em>Duck and Cover</em> footage or animated turtle sequence is present.</p>",
   "technical": {
-    "artifactSha256": "da677c2ea2b824112fbc1500eabb82d0f827c8128b96fded541930306a5d0200",
+    "artifactSha256": "23b9b9cb7a936375074a9dc694bb1d8c551856509a2de3e5e2e9f9289bf9a9d4",
     "artifactLabel": "Published 32 Mbit (4 MiB) Fast HiROM · 900-frame two-video stream",
     "stats": [
       {"value":"3,822 / 3,822","label":"eligible presentations"},

@@ -38,6 +38,7 @@ const repo = 'https://github.com/wbniv/llvm-mos-65816/blob/main/';
   </div>
   <figure class="svx-budget"><div><span style={`width:${(89088 / data.intervalDots * 100).toFixed(2)}%`}></span></div><figcaption>p99 combined: 89,088 / {data.intervalDots.toLocaleString()} dots. The 275,456-dot maximum is a seek keyframe, intentionally absent from sequential playback.</figcaption></figure>
   <p>The integrated gate presented <strong>3,822 frames in 3,822 eligible intervals</strong> during a 4,000-frame run, with zero decoder errors and zero deadline slips. The current published cartridge is a 60-packet/s throughput proof using 900 distinct frames authored at 30 fps, so motion runs at twice its authored speed. That is not a claim of native 60 fps source capture.</p>
+  <p>The cartridge dashboard reports the nominal playback cadence as <strong>60.0 fps</strong>. Physical NTSC SNES refresh is approximately 60.099 Hz; that hardware-rate detail belongs in timing analysis, not in the player’s nominal-cadence readout.</p>
 
   <h2>Verification and source</h2>
   <ul>
