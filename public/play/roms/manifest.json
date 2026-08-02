@@ -1318,11 +1318,11 @@
       "id": "svx2-fastrom-video",
       "title": "SVX2 FastROM Animated Video",
       "selfcheck": {
-        "off": "0x205",
+        "off": "0x206",
         "len": 4,
         "want": "0x00000000",
         "frames": 4000,
-        "label": "two-video 900-frame SVX2 stream, two loops, dashboard loop reset, all three cut labels, and zero failures (composite gate @ WRAM $0205)"
+        "label": "native-60p 1800-frame Fast ExHiROM SVX2 stream, two loops, dashboard reset, three cut labels, seam crossing, and zero failures (composite gate @ WRAM $0206)"
       }
     }
   ]

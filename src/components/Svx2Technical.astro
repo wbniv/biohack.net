@@ -11,18 +11,18 @@ const repo = 'https://github.com/wbniv/llvm-mos-65816/blob/main/';
 
   <h2>How one frame moves</h2>
   <figure class="svx-pipeline">
-    <div>FastROM packet table<small>code + stream in 32 Mbit (4 MiB) HiROM</small></div><i aria-hidden="true">→</i>
+    <div>FastROM packet table<small>code mirror + stream in 64 Mbit (8 MiB) ExHiROM</small></div><i aria-hidden="true">→</i>
     <div>Bank $7F staging<small>DMA during active display</small></div><i aria-hidden="true">→</i>
     <div>SVX2 in-place decode<small>replacement + retained spans</small></div><i aria-hidden="true">→</i>
     <div>Mode 7 VRAM<small>4,480-byte DMA in VBlank</small></div>
     <figcaption>Packet staging and decode happen during active display; VBlank is reserved for presentation and the small BG3 dashboard update.</figcaption>
   </figure>
-  <p>Each frame is 70 tile-major Mode 7 tiles: 80 × 56 indexed pixels. A replacement span copies changed bytes from the staged packet. A copy span means “retain what is already in the framebuffer,” so the hot decoder advances its cursors without copying bytes onto themselves. Sequential playback stays entirely delta-coded—including the cut and the loop—while separate independent keyframes keep seeking bounded.</p>
+  <p>Each frame is 70 tile-major Mode 7 tiles: 80 × 56 indexed pixels. A replacement span copies changed bytes from the staged packet. A copy span means “retain what is already in the framebuffer,” so the hot decoder advances its cursors without copying bytes onto themselves. Sequential playback stays entirely delta-coded—including each cut and the loop—while separate independent keyframes keep seeking bounded. Frame 1200 begins exactly at the ExHiROM region seam: logical <code>$3F0000</code> becomes file <code>$410000</code> / CPU bank <code>$41</code>.</p>
   <p>Mode 7 owns scanlines 0–191. An HDMA split switches the lower region to Mode 1 BG3 for the time, measured FPS, scene label, health, and transport. Automatic joypad results are read from <code>$4218/$4219</code> off the decode-critical path.</p>
 
   <h2>Why SVX2?</h2>
   <div class="svx-table-wrap" tabindex="0" aria-label="Scrollable codec benchmark table">
-    <table><caption>Real-camera, Floyd–Steinberg corpus. Size includes packet overhead.</caption>
+    <table><caption>Codec-selection benchmark corpus. Size includes packet overhead; the published native-60 reel is independently gated below.</caption>
       <thead><tr><th>Codec or path</th><th>Packed size</th><th>Raw ratio</th><th>65816 rate</th></tr></thead>
       <tbody>{data.codecs.map((c) => <tr class:list={{ selected: c.selected }}><th scope="row">{c.name}</th><td>{c.size}</td><td>{c.ratio}</td><td>{c.rate}</td></tr>)}</tbody>
     </table>
@@ -37,15 +37,15 @@ const repo = 'https://github.com/wbniv/llvm-mos-65816/blob/main/';
     </table>
   </div>
   <figure class="svx-budget"><div><span style={`width:${(89088 / data.intervalDots * 100).toFixed(2)}%`}></span></div><figcaption>p99 combined: 89,088 / {data.intervalDots.toLocaleString()} dots. The 275,456-dot maximum is a seek keyframe, intentionally absent from sequential playback.</figcaption></figure>
-  <p>The integrated gate presented <strong>3,822 frames in 3,822 eligible intervals</strong> during a 4,000-frame run, with zero decoder errors and zero deadline slips. The current published cartridge is a 60-packet/s throughput proof using 900 distinct frames authored at 30 fps, so motion runs at twice its authored speed. That is not a claim of native 60 fps source capture.</p>
+  <p>The release gate presented <strong>9,000 frames in 9,000 eligible intervals</strong> after the animated title, with zero decoder errors and zero deadline slips. The source is NASA SVS’s 60/1-fps XRISM master; all <strong>1,800 of 1,800</strong> quantized SNES frames are unique, with no 30-fps doubling or synthesized intermediate frames.</p>
   <p>The cartridge dashboard reports the nominal playback cadence as <strong>60.0 fps</strong>. Physical NTSC SNES refresh is approximately 60.099 Hz; that hardware-rate detail belongs in timing analysis, not in the player’s nominal-cadence readout.</p>
 
   <h2>Verification and source</h2>
   <ul>
     <li>Host round-trip checks every sequential packet and seek keyframe.</li>
     <li>Target gates compare all 4,480 decoded bytes and monitor decode, loop, and deadline state.</li>
-    <li>Rendezvous captures cover both videos, their palette cut, dashboard, and exact frame order.</li>
-    <li>Controller replay covers pause, frame step, ±1-second seek, shuttle, resume, and loop.</li>
+    <li>Rendezvous captures cover frames 1199 and 1200 on opposite sides of the ExHiROM seam, the dashboard, and exact frame order.</li>
+    <li>Controller replay covers pause, frame step, ±1-second seek, shuttle, resume, and both directions across the seam.</li>
   </ul>
   <p class="svx-links"><a href={`${repo}examples/snes/snes-video-reel.c`}>Player scheduler</a><a href={`${repo}examples/snes/snes-video-reel-fast.s`}>65816 hot path</a><a href={`${repo}tools/snes_video_codec.py`}>Codec implementation</a><a href={`${repo}docs/investigations/2026-08-01-svx2-60-fps-pipeline-profile.md`}>Full profile</a><a href={`${repo}docs/plans/2026-07-30-lzss-gallery-exhirom-video-boundary-test/real-video-codec-benchmark.md`}>Codec corpus</a></p>
   <p class="svx-artifact">{data.artifactLabel}<br><code>{data.artifactSha256}</code></p>

@@ -2,26 +2,26 @@
   "order": 117,
   "slug": "svx2-fastrom-video",
   "title": "SVX2 60 FPS FastROM Video",
-  "desc": "Two Artemis videos—NASA SVS animation and real launch-camera footage—with zero-slip 60-packet/s SVX2 decoding, transport controls, and a cartridge-native dashboard.",
+  "desc": "Thirty seconds of native-60p NASA XRISM imagery with zero-slip SVX2 decoding, transport controls, and an intentional ExHiROM seam crossing.",
   "keys": "Start pause/resume · A resume · L/R frame step · ←/→ seek or hold to shuttle",
   "category": "video",
   "displayMode": 7,
   "pageTitle": "SVX2 FastROM Animated Video — bioHACK•NET",
-  "pageDesc": "Run a real SNES FastROM with an animated title, SVX2-compressed Artemis video, and a non-Mode-7 tiled dashboard.",
+  "pageDesc": "Run a 64 Mbit SNES Fast ExHiROM with an animated title, 1,800 native-60p SVX2 frames, and a non-Mode-7 tiled dashboard.",
   "heading": "SVX2 FastROM Animated Video",
-  "lede": "Two complete Artemis videos: <b>600 frames</b> of NASA SVS launch-and-return animation followed by <b>300 frames</b> of real launch-camera footage, sustained at a verified <b>60 SVX2 packets/s</b> by a 32&nbsp;Mbit (4&nbsp;MiB) Fast HiROM.",
+  "lede": "Three ten-second cuts from NASA’s native-60p XRISM master: <b>1,800 unique SNES frames</b> presented in 1,800 consecutive VBlanks by a <b>64&nbsp;Mbit (8&nbsp;MiB) Fast ExHiROM</b> cartridge.",
   "keysHtml": [
     "Start pauses/resumes; A resumes; L/R step one frame; Left/Right seek one second or shuttle at 2&times;/4&times;/8&times; when held. Keyboard and touch use the matching on-screen SNES controls."
   ],
-  "doc": "<h2>Two videos, one cartridge</h2><p>Frames 0–599 are NASA SVS Artemis animation; frames 600–899 are real launch-camera footage. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. Browser keyboards and phone touch controllers use the matching on-screen SNES controls.</p><p class=\"rp-foot\">Sources: NASA SVS 14191 animation and NASA Artemis I press-site camera footage. No <em>Duck and Cover</em> footage or animated turtle sequence is present.</p>",
+  "doc": "<h2>Native 60 fps across an ExHiROM seam</h2><p>Frames 0–599, 600–1199, and 1200–1799 are three distinct ten-second excerpts from NASA SVS’s native-60p XRISM turntable master. The third cut begins exactly at logical stream offset <code>$3F0000</code>, crossing from ExHiROM region A into file <code>$410000</code> / CPU bank <code>$41</code>. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. Browser keyboards and phone touch controllers use the matching on-screen SNES controls.</p><p class=\"rp-foot\">Source: NASA Scientific Visualization Studio item 20374, <em>XRISM Beauty Shots</em>, credited to NASA’s Goddard Space Flight Center Conceptual Image Lab. No duplicated 30-fps frames, optical-flow interpolation, <em>Duck and Cover</em> footage, or animated turtle sequence is present.</p>",
   "technical": {
-    "artifactSha256": "23b9b9cb7a936375074a9dc694bb1d8c551856509a2de3e5e2e9f9289bf9a9d4",
-    "artifactLabel": "Published 32 Mbit (4 MiB) Fast HiROM · 900-frame two-video stream",
+    "artifactSha256": "6a4d176be0683bbb135872820e5db65ed2ef1b97d7b911149a64a43c8c28af24",
+    "artifactLabel": "Published 64 Mbit (8 MiB) Fast ExHiROM · 1,800 native-60p frames · 30 seconds",
     "stats": [
-      {"value":"3,822 / 3,822","label":"eligible presentations"},
+      {"value":"9,000 / 9,000","label":"eligible presentations"},
       {"value":"0 / 0","label":"deadline slips / decode errors"},
-      {"value":"4,480 B","label":"70-tile visible frame"},
-      {"value":"32 Mbit (4 MiB)","label":"Fast HiROM cartridge"}
+      {"value":"1,800 / 1,800","label":"unique quantized frames"},
+      {"value":"64 Mbit (8 MiB)","label":"Fast ExHiROM cartridge"}
     ],
     "codecs": [
       {"name":"Raw block copy","size":"1,368,600 B","ratio":"101.83%","rate":"87.6 fps"},
