@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@wbniv/bsnes-jg-player':
         specifier: github:wbniv/bsnes-jg-wasm#npm-package
-        version: https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/3ddddb5ff98c77f616832fa6a60e3b3eda0ce56a(astro@5.18.1(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(typescript@5.9.3))
+        version: https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1ec048f8c16daa7d5280d786781077ef93c66afc(astro@5.18.1(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(typescript@5.9.3))
       astro:
         specifier: ^5.8.0
         version: 5.18.1(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(typescript@5.9.3)
@@ -846,8 +846,8 @@ packages:
   '@ungap/structured-clone@1.3.1':
     resolution: {integrity: sha512-mUFwbeTqrVgDQxFveS+df2yfap6iuP20NAKAsBt5jDEoOTDew+zwLAOilHCeQJOVSvmgCX4ogqIrA0mnyr08yQ==}
 
-  '@wbniv/bsnes-jg-player@https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/3ddddb5ff98c77f616832fa6a60e3b3eda0ce56a':
-    resolution: {gitHosted: true, integrity: sha512-BUNWh/inOwuHjckGkS0VJO5guSsY+wTlbbv0FTgQ4swE3I1Jov9rCjobRxaiMwOFE4VhvBCCfARkEiP6RAosjQ==, tarball: https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/3ddddb5ff98c77f616832fa6a60e3b3eda0ce56a}
+  '@wbniv/bsnes-jg-player@https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1ec048f8c16daa7d5280d786781077ef93c66afc':
+    resolution: {gitHosted: true, integrity: sha512-rKTfoOwAkUe3S1fPTIRZSPp5712f9QMHg2/DmC8zgnzb/z/0U+wqwuhCPS7iF2sY5hT9D3L90e1soE+hLT6MFQ==, tarball: https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1ec048f8c16daa7d5280d786781077ef93c66afc}
     version: 1.0.0
     engines: {node: '>=20'}
     hasBin: true
@@ -2470,7 +2470,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.1': {}
 
-  '@wbniv/bsnes-jg-player@https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/3ddddb5ff98c77f616832fa6a60e3b3eda0ce56a(astro@5.18.1(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(typescript@5.9.3))':
+  '@wbniv/bsnes-jg-player@https://codeload.github.com/wbniv/bsnes-jg-wasm/tar.gz/1ec048f8c16daa7d5280d786781077ef93c66afc(astro@5.18.1(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(typescript@5.9.3))':
     optionalDependencies:
       astro: 5.18.1(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(typescript@5.9.3)
 
