@@ -28,6 +28,16 @@ const snes = defineCollection({
     lede: z.string().optional(),        // hero paragraph inner HTML
     keysHtml: z.array(z.string()).optional(), // key-help line(s) under the player, inner HTML
     doc: z.string().optional(),         // the whole notes section inner HTML
+    technical: z.object({
+      artifactSha256: z.string().regex(/^[0-9a-f]{64}$/),
+      artifactLabel: z.string(),
+      stats: z.array(z.object({ value: z.string(), label: z.string() })),
+      codecs: z.array(z.object({
+        name: z.string(), size: z.string(), ratio: z.string(), rate: z.string(), selected: z.boolean().optional(),
+      })),
+      phases: z.array(z.object({ name: z.string(), p50: z.number(), p99: z.number(), maximum: z.number() })),
+      intervalDots: z.number().positive(),
+    }).optional(),
   }),
 });
 

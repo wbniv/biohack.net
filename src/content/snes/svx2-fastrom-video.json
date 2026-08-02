@@ -13,5 +13,29 @@
   "keysHtml": [
     "Start pauses/resumes; A resumes; L/R step one frame; Left/Right seek one second or shuttle at 2&times;/4&times;/8&times; when held. Keyboard and touch use the matching on-screen SNES controls."
   ],
-  "doc": "<h2>Two videos, one cartridge</h2><p>Frames 0–599 are NASA SVS Artemis animation; frames 600–899 are real launch-camera footage. Boot and random access retain independent keyframes, while sequential playback uses ordinary deltas across the cut plus a dedicated frame-899-to-frame-0 loop delta, so a slow keyframe never enters the real-time path.</p><h2>Transport</h2><p>Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. The transport appears while paused, stepping, seeking, or shuttling. Browser keyboards and phone touch controllers use the same labeled SNES buttons.</p><h2>Cartridge-native dashboard</h2><p>Mode 7 video occupies scanlines 0–191; Mode 1 BG3 renders <b>TIME</b>, measured <b>FPS</b>, health, and transport below. Palette switching at the video cut preserves the dashboard colors and HDMA split.</p><h2>60-packet/s full-pipeline result</h2><p>The regression records <b>3,819 exact presentations in 3,819 eligible intervals</b> of a 4,000-frame run, with zero decoder errors and zero deadline slips. Separate animation and real-camera screenshot rendezvous gates verify video, dashboard, palette transition, and frame order. The current masters contain distinct frames authored at 30 fps, so this cartridge is an honest 60-packet/s throughput proof that plays their motion at twice the authored rate—not yet a claim of native 60 fps source capture.</p><p class=\"rp-foot\">ROM SHA-256 <code>d1b7b37aba4f28d546a63337a7f2c7d5c9d717dca3586ab6cfab4a7c5b1e70ff</code>. Sources: NASA SVS 14191 animation and NASA Artemis I press-site camera footage. No Duck and Cover footage is present.</p>"
+  "doc": "<h2>Two videos, one cartridge</h2><p>Frames 0–599 are NASA SVS Artemis animation; frames 600–899 are real launch-camera footage. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. Browser keyboards and phone touch controllers use the matching on-screen SNES controls.</p><p class=\"rp-foot\">Sources: NASA SVS 14191 animation and NASA Artemis I press-site camera footage. No <em>Duck and Cover</em> footage or animated turtle sequence is present.</p>",
+  "technical": {
+    "artifactSha256": "d1b7b37aba4f28d546a63337a7f2c7d5c9d717dca3586ab6cfab4a7c5b1e70ff",
+    "artifactLabel": "Published 4 MiB Fast HiROM · 900-frame two-video stream",
+    "stats": [
+      {"value":"3,819 / 3,819","label":"eligible presentations"},
+      {"value":"0 / 0","label":"deadline slips / decode errors"},
+      {"value":"4,480 B","label":"70-tile visible frame"},
+      {"value":"4 MiB","label":"Fast HiROM cartridge"}
+    ],
+    "codecs": [
+      {"name":"Raw block copy","size":"1,368,600 B","ratio":"101.83%","rate":"87.6 fps"},
+      {"name":"Gallery LZSS","size":"747,548 B","ratio":"55.62%","rate":"2.1–2.3 fps"},
+      {"name":"SVC1","size":"755,658 B","ratio":"56.22%","rate":"0.6 fps"},
+      {"name":"SVX1 XOR + PackBits","size":"705,621 B","ratio":"52.50%","rate":"15.6–34.3 fps"},
+      {"name":"SVX2 replacement/copy","size":"766,569 B","ratio":"57.04%","rate":"60.8–69.4 fps","selected":true}
+    ],
+    "phases": [
+      {"name":"FastROM stage","p50":8192,"p99":10240,"maximum":11264},
+      {"name":"SVX2 decode","p50":64512,"p99":69632,"maximum":254976},
+      {"name":"VRAM presentation","p50":10240,"p99":10240,"maximum":10240},
+      {"name":"Combined","p50":83968,"p99":89088,"maximum":275456}
+    ],
+    "intervalDots": 89342
+  }
 }

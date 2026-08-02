@@ -8,9 +8,11 @@
 // drift-gated in CI by `bsnes-jg-player sync --check`). ROM selfchecks and touch
 // nav come from public/play/roms/manifest.json, never from the page.
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { getCollection } from 'astro:content';
 import SnesPlayer from '@wbniv/bsnes-jg-player/SnesPlayer.astro';
 import Base from '../../layouts/Base.astro';
+import Svx2Technical from '../../components/Svx2Technical.astro';
 import { categoryLabel } from '../../data/snes-categories';
 import '../../styles/snes-page.css';
 
@@ -34,6 +36,13 @@ export async function getStaticPaths() {
 
 const { demo } = Astro.props;
 const [firstKeys, ...moreKeys] = demo.keysHtml;
+if (demo.technical) {
+  const rom = readFileSync(`public/play/roms/${demo.slug}.sfc`);
+  const actual = createHash('sha256').update(rom).digest('hex');
+  if (actual !== demo.technical.artifactSha256) {
+    throw new Error(`${demo.slug}: technical-page ROM SHA-256 ${demo.technical.artifactSha256} does not match ${actual}`);
+  }
+}
 ---
 
 <Base title={demo.pageTitle} description={demo.pageDesc}>
@@ -50,6 +59,7 @@ const [firstKeys, ...moreKeys] = demo.keysHtml;
     </SnesPlayer>
 
     <section class="rp-doc" set:html={demo.doc} />
+    {demo.technical && <Svx2Technical data={demo.technical} />}
 
   </main>
 </Base>
