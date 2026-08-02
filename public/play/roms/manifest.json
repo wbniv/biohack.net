@@ -1332,8 +1332,8 @@
         "off": "0x2C",
         "len": 4,
         "want": "0x00000000",
-        "frames": 4000,
-        "label": "whole 300-frame SVX2 loop byte-checked against the host oracle, plus two clean playback loops with zero decode or checksum failures (composite gate @ WRAM $002C)"
+        "frames": 2000,
+        "label": "two clean playback loops of the 300-frame SVX2 stream with zero decode failures (composite gate @ WRAM $002C); the whole-loop byte-for-byte check against the host oracle runs in the build gate"
       }
     }
   ]
