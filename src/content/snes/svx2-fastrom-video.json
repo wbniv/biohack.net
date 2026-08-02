@@ -1,10 +1,10 @@
 {
   "order": 117,
   "slug": "svx2-fastrom-video",
-  "title": "SVX2 FastROM Animated Video",
+  "title": "SVX2 60 FPS FastROM Video",
   "desc": "Two Artemis videos—NASA SVS animation and real launch-camera footage—with zero-slip 60-packet/s SVX2 decoding, transport controls, and a cartridge-native dashboard.",
   "keys": "Start pause/resume · A resume · L/R frame step · ←/→ seek or hold to shuttle",
-  "category": "rendering",
+  "category": "video",
   "displayMode": 7,
   "pageTitle": "SVX2 FastROM Animated Video — bioHACK•NET",
   "pageDesc": "Run a real SNES FastROM with an animated title, SVX2-compressed Artemis video, and a non-Mode-7 tiled dashboard.",

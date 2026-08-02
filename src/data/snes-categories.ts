@@ -8,6 +8,7 @@ export const categories = [
   { id: 'motion',     label: 'Motion & Curves' },
   { id: 'algorithms', label: 'Algorithms & Data' },
   { id: 'rendering',  label: 'Rendering & Graphics' },
+  { id: 'video',      label: 'Video Playback' },
   { id: 'signals',    label: 'Signals & Audio' },
   { id: 'bignums',    label: 'Big Numbers' },
   { id: 'ciphers',    label: 'Ciphers & Bit Tricks' },
