@@ -1322,7 +1322,8 @@
         "len": 4,
         "want": "0x00000000",
         "frames": 4000,
-        "label": "native-60p 1800-frame Fast ExHiROM SVX2 stream, two loops, dashboard reset, three cut labels, seam crossing, and zero failures (composite gate @ WRAM $0206)"
+        "blankscanRows": 5,
+        "label": "mixed-cadence 1200-frame Fast ExHiROM SVX2 stream, Artemis 2x plus Apollo 59.94p, dashboard reset, three cut labels, seam crossing, and zero failures (composite gate @ WRAM $0206)"
       }
     },
     {

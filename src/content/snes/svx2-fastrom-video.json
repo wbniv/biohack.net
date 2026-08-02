@@ -2,25 +2,25 @@
   "order": 117,
   "slug": "svx2-fastrom-video",
   "title": "SVX2 60 FPS FastROM Video",
-  "desc": "Thirty seconds of native-60p NASA XRISM imagery with zero-slip SVX2 decoding, transport controls, and an intentional ExHiROM seam crossing.",
+  "desc": "Twenty seconds of NASA launch imagery: two spectacular Artemis animations at 2× plus genuine 59.94p Apollo 11 footage, with zero-slip SVX2 decoding.",
   "keys": "Start pause/resume · A resume · L/R frame step · ←/→ seek or hold to shuttle",
   "category": "video",
   "displayMode": 7,
   "pageTitle": "SVX2 FastROM Animated Video — bioHACK•NET",
-  "pageDesc": "Run a 64 Mbit SNES Fast ExHiROM with an animated title, 1,800 native-60p SVX2 frames, and a non-Mode-7 tiled dashboard.",
+  "pageDesc": "Run a 64 Mbit SNES Fast ExHiROM with an animated title, 1,200 distinct SVX2 frames, mixed 2×/59.94p NASA imagery, and a tiled dashboard.",
   "heading": "SVX2 FastROM Animated Video",
-  "lede": "Three ten-second cuts from NASA’s native-60p XRISM master: <b>1,800 unique SNES frames</b> presented in 1,800 consecutive VBlanks by a <b>64&nbsp;Mbit (8&nbsp;MiB) Fast ExHiROM</b> cartridge.",
+  "lede": "Artemis launch and return animations at an intentional 2×, followed by ten seconds of genuine ~59.94p Apollo 11 launch footage: <b>1,200 distinct SNES frames</b> in a <b>64&nbsp;Mbit (8&nbsp;MiB) Fast ExHiROM</b> cartridge.",
   "keysHtml": [
     "Start pauses/resumes; A resumes; L/R step one frame; Left/Right seek one second or shuttle at 2&times;/4&times;/8&times; when held. Keyboard and touch use the matching on-screen SNES controls."
   ],
-  "doc": "<h2>Native 60 fps across an ExHiROM seam</h2><p>Frames 0–599, 600–1199, and 1200–1799 are three distinct ten-second excerpts from NASA SVS’s native-60p XRISM turntable master. The third cut begins exactly at logical stream offset <code>$3F0000</code>, crossing from ExHiROM region A into file <code>$410000</code> / CPU bank <code>$41</code>. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held. Browser keyboards and phone touch controllers use the matching on-screen SNES controls.</p><p class=\"rp-foot\">Source: NASA Scientific Visualization Studio item 20374, <em>XRISM Beauty Shots</em>, credited to NASA’s Goddard Space Flight Center Conceptual Image Lab. No duplicated 30-fps frames, optical-flow interpolation, <em>Duck and Cover</em> footage, or animated turtle sequence is present.</p>",
+  "doc": "<h2>Launch spectacle at one frame per VBlank</h2><p>Frames 0–299 and 300–599 preserve consecutive frames from NASA SVS’s progressive 29.97p Artemis animations and deliberately present them at 2&times;. Frames 600–1199 preserve all 600 consecutive temporal samples from NASA Images’ progressive ~59.94p Apollo 11 press-site master. No optical-flow frames are synthesized. The Apollo cut begins exactly at logical stream offset <code>$3F0000</code>, crossing from ExHiROM region A into file <code>$410000</code> / CPU bank <code>$41</code>. Start pauses/resumes, A resumes after seeking, L/R step one frame, and Left/Right seek one second or shuttle at 2&times;, 4&times;, then 8&times; when held.</p><p class=\"rp-foot\">Sources: NASA SVS item 14191, <em>Artemis I Mission Animations</em>, and NASA Images’ Apollo 11 press-site film KSC-19690716-MH-NAS01-0001. No <em>Duck and Cover</em> footage or animated turtle sequence is present.</p>",
   "technical": {
-    "artifactSha256": "6a4d176be0683bbb135872820e5db65ed2ef1b97d7b911149a64a43c8c28af24",
-    "artifactLabel": "Published 64 Mbit (8 MiB) Fast ExHiROM · 1,800 native-60p frames · 30 seconds",
+    "artifactSha256": "c3d7cd9e76d840f77d98aed96806ee2fb5268409a5ca6bcd81f9b1dc1bceefa2",
+    "artifactLabel": "Published 64 Mbit (8 MiB) Fast ExHiROM · 1,200 distinct frames · 20 seconds",
     "stats": [
       {"value":"9,000 / 9,000","label":"eligible presentations"},
       {"value":"0 / 0","label":"deadline slips / decode errors"},
-      {"value":"1,800 / 1,800","label":"unique quantized frames"},
+      {"value":"1,200 / 1,200","label":"unique quantized frames"},
       {"value":"64 Mbit (8 MiB)","label":"Fast ExHiROM cartridge"}
     ],
     "codecs": [
