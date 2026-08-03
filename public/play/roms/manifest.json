@@ -1334,7 +1334,7 @@
         "len": 4,
         "want": "0x00000000",
         "frames": 2000,
-        "label": "two clean playback loops of the 300-frame SVX2 stream with zero decode failures (composite gate @ WRAM $002C); the whole-loop byte-for-byte check against the host oracle runs in the build gate"
+        "label": "two clean playback loops of the 600-frame SVX2 stream at one frame per VBlank with zero decode failures (composite gate @ WRAM $002C); the whole-loop byte-for-byte check against the host oracle runs in the build gate"
       }
     }
   ]
