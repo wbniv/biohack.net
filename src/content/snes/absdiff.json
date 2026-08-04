@@ -1,0 +1,14 @@
+{
+  "order": 123,
+  "slug": "absdiff",
+  "title": "Motion-Detect Difference Field",
+  "desc": "Three synchronized motion-detector bands exercise unsigned 8-bit, signed 16-bit, and unsigned 32-bit absolute difference. The same computed values drive the visible silhouettes and the differential CRC. Compiler stress-test #119 (Round 7).",
+  "keys": "Self-running — three width lanes track the same drifting motion silhouette",
+  "category": "signals",
+  "pageTitle": "Motion-Detect Difference Field — bioHACK•NET",
+  "pageDesc": "A runnable SNES compiler probe for u8, s16, and u32 absolute-difference lowering on the 65816.",
+  "heading": "Motion-Detect Difference Field",
+  "lede": "Two drifting signals become three synchronized difference silhouettes, proving the compiler lowers absolute subtraction correctly at every tested width.",
+  "keysHtml": ["Self-running — verified CRC <code>3482</code>."],
+  "doc": "<h2>The operation under test</h2><p>The common expression <code>a &gt; b ? a - b : b - a</code> can be recognized by LLVM as an absolute-difference operation. This ROM forms that expression for unsigned 8-bit, signed 16-bit, and unsigned 32-bit values, then checks the selected lowering against the same host model.</p><div class=\"rp-bugbox\"><p><b>Visible proof:</b> the three separated bands run the same drifting source geometry through u8, s16, and u32 kernels. Cyan edges and yellow motion silhouettes are computed from the actual probe results; the bottom strip tracks difference energy.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0x3482</code>. No compiler defect was found.</p></div><h2>Why three widths?</h2><p>Each width takes a different legalization path on this 8/16-bit target. Running them together catches both missing opcode coverage and errors in multi-limb subtraction while keeping the visual result directly comparable.</p><p class=\"rp-foot\">Compiler stress-test #119, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}
