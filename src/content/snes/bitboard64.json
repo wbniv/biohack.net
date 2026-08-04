@@ -1,0 +1,14 @@
+{
+  "order": 125,
+  "slug": "bitboard64",
+  "title": "Bitboard Knight Tour",
+  "desc": "A 64-bit knight-move generator uses popcountll, clzll, and ctzll to select and score each move. The three i64 intrinsics lower inline and drive both the tour and its differential CRC. Compiler stress-test #120 (Round 7).",
+  "keys": "Self-running — gold knight, cyan reachable squares, blue visited trail",
+  "category": "algorithms",
+  "pageTitle": "Bitboard Knight Tour — bioHACK•NET",
+  "pageDesc": "A runnable SNES compiler probe for 64-bit popcount, leading-zero, and trailing-zero operations.",
+  "heading": "Bitboard Knight Tour",
+  "lede": "A knight crosses a 64-bit chessboard while three bit-count operations score its reach, find its next move, and locate its active bit.",
+  "keysHtml": ["Self-running — verified CRC <code>C074</code>."],
+  "doc": "<h2>The operations under test</h2><p>Each board is one 64-bit integer. Knight attacks are shift-and-mask bitboards; <code>popcountll</code> scores reachable squares, <code>ctzll</code> selects the next set bit, and <code>clzll</code> locates it from the opposite edge.</p><div class=\"rp-bugbox\"><p><b>Lowering:</b> LLVM forms <code>ctpop.i64</code>, <code>cttz.i64</code>, and <code>ctlz.i64</code>. This backend expands all three inline rather than calling the helper routines anticipated by the original plan.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0xC074</code> on MAME and bsnes-jg.</p></div><h2>What the board shows</h2><p>The selected knight is gold, currently reachable squares are cyan, and visited squares settle blue. Those states are the same bitboards folded into the differential CRC.</p><h2>Bring-up findings</h2><p>A variable <code>1ULL &lt;&lt; uint8_t</code> exposed an unlegalizable s8-to-s64 extension, and expanding all three count operations inside the pressure-heavy caller exposed undefined imaginary-register uses. The published shape constructs one-hot values with constant shifts and isolates each count operation behind a noinline helper; both findings remain recorded for compiler follow-up.</p><p class=\"rp-foot\">Compiler stress-test #120, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}
