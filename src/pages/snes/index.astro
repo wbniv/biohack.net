@@ -20,10 +20,13 @@ const previewV = (slug: string) => {
   catch { return ''; }
 };
 
-const byCategory = categories.map(cat => ({
-  ...cat,
-  items: demos.filter(d => d.category === cat.id),
-})).filter(c => c.items.length > 0);
+const byCategory = [
+  { id: 'newest', label: 'Newest Releases', items: demos.slice(0, 8) },
+  ...categories.map(cat => ({
+    ...cat,
+    items: demos.filter(d => d.category === cat.id),
+  })).filter(c => c.items.length > 0),
+];
 ---
 
 <Base title="SNES Demos — bioHACK•NET" description={`${demos.length} in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — each a stress-test for the compiler's 16-bit-accumulator codegen (+mos-a16). Play them in your browser.`}>
