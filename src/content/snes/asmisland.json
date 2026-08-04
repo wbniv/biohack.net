@@ -1,0 +1,14 @@
+{
+  "order": 122,
+  "slug": "asmisland",
+  "title": "Inline-Asm Island",
+  "desc": "Native-width C arithmetic crosses an opaque inline-assembly island that changes M, clobbers A and flags, and uses explicitly encoded A8/A16 immediates. Compiler stress-test #125 (Round 7).",
+  "keys": "Self-running — moving scan lines cross the red assembly island",
+  "category": "signals",
+  "pageTitle": "Inline-Asm Island — bioHACK•NET",
+  "pageDesc": "A runnable SNES compiler probe testing opaque inline assembly inside native-width 65816 C code.",
+  "heading": "Inline-Asm Island",
+  "lede": "Native C values cross an opaque patch of hand-written machine code without losing their width state or register contents.",
+  "keysHtml": ["Self-running — verified CRC <code>260B</code>."],
+  "doc": "<h2>The boundary under test</h2><p>The 65816 decodes immediate operands according to the live M flag, but inline assembly is opaque to the compiler's width-state analysis. This probe keeps native-width C values live across an island that saves P, switches to A8, clobbers A and flags, switches to A16, then restores P.</p><div class=\"rp-bugbox\"><p><b>A8 bytes:</b> <code>e2 20 a9 5a</code> — <code>SEP #$20; LDA #$5A</code>.</p><p><b>A16 bytes:</b> <code>c2 20 a9 ff 00</code> — <code>REP #$20; LDA #$00FF</code>.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0x260B</code>. No compiler defect was found.</p></div><h2>Why raw bytes matter</h2><p>A width-unaware disassembler can consume the following opcode as the high byte of an A8 immediate. The compiler gate therefore checks the exact object bytes and separately proves that generated C code re-establishes M16 after the island.</p><p class=\"rp-foot\">Compiler stress-test #125, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}

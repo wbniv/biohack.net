@@ -1349,6 +1349,17 @@
       }
     },
     {
+      "id": "asmisland",
+      "title": "Inline-Asm Island",
+      "selfcheck": {
+        "off": "0xBE",
+        "len": 2,
+        "want": "0x260B",
+        "frames": 300,
+        "label": "opaque inline-asm width-state CRC (corpus @ WRAM 0xBE)"
+      }
+    },
+    {
       "id": "apollo-daylight",
       "title": "Apollo 11 Daylight Launch",
       "selfcheck": {
