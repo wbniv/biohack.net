@@ -1,0 +1,16 @@
+{
+  "order": 121,
+  "slug": "mixedwidth",
+  "title": "Split-Personality Link",
+  "desc": "A call-ping-pong chain crossing between per-function A16 and forced-A8 code. IR and disassembly prove the feature sets differ while the shared ABI keeps every result bit-exact. Compiler stress-test #126 (Round 7).",
+  "keys": "Self-running — the split field visualizes calls crossing the A8/A16 boundary",
+  "category": "signals",
+  "pageTitle": "Split-Personality Link — bioHACK•NET",
+  "pageDesc": "A runnable SNES compiler probe mixing per-function 65816 accumulator-width features in one program.",
+  "heading": "Split-Personality Link",
+  "lede": "One program, two code-generation personalities: native A16 arithmetic calls forced-default A8 byte code and returns through the shared ABI.",
+  "keysHtml": [
+    "Self-running — verified CRC <code>83B7</code>."
+  ],
+  "doc": "<h2>The boundary under test</h2><p>Every earlier native-width ROM selected one target feature set for its whole translation unit. This probe uses Clang's per-function <code>target</code> attribute to put native A16 and forced-default A8 functions in the same link, then calls across the boundary in both directions.</p><div class=\"rp-bugbox\"><p><b>Native side:</b> <code>target(&quot;mos-a16&quot;)</code> produces real <code>rep #$20</code> / <code>sep #$20</code> brackets.</p><p><b>Byte side:</b> <code>target(&quot;no-mos-a16,no-mos-xy16&quot;)</code> remains transition-free A8 code even in globally native comparison builds.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0x83B7</code>. No compiler defect was found.</p></div><h2>What the gate does</h2><p>A 192-step call-ping-pong chain alternates 16-bit rotate/add/XOR work with byte-lane mixing. Every result is folded into the browser-verified CRC. The compiler gate also inspects IR target features and machine code, so a silently ignored attribute cannot pass.</p><p class=\"rp-foot\">Compiler stress-test #126, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}

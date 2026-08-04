@@ -1327,6 +1327,28 @@
       }
     },
     {
+      "id": "nmitally",
+      "title": "VBlank Interrupt Tally",
+      "selfcheck": {
+        "off": "0x34",
+        "len": 2,
+        "want": "0xDA3B",
+        "frames": 500,
+        "label": "120-NMI width-state tally (corpus @ WRAM 0x34)"
+      }
+    },
+    {
+      "id": "mixedwidth",
+      "title": "Split-Personality Link",
+      "selfcheck": {
+        "off": "0x13E7",
+        "len": 2,
+        "want": "0x83B7",
+        "frames": 300,
+        "label": "per-function A8/A16 call-boundary CRC (corpus @ WRAM 0x13E7)"
+      }
+    },
+    {
       "id": "apollo-daylight",
       "title": "Apollo 11 Daylight Launch",
       "selfcheck": {
