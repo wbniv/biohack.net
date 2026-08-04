@@ -1,0 +1,14 @@
+{
+  "order": 127,
+  "slug": "llabs64",
+  "title": "Seismograph Absolute Trace",
+  "desc": "The C llabs function and the signed x < 0 ? -x : x idiom rectify 64-bit samples across every 16-bit limb, including INT64_MIN+1. The tested values drive a dual-trace scope. Compiler stress-test #121 (Round 7).",
+  "keys": "Self-running — gold signed trace and cyan rectified envelope",
+  "category": "signals",
+  "pageTitle": "Seismograph Absolute Trace — bioHACK•NET",
+  "pageDesc": "A runnable SNES compiler probe for signed 64-bit absolute value and its four-limb negate chain.",
+  "heading": "Seismograph Absolute Trace",
+  "lede": "Signed 64-bit samples cross zero while two independent absolute-value forms rectify them into the same bright envelope.",
+  "keysHtml": ["Self-running — verified CRC <code>8490</code>."],
+  "doc": "<h2>The operation under test</h2><p>The trace feeds positive and negative 64-bit values through both the C library <code>llabs</code> function and the canonical <code>x &lt; 0 ? -x : x</code> idiom. Samples cross the 16-, 32-, and 48-bit limb boundaries and include <code>INT64_MIN+1</code>, the largest legal negative magnitude; <code>INT64_MIN</code> is deliberately excluded because negating it is undefined in C.</p><div class=\"rp-bugbox\"><p><b>Compiler shape:</b> signed i64 absolute value forms in LLVM IR and passes the non-LTO machine verifier.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0x8490</code> on MAME and bsnes-jg.</p></div><h2>What the scope shows</h2><p>Gold is the signed input around the blue zero line. Cyan is its rectified magnitude mirrored above and below; the tallest pulse is the <code>INT64_MIN+1</code> case. Every plotted point comes from the same values folded into the differential CRC.</p><p class=\"rp-foot\">Compiler stress-test #121, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}

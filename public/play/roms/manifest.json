@@ -1413,6 +1413,17 @@
         "frames": 2000,
         "label": "two clean playback loops of the 600-frame SVX2 stream at one frame per VBlank with zero decode failures (composite gate @ WRAM $002C); the whole-loop byte-for-byte check against the host oracle runs in the build gate"
       }
+    },
+    {
+      "id": "llabs64",
+      "title": "Seismograph Absolute Trace",
+      "selfcheck": {
+        "off": "0x13F9",
+        "len": 2,
+        "want": "0x8490",
+        "frames": 480,
+        "label": "llabs and signed i64 absolute-value CRC (corpus @ WRAM 0x13F9)"
+      }
     }
   ]
 }
