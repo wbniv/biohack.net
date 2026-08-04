@@ -8,8 +8,9 @@ import { readFileSync } from 'node:fs';
 
 // The demo registry lives in the `snes` content collection (one JSON per ROM,
 // which also carries each page's prose for /snes/[slug]). Gallery order = the
-// entries' `order` field (the old snes-demos.ts array order).
-const demos = (await getCollection('snes')).map((e) => e.data).sort((a, b) => a.order - b.order);
+// entries' `order` field (the old snes-demos.ts array order). Higher values are newer, so put
+// newly published ROMs first instead of making visitors hunt at the end of the gallery.
+const demos = (await getCollection('snes')).map((e) => e.data).sort((a, b) => b.order - a.order);
 
 // Cache-bust the card thumbnails: /play/* is served `immutable, max-age=1y`, and these <img> URLs
 // have no ?v= (unlike the app.js-loaded ROM/engine assets), so a regenerated preview at the same
