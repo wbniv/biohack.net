@@ -1371,6 +1371,17 @@
       }
     },
     {
+      "id": "farspill",
+      "title": "Far-Pointer Spill Funnel",
+      "selfcheck": {
+        "off": "0x13E9",
+        "len": 2,
+        "want": "0x7F3B",
+        "frames": 420,
+        "label": "multi-Imag32 spill/reload CRC (corpus @ WRAM 0x13E9)"
+      }
+    },
+    {
       "id": "apollo-daylight",
       "title": "Apollo 11 Daylight Launch",
       "selfcheck": {

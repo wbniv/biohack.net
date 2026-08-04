@@ -1,0 +1,14 @@
+{
+  "order": 124,
+  "slug": "farspill",
+  "title": "Far-Pointer Spill Funnel",
+  "desc": "Ten non-rematerializable 32-bit far pointers stay live across a clobbering multiply call, forcing seven complete Imag32 stack slots and 28-byte spill/reload traffic. Compiler stress-test #131 (Round 7).",
+  "keys": "Self-running — pointer ribbons squeeze through registers and spill parking slots",
+  "category": "signals",
+  "pageTitle": "Far-Pointer Spill Funnel — bioHACK•NET",
+  "pageDesc": "A runnable SNES stress test for spilling and restoring multiple live 32-bit far pointers on the 65816.",
+  "heading": "Far-Pointer Spill Funnel",
+  "lede": "Ten banked pointers crowd a register funnel, park on the stack, survive a clobbering call, and reconnect to their original far-data targets.",
+  "keysHtml": ["Self-running — verified CRC <code>7F3B</code>."],
+  "doc": "<h2>The pressure under test</h2><p>A 65816 far pointer occupies a four-byte imaginary-register quad. This probe creates ten runtime-derived, non-rematerializable far pointers, keeps all of them live across a real 32-bit multiply call, then dereferences every pointer from ROM bank 1.</p><div class=\"rp-bugbox\"><p><b>Measured pressure:</b> greedy register allocation creates seven four-byte <code>Imag32</code> spill slots. They expand to 28 byte stores and 28 byte reloads.</p><p><b>Standing producer gate:</b> all eight <code>LDImm</code> destinations are hardware A/X/Y registers; no malformed imaginary-register destination returned.</p><p><b>Result:</b> host, a16, and xy16 all return <code>0x7F3B</code> on MAME and bsnes-jg. No new compiler defect was found.</p></div><h2>What the ROM shows</h2><p>Colored pointer ribbons enter a narrow yellow register funnel. Magenta branches represent values parked outside the funnel; recovered far-data samples choose the ribbons' exit paths. The display is driven by the same pressure kernel as the differential gate.</p><p class=\"rp-foot\">Compiler stress-test #131, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}
