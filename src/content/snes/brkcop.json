@@ -1,0 +1,14 @@
+{
+  "order": 132,
+  "slug": "brkcop",
+  "title": "Software Vectors",
+  "desc": "Real BRK and COP software interrupts enter distinct native-mode vectors from both 8-bit and 16-bit width contexts. Signature-byte return, interrupt envelopes, and handler state feed two independently moving lanes. Compiler stress-test #140 (Round 7).",
+  "keys": "Self-running — BRK and COP packets traverse their own vector lanes",
+  "category": "signals",
+  "pageTitle": "Software Vectors — bioHACK•NET",
+  "pageDesc": "A runnable SNES test of native-mode BRK and COP vectors, signature bytes, and width-safe interrupt return.",
+  "heading": "Software Vectors",
+  "lede": "BRK and COP cross two distinct software-interrupt vectors while signature bytes and width-safe RTI returns are checked live.",
+  "keysHtml": ["Self-running — verified CRC <code>A34C</code>."],
+  "doc": "<h2>The software-interrupt path</h2><p>The ROM fires real <code>brk #$42</code> and <code>cop #$5a</code> instructions from both native 16-bit and ordinary 8-bit width contexts. Separate C interrupt handlers count and mix each trap before <code>rti</code> resumes immediately after the signature byte.</p><div class=\"rp-bugbox\"><p><b>Platform finding:</b> the SNES SDK previously sent native COP to address <code>$0000</code> and BRK to the shared IRQ handler.</p><p><b>Fix:</b> distinct weak BRK/COP handlers and native vector slots across all five SNES platform layouts. The demo also motivated standalone assembler support for BRK's signature operand.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0xA34C</code>; vector slots resolve to the real handlers.</p></div><h2>What it shows</h2><p>The upper BRK lane and lower COP lane carry independently moving packets derived from their own handler state. The gold seam represents the now-distinct vector slots; the HUD exposes exact hit counts and the verified CRC.</p><p class=\"rp-foot\">Compiler stress-test #140, Round 7.</p>"
+}
