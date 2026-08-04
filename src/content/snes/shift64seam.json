@@ -1,0 +1,14 @@
+{
+  "order": 126,
+  "slug": "shift64seam",
+  "title": "64-Bit Limb-Seam Barrel",
+  "desc": "Variable 64-bit left, logical-right, and arithmetic-right shifts sweep the 15/16/17 and 31/32/33 limb boundaries. Three synchronized texture bands make carry and sign fill visible. Compiler stress-test #138 (Round 7).",
+  "keys": "Self-running — three shift bands sweep the highlighted limb seams",
+  "category": "ciphers",
+  "pageTitle": "64-Bit Limb-Seam Barrel — bioHACK•NET",
+  "pageDesc": "A runnable SNES compiler probe for variable 64-bit shifts across 16- and 32-bit limb boundaries.",
+  "heading": "64-Bit Limb-Seam Barrel",
+  "lede": "A striped 64-bit texture passes through left, logical-right, and sign-preserving right shifters while the count crosses every dangerous limb boundary.",
+  "keysHtml": ["Self-running — verified CRC <code>2007</code>."],
+  "doc": "<h2>The seams under test</h2><p>The runtime count repeatedly visits 15/16/17 and 31/32/33, plus the 47/48/49 and 62/63 edges. Those are the points where a multi-limb shift changes which 16-bit word supplies bits to its neighbor.</p><div class=\"rp-bugbox\"><p><b>Operations:</b> variable <code>shl i64</code>, <code>lshr i64</code>, and <code>ashr i64</code> all form and pass the machine verifier when the count is explicitly widened to 64 bits.</p><p><b>Result:</b> host, default, a16, and xy16 all return <code>0x2007</code> on MAME and bsnes-jg.</p></div><h2>What the barrel shows</h2><p>The upper cyan band shifts left, the middle cyan band shifts logically right, and the lower blue/gold band shifts arithmetically right so sign fill stays visible. The bottom cursor marks the active four-bit group.</p><h2>Related finding</h2><p>The natural narrow-count form <code>uint64 &lt;&lt; uint8</code> still exposes an unlegalizable <code>G_ANYEXT s8 to s64</code>. The published ROM widens the count before the operation; the narrow reproducer remains in the source tree for the backend fix.</p><p class=\"rp-foot\">Compiler stress-test #138, Round 7. Source and full test record live in <a href=\"https://github.com/wbniv/llvm-mos-65816\">llvm-mos-65816</a>.</p>"
+}
