@@ -3,6 +3,7 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { categories } from '../../data/snes-categories';
+import { assertMode7Contract } from '../../data/mode7-contract.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
@@ -27,6 +28,18 @@ const byCategory = [
     items: demos.filter(d => d.category === cat.id),
   })).filter(c => c.items.length > 0),
 ];
+
+// Build-time Mode 7 data contract (llvm-mos-65816 plan #123, "Data contract"). Fails this build if
+// the `displayMode: 7` set drifts from the committed ledger, or if a Mode 7 demo renders no card
+// (and therefore no data-display-mode hook and no visible 7 badge). `renderedRecords` is every card
+// this page emits, "Newest Releases" duplicates included — the contract counts distinct slugs.
+// mode7.count is DERIVED from the registry and is what the filter/badge surface is described by;
+// no Mode 7 total is hardcoded in this page.
+const mode7 = assertMode7Contract({
+  site: 'biohack.net',
+  demos,
+  renderedRecords: byCategory.flatMap(c => c.items),
+});
 ---
 
 <Base title="SNES Demos — bioHACK•NET" description={`${demos.length} in-browser Super Nintendo demos compiled from C with the llvm-mos-65816 toolchain — each a stress-test for the compiler's 16-bit-accumulator codegen (+mos-a16). Play them in your browser.`}>
@@ -43,7 +56,7 @@ const byCategory = [
       </p>
     </header>
 
-    <div class="gl-mode-filter" data-total={demos.length}>
+    <div class="gl-mode-filter" data-total={demos.length} data-mode7-count={mode7.count}>
       <button type="button" class="gl-mode-toggle" aria-pressed="false" aria-label="Show Mode 7 demos only">
         <span class="gl-mode-filter-seven" aria-hidden="true">7</span>
         <span>Mode 7</span>
