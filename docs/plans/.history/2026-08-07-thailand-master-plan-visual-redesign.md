@@ -1,9 +1,14 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/5d56794) | fix: remove Thailand page history spine |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/329df0c) | feat: redesign Thailand plan in biohack dark theme |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+5d56794	author	Will Norris
+5d56794	added	3
+5d56794	deleted	1
+5d56794	files	1
 329df0c	author	Will Norris
 329df0c	added	11
 329df0c	deleted	0

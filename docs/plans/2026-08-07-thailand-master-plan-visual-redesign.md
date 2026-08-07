@@ -131,6 +131,9 @@ that the redesign resets local progress.
 - Rebuild the decision flow so the three application outcomes remain exact:
   issued returns on the issued status; pending remains in Viet Nam under the
   90-day visa; refused activates the visa-exempt/TM.87 fallback.
+- Apply explicit dark-theme fills, strokes, text, arrowheads, and edge-label
+  backgrounds to the decision graph; never rely on light Mermaid defaults under
+  globally light text.
 - Give route-map labels dark-theme halos matching the map background, not pale
   outlines that look double-printed.
 - Keep unrelated Malaysia routes and labels absent.
