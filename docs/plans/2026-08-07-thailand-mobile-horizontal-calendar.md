@@ -33,10 +33,10 @@ readable milestone stack.
 ├──────────────────────────────────────┤
 │ AUGUST                         →     │
 │                                      │
-│ 15 Aug  Mission answers          ↘  │
-│ 15 Aug  Legal consult booked     ↘  │
-│ 22 Aug  Funds seasoned           ↘  │
-│ 31 Aug  Rabies #2                ↘  │
+│ 15  Mission answers              ↘  │
+│ 15  Legal consult booked         ↘  │
+│ 22  Funds seasoned               ↘  │
+│ 31  Rabies #2                    ↘  │
 │                                      │
 │         swipe horizontally →         │
 └──────────────────────────────────────┘
@@ -45,8 +45,8 @@ readable milestone stack.
 
 ┌──────────────────────────────────────┐
 │ OCTOBER                       ←  →  │
-│ 1 Oct   Chula calendar          ↘  │
-│ 6 Oct   AQS confirmed           ↘  │
+│ 1   Chula calendar              ↘  │
+│ 6   AQS confirmed               ↘  │
 │ …                                    │
 └──────────────────────────────────────┘
 ```
@@ -54,6 +54,10 @@ readable milestone stack.
 ## Interaction
 
 - Time runs left to right; columns remain in chronological phase order.
+- Within a single-month column, milestone labels show the day only because the
+  sticky column heading already supplies the month. Retain descriptive values
+  such as `ASAP`, `Arrival`, `Within 48h`, and `Day 45`; use a month abbreviation
+  only when a phase spans multiple months and omission would be ambiguous.
 - Column width is `min(82vw, 320px)` with a narrow visible glimpse of the next
   column to advertise horizontal movement.
 - Use CSS `scroll-snap-type: x mandatory` and `scroll-snap-align: start`.
@@ -92,6 +96,7 @@ readable milestone stack.
 - The full mobile calendar visibly reads as time moving left to right.
 - Labels remain readable without shrinking the entire desktop calendar.
 - Horizontal navigation is obvious, direct, and synchronized with task state.
+- Redundant month names do not consume milestone-card space.
 
 ## Implementation result
 
