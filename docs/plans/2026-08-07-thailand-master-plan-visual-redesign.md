@@ -81,7 +81,9 @@ Use the same font stack and hierarchy as the better-designed biohack.net pages:
 - tabular numerals for dates where available.
 
 The page should not inherit the Markdown preview's revision markers, blame
-highlights, metadata card, or document-export footer.
+highlights, metadata card, document-export footer, or vertical history spine.
+No decorative or revision line may run through the reading column; any future
+timeline treatment must sit fully outside the text measure or be omitted.
 
 ### Layout
 
