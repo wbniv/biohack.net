@@ -49,10 +49,14 @@ test('global progress is persistent, display-only, and clears sticky layers', ()
   assert.match(page, /<dt>Thai study<\/dt><dd>Every visa route<\/dd>/);
 });
 
-test('mobile calendar is complete, inline, and vertically grouped', () => {
+test('mobile calendar is an inline three-month pager', () => {
+  assert.match(page, /class="mobile-calendar-pager"/);
+  assert.match(page, /id="calendar-prev" aria-label="Previous months"/);
+  assert.match(page, /id="calendar-next" aria-label="Next months"/);
   assert.match(page, /class="mobile-inline-calendar" data-calendar/);
   assert.match(page, /class="mobile-calendar-month"/);
-  assert.match(page, /grid-template-columns:54px minmax\(0,1fr\)/);
+  assert.match(page, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(page, /index>=windowStart&&index<windowStart\+3/);
   assert.match(page, /mobileDate\(e\.date, phase\.id\)/);
   assert.equal(page.match(/mobileDate\(e\.date, phase\.id\)/g)?.length, 3);
   assert.doesNotMatch(page, /calendar-sheet|open-calendar|scroll-snap-type:x|mobile-horizontal-calendar/);

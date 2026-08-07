@@ -1,7 +1,7 @@
 # Thailand master plan — three-month mobile calendar carousel
 
 **Date:** 2026-08-07
-**Status:** Approved for implementation
+**Status:** Implemented and verified
 **Target:** <https://biohack.net/thailand/>
 **Builds on:** [Inline mobile milestone calendar](2026-08-07-thailand-mobile-horizontal-calendar.md)
 
@@ -120,3 +120,16 @@ a dedicated line.
 - Three month columns appear across the phone viewport.
 - Explicit arrow controls replace horizontal scrolling.
 - Calendar/task synchronization and accessibility remain intact.
+
+## Implementation result
+
+- **PASS — 2026-08-07.**
+- Mobile displays exactly three equal-width month columns at once.
+- Previous and next buttons traverse the three valid windows and disable at the
+  chronological boundaries.
+- Only the visible three months remain exposed; the other two are hidden and
+  inert until their window is selected.
+- Verification passed: 21 unit/contract tests, production Astro build, all 214
+  Thailand contrast surfaces at 6.01:1 or better, browser checks for the three
+  columns and all navigation states, event parity, zero calendar overflow, and
+  internal link checks.
