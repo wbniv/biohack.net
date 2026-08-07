@@ -16,6 +16,8 @@ letting the full 1200×620 calendar consume most of the viewport.
   active, reveal a sticky calendar dock beneath the top edge.
 - Use the same calendar SVG and the same stable task/event mappings.
 - Limit the dock to roughly 160–190 px high and make it collapsible.
+- Size the SVG from the dock width and crop vertically inside the dock; never
+  scale it from the short dock height, which creates blank side gutters.
 - Highlight, partial, and completed states must update in both calendar views.
 - Provide **View full calendar** and collapse controls.
 - Hide the dock outside the dated checklist and definition-of-done region.
