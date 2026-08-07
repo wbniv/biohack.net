@@ -102,6 +102,9 @@ The disclosure must use a native `<details>`/`<summary>` or an equivalent button
 with correct `aria-expanded` behavior. Checkbox toggling and disclosure toggling
 must not interfere with each other.
 
+**Implemented 2026-08-07:** task rationale and completion criteria are moved
+into native, initially closed `<details>` disclosures labeled “Why / done when.”
+
 ### 5. Add task filters
 
 Add a keyboard-accessible filter bar with:

@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/479dde4) | feat: reflect task completion on Thailand calendar |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/e73f639) | refactor: move Thailand page behind Astro route |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/1d92f65) | fix: enforce Thailand graph contrast in Chrome |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/6c4c430) | docs: plan linked checklist calendar highlighting |
@@ -9,6 +10,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+479dde4	author	Will Norris
+479dde4	added	16
+479dde4	deleted	0
+479dde4	files	1
 e73f639	author	Will Norris
 e73f639	added	6
 e73f639	deleted	0

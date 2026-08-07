@@ -385,6 +385,7 @@ h1{font-size:clamp(38px,7vw,68px)!important;line-height:1!important;letter-spaci
 p,li,td,th{color:var(--th-text)!important}a{color:#e58b6d!important}strong{color:#fff!important}blockquote{background:var(--th-raised)!important;border:1px solid var(--th-line)!important;border-left:4px solid var(--th-terra)!important;border-radius:12px!important;padding:20px 24px!important;color:var(--th-text)!important}
 table{display:table!important;width:100%!important;background:var(--th-surface)!important;border:1px solid var(--th-line)!important;border-radius:14px!important;overflow:hidden!important}th{background:var(--th-raised)!important;color:var(--th-muted)!important;text-transform:uppercase;font-size:11px!important;letter-spacing:.08em}td,th{border-color:var(--th-line)!important;padding:13px!important}tr:nth-child(2n){background:#0d1722!important}
 li.task{list-style:none!important;background:linear-gradient(180deg,var(--th-raised),var(--th-surface))!important;border:1px solid var(--th-line)!important;border-radius:13px!important;margin:12px 0!important;padding:18px 20px!important;transition:.15s border-color,.15s transform}li.task:hover{border-color:#4b6278!important;transform:translateY(-1px)}li.task input{width:22px;height:22px;accent-color:var(--th-terra);vertical-align:middle;margin:0 10px 0 0!important;cursor:pointer}li.task:has(input:checked){opacity:.67;border-color:#25453f!important}li.task:has(input:checked)>strong{text-decoration:line-through}li.task ul{margin-top:10px!important;color:var(--th-muted)!important}li.task ul li{color:var(--th-muted)!important;font-size:13px!important}
+li.task details{margin:10px 0 0 32px}li.task summary{cursor:pointer;color:var(--th-muted);font-size:12px;font-weight:800;letter-spacing:.04em;user-select:none}li.task summary:hover{color:var(--th-text)}li.task details ul{margin:7px 0 0!important;padding-left:18px!important}
 img,svg{max-width:100%!important;height:auto!important;border-radius:14px!important;background:var(--th-surface)!important;border:1px solid var(--th-line)!important}.mermaid-diagram,.mermaid-rendered{background:var(--th-surface)!important;border:1px solid var(--th-line)!important;border-radius:14px!important;padding:16px!important;overflow:auto!important}
 #thailand-calendar{display:block;width:100%;aspect-ratio:1200/620;border:1px solid var(--th-line);border-radius:14px;background:var(--th-surface)}
 #calendar-dock{position:fixed;z-index:50;left:50%;top:8px;transform:translateX(-50%);width:min(960px,calc(100% - 28px));height:178px;padding:28px 10px 8px;background:#09111cf2;border:1px solid var(--th-line);border-radius:14px;box-shadow:0 12px 35px #0009;display:none;overflow:hidden}#calendar-dock.visible{display:block}#calendar-dock object{display:block;width:100%;height:auto;aspect-ratio:1200/620;border:0;background:#111113;transform:translateY(-2px)}#calendar-dock button,#calendar-dock a{position:absolute;z-index:2;top:5px;font-size:11px}#calendar-dock button{right:9px}#calendar-dock a{left:10px}.calendar-mobile-trigger{display:none}
@@ -1030,6 +1031,15 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
 </script>
 <script>
 (() => {
+  document.querySelectorAll('li.task').forEach(card => {
+    const detailList = [...card.children].find(el => el.tagName === 'UL');
+    if (!detailList) return;
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = 'Why / done when';
+    details.append(summary, detailList);
+    card.append(details);
+  });
   const prefix = 'biohack.thailand.v1.';
   const boxes = [...document.querySelectorAll('[data-task-check]')];
   boxes.forEach((box, index) => {
