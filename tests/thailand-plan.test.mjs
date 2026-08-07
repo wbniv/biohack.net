@@ -105,7 +105,6 @@ test('operational checklist is complete and avoids physical SIM purchases', () =
 test('border tasks contain the verified official requirements', () => {
   const korea = tasks.find(item => item.id === 'verify-korea-entry');
   assert.match(korea.action, /visa-free tourist entry/i);
-  assert.match(korea.action, /e-Arrival Card/);
   assert.match(korea.why, /31 December 2026/);
 
   const vietnam = tasks.find(item => item.id === 'verify-vietnam-entry');
@@ -113,4 +112,14 @@ test('border tasks contain the verified official requirements', () => {
   assert.match(vietnam.action, /90-day single-entry/);
   assert.match(vietnam.action, /Da Nang International Airport/);
   assert.match(vietnam.action, /six months/);
+
+  const koreaArrival = tasks.find(item => item.id === 'korea-e-arrival-card');
+  assert.equal(koreaArrival.due, '2026-10-18');
+  assert.deepEqual(koreaArrival.events, ['korea-e-arrival']);
+  assert.match(koreaArrival.action, /e-arrivalcard\.go\.kr/);
+
+  const vietnamArrival = tasks.find(item => item.id === 'vietnam-pre-arrival');
+  assert.equal(vietnamArrival.due, '2026-11-12');
+  assert.deepEqual(vietnamArrival.events, ['vietnam-pre-arrival']);
+  assert.match(vietnamArrival.action, /prearrival\.immigration\.gov\.vn/);
 });
