@@ -68,3 +68,73 @@ Each with a same-basename `.png`, 1440×900 canvas, inline CSS only.
 - **Duplication drift** — the page and the cat doc disagreeing after a later edit. Mitigate by rendering only dates and outcomes here, never the reasoning, and linking out for the why.
 - **Chulalongkorn Day is hardcoded.** It is 23 October annually, but the plan should not grow a Thai holiday calendar for one date; note the assumption inline.
 - The two-permit answer may arrive **after** this ships and flip a cost annotation. Keep that string in one place.
+
+## Verification result
+
+**PASS — 2026‑08‑07.** All seven steps run, evidence below.
+
+### 1. `task build` completes with no new warnings
+
+```
+$ task build
+16:23:57 ✓ Completed in 2.29s.
+16:23:57 [build] 144 page(s) built in 7.82s
+16:23:57 [build] Complete!
+```
+
+**PASS** — no warnings.
+
+### 2. The ladder renders at 1440, 1024 and 390 px with no overlap
+
+Measured `#ladder` geometry and screenshotted each width. Desktop: `top=4141 h=850`; mobile: `top=3633 h=1176` — taller because the two-column `dl` collapses to one, as designed. No overlap at either; the rung marks shrink 44→36 px and the connector arrow shifts with them.
+
+**PASS**
+
+### 3. The three closed AQS days are visually distinct from open days and from "complete"
+
+They render in their own block below the rungs, with a `#813842` left border and `#f19aa4` mono date labels — a red family used nowhere in the calendar's own states (current `#8c6fff`, next `#ffb248`, complete `#43c6a4`). Contrast checked in step 6.
+
+**PASS**
+
+### 4. Hovering a ladder rung highlights its milestone in the calendar
+
+Three rungs carry an event (`plan-a-attempt`, `depart`, `nong-khai-bridge`); the dead end carries none. Each has a `:has()` pair matching the legend-hover behaviour from `b40030e`.
+
+⚠️ **This step forced a correction.** The rungs first carried `data-event-id`, which the behaviour gate treats as a contract meaning *"this is a calendar milestone"* — it asserts every such element contains a checkbox. The gate failed with `calendarCheckboxes:false`, correctly. Rungs now use `data-rung-event`.
+
+**PASS**
+
+### 5. `node --test tests/thailand-plan.test.mjs`, extended for the ladder
+
+```
+$ node --test tests/thailand-plan.test.mjs
+# tests 17
+# pass 17
+# fail 0
+```
+
+Two tests added: the ladder is a single unbroken chain (one head, one dead end, no rung its own fallback, every `fallbackOf` and `event` resolving), and the closed days are real October dates including 10‑23.
+
+**PASS**
+
+### 6. Contrast check for the new states
+
+```
+$ node scripts/check-thailand-contrast.mjs
+Checked 263 native decision, task, and calendar surfaces; minimum 6.01:1
+```
+
+263 surfaces, up from 247 — the 16 new ladder surfaces are included, and the minimum is unchanged.
+
+**PASS**
+
+### 7. Live check after `task bump`
+
+```
+$ node scripts/check-thailand-behavior.mjs
+Thailand behavior PASS
+```
+
+Recorded at deploy below.
+
+**PASS**

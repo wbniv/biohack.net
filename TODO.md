@@ -14,7 +14,6 @@ the `todo-lint: disable=open-rank` line above once the weekly allowance resets.*
 
 ### Thailand plan
 
-- [ ] [departure-ladder] Render the A/B/C departure ladder — timeline, dependencies, contingencies — on the Thailand page, with the three closed AQS days (10‑17, 10‑18, 10‑23) marked and the C→no-successor state visible. See [plan](docs/plans/2026-08-07-departure-ladder-on-the-thailand-page.md).
 
 ### Languages
 
@@ -32,6 +31,7 @@ _Nothing parked._
 
 ## Done
 
+- [x] 2026-08-07 — [departure-ladder] A/B/C departure ladder on the Thailand page: rungs, the dead end, the three closed AQS days, and rung→milestone hover. 7/7 verification steps PASS. See [plan](docs/plans/2026-08-07-departure-ladder-on-the-thailand-page.md).
 - [x] 2026-08-07 — [thailand-sticky-calendar-dock] Re-verified all 7 steps with recorded evidence: build + contrast gate (247 surfaces, min 6.01:1) and the headless behaviour gate (39 assertions). Also disproved a defect reported against the dock. See [plan](docs/plans/2026-08-07-thailand-sticky-calendar-dock.md).
 - [x] 2026-08-07 — [thailand-calendar-svg] Deleted the orphaned `public/thailand/calendar.svg` — unreferenced in `src/`, stale, and duplicating the canonical `~/docs/cat-maps/calendar.svg`; the page renders its calendar from `thailand-plan.mjs`.
 - [x] 2026-08-01 — [cast-receiver-phase1] Language-neutral Cast receiver simulator + protocol, verified 720p–4K. See [plan](../spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md).
@@ -50,5 +50,4 @@ _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage 
 - [verify] **2026-08-06-thailand-master-plan-page** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-06-thailand-master-plan-page.md](docs/plans/2026-08-06-thailand-master-plan-page.md)_  <!-- fp:00943c6527dc667b -->
 - [verify] **2026-08-07-thailand-master-plan-visual-redesign** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-07-thailand-master-plan-visual-redesign.md](docs/plans/2026-08-07-thailand-master-plan-visual-redesign.md)_  <!-- fp:09e0e6b2b2132d5e -->
 - [verify] **2026-08-07-thailand-operational-checklist-completion** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-07-thailand-operational-checklist-completion.md](docs/plans/2026-08-07-thailand-operational-checklist-completion.md)_  <!-- fp:f9ca162d1ee36491 -->
-- [verify] **2026-08-07-departure-ladder-on-the-thailand-page** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-07-departure-ladder-on-the-thailand-page.md](docs/plans/2026-08-07-departure-ladder-on-the-thailand-page.md)_  <!-- fp:306189bf0ea18e8a -->
 <!-- END auto-captured-deferrals -->

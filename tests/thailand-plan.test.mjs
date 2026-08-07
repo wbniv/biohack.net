@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { tasks, events, eventSortKey } from '../src/data/thailand-plan.mjs';
+import { tasks, events, eventSortKey, ladder, closedDays } from '../src/data/thailand-plan.mjs';
 
 const page = await readFile(new URL('../src/pages/thailand.astro', import.meta.url), 'utf8');
 
@@ -161,4 +161,29 @@ test('a relative label stays pinned beside the date it qualifies', () => {
   const vn = events.filter(e => e.phase === 'vietnam').map(e => e.date);
   assert.ok(vn.indexOf('Decision') > vn.indexOf('20 Dec'), 'Decision should follow 20 Dec');
   assert.ok(vn.indexOf('Decision') < vn.indexOf('30 Dec'), 'Decision should precede 30 Dec');
+});
+
+test('the departure ladder is a single chain ending in a dead end', () => {
+  const ids = new Set(ladder.map(r => r.id));
+  const eventIds = new Set(events.map(e => e.id));
+  for (const rung of ladder) {
+    assert.notEqual(rung.fallbackOf, rung.id, `${rung.id} is its own fallback`);
+    if (rung.fallbackOf !== null) assert.ok(ids.has(rung.fallbackOf), `${rung.id} -> unknown rung ${rung.fallbackOf}`);
+    if (rung.event) assert.ok(eventIds.has(rung.event), `${rung.id} -> unknown event ${rung.event}`);
+  }
+  // exactly one head, exactly one dead end, and every other rung is somebody's fallback
+  assert.equal(ladder.filter(r => r.fallbackOf === null).length, 1);
+  assert.equal(ladder.filter(r => r.contingency === 'dead-end').length, 1);
+  const referenced = new Set(ladder.map(r => r.fallbackOf).filter(Boolean));
+  assert.equal(referenced.size, ladder.length - 1, 'the chain forks or breaks');
+});
+
+test('closed AQS days are real dates inside departure week', () => {
+  assert.ok(closedDays.length >= 3);
+  for (const d of closedDays) {
+    assert.match(d.date, /^2026-10-\d{2}$/, d.date);
+    assert.ok(d.why && d.label, `${d.date} needs a label and a reason`);
+  }
+  // the tax line itself must be listed, since it is the one people assume is usable
+  assert.ok(closedDays.some(d => d.date === '2026-10-23'), '23 Oct (Chulalongkorn Day) missing');
 });
