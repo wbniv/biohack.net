@@ -15,7 +15,6 @@ the `todo-lint: disable=open-rank` line above once the weekly allowance resets.*
 ### Thailand plan
 
 - [ ] [departure-ladder] Render the A/B/C departure ladder — timeline, dependencies, contingencies — on the Thailand page, with the three closed AQS days (10‑17, 10‑18, 10‑23) marked and the C→no-successor state visible. See [plan](docs/plans/2026-08-07-departure-ladder-on-the-thailand-page.md).
-- [ ] [thailand-calendar-svg] Decide the orphaned `public/thailand/calendar.svg` — it is referenced nowhere in `src/` or `dist/`, and is the stale pre-fix copy. Either wire it into the page or delete it.
 
 ### Languages
 
@@ -33,6 +32,7 @@ _Nothing parked._
 
 ## Done
 
+- [x] 2026-08-07 — [thailand-calendar-svg] Deleted the orphaned `public/thailand/calendar.svg` — unreferenced in `src/`, stale, and duplicating the canonical `~/docs/cat-maps/calendar.svg`; the page renders its calendar from `thailand-plan.mjs`.
 - [x] 2026-08-01 — [cast-receiver-phase1] Language-neutral Cast receiver simulator + protocol, verified 720p–4K. See [plan](../spanish/docs/plans/2026-08-01-thai-flashcards-google-cast.md).
 - [x] 2026-07-27 — [drdevtools-github] Homepage drdevtools link now points at github.com/developer-resources-co/drdevtools (was SourceForge).
 - [x] 2026-07-26 — [homepage-demo-count] Homepage SNES count derives from shared `src/data/snes-demos.ts`; build fails on manifest drift. See [plan](docs/plans/2026-07-26-homepage-snes-demo-count.md).
