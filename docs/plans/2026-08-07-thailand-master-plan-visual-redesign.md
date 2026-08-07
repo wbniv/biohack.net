@@ -24,6 +24,17 @@ Replace the exported HTML with a first-class Astro page that:
 - keeps interactive checkbox state in browser `localStorage`;
 - remains excellent on phones, tablets, and desktop screens.
 
+## Mockups
+
+**[Open the responsive dark-theme HTML mockup](2026-08-07-thailand-master-plan-visual-redesign/mockup.html).**
+
+The mockup demonstrates the intended desktop and mobile composition: hero and
+status chips, five-card summary, three-outcome decision path, route/calendar
+pairing, progress meter, native checklist cards, reset control, and local-only
+persistence note. It is a visual design reference rather than production code;
+the implementation still uses the real map, calendar, complete task set, stable
+IDs, and accessible interaction behavior specified below.
+
 ## Files
 
 - Create `src/pages/thailand.astro` as the canonical public implementation.
