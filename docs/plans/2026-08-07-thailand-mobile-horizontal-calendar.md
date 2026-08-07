@@ -52,10 +52,14 @@ on a narrow screen. Desktop retains its five-column left-to-right calendar.
 
 - Mobile time runs top to bottom in chronological phase order; the entire
   calendar is visible inline without opening another surface.
-- Within a single-month column, milestone labels show the day only because the
-  sticky column heading already supplies the month. Retain descriptive values
-  such as `ASAP`, `Arrival`, `Within 48h`, and `Day 45`; use a month abbreviation
-  only when a phase spans multiple months and omission would be ambiguous.
+- Within any single-month calendar column—desktop, sticky dock, or mobile—show
+  the day only because the column heading already supplies the month. Retain
+  descriptive values such as `ASAP`, `Arrival`, `Within 48h`, and `Day 45`; use
+  a month abbreviation only when a phase spans multiple months and omission
+  would be ambiguous.
+- Present each milestone as `{day} {description}` beginning on one row; do not
+  place the date on a separate line. Long descriptions may wrap naturally when
+  the available column width requires it.
 - Month sections use the full available width and dense two-column milestone
   rows: a narrow date column and a flexible task label.
 - Milestones remain native task-opening buttons with completion, partial,
@@ -99,8 +103,9 @@ on a narrow screen. Desktop retains its five-column left-to-right calendar.
   vertically stacked month sections.
 - The summary, modal sheet, floating calendar button, and horizontal snap
   scrolling were removed.
-- Single-month sections render day-only dates; the two-month Viet Nam section
-  retains month context where needed.
+- Single-month columns render day-only dates in all calendar presentations; the
+  two-month Viet Nam column retains month context where needed.
+- Dates and descriptions begin on the same row throughout the calendar.
 - Desktop retains its full five-column calendar and sticky calendar dock.
 - Verification passed: 21 unit/contract tests, production Astro build, all 214
   Thailand contrast surfaces at 6.01:1 or better, the full browser interaction

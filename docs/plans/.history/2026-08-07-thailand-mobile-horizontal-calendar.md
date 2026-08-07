@@ -1,10 +1,15 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/f064cb6) | Make mobile Thailand calendar inline |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/3845b6a) | Clarify compact mobile calendar dates |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/31e3f5f) | Record mobile calendar verification |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/5c128ec) | Restore horizontal mobile Thailand calendar |
 
 <!--history-meta v1
+f064cb6	author	Will Norris
+f064cb6	added	45
+f064cb6	deleted	49
+f064cb6	files	1
 3845b6a	author	Will Norris
 3845b6a	added	11
 3845b6a	deleted	6
