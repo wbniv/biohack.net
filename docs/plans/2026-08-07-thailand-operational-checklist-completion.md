@@ -215,6 +215,17 @@ an eSIM alternative.
     - **Categories:** Cat, Thai study, Visa, Travel/tax
     - **Calendar event:** `bangkok-settled`
 
+17. `bangkok-housing-bridge`
+    - **Due:** Before booking the return flight
+    - **Task:** Book a cat-friendly Airbnb or hotel for roughly the first week
+      after Bangkok arrival and shortlist roughly two-month rentals with an
+      option to renew.
+    - **Done when:** The landing stay is confirmed and at least three candidates
+      record price, location, cat policy, deposit, availability, renewal terms,
+      viewing contact, and TM30 capability.
+    - **Categories:** Cat, Visa, Travel/tax
+    - **Calendar event:** `bangkok-housing-bridge`
+
 ## Calendar and interface changes
 
 - Add all non-conditional dates to the shared event registry.
@@ -267,8 +278,8 @@ an eSIM alternative.
 ## Implementation evidence
 
 - Canonical master-plan commit: `e3d6a5b`.
-- Added all 16 stable tasks and matching calendar events; the rendered registry
-  now contains 57 tasks.
+- Added all 17 stable tasks and matching calendar events; the rendered registry
+  now contains 58 tasks.
 - The sticky desktop calendar retains every event and uses an explicitly labeled,
   visible internal scroll region when its content exceeds the viewport.
 - Unit tests and the Astro production build pass.
@@ -278,3 +289,5 @@ an eSIM alternative.
   was 6.01:1.
 - Internal link check passed all 15 checked links.
 - Release and live verification are recorded in the follow-up publication commit.
+- Bangkok housing-bridge addition: canonical commit `7594ae0`; site regression
+  passes with 58 tasks and all sticky-calendar milestones accessible.

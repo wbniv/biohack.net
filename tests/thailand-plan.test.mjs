@@ -47,4 +47,9 @@ test('operational checklist is complete and avoids physical SIM purchases', () =
   assert.match(connectivity.action, /TRUE/i);
   assert.match(connectivity.action, /eSIM/i);
   assert.doesNotMatch(tasks.map(item => item.action).join('\n'), /buy (?:a )?physical SIM/i);
+  const housing = tasks.find(item => item.id === 'bangkok-housing-bridge');
+  assert.ok(housing);
+  assert.match(housing.action, /first week/i);
+  assert.match(housing.action, /two months/i);
+  assert.match(housing.done, /option|renewal/i);
 });
