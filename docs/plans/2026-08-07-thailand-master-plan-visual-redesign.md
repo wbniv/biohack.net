@@ -126,6 +126,45 @@ If migration from the current prose-hash keys is practical and unambiguous,
 migrate once. Otherwise start the explicit-ID `v2` namespace cleanly and state
 that the redesign resets local progress.
 
+### Checklist ↔ calendar highlighting
+
+Checklist cards and calendar milestones are linked views of the same plan. When
+a user hovers over or keyboard-focuses a checklist card, highlight its
+corresponding item in the calendar view.
+
+- Give every plotted calendar milestone an explicit stable event ID such as
+  `dtv-questions-august`.
+- Map each checklist task to zero, one, or several event IDs through authored
+  data; do not infer mappings from prose, dates, DOM order, or fuzzy matching.
+- Put the mapping in the shared plan data so the checklist and calendar cannot
+  silently drift apart.
+- On task-card `pointerenter` or `focusin`, add a strong but tasteful highlight
+  to the corresponding calendar marker, label, and date lane. Dim unrelated
+  calendar events slightly rather than hiding them.
+- On `pointerleave` or when focus leaves the entire task card, restore the
+  calendar's normal state.
+- Make the association bidirectional: hovering or focusing a calendar event
+  should emphasize the corresponding checklist card when it is currently in or
+  near the viewport. Do not force-scroll on hover.
+- If several tasks map to one milestone, highlight that milestone for each task.
+  If one task spans several milestones, highlight the full set together.
+- Tasks without a meaningful plotted calendar event remain fully usable and do
+  not trigger a blank or misleading highlight.
+- The interaction must work with keyboard focus and touch selection, not hover
+  alone. On touch, tapping a task may toggle its calendar emphasis without
+  toggling the checkbox unless the checkbox or its label was the target.
+- Expose the relationship programmatically with stable element IDs and
+  `aria-describedby` or equivalent accessible text. The visual highlight is a
+  progressive enhancement, not the only expression of the date.
+- Respect `prefers-reduced-motion`; use color, border, contrast, and modest scale
+  rather than sweeping animation.
+
+Example mapping:
+
+`dtv-questions-august` links the checklist task “Send the prepared DTV questions
+to Hanoi and Seoul” to its August calendar milestone. Hovering or focusing the
+task card highlights that milestone; leaving the card restores the calendar.
+
 ## Diagram and map treatment
 
 - Rebuild the decision flow so the three application outcomes remain exact:
@@ -174,13 +213,17 @@ that the redesign resets local progress.
 4. Verify every intended task has one unique stable ID and enabled checkbox.
 5. Check tasks, reload, navigate away/back, and confirm persistence.
 6. Test the reset flow and unavailable-storage fallback.
-7. Compare issued, pending, and refused decision branches against the source.
-8. Inspect route map and calendar in dark mode at desktop and mobile widths.
-9. Run Lighthouse for `/thailand/`, including accessibility.
-10. Check keyboard-only navigation, focus visibility, contrast, reduced motion,
+7. For every authored task-to-calendar mapping, hover and keyboard-focus the
+   task and confirm the correct milestone highlights and then resets.
+8. Test shared milestones, multi-event tasks, unmapped tasks, touch selection,
+   and calendar-to-task reverse emphasis.
+9. Compare issued, pending, and refused decision branches against the source.
+10. Inspect route map and calendar in dark mode at desktop and mobile widths.
+11. Run Lighthouse for `/thailand/`, including accessibility.
+12. Check keyboard-only navigation, focus visibility, contrast, reduced motion,
     and print preview.
-11. Confirm no Malaysia route or label appears.
-12. Confirm no local filesystem paths or unintended private information appear
+13. Confirm no Malaysia route or label appears.
+14. Confirm no local filesystem paths or unintended private information appear
     in the built HTML.
 
 ## Deployment
@@ -200,6 +243,8 @@ that the redesign resets local progress.
   layout.
 - All plan logic and approved content remain accurate.
 - Every task is clickable and persists locally through stable explicit IDs.
+- Hovering, focusing, or touch-selecting a mapped task highlights the correct
+  calendar milestone, and calendar events can emphasize their mapped tasks.
 - The map, calendar, and decision flow are clear and uncluttered.
 - Tests, build, link checks, accessibility checks, and production verification
   pass.
