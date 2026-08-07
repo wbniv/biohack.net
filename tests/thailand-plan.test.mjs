@@ -45,6 +45,10 @@ test('global progress is persistent, display-only, and clears sticky layers', ()
   assert.match(page, /<dt>Thai study<\/dt><dd>Every visa route<\/dd>/);
 });
 
+test('route copy describes the active route without historical exclusions', () => {
+  assert.doesNotMatch(page, /Malaysia is not part of this plan/);
+});
+
 test('conditional work cannot be reported overdue', () => {
   assert.ok(tasks.filter(t => t.conditional).length >= 3);
   assert.ok(page.includes("c.dataset.conditional!=='true'"));
