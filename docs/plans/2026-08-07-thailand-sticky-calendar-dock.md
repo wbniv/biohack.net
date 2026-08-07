@@ -111,27 +111,63 @@ Outcome → Decision → [ FULL CALENDAR: every milestone, natural height ]
 
 ## Verification result
 
-**PASS — 2026-08-07; reverified with the native Astro replacement.**
+**Re-verified 2026‑08‑07 (second run, evidence recorded below).** All seven steps PASS.
 
-**Re-verified per numbered step — 2026-08-07.**
+### 1. Build the Astro route and run the graph contrast gate.
 
-1. **Build and graph contrast gate.** **PASS** — 144 pages; `check-thailand-contrast.mjs`: 247 surfaces, minimum 6.01:1.
-2. **Dock appears, stays sticky, disappears outside checklist scope.** **PASS** — `dock:true`, `staysVisible:true`, `taskViewport:true`.
-3. **Hover, focus, check, uncheck mapped tasks; both calendar instances.** **PASS** — `calendarChecks`, `calendarUnchecks`, `calendarCheckboxes`, `inlineCalendar` true.
-4. **Collapse and full-calendar navigation.** **PASS** — `collapseState:true`, `expandState:true`, `prevNamed`/`nextNamed` true.
-5. **Mobile button, sheet, Escape, focus restoration, scroll lock, labels.** **PASS** — `mobileEvents`, `mobileMetadata`, `noCalendarButton`, `noCalendarDialog`, `noHorizontalOverflow`, `compactDay` true.
-6. **Reduced motion and keyboard-only navigation.** **PASS** — `dockAccessible:true`; `prefers-reduced-motion` honoured under a reduce-motion context.
-7. **Dock ≤ 280 px, leaves half the viewport, scrolls to its final milestone.** **PASS** — `dockCompact:true`, `taskViewport:true`, `dockNoHiddenOverflow:true`, `lastWindow:true`.
+```
+$ task build
+16:11:18 [build] 144 page(s) built in 7.39s
+16:11:18 [build] Complete!
 
-- The desktop dock is a compact native calendar generated from the same event
-  records as the full calendar; it has no SVG aspect-ratio gutters and does not
-  clip or horizontally discard milestones.
-- It appears only after the full calendar and only inside the task register,
-  supports full-calendar navigation and collapse, and shares completion,
-  partial, next-action, and temporary linked states.
-- Mobile uses a task-register-only floating control and modal bottom sheet with
-  readable vertical events, native modal focus containment, Escape dismissal,
-  background inertness, and focus restoration.
-- The headless browser gate verifies persistence, progress, closed disclosures,
-  filters, synchronized completion, and dialog behavior. Contrast is checked
-  across all native decision, task, and calendar surfaces.
+$ node scripts/check-thailand-contrast.mjs
+Checked 247 native decision, task, and calendar surfaces; minimum 6.01:1
+```
+
+**PASS**
+
+### 2–7. Dock behaviour, synchronisation, collapse, mobile sheet, reduced motion, and dock geometry.
+
+Steps 2 through 7 are asserted by the headless gate, which throws if any value is `false`:
+
+```
+$ node scripts/check-thailand-behavior.mjs
+Thailand behavior PASS: {"tasks":67,"closed":true,"proseDoesNotComplete":true,"checkboxCompletes":true,
+"staysVisible":true,"progress":true,"persist":true,"calendar":true,"jumpVisible":true,
+"calendarCheckboxes":true,"calendarUnchecks":true,"calendarChecks":true,"doneFilter":true,
+"doneFilterSwitches":true,"filter":true,"filtersLeaveCalendar":true,"dock":true,"dockCompact":true,
+"taskViewport":true,"dockNoHiddenOverflow":true,"collapseState":true,"expandState":true,
+"dockAccessible":true,"inlineCalendar":true,"months":true,"threeVisible":true,"threeColumns":true,
+"mobileEvents":true,"noCalendarButton":true,"noCalendarDialog":true,"noHorizontalOverflow":true,
+"mobileMetadata":true,"compactDay":true,"prevNamed":true,"nextNamed":true,"firstWindow":true,
+"secondWindow":true,"thirdWindow":true,"lastWindow":true}
+```
+
+- **2. Dock appears, stays sticky, disappears outside checklist scope** — `dock`, `staysVisible`, `taskViewport`. **PASS**
+- **3. Hover, focus, check, uncheck; both calendar instances** — `calendarChecks`, `calendarUnchecks`, `calendarCheckboxes`, `inlineCalendar`. **PASS**
+- **4. Collapse and full-calendar navigation** — `collapseState`, `expandState`, `prevNamed`, `nextNamed`. **PASS**
+- **5. Mobile control, sheet, labels, no horizontal overflow** — `mobileEvents`, `mobileMetadata`, `noCalendarButton`, `noCalendarDialog`, `noHorizontalOverflow`, `compactDay`. **PASS**
+- **6. Reduced motion and keyboard-only navigation** — `dockAccessible`. **PASS**
+- **7. Dock ≤ 280 px, leaves half the viewport, scrolls to its final milestone** — `dockCompact`, `taskViewport`, `dockNoHiddenOverflow`, `lastWindow`. **PASS**
+
+### ⚠️ A defect reported against this component on 2026‑08‑07 did not exist
+
+During unrelated work the dock was reported as clipping ~678 px of milestones "unreachably",
+on the reasoning that `.calendar-dock .calendar-board` inherited `overflow:hidden` from
+`.calendar-board` while carrying a fixed `height:347px`. **That reading was wrong.** A second,
+later, equally unconditional rule already set `overflow-y:auto`, and the later rule wins.
+
+Measured directly against the pre-fix stylesheet, with the dock forced visible:
+
+```
+PRE-FIX css, desktop 1400x900:  overflowY=auto clientH=211 scrollH=628 reachable=true
+PRE-FIX css, 800x600:           overflowY=auto clientH=161 scrollH=851 reachable=true
+```
+
+The dock was scrollable at both viewports before the change, so the `overflow-y:auto` added in
+`b40030e` was a **no-op**. Content exceeding the visible box is the intended design — the dock
+is a compact overview and its header reads *"All milestones · scroll calendar if needed."*
+
+This also vindicates the gate: `dockNoHiddenOverflow` and `dockAccessible` were correct to pass,
+and the earlier record was not stale.
+
