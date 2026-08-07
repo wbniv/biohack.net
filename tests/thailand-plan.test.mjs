@@ -101,3 +101,16 @@ test('operational checklist is complete and avoids physical SIM purchases', () =
   assert.match(housing.action, /two months/i);
   assert.match(housing.done, /option|renewal/i);
 });
+
+test('border tasks contain the verified official requirements', () => {
+  const korea = tasks.find(item => item.id === 'verify-korea-entry');
+  assert.match(korea.action, /visa-free tourist entry/i);
+  assert.match(korea.action, /e-Arrival Card/);
+  assert.match(korea.why, /31 December 2026/);
+
+  const vietnam = tasks.find(item => item.id === 'verify-vietnam-entry');
+  assert.match(vietnam.action, /evisa\.gov\.vn/);
+  assert.match(vietnam.action, /90-day single-entry/);
+  assert.match(vietnam.action, /Da Nang International Airport/);
+  assert.match(vietnam.action, /six months/);
+});
