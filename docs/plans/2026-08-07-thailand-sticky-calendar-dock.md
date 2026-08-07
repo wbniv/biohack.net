@@ -15,7 +15,8 @@ letting the full 1200×620 calendar consume most of the viewport.
 - After the full calendar scrolls above the viewport and a checklist section is
   active, reveal a sticky calendar dock beneath the top edge.
 - Use the same calendar SVG and the same stable task/event mappings.
-- Limit the dock to roughly 160–190 px high and make it collapsible.
+- Keep the expanded dock compact but tall enough to show every milestone in the
+  busiest month (currently 310 px), and make it collapsible.
 - Size the SVG from the dock width and crop vertically inside the dock; never
   scale it from the short dock height, which creates blank side gutters.
 - Highlight, partial, and completed states must update in both calendar views.
@@ -63,7 +64,8 @@ letting the full 1200×620 calendar consume most of the viewport.
 **PASS — 2026-08-07; reverified with the native Astro replacement.**
 
 - The desktop dock is a compact native calendar generated from the same event
-  records as the full calendar; it has no SVG aspect-ratio gutters.
+  records as the full calendar; it has no SVG aspect-ratio gutters and does not
+  clip or horizontally discard milestones.
 - It appears only after the full calendar and only inside the task register,
   supports full-calendar navigation and collapse, and shares completion,
   partial, next-action, and temporary linked states.

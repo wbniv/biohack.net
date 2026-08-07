@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/48028c2) | Test Thailand page through HTTP |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/89bbbc4) | Finish native Thailand master plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/929d10f) | feat: collapse Thailand task details by default |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/479dde4) | feat: reflect task completion on Thailand calendar |
@@ -12,6 +13,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+48028c2	author	Will Norris
+48028c2	added	4
+48028c2	deleted	0
+48028c2	files	1
 89bbbc4	author	Will Norris
 89bbbc4	added	24
 89bbbc4	deleted	6

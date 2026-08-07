@@ -103,6 +103,11 @@ must not interfere with each other.
 **Implemented 2026-08-07:** task rationale and completion criteria are moved
 into native, initially closed `<details>` disclosures labeled “Why / done when.”
 
+**Compactness refinement:** the closed disclosure is a small top-right info
+control with an accessible “Why and done when” name, not a separate text row.
+Task-card padding and inter-card gaps are reduced; explanatory content consumes
+vertical space only while deliberately expanded.
+
 ### 5. Add task filters
 
 Add a keyboard-accessible filter bar with:
