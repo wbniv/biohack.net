@@ -29,6 +29,15 @@ test('read-only hero parameters are semantic metadata, not filter chips', () => 
   assert.doesNotMatch(page, /<div class="status-row"><span>/);
 });
 
+test('affordances distinguish metadata, completion, navigation, and disclosure', () => {
+  assert.match(page, /class="candidate-context"/);
+  assert.match(page, /class="checkbox-control"/);
+  assert.match(page, /class="task-copy"/);
+  assert.match(page, /aria-controls="sticky-calendar-board"/);
+  assert.match(page, /dockToggle\.textContent=collapsed\?'Expand':'Collapse'/);
+  assert.doesNotMatch(page, /aria-hidden="true">ⓘ/);
+});
+
 test('conditional work cannot be reported overdue', () => {
   assert.ok(tasks.filter(t => t.conditional).length >= 3);
   assert.ok(page.includes("c.dataset.conditional!=='true'"));

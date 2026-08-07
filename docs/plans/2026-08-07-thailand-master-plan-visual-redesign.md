@@ -260,6 +260,24 @@ Show tasks   [Due soon] [Visa] [Cat] [Thai study] [Travel/tax] [Done]
 - Test mouse, keyboard, and touch-width layouts, including a 600px-high desktop
   viewport with every sticky surface active.
 
+### Affordance implementation result
+
+**Implemented 2026-08-07.** All ten audit items are represented in the native
+Astro page:
+
+- hero parameters and candidate routes are semantic read-only structures;
+- task prose is separate from the checkbox label, so only the visible checkbox
+  control changes completion;
+- milestone bodies use a neutral cursor and their real jump links are always
+  discoverable in the full calendar and mobile timeline;
+- the dock control owns `aria-expanded`, names its controlled region, and
+  switches between Expand and Collapse;
+- reset has a secondary-button treatment;
+- the disclosure uses one bordered control with distinct `i` and minus states;
+- decision outcomes are explicitly grouped and cursor-neutral;
+- browser coverage verifies checkbox scope, visible jump actions, honest
+  cursors, dock state, compactness, viewport allocation, and scroll reachability.
+
 ## Visual direction
 
 ### Palette
