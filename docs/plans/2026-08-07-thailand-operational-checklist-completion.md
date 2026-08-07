@@ -288,6 +288,8 @@ an eSIM alternative.
 - Contrast gate checked 260 task, decision, and calendar surfaces; minimum ratio
   was 6.01:1.
 - Internal link check passed all 15 checked links.
-- Release and live verification are recorded in the follow-up publication commit.
+- Release `v1.0.409` deployed successfully. Live HTML verification found the
+  `bangkok-housing-bridge` task, landing-stay wording, TRUE/eSIM choice, and
+  explicit sticky-calendar scroll affordance.
 - Bangkok housing-bridge addition: canonical commit `7594ae0`; site regression
   passes with 58 tasks and all sticky-calendar milestones accessible.
