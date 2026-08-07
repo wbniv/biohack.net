@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/b7902b4) | Refine Thailand calendar actions and mobile metadata |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/83a642e) | Add fixed Thailand progress rail |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/75de989) | Implement Thailand affordance audit |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/aaac268) | Clarify Thailand page control affordances |
@@ -20,6 +21,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+b7902b4	author	Will Norris
+b7902b4	added	11
+b7902b4	deleted	0
+b7902b4	files	1
 83a642e	author	Will Norris
 83a642e	added	14
 83a642e	deleted	1

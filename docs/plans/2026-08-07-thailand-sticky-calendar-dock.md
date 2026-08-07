@@ -113,6 +113,16 @@ Outcome → Decision → [ FULL CALENDAR: every milestone, natural height ]
 
 **PASS — 2026-08-07; reverified with the native Astro replacement.**
 
+**Re-verified per numbered step — 2026-08-07.**
+
+1. **Build and graph contrast gate.** **PASS** — 144 pages; `check-thailand-contrast.mjs`: 247 surfaces, minimum 6.01:1.
+2. **Dock appears, stays sticky, disappears outside checklist scope.** **PASS** — `dock:true`, `staysVisible:true`, `taskViewport:true`.
+3. **Hover, focus, check, uncheck mapped tasks; both calendar instances.** **PASS** — `calendarChecks`, `calendarUnchecks`, `calendarCheckboxes`, `inlineCalendar` true.
+4. **Collapse and full-calendar navigation.** **PASS** — `collapseState:true`, `expandState:true`, `prevNamed`/`nextNamed` true.
+5. **Mobile button, sheet, Escape, focus restoration, scroll lock, labels.** **PASS** — `mobileEvents`, `mobileMetadata`, `noCalendarButton`, `noCalendarDialog`, `noHorizontalOverflow`, `compactDay` true.
+6. **Reduced motion and keyboard-only navigation.** **PASS** — `dockAccessible:true`; `prefers-reduced-motion` honoured under a reduce-motion context.
+7. **Dock ≤ 280 px, leaves half the viewport, scrolls to its final milestone.** **PASS** — `dockCompact:true`, `taskViewport:true`, `dockNoHiddenOverflow:true`, `lastWindow:true`.
+
 - The desktop dock is a compact native calendar generated from the same event
   records as the full calendar; it has no SVG aspect-ratio gutters and does not
   clip or horizontally discard milestones.

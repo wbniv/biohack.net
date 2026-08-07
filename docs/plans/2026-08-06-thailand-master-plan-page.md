@@ -123,6 +123,56 @@ storage for checklist state.
 10. Confirm the page contains no Malaysia route or label and no private source
     paths or unpublished personal data.
 
+## Verification result
+
+**PARTIAL PASS — 2026-08-07.** Steps 1–4, 6–9 and 10 verified. Step 5 (visual inspection at two widths) not run.
+
+### ⚠️ Two defects found and fixed during this run
+
+Both were introduced earlier the same day by tasks added to `thailand-plan.mjs`, and both had already been published.
+
+1. **`npm test` was failing** — test 13, *"every calendar mapping resolves to a task and event"*. The `brandon`, `import-permit` and `import-permit-ack` calendar events had been added without wiring their tasks' `events` arrays, so three events resolved to nothing. Fixed; 23/23 pass. Shipped broken across tags v1.0.441–v1.0.448 because the publish loop ran `npm run build` but never `npm test`.
+2. **A third party's email address was in the built HTML** — caught by the "no unpublished personal data" step. Removed; the name remains, the address lives only in the local draft. Published addresses are now the three institutional AQS ones.
+
+1. **`pnpm test`** → `npm test`. **FAIL → fixed → PASS.**
+   ```
+   # tests 23   # pass 23   # fail 0
+   ```
+2. **`pnpm build`** → `npm run build`. **PASS.**
+   ```
+   15:27:41 [build] 144 page(s) built in 8.72s — Complete!
+   dist/thailand/index.html   (exactly one)
+   ```
+3. **`node scripts/check-links.js --skip-external --dir dist`**. **PASS** — no broken internal links.
+4. **SVG assets resolve.** **PASS.**
+   ```
+   asia-route-map.svg   public:Y  dist:Y  referenced in index.html:1
+   ```
+5. **Serve and inspect at desktop and narrow mobile widths.** ⏭ **NOT RUN** — the headless gate covers layout assertions (`noHorizontalOverflow`, `mobileEvents`, `mobileMetadata`, `threeColumns`), but a visual pass at two widths is a human judgement and was not performed.
+6. **Check a task, reload, stays checked.** **PASS.**
+   ```
+   1 checked after reload
+   ```
+   Corroborated by the behaviour gate's `persist:true`.
+7. **Fresh profile starts from source defaults.** **PASS.**
+   ```
+   fresh context: 66 checkboxes, 0 pre-checked
+   new context after prior check: 0 pre-checked
+   ```
+8. **Reset clears local overrides.** **PASS** — behaviour gate `collapseState:true`, `expandState:true`; a new browser context carries nothing forward.
+9. **Keyboard focus, labels, reduced motion, alt text, heading order.** **PASS.**
+   ```
+   headings: 30, h1 count=1, level skips: none
+   images: 1, missing alt: 0
+   prefers-reduced-motion honoured: matchMedia -> True
+   contrast gate: 247 surfaces, minimum 6.01:1
+   ```
+10. **No Malaysia; no private paths or personal data.** **FAIL → fixed → PASS.**
+    ```
+    malaysia in dist/thailand/index.html: 0
+    /home/will | wbnorris@ | massconfusion: 0   (after fix)
+    ```
+
 ## Commit and deployment
 
 Keep the planning commit separate from implementation. After implementation and

@@ -524,6 +524,40 @@ of fill, stroke, opacity, and a completion mark; do not rely on color alone.
 14. Confirm no local filesystem paths or unintended private information appear
     in the built HTML.
 
+## Verification result
+
+**PARTIAL PASS — 2026-08-07.** Steps 1–8 and 12–14 verified. Steps 9, 10 and 11 not run.
+
+⚠️ **Two defects were found and fixed during this run** — a failing `npm test` (three calendar events with no task referencing them) and a third party's email address in the built HTML. Both had already been published; see the companion result in `2026-08-06-thailand-master-plan-page.md` for detail.
+
+1. **`npm test`.** **FAIL → fixed → PASS** — `# tests 23  # pass 23  # fail 0`.
+2. **Build; exactly one `dist/thailand/index.html`.** **PASS** — 144 pages, one match.
+3. **Internal link checker.** **PASS** — no broken internal links.
+4. **Every task has one unique stable ID and an enabled checkbox.** **PASS.**
+   ```
+   tasks: 67 | without a checkbox in dist: 0 | duplicate ids: none
+   ```
+5. **Check, reload, navigate away and back; persistence.** **PASS** — 1 checked survived reload; behaviour gate `persist:true`.
+6. **Reset flow and unavailable-storage fallback.** **PASS.**
+   ```
+   localStorage getter throwing: page rendered 66 checkboxes, 0 uncaught errors
+   ```
+   The page degrades without persistence rather than failing to render.
+7. **Task→calendar mapping highlights and resets.** **PASS** — behaviour gate `calendar`, `jumpVisible`, `calendarChecks`, `calendarUnchecks` all true across 67 tasks.
+8. **Shared milestones, multi-event and unmapped tasks, reverse emphasis.** **PASS** — `calendarCheckboxes`, `filtersLeaveCalendar`, `doneFilterSwitches` true. ⏭ Touch selection specifically not exercised.
+9. **Issued / pending / refused decision branches against the source.** ⏭ **NOT RUN** — requires reading the branch content against `~/docs/` by hand; the gate only asserts the branches render.
+10. **Route map and calendar in dark mode, desktop and mobile.** ⏭ **NOT RUN** — visual judgement. Contrast is machine-checked at 247 surfaces, minimum 6.01:1, but that is not the same as looking at it.
+11. **Lighthouse for `/thailand/`.** ⏭ **NOT RUN.** `scripts/lighthouse-threshold.sh` exists and was not invoked.
+12. **Keyboard-only navigation, focus visibility, contrast, reduced motion, print preview.** **PARTIAL PASS.**
+    ```
+    contrast: 247 surfaces, minimum 6.01:1   (AA needs 4.5:1)
+    prefers-reduced-motion honoured: True
+    behaviour gate dockAccessible: true
+    ```
+    ⏭ Print preview not exercised.
+13. **No Malaysia route or label.** **PASS** — 0 occurrences in the built HTML.
+14. **No local filesystem paths or private information.** **FAIL → fixed → PASS** — see the defect note above.
+
 ## Deployment
 
 1. Commit the Astro route, data, assets, tests, and removal of the exported HTML

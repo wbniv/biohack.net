@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/0c6be02) | Document compact calendar dock mockups |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/5eba768) | Compact Thailand sticky calendar dock |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/686b664) | Add passenger and cat booking tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8dd7f7c) | Show complete sticky calendar and compact tasks |
@@ -9,6 +10,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/19970c8) | feat: add sticky Thailand calendar dock |
 
 <!--history-meta v1
+0c6be02	author	Will Norris
+0c6be02	added	45
+0c6be02	deleted	5
+0c6be02	files	1
 5eba768	author	Will Norris
 5eba768	added	9
 5eba768	deleted	0
