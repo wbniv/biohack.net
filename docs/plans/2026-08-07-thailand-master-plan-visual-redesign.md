@@ -61,6 +61,12 @@ revision/history scripts, generated attribution spans, Mermaid export markup,
 and prose-hash task discovery. The build must produce exactly one
 `dist/thailand/index.html`, owned by Astro.
 
+**Implementation note (2026-08-07):** the route is now owned by
+`src/pages/thailand.astro`; the former public-path collision has been removed.
+The initial migration deliberately preserves the verified page body as imported
+HTML under `src/content/thailand/`. Follow-up work should progressively replace
+that compatibility source with typed Astro components and structured plan data.
+
 ### 2. Replace the tall flowchart with a compact decision panel
 
 Remove the disproportionately tall Mermaid graph. Render a compact responsive

@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/1d92f65) | fix: enforce Thailand graph contrast in Chrome |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/6c4c430) | docs: plan linked checklist calendar highlighting |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/41f9003) | fix: make Thailand decision graph legible in dark mode |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/5d56794) | fix: remove Thailand page history spine |
@@ -7,6 +8,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+1d92f65	author	Will Norris
+1d92f65	added	118
+1d92f65	deleted	0
+1d92f65	files	1
 6c4c430	author	Will Norris
 6c4c430	added	51
 6c4c430	deleted	6
