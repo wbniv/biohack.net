@@ -25,6 +25,7 @@ rows on commit.*
 | [Thailand master plan — mobile calendar layout](2026-08-07-thailand-mobile-calendar-layout.md) | Replace the duplicated inline mobile milestone list with a compact live summary and a grouped near-full-height calendar sheet | Planning | Feature |
 | [Thailand master plan — mobile horizontal calendar](2026-08-07-thailand-mobile-horizontal-calendar.md) | Restore time to the x-axis in the mobile calendar sheet using readable, horizontally pannable, snap-aligned phase columns | Planning | Feature |
 | [Thailand master plan — three-month mobile calendar carousel](2026-08-07-thailand-mobile-calendar-pager.md) | Show three mobile month columns at once with explicit previous/next window navigation | Planning | Feature |
+| [Thailand master plan — calendar checkboxes](2026-08-07-thailand-calendar-checkboxes.md) | Add native synchronized checkboxes to every calendar milestone while keeping filters scoped to the detailed checklist | Planning | Feature |
 
 ---
 

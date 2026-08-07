@@ -38,7 +38,8 @@ test('affordances distinguish metadata, completion, navigation, and disclosure',
   assert.doesNotMatch(page, /aria-hidden="true">ⓘ/);
   assert.match(page, /\.task-card \.checkmark\{display:block\}/);
   assert.doesNotMatch(page, />Jump to task<\/a>/);
-  assert.match(page, /class="milestone milestone-jump"/);
+  assert.match(page, /class="milestone-checkbox" type="checkbox" data-calendar-checkbox/);
+  assert.match(page, /class="milestone-jump" data-jump-task/);
 });
 
 test('global progress is persistent, display-only, and clears sticky layers', () => {
@@ -60,6 +61,8 @@ test('mobile calendar is an inline three-month pager', () => {
   assert.match(page, /id:'november', label:'November'/);
   assert.match(page, /id:'december', label:'December'/);
   assert.match(page, /index>=windowStart&&index<windowStart\+3/);
+  assert.match(page, /box\.indeterminate=partial/);
+  assert.match(page, /calendarChecks\.forEach/);
   assert.match(page, /mobileDate\(e\.date, phase\.id\)/);
   assert.equal(page.match(/mobileDate\(e\.date, phase\.id\)/g)?.length, 3);
   assert.doesNotMatch(page, /calendar-sheet|open-calendar|scroll-snap-type:x|mobile-horizontal-calendar/);
