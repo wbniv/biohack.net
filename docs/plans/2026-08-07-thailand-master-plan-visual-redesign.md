@@ -119,11 +119,20 @@ Add a keyboard-accessible filter bar with:
 - **Travel/tax**
 - **Completed**
 
-Default view shows all incomplete tasks plus any explicitly selected completed
-filter behavior. Filters may combine where useful, show the visible-result
+Default and category views retain completed tasks in place after checking; the
+card changes state but never vanishes as a consequence of the action. **Due
+soon** excludes completed tasks, while **Done** deliberately isolates them.
+Filters may combine where useful, show the visible-result
 count, preserve checkbox state, and never alter the canonical task data. When a
 filter hides the task currently linked to a highlighted calendar milestone,
 clear that highlight.
+
+**Done-filter refinement:** Done is an explicit view mode, not an ambiguous
+intersection with Due soon or category filters. Activating it clears other
+filters and shows checked cards; selecting another filter returns to incomplete
+tasks. Empty results explain that there are no completed tasks. The browser gate
+tests check → remain visible → Done-only, then switching back to Visa without
+losing the completed card.
 
 ### 6. Show temporal context without interaction
 

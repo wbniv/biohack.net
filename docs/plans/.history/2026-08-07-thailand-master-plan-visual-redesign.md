@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/c6f97fe) | Stabilize Thailand browser gates |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8dd7f7c) | Show complete sticky calendar and compact tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/48028c2) | Test Thailand page through HTTP |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/89bbbc4) | Finish native Thailand master plan |
@@ -14,6 +15,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+c6f97fe	author	Will Norris
+c6f97fe	added	2
+c6f97fe	deleted	0
+c6f97fe	files	1
 8dd7f7c	author	Will Norris
 8dd7f7c	added	5
 8dd7f7c	deleted	0
