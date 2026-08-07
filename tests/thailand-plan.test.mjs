@@ -36,6 +36,7 @@ test('affordances distinguish metadata, completion, navigation, and disclosure',
   assert.match(page, /aria-controls="sticky-calendar-board"/);
   assert.match(page, /dockToggle\.textContent=collapsed\?'Expand':'Collapse'/);
   assert.doesNotMatch(page, /aria-hidden="true">ⓘ/);
+  assert.match(page, /\.task-card \.checkmark\{display:block\}/);
 });
 
 test('global progress is persistent, display-only, and clears sticky layers', () => {
