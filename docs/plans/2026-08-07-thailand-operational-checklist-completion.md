@@ -1,7 +1,7 @@
 # Thailand master plan — operational checklist completion
 
 **Date:** 2026-08-07
-**Status:** Ready for implementation
+**Status:** Implemented and locally verified
 **Target:** <https://biohack.net/thailand/>
 
 ## Problem
@@ -263,3 +263,18 @@ an eSIM alternative.
   objective completion evidence.
 - Calendar density remains fully usable on desktop and mobile.
 - Documentation, tests, commits, deployment, and live verification all pass.
+
+## Implementation evidence
+
+- Canonical master-plan commit: `e3d6a5b`.
+- Added all 16 stable tasks and matching calendar events; the rendered registry
+  now contains 57 tasks.
+- The sticky desktop calendar retains every event and uses an explicitly labeled,
+  visible internal scroll region when its content exceeds the viewport.
+- Unit tests and the Astro production build pass.
+- Browser behavior gate passes persistence, filters, completion-to-calendar state,
+  closed-by-default details, synchronized calendar counts, and dock reachability.
+- Contrast gate checked 260 task, decision, and calendar surfaces; minimum ratio
+  was 6.01:1.
+- Internal link check passed all 15 checked links.
+- Release and live verification are recorded in the follow-up publication commit.

@@ -28,3 +28,23 @@ test('conditional work cannot be reported overdue', () => {
   assert.ok(tasks.filter(t => t.conditional).length >= 3);
   assert.ok(page.includes("c.dataset.conditional!=='true'"));
 });
+
+test('operational checklist is complete and avoids physical SIM purchases', () => {
+  const ids = [
+    'verify-korea-entry', 'verify-vietnam-entry', 'cat-country-permissions',
+    'book-cat-ground-transport', 'reconfirm-bkk-icn', 'reconfirm-icn-dad',
+    'reconfirm-return-flight', 'bind-travel-insurance', 'cat-travel-kit',
+    'duplicate-document-packets', 'verify-money-access', 'choose-asia-connectivity',
+    'close-thailand-departure', 'prepare-bangkok-address', 'confirm-tm30',
+    'bangkok-arrival-setup'
+  ];
+  for (const id of ids) {
+    const task = tasks.find(item => item.id === id);
+    assert.ok(task, id);
+    assert.ok(task.events.length, `${id} needs a calendar mapping`);
+  }
+  const connectivity = tasks.find(item => item.id === 'choose-asia-connectivity');
+  assert.match(connectivity.action, /TRUE/i);
+  assert.match(connectivity.action, /eSIM/i);
+  assert.doesNotMatch(tasks.map(item => item.action).join('\n'), /buy (?:a )?physical SIM/i);
+});
