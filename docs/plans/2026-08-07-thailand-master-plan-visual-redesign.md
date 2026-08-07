@@ -278,6 +278,17 @@ Astro page:
 - browser coverage verifies checkbox scope, visible jump actions, honest
   cursors, dock state, compactness, viewport allocation, and scroll reachability.
 
+**Calendar-action refinement:** remove the repeated textual “Jump to task”
+links. In the full calendar and mobile timeline, the milestone itself is now a
+native button that opens its primary mapped task, with a compact diagonal-arrow
+cue, title, keyboard focus treatment, and no nested interactive element. Shared
+milestones still emphasize every mapped task before navigation.
+
+**Mobile metadata refinement:** keep Target, Route, and Thai study as three
+equal columns at narrow widths. Each key/value pair is an indivisible grid item,
+so flex wrapping cannot separate headings from their values or produce a row of
+orphaned uppercase labels.
+
 ### Fixed progress-rail trial
 
 **Implemented 2026-08-07 for visual evaluation.** Move the existing accessible

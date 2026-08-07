@@ -37,6 +37,8 @@ test('affordances distinguish metadata, completion, navigation, and disclosure',
   assert.match(page, /dockToggle\.textContent=collapsed\?'Expand':'Collapse'/);
   assert.doesNotMatch(page, /aria-hidden="true">ⓘ/);
   assert.match(page, /\.task-card \.checkmark\{display:block\}/);
+  assert.doesNotMatch(page, />Jump to task<\/a>/);
+  assert.match(page, /class="milestone milestone-jump"/);
 });
 
 test('global progress is persistent, display-only, and clears sticky layers', () => {
