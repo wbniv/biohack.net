@@ -38,6 +38,13 @@ test('affordances distinguish metadata, completion, navigation, and disclosure',
   assert.doesNotMatch(page, /aria-hidden="true">ⓘ/);
 });
 
+test('global progress is persistent, display-only, and clears sticky layers', () => {
+  assert.match(page, /class="progress-track global-progress"/);
+  assert.match(page, /\.global-progress\{position:fixed/);
+  assert.match(page, /height:10px/);
+  assert.match(page, /<dt>Thai study<\/dt><dd>Every visa route<\/dd>/);
+});
+
 test('conditional work cannot be reported overdue', () => {
   assert.ok(tasks.filter(t => t.conditional).length >= 3);
   assert.ok(page.includes("c.dataset.conditional!=='true'"));

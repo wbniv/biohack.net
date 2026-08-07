@@ -232,7 +232,7 @@ state. Apply these changes in priority order:
 ### Affordance mockup
 
 ```text
-TARGET  Jan 2027  │  ROUTE  Asia only  │  THAI STUDY  Unconditional
+TARGET  Jan 2027  │  ROUTE  Asia only  │  THAI STUDY  Every visa route
        plain read-only metadata — no pills, hover, or pointer cursor
 
 Candidate evidence routes
@@ -277,6 +277,19 @@ Astro page:
 - decision outcomes are explicitly grouped and cursor-neutral;
 - browser coverage verifies checkbox scope, visible jump actions, honest
   cursors, dock state, compactness, viewport allocation, and scroll reachability.
+
+### Fixed progress-rail trial
+
+**Implemented 2026-08-07 for visual evaluation.** Move the existing accessible
+progressbar out of the summary-card layout and fix it across the viewport top at
+`10px` high. Keep the detailed completed count, current phase, next deadline,
+reset control, and local-storage explanation in the normal progress card. The
+rail is display-only and must not acquire a pointer cursor or click behavior.
+
+Offset the section navigator, task-filter toolbar, desktop calendar dock, and
+anchor scroll margins beneath the rail. This deliberately starts taller than a
+minimal 4px indicator so its visual weight can be judged on the live page; its
+height is a design variable, not a data or interaction dependency.
 
 ## Visual direction
 

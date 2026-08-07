@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/75de989) | Implement Thailand affordance audit |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/aaac268) | Clarify Thailand page control affordances |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/02f4b7f) | Retry Thailand browser gates in CI |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/130f895) | Keep completed Thailand tasks visible |
@@ -18,6 +19,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+75de989	author	Will Norris
+75de989	added	18
+75de989	deleted	0
+75de989	files	1
 aaac268	author	Will Norris
 aaac268	added	72
 aaac268	deleted	0
