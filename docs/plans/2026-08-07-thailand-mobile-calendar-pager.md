@@ -8,18 +8,18 @@
 ## Problem
 
 The inline mobile calendar removed the modal and hidden horizontal content, but
-showing all five month sections creates a long calendar before the checklist.
+showing the full range creates a long calendar before the checklist.
 The page needs a compact calendar that remains immediately visible without
 requiring a separate “open calendar” action.
 
 ## Decision
 
-On mobile, show a three-month-wide window into the five-month timeline. Each of
+On mobile, show a three-month-wide window into the six-month timeline. Each of
 the three columns is a complete month/phase column containing its milestone
 list. Explicit previous/next controls scroll the calendar window horizontally;
 the page itself does not scroll sideways and no separate surface opens.
 
-Desktop retains the existing five-column calendar and sticky calendar dock.
+Desktop and the sticky dock use the same six chronological month columns.
 
 ## Mockups
 
@@ -65,13 +65,13 @@ a dedicated line.
 - Default to the three-month window containing the current plan phase. Before
   the plan, show August–October; after the plan, show October–January.
 - Previous and next buttons move the window exactly one phase at a time:
-  August/September/October → September/October/Viet Nam →
-  October/Viet Nam/January.
+  August/September/October → September/October/November →
+  October/November/December → November/December/January.
 - Use real `<button>` elements with accessible names such as “Previous month”
   and “Next month.” Disable the unavailable direction at either boundary.
 - Update the visible month heading and grid without changing page scroll.
 - Keep only the three visible months exposed to assistive technology; the other
-  two must be hidden, not merely visually moved offscreen.
+  three must be hidden, not merely visually moved offscreen.
 - Milestones remain buttons that focus their mapped checklist task.
 - Completion, partial completion, next-action, current-month, and linked-task
   states continue to derive from the shared stable IDs.
@@ -84,8 +84,8 @@ a dedicated line.
   month columns at mobile widths.
 - Within each month, milestones remain a single vertical list.
 - Allow descriptions to wrap normally; never clip or ellipsize task meaning.
-- Retain day-only labels in single-month phases. The combined Viet Nam phase
-  keeps `Nov` or `Dec` where required to disambiguate the date.
+- Use day-only labels because every calendar column now represents exactly one
+  month. “Viet Nam” remains checklist/location context, never a calendar column.
 - At extremely narrow widths, preserve three columns as requested while
   reducing gaps and padding—not font size below the established readable floor.
 - The selected month heading and arrow controls must remain usable at 200% zoom.
@@ -102,7 +102,7 @@ a dedicated line.
 
 1. At 320, 360, 390, and 430px, exactly three month columns are visible.
 2. No horizontal page or calendar overflow occurs.
-3. Previous/next controls visit all three valid windows in chronological order.
+3. Previous/next controls visit all four valid windows in chronological order.
 4. Boundary controls are disabled correctly and expose accessible names.
 5. Exactly three phase panels are visible and exposed to accessibility APIs.
 6. Each phase contains every event mapped to it, exactly once.
@@ -124,10 +124,13 @@ a dedicated line.
 ## Implementation result
 
 - **PASS — 2026-08-07.**
+- Calendar presentation is independent from checklist phase naming: it uses six
+  chronological columns, August through January, with November and December
+  separate instead of a combined “Viet Nam” column.
 - Mobile displays exactly three equal-width month columns at once.
-- Previous and next buttons traverse the three valid windows and disable at the
+- Previous and next buttons traverse the four valid windows and disable at the
   chronological boundaries.
-- Only the visible three months remain exposed; the other two are hidden and
+- Only the visible three months remain exposed; the other three are hidden and
   inert until their window is selected.
 - Verification passed: 21 unit/contract tests, production Astro build, all 214
   Thailand contrast surfaces at 6.01:1 or better, browser checks for the three

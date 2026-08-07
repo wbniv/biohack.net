@@ -56,6 +56,9 @@ test('mobile calendar is an inline three-month pager', () => {
   assert.match(page, /class="mobile-inline-calendar" data-calendar/);
   assert.match(page, /class="mobile-calendar-month"/);
   assert.match(page, /grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(page, /grid-template-columns:repeat\(6,1fr\)/);
+  assert.match(page, /id:'november', label:'November'/);
+  assert.match(page, /id:'december', label:'December'/);
   assert.match(page, /index>=windowStart&&index<windowStart\+3/);
   assert.match(page, /mobileDate\(e\.date, phase\.id\)/);
   assert.equal(page.match(/mobileDate\(e\.date, phase\.id\)/g)?.length, 3);
