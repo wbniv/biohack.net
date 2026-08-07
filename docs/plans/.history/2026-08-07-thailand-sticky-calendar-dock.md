@@ -1,11 +1,16 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/8dd7f7c) | Show complete sticky calendar and compact tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/89bbbc4) | Finish native Thailand master plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/1995e26) | fix: fill sticky calendar dock without gutters |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8679f35) | docs: index and verify sticky calendar plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/19970c8) | feat: add sticky Thailand calendar dock |
 
 <!--history-meta v1
+8dd7f7c	author	Will Norris
+8dd7f7c	added	4
+8dd7f7c	deleted	2
+8dd7f7c	files	1
 89bbbc4	author	Will Norris
 89bbbc4	added	14
 89bbbc4	deleted	10
