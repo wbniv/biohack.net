@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/4457f5b) | docs: index Thailand visual redesign plan |
 | [2026-08-06](https://github.com/wbniv/biohack.net/commit/3d7217e) | docs: index Thailand publication plan |
 | [2026-07-27](https://github.com/wbniv/biohack.net/commit/1813d0d) | docs: index the snes-package-migration plan |
 | [2026-07-26](https://github.com/wbniv/biohack.net/commit/dd09e0f) | docs: index homepage-snes-demo-count plan |
@@ -9,6 +10,10 @@
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+4457f5b	author	Will Norris
+4457f5b	added	2
+4457f5b	deleted	1
+4457f5b	files	1
 3d7217e	author	Will Norris
 3d7217e	added	2
 3d7217e	deleted	1

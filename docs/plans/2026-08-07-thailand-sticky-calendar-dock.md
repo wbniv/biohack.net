@@ -55,3 +55,15 @@ letting the full 1200×620 calendar consume most of the viewport.
 - The dock never obscures task controls or dominates the viewport.
 - Both calendar instances remain synchronized with task interaction and state.
 - Desktop and mobile use layouts appropriate to their available space.
+
+## Verification result
+
+**PASS — 2026-08-07, release `v1.0.396`.**
+
+- Astro production build passed.
+- The headless-Chrome graph contrast gate passed.
+- GitHub deployment run `31154772192` completed successfully.
+- Cloudflare production HTML contains `calendar-dock`,
+  `thailand-calendar-dock`, and `task-complete` markers.
+- Live endpoint returned the deployed sticky-calendar implementation at
+  <https://biohack.net/thailand/>.
