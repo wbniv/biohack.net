@@ -4,7 +4,18 @@
 not yet run+recorded · `[x]` done (`## Done` only). The bracket also carries a delegation
 tier, tier last — `[T4]`, `[wip T2]`, `[verify T3]`. See `~/CLAUDE.md` — Delegation.
 
+<!-- todo-lint: disable=open-rank -->
+⏸️ **Ranking paused 2026‑08‑07 — new items land unranked and dispatch at the T3 default.**
+Only Fable may add a tier (`rank-requires-fable`), and Fable's weekly tokens are spent, so
+requiring one would block every new item outright. **Re-rank the unranked items and delete
+the `todo-lint: disable=open-rank` line above once the weekly allowance resets.**
+
 ## Open
+
+### Thailand plan
+
+- [ ] [departure-ladder] Render the A/B/C departure ladder — timeline, dependencies, contingencies — on the Thailand page, with the three closed AQS days (10‑17, 10‑18, 10‑23) marked and the C→no-successor state visible. See [plan](docs/plans/2026-08-07-departure-ladder-on-the-thailand-page.md).
+- [ ] [thailand-calendar-svg] Decide the orphaned `public/thailand/calendar.svg` — it is referenced nowhere in `src/` or `dist/`, and is the stale pre-fix copy. Either wire it into the page or delete it.
 
 ### Languages
 
