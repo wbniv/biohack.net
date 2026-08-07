@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/5eba768) | Compact Thailand sticky calendar dock |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/686b664) | Add passenger and cat booking tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8dd7f7c) | Show complete sticky calendar and compact tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/89bbbc4) | Finish native Thailand master plan |
@@ -8,6 +9,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/19970c8) | feat: add sticky Thailand calendar dock |
 
 <!--history-meta v1
+5eba768	author	Will Norris
+5eba768	added	9
+5eba768	deleted	0
+5eba768	files	1
 686b664	author	Will Norris
 686b664	added	2
 686b664	deleted	1

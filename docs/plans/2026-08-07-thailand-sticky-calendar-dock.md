@@ -18,17 +18,55 @@ calendar.
 Keep calendar context visible while working through checklist items without
 letting the full 1200×620 calendar consume most of the viewport.
 
+## Mockups
+
+Compact working state—the dock keeps context, while at least half of a short
+desktop viewport remains available to the checklist:
+
+```text
+┌────────────────────────────────────────────────────────────────────────────┐
+│ View full calendar        All milestones · scroll if needed      Collapse │
+├────────────┬────────────┬────────────┬────────────┬────────────────────────┤
+│ AUG        │ SEP        │ OCT        │ NOV–DEC    │ JAN                    │
+│ ○ answers  │ ○ schools  │ ○ route    │ ○ submit   │ ○ TM30                 │
+│ ○ funds    │ ○ flights  │ ○ papers   │ ○ pending  │ ○ classes              │
+│ ↕ scroll   │ ↕ scroll   │ ↕ scroll   │ ↕ scroll   │ ↕ scroll               │
+└────────────┴────────────┴────────────┴────────────┴────────────────────────┘
+┌──────────────────────────── checklist remains primary ─────────────────────┐
+│ □ Before 31 Aug — Book the cat's vaccination…                         ⓘ   │
+│ □ By 31 Aug — Begin the DTV packet…                                    ⓘ   │
+│ □ By 10 Sep — Contact schools…                                         ⓘ   │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+Collapsed working state:
+
+```text
+┌────────────────────────────────────────────────────────────────────────────┐
+│ View full calendar                                             Expand      │
+└────────────────────────────────────────────────────────────────────────────┘
+│ □ Checklist task                                                        ⓘ │
+│ □ Checklist task                                                        ⓘ │
+```
+
+The complete, unconstrained calendar remains in the normal document flow:
+
+```text
+Outcome → Decision → [ FULL CALENDAR: every milestone, natural height ]
+                         ↓ scroll into checklist
+             [ compact synchronized dock appears ]
+```
+
 ## Desktop behavior
 
 - Keep the full calendar in its existing document position.
 - After the full calendar scrolls above the viewport and a checklist section is
   active, reveal a sticky calendar dock beneath the top edge.
 - Use the same calendar SVG and the same stable task/event mappings.
-- Keep the expanded dock compact but tall enough to show every milestone in the
-  busiest month (currently 390 px after adding explicit flight-booking gates),
-  and make it collapsible.
-- Size the SVG from the dock width and crop vertically inside the dock; never
-  scale it from the short dock height, which creates blank side gutters.
+- Cap the expanded dock at `280px` and `32vh`; keep it collapsible.
+- Keep all milestones in the dock and make overflow intentionally reachable
+  through its clearly labeled internal vertical scroll area. Never clip or
+  silently omit events.
 - Highlight, partial, and completed states must update in both calendar views.
 - Provide **View full calendar** and collapse controls.
 - Hide the dock outside the dated checklist and definition-of-done region.
@@ -61,6 +99,8 @@ letting the full 1200×620 calendar consume most of the viewport.
 5. At mobile width, test the button, bottom sheet, Escape, focus restoration,
    background scroll lock, and readable calendar labels.
 6. Test reduced motion and keyboard-only navigation.
+7. Assert the dock is no taller than 280 px, leaves at least half the viewport
+   for checklist work, and can scroll to its final milestone.
 
 ## Definition of done
 
