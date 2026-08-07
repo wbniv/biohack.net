@@ -279,6 +279,8 @@ were inspected at 1440×1000 and 390×844.
 Both headless-browser gates serve the production build over a temporary local
 HTTP server, ensuring Astro's absolute CSS and asset paths are loaded exactly as
 they are in production; `file://` results are not accepted as visual evidence.
+Chrome uses an OS-assigned debugging port so concurrent or rapidly repeated CI
+runs cannot collide on a guessed fixed port.
 
 ### Checklist ↔ calendar highlighting
 

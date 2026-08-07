@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdtemp } from 'node:fs/promises';
+import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -10,11 +10,11 @@ const port = 10000 + (process.pid % 4000);
 const serverPort = port + 4001;
 const server = process.env.THAILAND_TEST_URL ? null : spawn('python3',['-m','http.server',String(serverPort),'--bind','127.0.0.1'],{cwd:resolve('dist'),stdio:'ignore'});
 const page = process.env.THAILAND_TEST_URL || `http://127.0.0.1:${serverPort}/thailand/`;
-const child = spawn(chrome, ['--headless=new','--no-sandbox',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,page], {stdio:'ignore'});
+const child = spawn(chrome, ['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--remote-debugging-port=0',`--user-data-dir=${profile}`,page], {stdio:'ignore'});
 const pause = ms => new Promise(r => setTimeout(r, ms));
 try {
   let target;
-  for (let i=0;i<120;i++) { try { const tabs=await fetch(`http://127.0.0.1:${port}/json`).then(r=>r.json()); target=tabs.find(t=>t.type==='page'); if(target)break; } catch {} await pause(100); }
+  for (let i=0;i<200;i++) { try { const [debugPort]=String(await readFile(join(profile,'DevToolsActivePort'))).split('\n'); const tabs=await fetch(`http://127.0.0.1:${debugPort}/json`).then(r=>r.json()); target=tabs.find(t=>t.type==='page'); if(target)break; } catch {} await pause(100); }
   if(!target) throw new Error('Chrome debugging target unavailable');
   const ws = new WebSocket(target.webSocketDebuggerUrl); await new Promise((ok,fail)=>{ws.onopen=ok;ws.onerror=fail});
   let seq=0; const pending=new Map(); ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&pending.has(m.id)){pending.get(m.id)(m);pending.delete(m.id)}};
