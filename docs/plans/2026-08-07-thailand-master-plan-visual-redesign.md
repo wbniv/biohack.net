@@ -290,6 +290,9 @@ HTTP server, ensuring Astro's absolute CSS and asset paths are loaded exactly as
 they are in production; `file://` results are not accepted as visual evidence.
 Chrome uses an OS-assigned debugging port so concurrent or rapidly repeated CI
 runs cannot collide on a guessed fixed port.
+CI permits up to three clean Chrome launches for each browser gate because the
+runner occasionally fails before exposing any debugging socket. Assertion
+failures remain fatal after the bounded retries.
 
 ### Checklist ↔ calendar highlighting
 

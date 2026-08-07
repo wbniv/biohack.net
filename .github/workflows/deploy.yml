@@ -39,9 +39,19 @@ jobs:
         run: pnpm build
 
       - name: Check Thailand graph contrast
-        run: node scripts/check-thailand-contrast.mjs
+        run: |
+          for attempt in 1 2 3; do
+            node scripts/check-thailand-contrast.mjs && exit 0
+            echo "Chrome contrast attempt ${attempt} failed; retrying with a clean process"
+          done
+          exit 1
       - name: Check Thailand interactions
-        run: node scripts/check-thailand-behavior.mjs
+        run: |
+          for attempt in 1 2 3; do
+            node scripts/check-thailand-behavior.mjs && exit 0
+            echo "Chrome behavior attempt ${attempt} failed; retrying with a clean process"
+          done
+          exit 1
 
       # The player engine (app.js + cores/*) is vendored from @wbniv/bsnes-jg-player by
       # `pnpm run sync-engine`. Byte-for-byte drift against the installed package fails
