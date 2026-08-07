@@ -387,6 +387,8 @@ table{display:table!important;width:100%!important;background:var(--th-surface)!
 li.task{list-style:none!important;background:linear-gradient(180deg,var(--th-raised),var(--th-surface))!important;border:1px solid var(--th-line)!important;border-radius:13px!important;margin:12px 0!important;padding:18px 20px!important;transition:.15s border-color,.15s transform}li.task:hover{border-color:#4b6278!important;transform:translateY(-1px)}li.task input{width:22px;height:22px;accent-color:var(--th-terra);vertical-align:middle;margin:0 10px 0 0!important;cursor:pointer}li.task:has(input:checked){opacity:.67;border-color:#25453f!important}li.task:has(input:checked)>strong{text-decoration:line-through}li.task ul{margin-top:10px!important;color:var(--th-muted)!important}li.task ul li{color:var(--th-muted)!important;font-size:13px!important}
 img,svg{max-width:100%!important;height:auto!important;border-radius:14px!important;background:var(--th-surface)!important;border:1px solid var(--th-line)!important}.mermaid-diagram,.mermaid-rendered{background:var(--th-surface)!important;border:1px solid var(--th-line)!important;border-radius:14px!important;padding:16px!important;overflow:auto!important}
 #thailand-calendar{display:block;width:100%;aspect-ratio:1200/620;border:1px solid var(--th-line);border-radius:14px;background:var(--th-surface)}
+#calendar-dock{position:fixed;z-index:50;left:50%;top:8px;transform:translateX(-50%);width:min(960px,calc(100% - 28px));height:178px;padding:28px 10px 8px;background:#09111cf2;border:1px solid var(--th-line);border-radius:14px;box-shadow:0 12px 35px #0009;display:none}#calendar-dock.visible{display:block}#calendar-dock object{width:100%;height:100%;border:0}#calendar-dock button,#calendar-dock a{position:absolute;top:5px;font-size:11px}#calendar-dock button{right:9px}#calendar-dock a{left:10px}.calendar-mobile-trigger{display:none}
+@media(max-width:680px){#calendar-dock{height:min(62vh,430px);top:auto;bottom:0;width:100%;border-radius:16px 16px 0 0;padding-top:36px}.calendar-mobile-trigger{display:none;position:fixed;z-index:49;right:14px;bottom:14px;background:var(--th-terra);color:#fff;border:0;border-radius:999px;padding:11px 16px;font-weight:800}.calendar-mobile-trigger.visible{display:block}#calendar-dock.mobile-open{display:block}#calendar-dock:not(.mobile-open){display:none!important}}
 .mermaid-diagram svg .node rect,.mermaid-diagram svg .node polygon,.mermaid-diagram svg .node path{fill:#203044!important;stroke:#60758b!important;stroke-width:2px!important}.mermaid-diagram svg .node .label,.mermaid-diagram svg .nodeLabel,.mermaid-diagram svg .nodeLabel p,.mermaid-diagram svg text{color:#fff!important;fill:#fff!important}.mermaid-diagram svg .edgePath path,.mermaid-diagram svg .flowchart-link{stroke:#8192a3!important}.mermaid-diagram svg marker path{fill:#8192a3!important;stroke:#8192a3!important}.mermaid-diagram svg .edgeLabel,.mermaid-diagram svg .edgeLabel p{background:#111c29!important;color:#f7f1e9!important}.mermaid-diagram svg .labelBkg{fill:#111c29!important}.mermaid-diagram svg g.outcome rect,.mermaid-diagram svg g.outcome path{fill:#0f766e!important;stroke:#2aa89a!important}.mermaid-diagram svg g.candidate rect,.mermaid-diagram svg g.candidate path{fill:#2457c5!important;stroke:#5180ed!important}.mermaid-diagram svg g.study rect,.mermaid-diagram svg g.study path{fill:#6d35d5!important;stroke:#9b7bea!important}
 .frontmatter,.history-footer,.timeline-footer,.doc-history,.blame-gutter,[class*="gutter"],[data-date-show]:before{display:none!important}.dh-word{color:inherit!important;background:none!important;text-decoration:none!important}.metadata{display:none!important}code{background:#172433!important;color:#f1c1b0!important;border-color:var(--th-line)!important}
 @media(max-width:680px){body{padding:20px 14px 70px!important}body:before{margin-bottom:32px}h1{font-size:42px!important}h2{font-size:24px!important;margin-top:42px!important}table{display:block!important;overflow-x:auto!important}li.task{padding:15px!important}}
@@ -464,9 +466,11 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
 
 <p data-commit="8dbc24c" data-date-show data-date="2026-08-06" data-age="recent" data-rev="5" style="--accent:hsl(92,70%,45%)"><em>Teal = <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">the</span> working <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">outbound</span> route: Bangkok → Seoul/Incheon → Da <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">Nang</span>. <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">The</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">return</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">to</span> Bangkok <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">happens</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">only</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">after</span> a <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">decision</span>: <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">on</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">the</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">issued</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">status</span>, <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">or</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">visa-exempt</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">after</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">refusal</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">to</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">execute</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">TM</span>.<span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">87</span>. <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">While</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">the</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">application</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">is</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">pending</span>, <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">remain</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">in</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">Viet</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">Nam</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">under</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">the</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">90-day</span> <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">visa</span>. Amber dashed = <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">the</span> triggered-only <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">cat-export</span> road fallback toward <span class="dh-word" data-commit="8dbc24c" style="--accent:hsl(92,70%,45%)">HCMC</span>.</em></p>
 
-<h2 data-commit="a3f1d7e" data-date-show data-date="2026-08-06" data-age="recent" data-rev="1" style="--accent:hsl(205,70%,45%)">Calendar — deadlines, gates, and where you are</h2>
+<h2 id="calendar-heading" data-commit="a3f1d7e" data-date-show data-date="2026-08-06" data-age="recent" data-rev="1" style="--accent:hsl(205,70%,45%)">Calendar — deadlines, gates, and where you are</h2>
 
 <object id="thailand-calendar" data="/thailand/calendar.svg" type="image/svg+xml" aria-label="Operational calendar from August 2026 through January 2027"></object>
+<div id="calendar-dock" role="region" aria-label="Sticky operational calendar"><a href="#calendar-heading">View full calendar</a><button type="button" id="calendar-dock-close" aria-label="Collapse sticky calendar">Collapse</button><object id="thailand-calendar-dock" data="/thailand/calendar.svg" type="image/svg+xml" aria-label="Condensed operational calendar"></object></div>
+<button type="button" class="calendar-mobile-trigger" aria-controls="calendar-dock" aria-expanded="false">Calendar</button>
 
 <p data-commit="a3f1d7e" data-date="2026-08-06" data-age="recent" data-rev="1" style="--accent:hsl(205,70%,45%)"><strong>Solid markers are deadlines or committed travel. Rings are decision gates or target dates.</strong> The country ribbon is the working itinerary, not a visa requirement. The USA is deliberately absent: it returns only as a contingency if the Asia-status plan fails.</p>
 
@@ -1061,23 +1065,21 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
     ['Begin Thai Level 1','Start Thai L1'],
     ['start/file TM.87','TM.87 day 20']
   ];
-  let svgDoc;
+  const svgDocs = [];
   const clear = () => {
-    if (!svgDoc) return;
-    svgDoc.querySelectorAll('.task-hit,.task-dim').forEach(el => el.classList.remove('task-hit','task-dim'));
+    svgDocs.forEach(doc => doc.querySelectorAll('.task-hit,.task-dim').forEach(el => el.classList.remove('task-hit','task-dim')));
   };
   const matching = (card) => mappings.find(([needle]) => card.textContent.includes(needle));
   const milestoneParts = (labelNeedle) => {
-    if (!svgDoc) return [];
-    const labels = [...svgDoc.querySelectorAll('text')].filter(el => el.textContent.includes(labelNeedle));
+    const labels = svgDocs.flatMap(doc => [...doc.querySelectorAll('text')]).filter(el => el.textContent.includes(labelNeedle));
     return labels.flatMap(label => {
       const marker = label.previousElementSibling;
       return marker && /^(circle|line|rect)$/i.test(marker.tagName) ? [label, marker] : [label];
     });
   };
   const syncCompleted = () => {
-    if (!svgDoc) return;
-    svgDoc.querySelectorAll('.task-complete,.task-partial').forEach(el => el.classList.remove('task-complete','task-partial'));
+    if (!svgDocs.length) return;
+    svgDocs.forEach(doc => doc.querySelectorAll('.task-complete,.task-partial').forEach(el => el.classList.remove('task-complete','task-partial')));
     const byMilestone = new Map();
     document.querySelectorAll('li.task').forEach(card => {
       const rule = matching(card); if (!rule) return;
@@ -1091,11 +1093,11 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
     });
   };
   const activate = (card) => {
-    if (!svgDoc || !card) return;
+    if (!svgDocs.length || !card) return;
     clear();
     const rule = matching(card);
     if (!rule) return;
-    const labels = [...svgDoc.querySelectorAll('text')];
+    const labels = svgDocs.flatMap(doc => [...doc.querySelectorAll('text')]);
     const hits = labels.filter(el => el.textContent.includes(rule[1]));
     if (!hits.length) return;
     labels.forEach(el => el.classList.add('task-dim'));
@@ -1105,13 +1107,14 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
       if (marker && /^(circle|line|rect)$/i.test(marker.tagName)) marker.classList.add('task-hit');
     });
   };
-  calendar.addEventListener('load', () => {
-    svgDoc = calendar.contentDocument;
+  const initCalendar = object => object.addEventListener('load', () => {
+    const svgDoc = object.contentDocument; svgDocs.push(svgDoc);
     const style = svgDoc.createElementNS('http://www.w3.org/2000/svg','style');
     style.textContent = '.task-dim{opacity:.28;transition:opacity .16s}.task-hit{opacity:1!important;filter:drop-shadow(0 0 5px #f6b36f);stroke:#f6b36f!important;stroke-width:3px!important;font-weight:800}.task-complete{opacity:.58;stroke:#2dd4bf!important;stroke-width:3px!important;text-decoration:line-through}.task-partial{opacity:.8;stroke:#fbbf24!important;stroke-width:3px!important;stroke-dasharray:3 2}';
     svgDoc.documentElement.appendChild(style);
     syncCompleted();
   });
+  initCalendar(calendar); initCalendar(document.getElementById('thailand-calendar-dock'));
   document.querySelectorAll('li.task').forEach(card => {
     card.addEventListener('pointerenter', () => activate(card));
     card.addEventListener('pointerleave', clear);
@@ -1120,6 +1123,13 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
     card.addEventListener('click', e => { if (e.target.tagName !== 'INPUT') activate(card); });
     card.querySelector('input[type=checkbox]')?.addEventListener('change', syncCompleted);
   });
+  const dock=document.getElementById('calendar-dock'), trigger=document.querySelector('.calendar-mobile-trigger'), close=document.getElementById('calendar-dock-close');
+  let collapsed=false;
+  const updateDock=()=>{const past=calendar.getBoundingClientRect().bottom<0;const tasks=[...document.querySelectorAll('li.task')];const inTasks=tasks.some(t=>{const r=t.getBoundingClientRect();return r.bottom>0&&r.top<innerHeight});const mobile=matchMedia('(max-width:680px)').matches;if(mobile){trigger.classList.toggle('visible',past&&inTasks)}else{dock.classList.toggle('visible',past&&inTasks&&!collapsed)}};
+  addEventListener('scroll',updateDock,{passive:true});addEventListener('resize',updateDock);updateDock();
+  close.addEventListener('click',()=>{dock.classList.remove('visible','mobile-open');trigger.setAttribute('aria-expanded','false');collapsed=true;trigger.focus()});
+  trigger.addEventListener('click',()=>{dock.classList.add('mobile-open');trigger.setAttribute('aria-expanded','true');collapsed=false;close.focus()});
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&dock.classList.contains('mobile-open'))close.click()});
 })();
 </script>
 </body>

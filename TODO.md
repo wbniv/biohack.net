@@ -37,4 +37,5 @@ _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage 
 <!-- triaged 2026-06-27: snes-demos-under-snes-prefix — build PASS, deployed v1.0.93, redirects live fp:2fb39bf06fc0414d -->
 - [verify] **2026-08-06-thailand-master-plan-page** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-06-thailand-master-plan-page.md](docs/plans/2026-08-06-thailand-master-plan-page.md)_  <!-- fp:00943c6527dc667b -->
 - [verify] **2026-08-07-thailand-master-plan-visual-redesign** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-07-thailand-master-plan-visual-redesign.md](docs/plans/2026-08-07-thailand-master-plan-visual-redesign.md)_  <!-- fp:09e0e6b2b2132d5e -->
+- [verify] **2026-08-07-thailand-sticky-calendar-dock** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-07-thailand-sticky-calendar-dock.md](docs/plans/2026-08-07-thailand-sticky-calendar-dock.md)_  <!-- fp:d1be94dfb9d64640 -->
 <!-- END auto-captured-deferrals -->
