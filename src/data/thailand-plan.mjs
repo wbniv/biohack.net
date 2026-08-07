@@ -83,9 +83,43 @@ export const tasks = [
 export const events = [
  ['mission-answers','15 Aug','Mission answers','august'],['legal-booked','15 Aug','Legal consult booked','august'],['mexico-deed-ask','10 Aug','Notaria: ask now','august'],['mexico-deed','21 Aug','Notaria: deed delivery','august'],['funding','~24 Aug','Funds credited (date unknown)','august'],['rabies','31 Aug','Rabies #2','august'],['packets','31 Aug','Evidence packets','august'],
  ['brandon','10 Aug','Email Brandon (Laos)','august'],['schools','10 Sep','School answers','september'],['carrier','15 Sep','Carrier decision','september'],['case-comparison','30 Sep','Cases to counsel','september'],['exit-chain','30 Sep','Cat exit chain','september'],['book-bkk-icn','30 Sep','Book BKK → ICN + cat','september'],['korea-entry-ready','30 Sep','Korea entry ready','september'],['vietnam-entry-ready','30 Sep','Viet Nam entry ready','september'],['cat-permissions-ready','30 Sep','Cat permissions ready','september'],
- ['chula-calendar','1 Oct','Chula calendar','october'],['us-tax-ready','1 Oct','U.S. return ready','october'],['aqs','6 Oct','AQS confirmed','october'],['visa-selection','10 Oct','Select route','october'],['us-tax-filing','15 Oct','File U.S. taxes','october'],['folders-complete','15 Oct','Folders ready','october'],['book-icn-dad','15 Oct','Book ICN → DAD + cat','october'],['book-stays','15 Oct','Book Asia stays','october'],['ground-transport-ready','15 Oct','Ground transport ready','october'],['insurance-bound','15 Oct','Insurance bound','october'],['money-access-ready','15 Oct','Money access ready','october'],['cat-kit-packed','18 Oct','Cat kit packed','october'],['documents-packed','18 Oct','Documents packed','october'],['connectivity-ready','18 Oct','TRUE or eSIM ready','october'],['korea-e-arrival','18 Oct','Korea e-Arrival Card','october'],['cat-export','19 Oct','Export papers','october'],['reconfirm-bkk-icn','20 Oct','Reconfirm flight + cat','october'],['departure-closed','20 Oct','Departure closed','october'],['depart','21 Oct','BKK → ICN','october'],['travel-record','1 Nov','Travel record','october'],
+ ['chula-calendar','1 Oct','Ask Chula for Jan calendar','october'],['us-tax-ready','1 Oct','U.S. return ready','october'],['aqs','6 Oct','AQS confirmed','october'],['visa-selection','10 Oct','Select route','october'],['us-tax-filing','15 Oct','File U.S. taxes','october'],['folders-complete','15 Oct','Folders ready','october'],['book-icn-dad','15 Oct','Book ICN → DAD + cat','october'],['book-stays','15 Oct','Book Asia stays','october'],['ground-transport-ready','15 Oct','Ground transport ready','october'],['insurance-bound','15 Oct','Insurance bound','october'],['money-access-ready','15 Oct','Money access ready','october'],['cat-kit-packed','18 Oct','Cat kit packed','october'],['documents-packed','18 Oct','Documents packed','october'],['connectivity-ready','18 Oct','TRUE or eSIM ready','october'],['korea-e-arrival','18 Oct','Korea e-Arrival Card','october'],['cat-export','19 Oct','Export papers','october'],['reconfirm-bkk-icn','20 Oct','Reconfirm flight + cat','october'],['departure-closed','20 Oct','Departure closed','october'],['depart','21 Oct','BKK → ICN','october'],['travel-record','1 Nov','Travel record','october'],
  ['study-underway','10 Nov','Study underway','vietnam'],['vietnam-pre-arrival','12 Nov','Viet Nam pre-arrival form','vietnam'],['reconfirm-icn-dad','14 Nov','Reconfirm ICN → DAD + cat','vietnam'],['arrive-vietnam','15 Nov','ICN → DAD','vietnam'],['submit','22 Nov','Submit strongest case','vietnam'],['pending','20 Dec','Wait in Viet Nam','vietnam'],['planning-bound','20 Dec','Escalation bound','vietnam'],['prepare-return','20 Dec','Prepare return flights + cat','vietnam'],['bangkok-address-ready','20 Dec','Bangkok address ready','vietnam'],['bangkok-housing-bridge','20 Dec','Book landing stay + shortlist rental','vietnam'],['book-return','Decision','Book return + cat','vietnam'],['reconfirm-return','Trigger','Reconfirm return + cat','vietnam'],['return','30 Dec','Return after decision','vietnam'],['december-remittance','Last week Dec','Decide year-end remittance','vietnam'],['road-fallback','Trigger','SGN road fallback','vietnam'],
  ['tm30-ready','Arrival','TM30/address ready','january'],['bangkok-settled','Within 48h','Bangkok essentials settled','january'],['import-permit','24 Nov','Cat import permit','vietnam'],['import-permit-ack','26 Nov','Receipt confirmed?','vietnam'],['classes','10 Jan','Thai Level 1','january'],['tm87','19 Jan','TM.87 if triggered','january'],['tm87-backstop','Day 45','TM.87 backstop','january'],['outcome','31 Jan','Bangkok + cat + lawful stay','january']
 ].map(([id,date,label,phase]) => ({id,date,label,phase}));
+
+// Calendar cards are read as a sequence, so they must run in date order within a
+// month. Source order drifted (August ran 15, 15, 10, 21; Viet Nam put 24 and 26
+// Nov after the December entries), so ordering is derived here rather than trusted
+// to hand-maintenance.
+const MONTHS = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+
+// "15 Aug" -> 815, "~24 Aug" -> 824. Returns null for relative labels such as
+// "Arrival", "Within 48h", "Day 45", "Decision", "Trigger", "Last week Dec".
+export const eventSortKey = (label) => {
+  const m = /^~?(\d{1,2})\s+([A-Za-z]{3})/.exec(String(label));
+  const month = m && MONTHS[m[2].toLowerCase()];
+  return month ? month * 100 + Number(m[1]) : null;
+};
+
+// A relative label inherits the key of the dated event it follows, so markers like
+// "Decision" stay pinned beside the date they qualify instead of floating to an end.
+export const sortEventsByDate = (list) => {
+  let carried = 0;
+  return list
+    .map((event, i) => {
+      const own = eventSortKey(event.date);
+      if (own !== null) carried = own;
+      return {event, key: carried, i};
+    })
+    .sort((a, b) => a.key - b.key || a.i - b.i)
+    .map(x => x.event);
+};
+
+// The source array interleaves phases, so rebuild it rather than splicing in place.
+const phaseOrder = [...new Set(events.map(e => e.phase))];
+const ordered = phaseOrder.flatMap(phase => sortEventsByDate(events.filter(e => e.phase === phase)));
+events.length = 0;
+events.push(...ordered);
 
 export const categories = [['visa','Visa'],['cat','Cat'],['thai-study','Thai study'],['travel-tax','Travel/tax']];

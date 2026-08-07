@@ -12,8 +12,14 @@ tasks:
     cmds:
       - pnpm dev
 
+  test:
+    desc: Run the data/page invariants (calendar ordering, task↔event mapping)
+    cmds:
+      - node --test tests/*.test.mjs
+
   build:
     desc: Build site to dist/
+    deps: [test]
     cmds:
       - pnpm build
 
@@ -121,12 +127,17 @@ tasks:
     preconditions:
       - sh: '[ -n "{{.TAG}}" ]'
         msg: "Usage: task publish TAG=v1.2.3"
+      - sh: 'node --test tests/*.test.mjs >/dev/null 2>&1'
+        msg: "Refusing to publish: tests/ is failing. Run 'task test' to see what."
     cmds:
       - git tag {{.TAG}}
       - git push origin master {{.TAG}}
 
   bump:
     desc: Auto-increment patch version, tag, and push to trigger deploy
+    preconditions:
+      - sh: 'node --test tests/*.test.mjs >/dev/null 2>&1'
+        msg: "Refusing to publish: tests/ is failing. Run 'task test' to see what."
     cmds:
       - |
         set -euo pipefail

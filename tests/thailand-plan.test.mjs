@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { tasks, events } from '../src/data/thailand-plan.mjs';
+import { tasks, events, eventSortKey } from '../src/data/thailand-plan.mjs';
 
 const page = await readFile(new URL('../src/pages/thailand.astro', import.meta.url), 'utf8');
 
@@ -136,4 +136,29 @@ test('tax filing task states the verified extension deadline and caveat', () => 
   assert.match(tax.action, /15 October 2026/);
   assert.match(tax.action, /Form 2350/);
   assert.match(tax.why, /does not extend the tax-payment deadline/i);
+});
+
+test('calendar events run in date order within each phase', () => {
+  // Regression: August rendered 15, 15, 10, 21 and Viet Nam put 24 and 26 Nov
+  // after the December entries, so the cards could not be read as a sequence.
+  for (const phase of new Set(events.map(e => e.phase))) {
+    const keys = events.filter(e => e.phase === phase).map(e => eventSortKey(e.date)).filter(k => k !== null);
+    const sorted = [...keys].sort((a, b) => a - b);
+    assert.deepEqual(keys, sorted, `${phase} is out of date order: ${keys.join(', ')}`);
+  }
+});
+
+test('eventSortKey parses dated labels and refuses relative ones', () => {
+  assert.equal(eventSortKey('15 Aug'), 815);
+  assert.equal(eventSortKey('~24 Aug'), 824);
+  assert.equal(eventSortKey('1 Nov'), 1101);
+  for (const relative of ['Arrival', 'Within 48h', 'Day 45', 'Decision', 'Trigger', 'Last week Dec'])
+    assert.equal(eventSortKey(relative), null, relative);
+});
+
+test('a relative label stays pinned beside the date it qualifies', () => {
+  // "Decision" and "Trigger" must not drift to the end of their phase.
+  const vn = events.filter(e => e.phase === 'vietnam').map(e => e.date);
+  assert.ok(vn.indexOf('Decision') > vn.indexOf('20 Dec'), 'Decision should follow 20 Dec');
+  assert.ok(vn.indexOf('Decision') < vn.indexOf('30 Dec'), 'Decision should precede 30 Dec');
 });

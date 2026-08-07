@@ -110,6 +110,9 @@ const calendarMonth = event => event.id === 'road-fallback' ? 'september' : even
   .calendar-section:has(.legend-item[data-state=done]:hover) .milestone.is-complete{border-color:#43c6a4;box-shadow:0 0 0 2px rgba(67,198,164,.5)}
   .calendar-section:has(.legend-item[data-state=current]:hover) .calendar-month.is-current{box-shadow:inset 0 3px #8c6fff,0 0 0 2px rgba(140,111,255,.5)}
   @media (prefers-reduced-motion:reduce){.legend-item,.milestone{transition:none}}
+  /* The day number is what you scan for, so it leads. Scoped to .full-calendar so
+     the compact dock and the mobile pager keep their own smaller sizing. */
+  .full-calendar .milestone small{font-size:1.02rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.015em;margin-right:7px}
   .global-progress{position:fixed;z-index:60;inset:0 0 auto;width:100%;height:10px;border-radius:0;background:#26384a;box-shadow:0 1px 0 #0008}.global-progress i{box-shadow:0 0 8px #ff684766}.section-nav{top:10px}.task-tools{top:70px}.calendar-dock{top:10px}.hero{scroll-margin-top:100px}
   .milestone-jump{width:100%;font:inherit;cursor:default;position:relative;padding-right:25px}.milestone-jump:after{content:'↘';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#a7e8d4;font-weight:700;opacity:0;transition:opacity .15s}
   /* The jump arrow is an affordance, not information — it appears on hover or
