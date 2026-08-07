@@ -51,9 +51,17 @@ test('global progress is persistent, display-only, and clears sticky layers', ()
 test('mobile calendar uses one summary and one grouped full calendar', () => {
   assert.match(page, /class="mobile-calendar-summary"/);
   assert.match(page, /id="mobile-next-deadline"/);
-  assert.match(page, /class="calendar-sheet-body"/);
+  assert.match(page, /class="calendar-sheet-body(?: [^"]+)?"/);
   assert.match(page, /class="sheet-phases"/);
   assert.doesNotMatch(page, /<div class="mobile-timeline" data-calendar>/);
+});
+
+test('mobile full calendar restores time to the horizontal axis', () => {
+  assert.match(page, /class="calendar-sheet-body mobile-horizontal-calendar"/);
+  assert.match(page, /grid-auto-flow:column/);
+  assert.match(page, /scroll-snap-type:x mandatory/);
+  assert.match(page, /scroll-snap-align:start/);
+  assert.match(page, /inline:'start'/);
 });
 
 test('route copy describes the active route without historical exclusions', () => {

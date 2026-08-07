@@ -23,6 +23,7 @@ rows on commit.*
 | [Thailand checklist — sticky calendar dock](2026-08-07-thailand-sticky-calendar-dock.md) | Keep synchronized calendar context visible while working through checklist tasks with a desktop dock and mobile calendar sheet | [`19970c8`](https://github.com/wbniv/biohack.net/commit/19970c8) | Feature |
 | [Thailand master plan — operational checklist completion](2026-08-07-thailand-operational-checklist-completion.md) | Add the missing border, pet, transport, insurance, supplies, money, connectivity, shutdown, and Bangkok-arrival tasks with stable IDs and calendar gates | Planning | Feature |
 | [Thailand master plan — mobile calendar layout](2026-08-07-thailand-mobile-calendar-layout.md) | Replace the duplicated inline mobile milestone list with a compact live summary and a grouped near-full-height calendar sheet | Planning | Feature |
+| [Thailand master plan — mobile horizontal calendar](2026-08-07-thailand-mobile-horizontal-calendar.md) | Restore time to the x-axis in the mobile calendar sheet using readable, horizontally pannable, snap-aligned phase columns | Planning | Feature |
 
 ---
 
