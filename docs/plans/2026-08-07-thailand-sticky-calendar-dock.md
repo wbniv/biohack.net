@@ -1,5 +1,14 @@
 # Thailand checklist — sticky calendar dock
 
+## 2026-08-07 compactness correction
+
+The expanded task/event set made a content-sized dock consume too much of the
+checklist viewport. Cap the desktop dock at `280px` (and `32vh` on shorter
+screens), retain an explicit internal vertical scrollbar, and adjust task jump
+offsets to the compact dock. The full calendar remains available at its original
+section; the dock is a synchronized working reference, not a second full-page
+calendar.
+
 **Date:** 2026-08-07  
 **Status:** Implemented and reverified
 **Target:** <https://biohack.net/thailand/>

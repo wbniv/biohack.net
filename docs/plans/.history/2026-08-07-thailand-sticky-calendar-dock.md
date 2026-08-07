@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/686b664) | Add passenger and cat booking tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8dd7f7c) | Show complete sticky calendar and compact tasks |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/89bbbc4) | Finish native Thailand master plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/1995e26) | fix: fill sticky calendar dock without gutters |
@@ -7,6 +8,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/19970c8) | feat: add sticky Thailand calendar dock |
 
 <!--history-meta v1
+686b664	author	Will Norris
+686b664	added	2
+686b664	deleted	1
+686b664	files	1
 8dd7f7c	author	Will Norris
 8dd7f7c	added	4
 8dd7f7c	deleted	2
