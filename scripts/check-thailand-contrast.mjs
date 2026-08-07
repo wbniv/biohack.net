@@ -12,7 +12,7 @@ const child = spawn(chrome, ['--headless=new','--no-sandbox',`--remote-debugging
 const pause = ms => new Promise(r => setTimeout(r, ms));
 try {
   let target;
-  for (let i=0;i<40;i++) { try { const tabs=await fetch(`http://127.0.0.1:${port}/json`).then(r=>r.json()); target=tabs.find(t=>t.type==='page'&&t.url.includes('/dist/thailand/index.html')); if(target)break; } catch {} await pause(100); }
+  for (let i=0;i<120;i++) { try { const tabs=await fetch(`http://127.0.0.1:${port}/json`).then(r=>r.json()); target=tabs.find(t=>t.type==='page'); if(target)break; } catch {} await pause(100); }
   if(!target) throw new Error('Chrome debugging target unavailable');
   const ws = new WebSocket(target.webSocketDebuggerUrl); await new Promise((ok,fail)=>{ws.onopen=ok;ws.onerror=fail});
   let seq=0; const pending=new Map(); ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&pending.has(m.id)){pending.get(m.id)(m);pending.delete(m.id)}};
