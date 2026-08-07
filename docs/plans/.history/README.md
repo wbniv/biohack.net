@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/75867b9) | Plan three-column mobile calendar pager |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/5c128ec) | Restore horizontal mobile Thailand calendar |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/333f678) | Redesign Thailand calendar for mobile |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/caef4fa) | Plan Thailand operational checklist completion |
@@ -14,6 +15,10 @@
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+75867b9	author	Will Norris
+75867b9	added	1
+75867b9	deleted	0
+75867b9	files	1
 5c128ec	author	Will Norris
 5c128ec	added	1
 5c128ec	deleted	0

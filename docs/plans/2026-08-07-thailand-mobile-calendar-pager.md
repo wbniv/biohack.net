@@ -1,4 +1,4 @@
-# Thailand master plan — three-column mobile calendar pager
+# Thailand master plan — three-month mobile calendar carousel
 
 **Date:** 2026-08-07
 **Status:** Approved for implementation
@@ -14,10 +14,10 @@ requiring a separate “open calendar” action.
 
 ## Decision
 
-On mobile, show one selected month at a time. Arrange that month’s milestones in
-a three-column grid and provide explicit previous/next controls in the month
-header. Navigation changes the selected month in place; it does not horizontally
-scroll the page or open another surface.
+On mobile, show a three-month-wide window into the five-month timeline. Each of
+the three columns is a complete month/phase column containing its milestone
+list. Explicit previous/next controls scroll the calendar window horizontally;
+the page itself does not scroll sideways and no separate surface opens.
 
 Desktop retains the existing five-column calendar and sticky calendar dock.
 
@@ -27,44 +27,51 @@ Desktop retains the existing five-column calendar and sticky calendar dock.
 
 ```text
 ┌──────────────────────────────────────┐
-│ ‹          AUGUST 2026            › │
+│ ‹       AUG — SEP — OCT          › │
 ├────────────┬────────────┬────────────┤
-│ 15 Mission │ 15 Legal   │ 22 Funds  │
-│ answers    │ consult    │ seasoned  │
-├────────────┼────────────┼────────────┤
-│ 31 Rabies  │ ASAP Work- │ 31 Cooking│
-│ #2         │ cation     │ packet    │
-├────────────┼────────────┼────────────┤
+│ AUGUST     │ SEPTEMBER  │ OCTOBER    │
+│            │            │            │
+│ 15 Mission │ 7 Choose   │ 1 Chula    │
+│ answers    │ visa route │ calendar   │
+│            │            │            │
+│ 22 Funds   │ 18 Confirm │ 6 AQS      │
+│ seasoned   │ bookings   │ confirmed  │
 │ …          │ …          │ …          │
 └────────────┴────────────┴────────────┘
 ```
 
-Each cell begins with `{day} {description}` on the same line. The description
-may wrap inside its cell; the date never receives a dedicated line.
+Each milestone inside a month begins with `{day} {description}` on the same
+line. The description may wrap inside its month column; the date never receives
+a dedicated line.
 
-### First and last month
+### Window navigation
 
 ```text
 ┌──────────────────────────────────────┐
-│            AUGUST 2026            › │  previous disabled
+│ ‹       AUG — SEP — OCT          › │
 └──────────────────────────────────────┘
 
 ┌──────────────────────────────────────┐
-│ ‹          JANUARY 2027              │  next disabled
+│ ‹       SEP — OCT — VIET NAM       › │
+└──────────────────────────────────────┘
+
+┌──────────────────────────────────────┐
+│ ‹       OCT — VIET NAM — JAN         │
 └──────────────────────────────────────┘
 ```
 
 ## Interaction
 
-- Default to the current plan month; before the plan, default to August, and
-  after the plan, default to January.
-- Previous and next buttons move exactly one phase in chronological order:
-  August → September → October → Viet Nam → January.
+- Default to the three-month window containing the current plan phase. Before
+  the plan, show August–October; after the plan, show October–January.
+- Previous and next buttons move the window exactly one phase at a time:
+  August/September/October → September/October/Viet Nam →
+  October/Viet Nam/January.
 - Use real `<button>` elements with accessible names such as “Previous month”
   and “Next month.” Disable the unavailable direction at either boundary.
 - Update the visible month heading and grid without changing page scroll.
-- Keep only the selected month exposed to assistive technology; inactive months
-  must be hidden, not merely visually moved offscreen.
+- Keep only the three visible months exposed to assistive technology; the other
+  two must be hidden, not merely visually moved offscreen.
 - Milestones remain buttons that focus their mapped checklist task.
 - Completion, partial completion, next-action, current-month, and linked-task
   states continue to derive from the shared stable IDs.
@@ -73,8 +80,9 @@ may wrap inside its cell; the date never receives a dedicated line.
 
 ## Layout
 
-- Use `grid-template-columns: repeat(3, minmax(0, 1fr))` at mobile widths.
-- Keep a consistent small gap and equal-width cells.
+- Use `grid-template-columns: repeat(3, minmax(0, 1fr))` for three equal-width
+  month columns at mobile widths.
+- Within each month, milestones remain a single vertical list.
 - Allow descriptions to wrap normally; never clip or ellipsize task meaning.
 - Retain day-only labels in single-month phases. The combined Viet Nam phase
   keeps `Nov` or `Dec` where required to disambiguate the date.
@@ -86,18 +94,17 @@ may wrap inside its cell; the date never receives a dedicated line.
 
 - The pager selection is temporary presentation state and does not need local
   persistence.
-- A calendar section link should reveal the calendar with the default/current
-  month selected.
+- A calendar section link should reveal the default/current three-month window.
 - Task completion remains persisted under existing stable checklist IDs and
   immediately updates milestone styling in every calendar presentation.
 
 ## Verification
 
-1. At 320, 360, 390, and 430px, exactly three milestone columns are rendered.
+1. At 320, 360, 390, and 430px, exactly three month columns are visible.
 2. No horizontal page or calendar overflow occurs.
-3. Previous/next controls visit all five phases in chronological order.
+3. Previous/next controls visit all three valid windows in chronological order.
 4. Boundary controls are disabled correctly and expose accessible names.
-5. Exactly one phase panel is visible and exposed to accessibility APIs.
+5. Exactly three phase panels are visible and exposed to accessibility APIs.
 6. Each phase contains every event mapped to it, exactly once.
 7. Calendar dates begin inline with descriptions and omit redundant month names.
 8. Checking a task updates the corresponding milestone in the selected month.
@@ -109,8 +116,7 @@ may wrap inside its cell; the date never receives a dedicated line.
 ## Definition of done
 
 - The mobile calendar is visible without an opener.
-- It occupies only one month panel’s height at a time.
-- Three milestone cells appear across the phone viewport.
+- It occupies the height of the tallest month in the visible window.
+- Three month columns appear across the phone viewport.
 - Explicit arrow controls replace horizontal scrolling.
 - Calendar/task synchronization and accessibility remain intact.
-
