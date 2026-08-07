@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="title desc">
+<title id="title">Return to Thailand operational calendar, August 2026 through January 2027</title>
+<desc id="desc">A country-aware timeline showing Thailand through 21 October, South Korea into November, Viet Nam until visa issuance, and Thailand from late December or early January. Milestones cover DTV, Non-ED language study, cat paperwork, travel, and tax.</desc>
+<style>
+text{font-family:system-ui,-apple-system,sans-serif}.bg{fill:#fafaf9}.title{font-size:24px;font-weight:750;fill:#1c1917}.sub{font-size:12px;fill:#78716c}.month{font-size:13px;font-weight:750;letter-spacing:.08em;fill:#57534e}.lane{font-size:12px;font-weight:700;fill:#44403c}.grid{stroke:#d6d3d1;stroke-width:1}.minor{stroke:#e7e5e4;stroke-width:1}.thai{fill:#dbeafe}.korea{fill:#ede9fe}.vietnam{fill:#ccfbf1}.location{font-size:12px;font-weight:700;fill:#292524}.dtv{fill:#2563eb}.ed{fill:#7c3aed}.cat{fill:#d97706}.tax{fill:#059669}.travel{fill:#dc2626}.ring{fill:#fafaf9;stroke-width:3}.deadline{stroke:#fff;stroke-width:1}.label{font-size:10.5px;fill:#292524}.small{font-size:9.5px;fill:#57534e}.legend{font-size:11px;fill:#44403c}
+@media(prefers-color-scheme:dark){.bg{fill:#111113}.title,.label{fill:#f5f5f4}.sub,.month,.lane,.small,.legend{fill:#a8a29e}.grid{stroke:#3f3f46}.minor{stroke:#27272a}.thai{fill:#1e3a5f}.korea{fill:#3b276b}.vietnam{fill:#134e4a}.location{fill:#f5f5f4}.ring{fill:#111113}}
+</style>
+<rect class="bg" width="1200" height="620" rx="12"/>
+<text class="title" x="28" y="38">THE ROAD BACK TO BANGKOK</text>
+<text class="sub" x="28" y="60">One outcome · three candidate visa routes · Thai study under every scenario</text>
+
+<!-- month columns -->
+<g transform="translate(180 82)">
+  <line class="grid" x1="0" y1="0" x2="0" y2="458"/><line class="grid" x1="165" y1="0" x2="165" y2="458"/>
+  <line class="grid" x1="330" y1="0" x2="330" y2="458"/><line class="grid" x1="495" y1="0" x2="495" y2="458"/>
+  <line class="grid" x1="660" y1="0" x2="660" y2="458"/><line class="grid" x1="825" y1="0" x2="825" y2="458"/>
+  <line class="grid" x1="990" y1="0" x2="990" y2="458"/>
+  <text class="month" x="82" y="-8" text-anchor="middle">AUG</text><text class="month" x="247" y="-8" text-anchor="middle">SEP</text>
+  <text class="month" x="412" y="-8" text-anchor="middle">OCT</text><text class="month" x="577" y="-8" text-anchor="middle">NOV</text>
+  <text class="month" x="742" y="-8" text-anchor="middle">DEC</text><text class="month" x="907" y="-8" text-anchor="middle">JAN 2027</text>
+
+  <!-- country ribbon -->
+  <rect class="thai" x="0" y="8" width="443" height="46" rx="8"/><rect class="korea" x="443" y="8" width="112" height="46"/>
+  <rect class="vietnam" x="555" y="8" width="269" height="46"/><rect class="thai" x="824" y="8" width="166" height="46" rx="8"/>
+  <text class="location" x="210" y="36" text-anchor="middle">🇹🇭 THAILAND</text><text class="location" x="499" y="36" text-anchor="middle">🇰🇷 KOREA</text>
+  <text class="location" x="689" y="36" text-anchor="middle">🇻🇳 VIET NAM</text><text class="location" x="907" y="36" text-anchor="middle">🇹🇭 THAILAND</text>
+
+  <!-- horizontal lanes -->
+  <line class="minor" x1="0" y1="103" x2="990" y2="103"/><line class="minor" x1="0" y1="188" x2="990" y2="188"/>
+  <line class="minor" x1="0" y1="273" x2="990" y2="273"/><line class="minor" x1="0" y1="358" x2="990" y2="358"/>
+  <line class="minor" x1="0" y1="443" x2="990" y2="443"/>
+
+  <!-- DTV milestones -->
+  <circle class="dtv deadline" cx="60" cy="121" r="8"/><text class="label" x="60" y="142" text-anchor="middle">Email missions</text><text class="small" x="60" y="156" text-anchor="middle">August</text>
+  <circle class="dtv deadline" cx="113" cy="121" r="8"/><text class="label" x="113" y="100" text-anchor="middle">Fund 21/22 Aug</text>
+  <circle class="dtv deadline" cx="420" cy="121" r="8"/><text class="label" x="420" y="142" text-anchor="middle">3 cases complete</text><text class="small" x="420" y="156" text-anchor="middle">by 15 Oct</text>
+  <circle class="ring" stroke="#2563eb" cx="382" cy="121" r="8"/><text class="label" x="382" y="100" text-anchor="middle">Integrity Legal</text><text class="small" x="382" y="88" text-anchor="middle">by 10 Oct</text>
+  <circle class="ring" stroke="#2563eb" cx="610" cy="121" r="8"/><text class="label" x="610" y="100" text-anchor="middle">Submit strongest</text><text class="small" x="610" y="88" text-anchor="middle">≥ 22 Nov if DTV</text>
+  <line x1="610" y1="121" x2="764" y2="121" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/><text class="small" x="687" y="142" text-anchor="middle">remain in Viet Nam while pending</text>
+  <circle class="ring" stroke="#2563eb" cx="764" cy="121" r="8"/><text class="label" x="764" y="100" text-anchor="middle">planning edge</text><text class="small" x="764" y="88" text-anchor="middle">~20 Dec</text>
+
+  <!-- ED milestones -->
+  <circle class="ed deadline" cx="230" cy="206" r="8"/><text class="label" x="230" y="227" text-anchor="middle">Shortlist schools</text><text class="small" x="230" y="241" text-anchor="middle">early Sep</text>
+  <circle class="ring" stroke="#7c3aed" cx="335" cy="206" r="8"/><text class="label" x="335" y="185" text-anchor="middle">Contact CTFL</text><text class="small" x="335" y="173" text-anchor="middle">1 Oct target</text>
+  <circle class="ed deadline" cx="505" cy="206" r="8"/><text class="label" x="505" y="227" text-anchor="middle">ED docs underway</text><text class="small" x="505" y="241" text-anchor="middle">early Nov</text>
+  <circle class="ring" stroke="#7c3aed" cx="870" cy="206" r="8"/><text class="label" x="870" y="185" text-anchor="middle">Start Thai L1</text><text class="small" x="870" y="173" text-anchor="middle">tentative</text>
+  <circle class="ed deadline" cx="930" cy="206" r="8"/><text class="label" x="930" y="227" text-anchor="middle">TM.87 day 20</text><text class="small" x="930" y="241" text-anchor="middle">fallback only</text>
+
+  <!-- cat milestones -->
+  <circle class="cat deadline" cx="160" cy="291" r="8"/><text class="label" x="160" y="312" text-anchor="middle">Rabies #2</text><text class="small" x="160" y="326" text-anchor="middle">31 Aug</text>
+  <circle class="cat deadline" cx="317" cy="291" r="8"/><text class="label" x="317" y="270" text-anchor="middle">Flight + export chain</text><text class="small" x="317" y="258" text-anchor="middle">weight confirmed by 30 Sep</text>
+  <circle class="cat deadline" cx="425" cy="291" r="8"/><text class="label" x="425" y="312" text-anchor="middle">DLD exam / R9</text><text class="small" x="425" y="326" text-anchor="middle">18–19 Oct</text>
+  <circle class="cat deadline" cx="805" cy="291" r="8"/><text class="label" x="805" y="270" text-anchor="middle">Return papers</text><text class="small" x="805" y="258" text-anchor="middle">before flight</text>
+
+  <!-- tax / travel milestones -->
+  <circle class="travel deadline" cx="443" cy="376" r="8"/><text class="label" x="443" y="397" text-anchor="middle">Depart BKK</text><text class="small" x="443" y="411" text-anchor="middle">21 Oct · 177 days</text>
+  <circle class="travel deadline" cx="555" cy="376" r="8"/><text class="label" x="555" y="355" text-anchor="middle">Enter Viet Nam</text><text class="small" x="555" y="343" text-anchor="middle">mid-Nov target</text>
+  <circle class="tax deadline" cx="824" cy="376" r="8"/><text class="label" x="824" y="397" text-anchor="middle">Earliest return</text><text class="small" x="824" y="411" text-anchor="middle">30 Dec</text>
+  <circle class="ring" stroke="#dc2626" cx="865" cy="376" r="8"/><text class="label" x="865" y="355" text-anchor="middle">Bangkok</text><text class="small" x="865" y="343" text-anchor="middle">early Jan target</text>
+</g>
+
+<!-- row labels -->
+<text class="lane" x="28" y="208">VISA EVIDENCE</text><text class="lane" x="28" y="293">THAI STUDY / NON-ED</text>
+<text class="lane" x="28" y="378">CAT PAPERWORK</text><text class="lane" x="28" y="463">TRAVEL + TAX</text>
+
+<!-- legend -->
+<circle class="dtv" cx="32" cy="580" r="6"/><text class="legend" x="45" y="584">visa selection</text>
+<circle class="ed" cx="102" cy="580" r="6"/><text class="legend" x="115" y="584">Non-ED / study</text>
+<circle class="cat" cx="228" cy="580" r="6"/><text class="legend" x="241" y="584">cat</text>
+<circle class="tax" cx="292" cy="580" r="6"/><text class="legend" x="305" y="584">tax gate</text>
+<circle class="travel" cx="372" cy="580" r="6"/><text class="legend" x="385" y="584">travel</text>
+<circle class="ring" stroke="#57534e" cx="470" cy="580" r="6"/><text class="legend" x="483" y="584">target / decision gate</text>
+<text class="sub" x="1170" y="584" text-anchor="end">Working plan · 6 Aug 2026</text>
+</svg>
