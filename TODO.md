@@ -35,4 +35,5 @@ _Auto-added from plan "Out of scope"/"Deferred" sections at commit time. Triage 
 <!-- BEGIN auto-captured-deferrals (managed by audit-plan-deferrals.sh — triage these into the curated sections above; the fingerprint ledger means a deleted item is NOT re-added) -->
 <!-- triaged 2026-06-27: all 5 steps verified PASS in same session, evidence recorded in plan fp:9ef5db85609d76c0 -->
 <!-- triaged 2026-06-27: snes-demos-under-snes-prefix — build PASS, deployed v1.0.93, redirects live fp:2fb39bf06fc0414d -->
+- [verify] **2026-08-06-thailand-master-plan-page** — Verification section present but no PASS recorded — run + record the steps. _from [2026-08-06-thailand-master-plan-page.md](docs/plans/2026-08-06-thailand-master-plan-page.md)_  <!-- fp:00943c6527dc667b -->
 <!-- END auto-captured-deferrals -->
