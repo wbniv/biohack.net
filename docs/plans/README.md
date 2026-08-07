@@ -26,6 +26,7 @@ rows on commit.*
 | [Thailand master plan — mobile horizontal calendar](2026-08-07-thailand-mobile-horizontal-calendar.md) | Restore time to the x-axis in the mobile calendar sheet using readable, horizontally pannable, snap-aligned phase columns | Planning | Feature |
 | [Thailand master plan — three-month mobile calendar carousel](2026-08-07-thailand-mobile-calendar-pager.md) | Show three mobile month columns at once with explicit previous/next window navigation | Planning | Feature |
 | [Thailand master plan — calendar checkboxes](2026-08-07-thailand-calendar-checkboxes.md) | Add native synchronized checkboxes to every calendar milestone while keeping filters scoped to the detailed checklist | Planning | Feature |
+| [Departure ladder on the Thailand page](2026-08-07-departure-ladder-on-the-thailand-page.md) | Render the A/B/C departure ladder — timeline, dependencies and contingencies — on the Thailand page, so a refused step shows its fallback instead of a flat list of equally weighted milestones | [`1865f43`](https://github.com/wbniv/biohack.net/commit/1865f43) | Feature |
 
 ---
 
@@ -34,4 +35,4 @@ rows on commit.*
 - **Order** = each plan's *creation* commit (oldest commit that touched the file), by committer date.
 - **Commit(s)** = the full `git log --follow` set per plan, oldest → newest.
 - **Summaries / categories** auto-generated from each plan's TL;DR (Sonnet, medium effort) — refine as needed.
-- **Generated** 2026-06-27 for 7 plan(s); last updated 2026-08-07 for 12 plan(s).
+- **Generated** 2026-06-27 for 7 plan(s); last updated 2026-08-07 for 13 plan(s).
