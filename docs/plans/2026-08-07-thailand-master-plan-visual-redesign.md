@@ -188,6 +188,78 @@ focus, account for the sticky header in anchor positioning, allow horizontal
 scrolling on narrow screens, and avoid covering page content. Respect reduced
 motion for section scrolling.
 
+## Affordance consistency audit — 2026-08-07
+
+The page must reserve pill/button styling for things that act like controls.
+Read-only facts should look editorial; controls must expose their action and
+state. Apply these changes in priority order:
+
+1. **Hero parameters — implemented in this round.** Replace the three rounded
+   “Target / Route / Thai study” chips with a semantic definition list: quiet
+   uppercase keys, plain values, and simple divider rules. They must have no
+   hover, focus, pointer cursor, pressed state, or button-like background.
+2. **Candidate visa routes.** The DTV workcation, DTV cooking, and Non-ED labels
+   are also read-only context but currently reuse pill styling. Render them as
+   a labeled inline list or compact numbered evidence list, not filter chips.
+3. **Checkbox scope.** Checking a task must require activating its visible
+   checkbox control. Clicking arbitrary task prose must not silently complete
+   the task. Keep a generous checkbox hit target and preserve keyboard access.
+4. **Calendar milestone cards.** A milestone currently has `cursor:pointer`
+   even though clicking the card itself performs no action. Use the default
+   cursor on the card, expose real **Jump to task** links without relying on
+   hover alone, and reserve the pointer cursor for those links.
+5. **Dock collapse state.** Change the control label and accessible state from
+   **Collapse** to **Expand** while collapsed; support `aria-expanded` and make
+   the controlled calendar region explicit.
+6. **Reset progress.** It is a consequential button but visually resembles an
+   ordinary text link. Give it a quiet secondary-button treatment, retain the
+   confirmation, and distinguish it from navigation links without making it
+   compete with the checklist.
+7. **Information disclosure.** Keep the small task info control, but give its
+   closed/open states a consistent icon change and explicit tooltip/accessibility
+   name. Avoid a bordered circle around an already circled glyph.
+8. **Decision outcomes.** The strongly colored Issued/Pending/Refused panels
+   are informational, not selectable. Keep them cursor-neutral with no hover
+   elevation and label the group as outcomes so color is not interpreted as a
+   choice control.
+9. **Touch parity.** Every interaction currently revealed by hover—especially
+   milestone-to-task navigation—must also be persistently discoverable or
+   available on focus/tap. Hover may enhance emphasis, never gate the action.
+10. **Sticky-layer collision test.** Test section navigation, task filters, and
+    the calendar dock together at short desktop heights. No layer may obscure
+    the checkbox, info control, focused task, or another sticky control.
+
+### Affordance mockup
+
+```text
+TARGET  Jan 2027  │  ROUTE  Asia only  │  THAI STUDY  Unconditional
+       plain read-only metadata — no pills, hover, or pointer cursor
+
+Candidate evidence routes
+  1  DTV workcation     2  DTV cooking     3  Non-ED language
+       read-only list — visually distinct from the filter buttons below
+
+Show tasks   [Due soon] [Visa] [Cat] [Thai study] [Travel/tax] [Done]
+                    actual controls retain button treatment
+
+┌─ task ────────────────────────────────────────────────────────────┐
+│ [ ]  Due/owner: action text                                  [i] │
+│  ↑ only this checkbox toggles completion      disclosure toggles ↑│
+└───────────────────────────────────────────────────────────────────┘
+```
+
+### Affordance verification
+
+- Tab through the page and inventory every focus stop; each must perform an
+  evident action or provide an intentional focus interaction.
+- Compare pointer cursors against actual click handlers; no dead surface may
+  advertise clickability.
+- Click task prose, checkbox, disclosure, milestone body, and jump link
+  separately and assert that only the intended state changes.
+- Verify control names/states with an accessibility tree snapshot.
+- Test mouse, keyboard, and touch-width layouts, including a 600px-high desktop
+  viewport with every sticky surface active.
+
 ## Visual direction
 
 ### Palette

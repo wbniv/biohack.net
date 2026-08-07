@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/02f4b7f) | Retry Thailand browser gates in CI |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/130f895) | Keep completed Thailand tasks visible |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/c6f97fe) | Stabilize Thailand browser gates |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8dd7f7c) | Show complete sticky calendar and compact tasks |
@@ -16,6 +17,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+02f4b7f	author	Will Norris
+02f4b7f	added	3
+02f4b7f	deleted	0
+02f4b7f	files	1
 130f895	author	Will Norris
 130f895	added	11
 130f895	deleted	2

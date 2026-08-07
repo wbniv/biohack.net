@@ -24,6 +24,11 @@ test('native Astro page contains the planned interaction hooks', () => {
   for (const outcome of ['Issued','Pending','Refused']) assert.ok(page.includes(outcome));
 });
 
+test('read-only hero parameters are semantic metadata, not filter chips', () => {
+  assert.match(page, /<dl class="status-row" aria-label="Plan parameters">/);
+  assert.doesNotMatch(page, /<div class="status-row"><span>/);
+});
+
 test('conditional work cannot be reported overdue', () => {
   assert.ok(tasks.filter(t => t.conditional).length >= 3);
   assert.ok(page.includes("c.dataset.conditional!=='true'"));
