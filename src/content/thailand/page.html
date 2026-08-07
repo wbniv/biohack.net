@@ -1066,10 +1066,34 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
     if (!svgDoc) return;
     svgDoc.querySelectorAll('.task-hit,.task-dim').forEach(el => el.classList.remove('task-hit','task-dim'));
   };
+  const matching = (card) => mappings.find(([needle]) => card.textContent.includes(needle));
+  const milestoneParts = (labelNeedle) => {
+    if (!svgDoc) return [];
+    const labels = [...svgDoc.querySelectorAll('text')].filter(el => el.textContent.includes(labelNeedle));
+    return labels.flatMap(label => {
+      const marker = label.previousElementSibling;
+      return marker && /^(circle|line|rect)$/i.test(marker.tagName) ? [label, marker] : [label];
+    });
+  };
+  const syncCompleted = () => {
+    if (!svgDoc) return;
+    svgDoc.querySelectorAll('.task-complete,.task-partial').forEach(el => el.classList.remove('task-complete','task-partial'));
+    const byMilestone = new Map();
+    document.querySelectorAll('li.task').forEach(card => {
+      const rule = matching(card); if (!rule) return;
+      const states = byMilestone.get(rule[1]) || [];
+      states.push(Boolean(card.querySelector('input[type=checkbox]')?.checked));
+      byMilestone.set(rule[1], states);
+    });
+    byMilestone.forEach((states, label) => {
+      const klass = states.every(Boolean) ? 'task-complete' : states.some(Boolean) ? 'task-partial' : '';
+      if (klass) milestoneParts(label).forEach(el => { el.classList.add(klass); el.setAttribute('aria-label', `${el.textContent || label}: ${klass === 'task-complete' ? 'completed' : 'partially completed'}`); });
+    });
+  };
   const activate = (card) => {
     if (!svgDoc || !card) return;
     clear();
-    const rule = mappings.find(([needle]) => card.textContent.includes(needle));
+    const rule = matching(card);
     if (!rule) return;
     const labels = [...svgDoc.querySelectorAll('text')];
     const hits = labels.filter(el => el.textContent.includes(rule[1]));
@@ -1084,8 +1108,9 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
   calendar.addEventListener('load', () => {
     svgDoc = calendar.contentDocument;
     const style = svgDoc.createElementNS('http://www.w3.org/2000/svg','style');
-    style.textContent = '.task-dim{opacity:.28;transition:opacity .16s}.task-hit{opacity:1!important;filter:drop-shadow(0 0 5px #f6b36f);stroke:#f6b36f!important;stroke-width:3px!important;font-weight:800}';
+    style.textContent = '.task-dim{opacity:.28;transition:opacity .16s}.task-hit{opacity:1!important;filter:drop-shadow(0 0 5px #f6b36f);stroke:#f6b36f!important;stroke-width:3px!important;font-weight:800}.task-complete{opacity:.58;stroke:#2dd4bf!important;stroke-width:3px!important;text-decoration:line-through}.task-partial{opacity:.8;stroke:#fbbf24!important;stroke-width:3px!important;stroke-dasharray:3 2}';
     svgDoc.documentElement.appendChild(style);
+    syncCompleted();
   });
   document.querySelectorAll('li.task').forEach(card => {
     card.addEventListener('pointerenter', () => activate(card));
@@ -1093,6 +1118,7 @@ img,svg{max-width:100%!important;height:auto!important;border-radius:14px!import
     card.addEventListener('focusin', () => activate(card));
     card.addEventListener('focusout', e => { if (!card.contains(e.relatedTarget)) clear(); });
     card.addEventListener('click', e => { if (e.target.tagName !== 'INPUT') activate(card); });
+    card.querySelector('input[type=checkbox]')?.addEventListener('change', syncCompleted);
   });
 })();
 </script>

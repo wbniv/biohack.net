@@ -289,6 +289,22 @@ Example mapping:
 to Hanoi and Seoul” to its August calendar milestone. Hovering or focusing the
 task card highlights that milestone; leaving the card restores the calendar.
 
+### Completed tasks reflected in the calendar
+
+When a mapped task is checked, its calendar milestone must adopt a persistent
+completed visual state distinct from hover/focus highlighting. Use a combination
+of fill, stroke, opacity, and a completion mark; do not rely on color alone.
+
+- Restore completed milestone states from the same persisted task state on load.
+- Update the milestone immediately when its checkbox changes.
+- If several tasks share a milestone, mark it complete only when every mapped
+  task is complete; otherwise show a partial state.
+- If one task maps to several milestones, update the full mapped set together.
+- Hover/focus emphasis temporarily strengthens a completed marker without
+  erasing its completed meaning, then returns it to the completed style.
+- Expose completion in the SVG/accessibility label so it is not merely visual.
+- The current/next milestone calculation must skip completed milestones.
+
 ## Diagram and map treatment
 
 - Rebuild the decision flow so the three application outcomes remain exact:
