@@ -1,74 +1,919 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620" role="img" aria-labelledby="title desc">
-<title id="title">Return to Thailand operational calendar, August 2026 through January 2027</title>
-<desc id="desc">A country-aware timeline showing Thailand through 21 October, South Korea into November, Viet Nam until visa issuance, and Thailand from late December or early January. Milestones cover DTV, Non-ED language study, cat paperwork, travel, and tax.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 910 792" width="910" height="792" role="img" aria-labelledby="ct cd">
+<title id="ct">Trip calendar, August 2026 to July 2027</title>
+<desc id="cd">Twelve-month calendar: funds consolidated 22 August, cat second rabies vaccination 31 August, titer draw mid September, DLD examination 19 October, departure 21 October, Korea to Da Nang early November, DTV application 22 November, visa issued mid December, return to Bangkok around 1 January, the earliest projected Japan entry for the cat on 27 February 2027, and a rabies booster due before leaving Thailand about 25 June 2027.</desc>
 <style>
-text{font-family:system-ui,-apple-system,sans-serif}.bg{fill:#fafaf9}.title{font-size:24px;font-weight:750;fill:#1c1917}.sub{font-size:12px;fill:#78716c}.month{font-size:13px;font-weight:750;letter-spacing:.08em;fill:#57534e}.lane{font-size:12px;font-weight:700;fill:#44403c}.grid{stroke:#d6d3d1;stroke-width:1}.minor{stroke:#e7e5e4;stroke-width:1}.thai{fill:#dbeafe}.korea{fill:#ede9fe}.vietnam{fill:#ccfbf1}.location{font-size:12px;font-weight:700;fill:#292524}.dtv{fill:#2563eb}.ed{fill:#7c3aed}.cat{fill:#d97706}.tax{fill:#059669}.travel{fill:#dc2626}.ring{fill:#fafaf9;stroke-width:3}.deadline{stroke:#fff;stroke-width:1}.label{font-size:10.5px;fill:#292524}.small{font-size:9.5px;fill:#57534e}.legend{font-size:11px;fill:#44403c}
-@media(prefers-color-scheme:dark){.bg{fill:#111113}.title,.label{fill:#f5f5f4}.sub,.month,.lane,.small,.legend{fill:#a8a29e}.grid{stroke:#3f3f46}.minor{stroke:#27272a}.thai{fill:#1e3a5f}.korea{fill:#3b276b}.vietnam{fill:#134e4a}.location{fill:#f5f5f4}.ring{fill:#111113}}
+.bg{fill:#ffffff}
+.mname{font-size:13px;font-weight:700;letter-spacing:.06em;fill:#57534e}
+.dow{font-size:9.5px;font-weight:700;fill:#a8a29e}
+.d{font-size:11px;fill:#1c1917}
+.p-th{fill:#f5f5f4}.p-kr{fill:#e9d5ff}.p-vn{fill:#ccfbf1}.p-out{fill:#fee2e2}
+.hard{fill:#b45309}.soft{fill:none;stroke:#b45309;stroke-width:1.6}
+.dnum-hard{font-size:11px;font-weight:700;fill:#fff}
+.key{font-size:11.5px;fill:#1c1917}.keyh{font-size:10.5px;font-weight:700;letter-spacing:.08em;fill:#57534e}
+text{font-family:system-ui,-apple-system,sans-serif}
+@media (prefers-color-scheme:dark){
+ .bg{fill:#0f0f11}.mname{fill:#a1a1aa}.dow{fill:#71717a}.d{fill:#e4e4e7}
+ .p-th{fill:#27272a}.p-kr{fill:#3b2a52}.p-vn{fill:#134e4a}.p-out{fill:#4a1d1d}
+ .hard{fill:#fbbf24}.soft{stroke:#fbbf24}.dnum-hard{fill:#0f0f11}
+ .key{fill:#e4e4e7}.keyh{fill:#a1a1aa}}
+:root[data-theme="dark"] .bg{fill:#0f0f11}
+:root[data-theme="dark"] .mname{fill:#a1a1aa}:root[data-theme="dark"] .dow{fill:#71717a}
+:root[data-theme="dark"] .d{fill:#e4e4e7}
+:root[data-theme="dark"] .p-th{fill:#27272a}:root[data-theme="dark"] .p-kr{fill:#3b2a52}
+:root[data-theme="dark"] .p-vn{fill:#134e4a}:root[data-theme="dark"] .p-out{fill:#4a1d1d}
+:root[data-theme="dark"] .hard{fill:#fbbf24}:root[data-theme="dark"] .soft{stroke:#fbbf24}
+:root[data-theme="dark"] .dnum-hard{fill:#0f0f11}:root[data-theme="dark"] .key{fill:#e4e4e7}
+:root[data-theme="dark"] .keyh{fill:#a1a1aa}
 </style>
-<rect class="bg" width="1200" height="620" rx="12"/>
-<text class="title" x="28" y="38">THE ROAD BACK TO BANGKOK</text>
-<text class="sub" x="28" y="60">One outcome · three candidate visa routes · Thai study under every scenario</text>
-
-<!-- month columns -->
-<g transform="translate(180 82)">
-  <line class="grid" x1="0" y1="0" x2="0" y2="458"/><line class="grid" x1="165" y1="0" x2="165" y2="458"/>
-  <line class="grid" x1="330" y1="0" x2="330" y2="458"/><line class="grid" x1="495" y1="0" x2="495" y2="458"/>
-  <line class="grid" x1="660" y1="0" x2="660" y2="458"/><line class="grid" x1="825" y1="0" x2="825" y2="458"/>
-  <line class="grid" x1="990" y1="0" x2="990" y2="458"/>
-  <text class="month" x="82" y="-8" text-anchor="middle">AUG</text><text class="month" x="247" y="-8" text-anchor="middle">SEP</text>
-  <text class="month" x="412" y="-8" text-anchor="middle">OCT</text><text class="month" x="577" y="-8" text-anchor="middle">NOV</text>
-  <text class="month" x="742" y="-8" text-anchor="middle">DEC</text><text class="month" x="907" y="-8" text-anchor="middle">JAN 2027</text>
-
-  <!-- country ribbon -->
-  <rect class="thai" x="0" y="8" width="443" height="46" rx="8"/><rect class="korea" x="443" y="8" width="112" height="46"/>
-  <rect class="vietnam" x="555" y="8" width="269" height="46"/><rect class="thai" x="824" y="8" width="166" height="46" rx="8"/>
-  <text class="location" x="210" y="36" text-anchor="middle">🇹🇭 THAILAND</text><text class="location" x="499" y="36" text-anchor="middle">🇰🇷 KOREA</text>
-  <text class="location" x="689" y="36" text-anchor="middle">🇻🇳 VIET NAM</text><text class="location" x="907" y="36" text-anchor="middle">🇹🇭 THAILAND</text>
-
-  <!-- horizontal lanes -->
-  <line class="minor" x1="0" y1="103" x2="990" y2="103"/><line class="minor" x1="0" y1="188" x2="990" y2="188"/>
-  <line class="minor" x1="0" y1="273" x2="990" y2="273"/><line class="minor" x1="0" y1="358" x2="990" y2="358"/>
-  <line class="minor" x1="0" y1="443" x2="990" y2="443"/>
-
-  <!-- DTV milestones -->
-  <circle class="dtv deadline" cx="60" cy="121" r="8"/><text class="label" x="60" y="142" text-anchor="middle">Email missions</text><text class="small" x="60" y="156" text-anchor="middle">August</text>
-  <circle class="dtv deadline" cx="113" cy="121" r="8"/><text class="label" x="113" y="100" text-anchor="middle">Fund 21/22 Aug</text>
-  <circle class="dtv deadline" cx="420" cy="121" r="8"/><text class="label" x="420" y="142" text-anchor="middle">3 cases complete</text><text class="small" x="420" y="156" text-anchor="middle">by 15 Oct</text>
-  <circle class="ring" stroke="#2563eb" cx="382" cy="121" r="8"/><text class="label" x="382" y="100" text-anchor="middle">Integrity Legal</text><text class="small" x="382" y="88" text-anchor="middle">by 10 Oct</text>
-  <circle class="ring" stroke="#2563eb" cx="610" cy="121" r="8"/><text class="label" x="610" y="100" text-anchor="middle">Submit strongest</text><text class="small" x="610" y="88" text-anchor="middle">≥ 22 Nov if DTV</text>
-  <line x1="610" y1="121" x2="764" y2="121" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/><text class="small" x="687" y="142" text-anchor="middle">remain in Viet Nam while pending</text>
-  <circle class="ring" stroke="#2563eb" cx="764" cy="121" r="8"/><text class="label" x="764" y="100" text-anchor="middle">planning edge</text><text class="small" x="764" y="88" text-anchor="middle">~20 Dec</text>
-
-  <!-- ED milestones -->
-  <circle class="ed deadline" cx="230" cy="206" r="8"/><text class="label" x="230" y="227" text-anchor="middle">Shortlist schools</text><text class="small" x="230" y="241" text-anchor="middle">early Sep</text>
-  <circle class="ring" stroke="#7c3aed" cx="335" cy="206" r="8"/><text class="label" x="335" y="185" text-anchor="middle">Contact CTFL</text><text class="small" x="335" y="173" text-anchor="middle">1 Oct target</text>
-  <circle class="ed deadline" cx="505" cy="206" r="8"/><text class="label" x="505" y="227" text-anchor="middle">ED docs underway</text><text class="small" x="505" y="241" text-anchor="middle">early Nov</text>
-  <circle class="ring" stroke="#7c3aed" cx="870" cy="206" r="8"/><text class="label" x="870" y="185" text-anchor="middle">Start Thai L1</text><text class="small" x="870" y="173" text-anchor="middle">tentative</text>
-  <circle class="ed deadline" cx="930" cy="206" r="8"/><text class="label" x="930" y="227" text-anchor="middle">TM.87 day 20</text><text class="small" x="930" y="241" text-anchor="middle">fallback only</text>
-
-  <!-- cat milestones -->
-  <circle class="cat deadline" cx="160" cy="291" r="8"/><text class="label" x="160" y="312" text-anchor="middle">Rabies #2</text><text class="small" x="160" y="326" text-anchor="middle">31 Aug</text>
-  <circle class="cat deadline" cx="317" cy="291" r="8"/><text class="label" x="317" y="270" text-anchor="middle">Flight + export chain</text><text class="small" x="317" y="258" text-anchor="middle">weight confirmed by 30 Sep</text>
-  <circle class="cat deadline" cx="425" cy="291" r="8"/><text class="label" x="425" y="312" text-anchor="middle">DLD exam / R9</text><text class="small" x="425" y="326" text-anchor="middle">18–19 Oct</text>
-  <circle class="cat deadline" cx="805" cy="291" r="8"/><text class="label" x="805" y="270" text-anchor="middle">Return papers</text><text class="small" x="805" y="258" text-anchor="middle">before flight</text>
-
-  <!-- tax / travel milestones -->
-  <circle class="travel deadline" cx="443" cy="376" r="8"/><text class="label" x="443" y="397" text-anchor="middle">Depart BKK</text><text class="small" x="443" y="411" text-anchor="middle">21 Oct · 177 days</text>
-  <circle class="travel deadline" cx="555" cy="376" r="8"/><text class="label" x="555" y="355" text-anchor="middle">Enter Viet Nam</text><text class="small" x="555" y="343" text-anchor="middle">mid-Nov target</text>
-  <circle class="tax deadline" cx="824" cy="376" r="8"/><text class="label" x="824" y="397" text-anchor="middle">Earliest return</text><text class="small" x="824" y="411" text-anchor="middle">30 Dec</text>
-  <circle class="ring" stroke="#dc2626" cx="865" cy="376" r="8"/><text class="label" x="865" y="355" text-anchor="middle">Bangkok</text><text class="small" x="865" y="343" text-anchor="middle">early Jan target</text>
-</g>
-
-<!-- row labels -->
-<text class="lane" x="28" y="208">VISA EVIDENCE</text><text class="lane" x="28" y="293">THAI STUDY / NON-ED</text>
-<text class="lane" x="28" y="378">CAT PAPERWORK</text><text class="lane" x="28" y="463">TRAVEL + TAX</text>
-
-<!-- legend -->
-<circle class="dtv" cx="32" cy="580" r="6"/><text class="legend" x="45" y="584">visa selection</text>
-<circle class="ed" cx="102" cy="580" r="6"/><text class="legend" x="115" y="584">Non-ED / study</text>
-<circle class="cat" cx="228" cy="580" r="6"/><text class="legend" x="241" y="584">cat</text>
-<circle class="tax" cx="292" cy="580" r="6"/><text class="legend" x="305" y="584">tax gate</text>
-<circle class="travel" cx="372" cy="580" r="6"/><text class="legend" x="385" y="584">travel</text>
-<circle class="ring" stroke="#57534e" cx="470" cy="580" r="6"/><text class="legend" x="483" y="584">target / decision gate</text>
-<text class="sub" x="1170" y="584" text-anchor="end">Working plan · 6 Aug 2026</text>
+<rect class="bg" x="0" y="0" width="910" height="792"/>
+<text class="mname" x="18" y="30">AUGUST 2026</text>
+<text class="dow" x="30" y="46" text-anchor="middle">M</text>
+<text class="dow" x="54" y="46" text-anchor="middle">T</text>
+<text class="dow" x="80" y="46" text-anchor="middle">W</text>
+<text class="dow" x="104" y="46" text-anchor="middle">T</text>
+<text class="dow" x="130" y="46" text-anchor="middle">F</text>
+<text class="dow" x="154" y="46" text-anchor="middle">S</text>
+<text class="dow" x="180" y="46" text-anchor="middle">S</text>
+<rect class="p-th" x="143" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="68" text-anchor="middle">1</text>
+<rect class="p-th" x="168" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="68" text-anchor="middle">2</text>
+<rect class="p-th" x="18" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="93" text-anchor="middle">3</text>
+<rect class="p-th" x="43" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="93" text-anchor="middle">4</text>
+<rect class="p-th" x="68" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="93" text-anchor="middle">5</text>
+<rect class="p-th" x="93" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="93" text-anchor="middle">6</text>
+<rect class="p-th" x="118" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="93" text-anchor="middle">7</text>
+<rect class="p-th" x="143" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="93" text-anchor="middle">8</text>
+<rect class="p-th" x="168" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="93" text-anchor="middle">9</text>
+<rect class="p-th" x="18" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="118" text-anchor="middle">10</text>
+<rect class="p-th" x="43" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="118" text-anchor="middle">11</text>
+<rect class="p-th" x="68" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="118" text-anchor="middle">12</text>
+<rect class="p-th" x="93" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="118" text-anchor="middle">13</text>
+<rect class="p-th" x="118" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="118" text-anchor="middle">14</text>
+<rect class="p-th" x="143" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="118" text-anchor="middle">15</text>
+<rect class="p-th" x="168" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="118" text-anchor="middle">16</text>
+<rect class="p-th" x="18" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="143" text-anchor="middle">17</text>
+<rect class="p-th" x="43" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="143" text-anchor="middle">18</text>
+<rect class="p-th" x="68" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="143" text-anchor="middle">19</text>
+<rect class="p-th" x="93" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="143" text-anchor="middle">20</text>
+<rect class="p-th" x="118" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="143" text-anchor="middle">21</text>
+<rect class="p-th" x="143" y="127" width="23" height="23" rx="3"/>
+<rect class="hard" x="143" y="127" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="154" y="143" text-anchor="middle">22</text>
+<rect class="p-th" x="168" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="143" text-anchor="middle">23</text>
+<rect class="p-th" x="18" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="168" text-anchor="middle">24</text>
+<rect class="p-th" x="43" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="168" text-anchor="middle">25</text>
+<rect class="p-th" x="68" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="168" text-anchor="middle">26</text>
+<rect class="p-th" x="93" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="168" text-anchor="middle">27</text>
+<rect class="p-th" x="118" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="168" text-anchor="middle">28</text>
+<rect class="p-th" x="143" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="168" text-anchor="middle">29</text>
+<rect class="p-th" x="168" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="168" text-anchor="middle">30</text>
+<rect class="p-th" x="18" y="177" width="23" height="23" rx="3"/>
+<rect class="hard" x="18" y="177" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="30" y="193" text-anchor="middle">31</text>
+<text class="mname" x="244" y="30">SEPTEMBER 2026</text>
+<text class="dow" x="256" y="46" text-anchor="middle">M</text>
+<text class="dow" x="280" y="46" text-anchor="middle">T</text>
+<text class="dow" x="306" y="46" text-anchor="middle">W</text>
+<text class="dow" x="330" y="46" text-anchor="middle">T</text>
+<text class="dow" x="356" y="46" text-anchor="middle">F</text>
+<text class="dow" x="380" y="46" text-anchor="middle">S</text>
+<text class="dow" x="406" y="46" text-anchor="middle">S</text>
+<rect class="p-th" x="269" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="68" text-anchor="middle">1</text>
+<rect class="p-th" x="294" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="68" text-anchor="middle">2</text>
+<rect class="p-th" x="319" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="68" text-anchor="middle">3</text>
+<rect class="p-th" x="344" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="68" text-anchor="middle">4</text>
+<rect class="p-th" x="369" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="68" text-anchor="middle">5</text>
+<rect class="p-th" x="394" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="68" text-anchor="middle">6</text>
+<rect class="p-th" x="244" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="93" text-anchor="middle">7</text>
+<rect class="p-th" x="269" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="93" text-anchor="middle">8</text>
+<rect class="p-th" x="294" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="93" text-anchor="middle">9</text>
+<rect class="p-th" x="319" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="93" text-anchor="middle">10</text>
+<rect class="p-th" x="344" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="93" text-anchor="middle">11</text>
+<rect class="p-th" x="369" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="93" text-anchor="middle">12</text>
+<rect class="p-th" x="394" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="93" text-anchor="middle">13</text>
+<rect class="p-th" x="244" y="102" width="23" height="23" rx="3"/>
+<rect class="soft" x="244.8" y="102.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="256" y="118" text-anchor="middle">14</text>
+<rect class="p-th" x="269" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="118" text-anchor="middle">15</text>
+<rect class="p-th" x="294" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="118" text-anchor="middle">16</text>
+<rect class="p-th" x="319" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="118" text-anchor="middle">17</text>
+<rect class="p-th" x="344" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="118" text-anchor="middle">18</text>
+<rect class="p-th" x="369" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="118" text-anchor="middle">19</text>
+<rect class="p-th" x="394" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="118" text-anchor="middle">20</text>
+<rect class="p-th" x="244" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="143" text-anchor="middle">21</text>
+<rect class="p-th" x="269" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="143" text-anchor="middle">22</text>
+<rect class="p-th" x="294" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="143" text-anchor="middle">23</text>
+<rect class="p-th" x="319" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="143" text-anchor="middle">24</text>
+<rect class="p-th" x="344" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="143" text-anchor="middle">25</text>
+<rect class="p-th" x="369" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="143" text-anchor="middle">26</text>
+<rect class="p-th" x="394" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="143" text-anchor="middle">27</text>
+<rect class="p-th" x="244" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="168" text-anchor="middle">28</text>
+<rect class="p-th" x="269" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="168" text-anchor="middle">29</text>
+<rect class="p-th" x="294" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="168" text-anchor="middle">30</text>
+<text class="mname" x="470" y="30">OCTOBER 2026</text>
+<text class="dow" x="482" y="46" text-anchor="middle">M</text>
+<text class="dow" x="506" y="46" text-anchor="middle">T</text>
+<text class="dow" x="532" y="46" text-anchor="middle">W</text>
+<text class="dow" x="556" y="46" text-anchor="middle">T</text>
+<text class="dow" x="582" y="46" text-anchor="middle">F</text>
+<text class="dow" x="606" y="46" text-anchor="middle">S</text>
+<text class="dow" x="632" y="46" text-anchor="middle">S</text>
+<rect class="p-th" x="545" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="68" text-anchor="middle">1</text>
+<rect class="p-th" x="570" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="68" text-anchor="middle">2</text>
+<rect class="p-th" x="595" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="68" text-anchor="middle">3</text>
+<rect class="p-th" x="620" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="68" text-anchor="middle">4</text>
+<rect class="p-th" x="470" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="93" text-anchor="middle">5</text>
+<rect class="p-th" x="495" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="93" text-anchor="middle">6</text>
+<rect class="p-th" x="520" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="93" text-anchor="middle">7</text>
+<rect class="p-th" x="545" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="93" text-anchor="middle">8</text>
+<rect class="p-th" x="570" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="93" text-anchor="middle">9</text>
+<rect class="p-th" x="595" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="93" text-anchor="middle">10</text>
+<rect class="p-th" x="620" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="93" text-anchor="middle">11</text>
+<rect class="p-th" x="470" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="118" text-anchor="middle">12</text>
+<rect class="p-th" x="495" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="118" text-anchor="middle">13</text>
+<rect class="p-th" x="520" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="118" text-anchor="middle">14</text>
+<rect class="p-th" x="545" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="118" text-anchor="middle">15</text>
+<rect class="p-th" x="570" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="118" text-anchor="middle">16</text>
+<rect class="p-th" x="595" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="118" text-anchor="middle">17</text>
+<rect class="p-th" x="620" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="118" text-anchor="middle">18</text>
+<rect class="p-th" x="470" y="127" width="23" height="23" rx="3"/>
+<rect class="soft" x="470.8" y="127.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="482" y="143" text-anchor="middle">19</text>
+<rect class="p-th" x="495" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="143" text-anchor="middle">20</text>
+<rect class="p-kr" x="520" y="127" width="23" height="23" rx="3"/>
+<rect class="hard" x="520" y="127" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="532" y="143" text-anchor="middle">21</text>
+<rect class="p-kr" x="545" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="143" text-anchor="middle">22</text>
+<rect class="p-kr" x="570" y="127" width="23" height="23" rx="3"/>
+<rect class="soft" x="570.8" y="127.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="582" y="143" text-anchor="middle">23</text>
+<rect class="p-kr" x="595" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="143" text-anchor="middle">24</text>
+<rect class="p-kr" x="620" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="143" text-anchor="middle">25</text>
+<rect class="p-kr" x="470" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="168" text-anchor="middle">26</text>
+<rect class="p-kr" x="495" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="168" text-anchor="middle">27</text>
+<rect class="p-kr" x="520" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="168" text-anchor="middle">28</text>
+<rect class="p-kr" x="545" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="168" text-anchor="middle">29</text>
+<rect class="p-kr" x="570" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="168" text-anchor="middle">30</text>
+<rect class="p-kr" x="595" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="168" text-anchor="middle">31</text>
+<text class="mname" x="696" y="30">NOVEMBER 2026</text>
+<text class="dow" x="708" y="46" text-anchor="middle">M</text>
+<text class="dow" x="732" y="46" text-anchor="middle">T</text>
+<text class="dow" x="758" y="46" text-anchor="middle">W</text>
+<text class="dow" x="782" y="46" text-anchor="middle">T</text>
+<text class="dow" x="808" y="46" text-anchor="middle">F</text>
+<text class="dow" x="832" y="46" text-anchor="middle">S</text>
+<text class="dow" x="858" y="46" text-anchor="middle">S</text>
+<rect class="p-kr" x="846" y="52" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="68" text-anchor="middle">1</text>
+<rect class="p-kr" x="696" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="93" text-anchor="middle">2</text>
+<rect class="p-kr" x="721" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="93" text-anchor="middle">3</text>
+<rect class="p-vn" x="746" y="77" width="23" height="23" rx="3"/>
+<rect class="soft" x="746.8" y="77.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="758" y="93" text-anchor="middle">4</text>
+<rect class="p-vn" x="771" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="93" text-anchor="middle">5</text>
+<rect class="p-vn" x="796" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="93" text-anchor="middle">6</text>
+<rect class="p-vn" x="821" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="93" text-anchor="middle">7</text>
+<rect class="p-vn" x="846" y="77" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="93" text-anchor="middle">8</text>
+<rect class="p-vn" x="696" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="118" text-anchor="middle">9</text>
+<rect class="p-vn" x="721" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="118" text-anchor="middle">10</text>
+<rect class="p-vn" x="746" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="118" text-anchor="middle">11</text>
+<rect class="p-vn" x="771" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="118" text-anchor="middle">12</text>
+<rect class="p-vn" x="796" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="118" text-anchor="middle">13</text>
+<rect class="p-vn" x="821" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="118" text-anchor="middle">14</text>
+<rect class="p-vn" x="846" y="102" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="118" text-anchor="middle">15</text>
+<rect class="p-vn" x="696" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="143" text-anchor="middle">16</text>
+<rect class="p-vn" x="721" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="143" text-anchor="middle">17</text>
+<rect class="p-vn" x="746" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="143" text-anchor="middle">18</text>
+<rect class="p-vn" x="771" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="143" text-anchor="middle">19</text>
+<rect class="p-vn" x="796" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="143" text-anchor="middle">20</text>
+<rect class="p-vn" x="821" y="127" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="143" text-anchor="middle">21</text>
+<rect class="p-vn" x="846" y="127" width="23" height="23" rx="3"/>
+<rect class="hard" x="846" y="127" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="858" y="143" text-anchor="middle">22</text>
+<rect class="p-vn" x="696" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="168" text-anchor="middle">23</text>
+<rect class="p-vn" x="721" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="168" text-anchor="middle">24</text>
+<rect class="p-vn" x="746" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="168" text-anchor="middle">25</text>
+<rect class="p-vn" x="771" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="168" text-anchor="middle">26</text>
+<rect class="p-vn" x="796" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="168" text-anchor="middle">27</text>
+<rect class="p-vn" x="821" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="168" text-anchor="middle">28</text>
+<rect class="p-vn" x="846" y="152" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="168" text-anchor="middle">29</text>
+<rect class="p-vn" x="696" y="177" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="193" text-anchor="middle">30</text>
+<text class="mname" x="18" y="198">DECEMBER 2026</text>
+<text class="dow" x="30" y="214" text-anchor="middle">M</text>
+<text class="dow" x="54" y="214" text-anchor="middle">T</text>
+<text class="dow" x="80" y="214" text-anchor="middle">W</text>
+<text class="dow" x="104" y="214" text-anchor="middle">T</text>
+<text class="dow" x="130" y="214" text-anchor="middle">F</text>
+<text class="dow" x="154" y="214" text-anchor="middle">S</text>
+<text class="dow" x="180" y="214" text-anchor="middle">S</text>
+<rect class="p-vn" x="43" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="236" text-anchor="middle">1</text>
+<rect class="p-vn" x="68" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="236" text-anchor="middle">2</text>
+<rect class="p-vn" x="93" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="236" text-anchor="middle">3</text>
+<rect class="p-vn" x="118" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="236" text-anchor="middle">4</text>
+<rect class="p-vn" x="143" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="236" text-anchor="middle">5</text>
+<rect class="p-vn" x="168" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="236" text-anchor="middle">6</text>
+<rect class="p-vn" x="18" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="261" text-anchor="middle">7</text>
+<rect class="p-vn" x="43" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="261" text-anchor="middle">8</text>
+<rect class="p-vn" x="68" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="261" text-anchor="middle">9</text>
+<rect class="p-vn" x="93" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="261" text-anchor="middle">10</text>
+<rect class="p-vn" x="118" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="261" text-anchor="middle">11</text>
+<rect class="p-vn" x="143" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="261" text-anchor="middle">12</text>
+<rect class="p-vn" x="168" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="261" text-anchor="middle">13</text>
+<rect class="p-vn" x="18" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="286" text-anchor="middle">14</text>
+<rect class="p-vn" x="43" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="286" text-anchor="middle">15</text>
+<rect class="p-vn" x="68" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="286" text-anchor="middle">16</text>
+<rect class="p-vn" x="93" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="286" text-anchor="middle">17</text>
+<rect class="p-vn" x="118" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="286" text-anchor="middle">18</text>
+<rect class="p-vn" x="143" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="286" text-anchor="middle">19</text>
+<rect class="p-vn" x="168" y="270" width="23" height="23" rx="3"/>
+<rect class="soft" x="168.8" y="270.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="180" y="286" text-anchor="middle">20</text>
+<rect class="p-vn" x="18" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="311" text-anchor="middle">21</text>
+<rect class="p-vn" x="43" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="311" text-anchor="middle">22</text>
+<rect class="p-vn" x="68" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="311" text-anchor="middle">23</text>
+<rect class="p-vn" x="93" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="311" text-anchor="middle">24</text>
+<rect class="p-vn" x="118" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="311" text-anchor="middle">25</text>
+<rect class="p-vn" x="143" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="311" text-anchor="middle">26</text>
+<rect class="p-vn" x="168" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="311" text-anchor="middle">27</text>
+<rect class="p-vn" x="18" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="336" text-anchor="middle">28</text>
+<rect class="p-vn" x="43" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="336" text-anchor="middle">29</text>
+<rect class="p-vn" x="68" y="320" width="23" height="23" rx="3"/>
+<rect class="soft" x="68.8" y="320.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="80" y="336" text-anchor="middle">30</text>
+<rect class="p-vn" x="93" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="336" text-anchor="middle">31</text>
+<text class="mname" x="244" y="198">JANUARY 2027</text>
+<text class="dow" x="256" y="214" text-anchor="middle">M</text>
+<text class="dow" x="280" y="214" text-anchor="middle">T</text>
+<text class="dow" x="306" y="214" text-anchor="middle">W</text>
+<text class="dow" x="330" y="214" text-anchor="middle">T</text>
+<text class="dow" x="356" y="214" text-anchor="middle">F</text>
+<text class="dow" x="380" y="214" text-anchor="middle">S</text>
+<text class="dow" x="406" y="214" text-anchor="middle">S</text>
+<rect class="p-th" x="344" y="220" width="23" height="23" rx="3"/>
+<rect class="hard" x="344" y="220" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="356" y="236" text-anchor="middle">1</text>
+<rect class="p-th" x="369" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="236" text-anchor="middle">2</text>
+<rect class="p-th" x="394" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="236" text-anchor="middle">3</text>
+<rect class="p-th" x="244" y="245" width="23" height="23" rx="3"/>
+<rect class="soft" x="244.8" y="245.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="256" y="261" text-anchor="middle">4</text>
+<rect class="p-th" x="269" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="261" text-anchor="middle">5</text>
+<rect class="p-th" x="294" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="261" text-anchor="middle">6</text>
+<rect class="p-th" x="319" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="261" text-anchor="middle">7</text>
+<rect class="p-th" x="344" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="261" text-anchor="middle">8</text>
+<rect class="p-th" x="369" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="261" text-anchor="middle">9</text>
+<rect class="p-th" x="394" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="261" text-anchor="middle">10</text>
+<rect class="p-th" x="244" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="286" text-anchor="middle">11</text>
+<rect class="p-th" x="269" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="286" text-anchor="middle">12</text>
+<rect class="p-th" x="294" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="286" text-anchor="middle">13</text>
+<rect class="p-th" x="319" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="286" text-anchor="middle">14</text>
+<rect class="p-th" x="344" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="286" text-anchor="middle">15</text>
+<rect class="p-th" x="369" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="286" text-anchor="middle">16</text>
+<rect class="p-th" x="394" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="286" text-anchor="middle">17</text>
+<rect class="p-th" x="244" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="311" text-anchor="middle">18</text>
+<rect class="p-th" x="269" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="311" text-anchor="middle">19</text>
+<rect class="p-th" x="294" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="311" text-anchor="middle">20</text>
+<rect class="p-th" x="319" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="311" text-anchor="middle">21</text>
+<rect class="p-th" x="344" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="311" text-anchor="middle">22</text>
+<rect class="p-th" x="369" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="311" text-anchor="middle">23</text>
+<rect class="p-th" x="394" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="311" text-anchor="middle">24</text>
+<rect class="p-th" x="244" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="336" text-anchor="middle">25</text>
+<rect class="p-th" x="269" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="336" text-anchor="middle">26</text>
+<rect class="p-th" x="294" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="336" text-anchor="middle">27</text>
+<rect class="p-th" x="319" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="336" text-anchor="middle">28</text>
+<rect class="p-th" x="344" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="336" text-anchor="middle">29</text>
+<rect class="p-th" x="369" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="336" text-anchor="middle">30</text>
+<rect class="p-th" x="394" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="336" text-anchor="middle">31</text>
+<text class="mname" x="470" y="198">FEBRUARY 2027</text>
+<text class="dow" x="482" y="214" text-anchor="middle">M</text>
+<text class="dow" x="506" y="214" text-anchor="middle">T</text>
+<text class="dow" x="532" y="214" text-anchor="middle">W</text>
+<text class="dow" x="556" y="214" text-anchor="middle">T</text>
+<text class="dow" x="582" y="214" text-anchor="middle">F</text>
+<text class="dow" x="606" y="214" text-anchor="middle">S</text>
+<text class="dow" x="632" y="214" text-anchor="middle">S</text>
+<rect class="p-th" x="470" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="236" text-anchor="middle">1</text>
+<rect class="p-th" x="495" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="236" text-anchor="middle">2</text>
+<rect class="p-th" x="520" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="236" text-anchor="middle">3</text>
+<rect class="p-th" x="545" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="236" text-anchor="middle">4</text>
+<rect class="p-th" x="570" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="236" text-anchor="middle">5</text>
+<rect class="p-th" x="595" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="236" text-anchor="middle">6</text>
+<rect class="p-th" x="620" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="236" text-anchor="middle">7</text>
+<rect class="p-th" x="470" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="261" text-anchor="middle">8</text>
+<rect class="p-th" x="495" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="261" text-anchor="middle">9</text>
+<rect class="p-th" x="520" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="261" text-anchor="middle">10</text>
+<rect class="p-th" x="545" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="261" text-anchor="middle">11</text>
+<rect class="p-th" x="570" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="261" text-anchor="middle">12</text>
+<rect class="p-th" x="595" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="261" text-anchor="middle">13</text>
+<rect class="p-th" x="620" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="261" text-anchor="middle">14</text>
+<rect class="p-th" x="470" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="286" text-anchor="middle">15</text>
+<rect class="p-th" x="495" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="286" text-anchor="middle">16</text>
+<rect class="p-th" x="520" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="286" text-anchor="middle">17</text>
+<rect class="p-th" x="545" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="286" text-anchor="middle">18</text>
+<rect class="p-th" x="570" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="286" text-anchor="middle">19</text>
+<rect class="p-th" x="595" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="286" text-anchor="middle">20</text>
+<rect class="p-th" x="620" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="286" text-anchor="middle">21</text>
+<rect class="p-th" x="470" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="311" text-anchor="middle">22</text>
+<rect class="p-th" x="495" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="311" text-anchor="middle">23</text>
+<rect class="p-th" x="520" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="311" text-anchor="middle">24</text>
+<rect class="p-th" x="545" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="311" text-anchor="middle">25</text>
+<rect class="p-th" x="570" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="311" text-anchor="middle">26</text>
+<rect class="p-th" x="595" y="295" width="23" height="23" rx="3"/>
+<rect class="soft" x="595.8" y="295.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="606" y="311" text-anchor="middle">27</text>
+<rect class="p-th" x="620" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="311" text-anchor="middle">28</text>
+<text class="mname" x="696" y="198">MARCH 2027</text>
+<text class="dow" x="708" y="214" text-anchor="middle">M</text>
+<text class="dow" x="732" y="214" text-anchor="middle">T</text>
+<text class="dow" x="758" y="214" text-anchor="middle">W</text>
+<text class="dow" x="782" y="214" text-anchor="middle">T</text>
+<text class="dow" x="808" y="214" text-anchor="middle">F</text>
+<text class="dow" x="832" y="214" text-anchor="middle">S</text>
+<text class="dow" x="858" y="214" text-anchor="middle">S</text>
+<rect class="p-th" x="696" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="236" text-anchor="middle">1</text>
+<rect class="p-th" x="721" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="236" text-anchor="middle">2</text>
+<rect class="p-th" x="746" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="236" text-anchor="middle">3</text>
+<rect class="p-th" x="771" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="236" text-anchor="middle">4</text>
+<rect class="p-th" x="796" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="236" text-anchor="middle">5</text>
+<rect class="p-th" x="821" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="236" text-anchor="middle">6</text>
+<rect class="p-th" x="846" y="220" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="236" text-anchor="middle">7</text>
+<rect class="p-th" x="696" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="261" text-anchor="middle">8</text>
+<rect class="p-th" x="721" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="261" text-anchor="middle">9</text>
+<rect class="p-th" x="746" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="261" text-anchor="middle">10</text>
+<rect class="p-th" x="771" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="261" text-anchor="middle">11</text>
+<rect class="p-th" x="796" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="261" text-anchor="middle">12</text>
+<rect class="p-th" x="821" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="261" text-anchor="middle">13</text>
+<rect class="p-th" x="846" y="245" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="261" text-anchor="middle">14</text>
+<rect class="p-th" x="696" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="286" text-anchor="middle">15</text>
+<rect class="p-th" x="721" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="286" text-anchor="middle">16</text>
+<rect class="p-th" x="746" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="286" text-anchor="middle">17</text>
+<rect class="p-th" x="771" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="286" text-anchor="middle">18</text>
+<rect class="p-th" x="796" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="286" text-anchor="middle">19</text>
+<rect class="p-th" x="821" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="286" text-anchor="middle">20</text>
+<rect class="p-th" x="846" y="270" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="286" text-anchor="middle">21</text>
+<rect class="p-th" x="696" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="311" text-anchor="middle">22</text>
+<rect class="p-th" x="721" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="311" text-anchor="middle">23</text>
+<rect class="p-th" x="746" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="311" text-anchor="middle">24</text>
+<rect class="p-th" x="771" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="311" text-anchor="middle">25</text>
+<rect class="p-th" x="796" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="311" text-anchor="middle">26</text>
+<rect class="p-th" x="821" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="311" text-anchor="middle">27</text>
+<rect class="p-th" x="846" y="295" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="311" text-anchor="middle">28</text>
+<rect class="p-th" x="696" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="336" text-anchor="middle">29</text>
+<rect class="p-th" x="721" y="320" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="336" text-anchor="middle">30</text>
+<rect class="p-th" x="746" y="320" width="23" height="23" rx="3"/>
+<rect class="soft" x="746.8" y="320.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="758" y="336" text-anchor="middle">31</text>
+<text class="mname" x="18" y="366">APRIL 2027</text>
+<text class="dow" x="30" y="382" text-anchor="middle">M</text>
+<text class="dow" x="54" y="382" text-anchor="middle">T</text>
+<text class="dow" x="80" y="382" text-anchor="middle">W</text>
+<text class="dow" x="104" y="382" text-anchor="middle">T</text>
+<text class="dow" x="130" y="382" text-anchor="middle">F</text>
+<text class="dow" x="154" y="382" text-anchor="middle">S</text>
+<text class="dow" x="180" y="382" text-anchor="middle">S</text>
+<rect class="p-th" x="93" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="404" text-anchor="middle">1</text>
+<rect class="p-th" x="118" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="404" text-anchor="middle">2</text>
+<rect class="p-th" x="143" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="404" text-anchor="middle">3</text>
+<rect class="p-th" x="168" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="404" text-anchor="middle">4</text>
+<rect class="p-th" x="18" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="429" text-anchor="middle">5</text>
+<rect class="p-th" x="43" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="429" text-anchor="middle">6</text>
+<rect class="p-th" x="68" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="429" text-anchor="middle">7</text>
+<rect class="p-th" x="93" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="429" text-anchor="middle">8</text>
+<rect class="p-th" x="118" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="429" text-anchor="middle">9</text>
+<rect class="p-th" x="143" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="429" text-anchor="middle">10</text>
+<rect class="p-th" x="168" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="429" text-anchor="middle">11</text>
+<rect class="p-th" x="18" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="454" text-anchor="middle">12</text>
+<rect class="p-th" x="43" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="454" text-anchor="middle">13</text>
+<rect class="p-th" x="68" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="454" text-anchor="middle">14</text>
+<rect class="p-th" x="93" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="454" text-anchor="middle">15</text>
+<rect class="p-th" x="118" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="454" text-anchor="middle">16</text>
+<rect class="p-th" x="143" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="454" text-anchor="middle">17</text>
+<rect class="p-th" x="168" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="454" text-anchor="middle">18</text>
+<rect class="p-th" x="18" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="479" text-anchor="middle">19</text>
+<rect class="p-th" x="43" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="479" text-anchor="middle">20</text>
+<rect class="p-th" x="68" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="479" text-anchor="middle">21</text>
+<rect class="p-th" x="93" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="479" text-anchor="middle">22</text>
+<rect class="p-th" x="118" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="479" text-anchor="middle">23</text>
+<rect class="p-th" x="143" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="154" y="479" text-anchor="middle">24</text>
+<rect class="p-th" x="168" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="180" y="479" text-anchor="middle">25</text>
+<rect class="p-th" x="18" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="30" y="504" text-anchor="middle">26</text>
+<rect class="p-th" x="43" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="54" y="504" text-anchor="middle">27</text>
+<rect class="p-th" x="68" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="80" y="504" text-anchor="middle">28</text>
+<rect class="p-th" x="93" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="104" y="504" text-anchor="middle">29</text>
+<rect class="p-th" x="118" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="130" y="504" text-anchor="middle">30</text>
+<text class="mname" x="244" y="366">MAY 2027</text>
+<text class="dow" x="256" y="382" text-anchor="middle">M</text>
+<text class="dow" x="280" y="382" text-anchor="middle">T</text>
+<text class="dow" x="306" y="382" text-anchor="middle">W</text>
+<text class="dow" x="330" y="382" text-anchor="middle">T</text>
+<text class="dow" x="356" y="382" text-anchor="middle">F</text>
+<text class="dow" x="380" y="382" text-anchor="middle">S</text>
+<text class="dow" x="406" y="382" text-anchor="middle">S</text>
+<rect class="p-th" x="369" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="404" text-anchor="middle">1</text>
+<rect class="p-th" x="394" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="404" text-anchor="middle">2</text>
+<rect class="p-th" x="244" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="429" text-anchor="middle">3</text>
+<rect class="p-th" x="269" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="429" text-anchor="middle">4</text>
+<rect class="p-th" x="294" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="429" text-anchor="middle">5</text>
+<rect class="p-th" x="319" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="429" text-anchor="middle">6</text>
+<rect class="p-th" x="344" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="429" text-anchor="middle">7</text>
+<rect class="p-th" x="369" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="429" text-anchor="middle">8</text>
+<rect class="p-th" x="394" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="429" text-anchor="middle">9</text>
+<rect class="p-th" x="244" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="454" text-anchor="middle">10</text>
+<rect class="p-th" x="269" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="454" text-anchor="middle">11</text>
+<rect class="p-th" x="294" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="454" text-anchor="middle">12</text>
+<rect class="p-th" x="319" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="454" text-anchor="middle">13</text>
+<rect class="p-th" x="344" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="454" text-anchor="middle">14</text>
+<rect class="p-th" x="369" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="454" text-anchor="middle">15</text>
+<rect class="p-th" x="394" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="454" text-anchor="middle">16</text>
+<rect class="p-th" x="244" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="479" text-anchor="middle">17</text>
+<rect class="p-th" x="269" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="479" text-anchor="middle">18</text>
+<rect class="p-th" x="294" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="479" text-anchor="middle">19</text>
+<rect class="p-th" x="319" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="479" text-anchor="middle">20</text>
+<rect class="p-th" x="344" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="479" text-anchor="middle">21</text>
+<rect class="p-th" x="369" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="479" text-anchor="middle">22</text>
+<rect class="p-th" x="394" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="406" y="479" text-anchor="middle">23</text>
+<rect class="p-th" x="244" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="504" text-anchor="middle">24</text>
+<rect class="p-th" x="269" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="280" y="504" text-anchor="middle">25</text>
+<rect class="p-th" x="294" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="306" y="504" text-anchor="middle">26</text>
+<rect class="p-th" x="319" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="330" y="504" text-anchor="middle">27</text>
+<rect class="p-th" x="344" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="356" y="504" text-anchor="middle">28</text>
+<rect class="p-th" x="369" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="380" y="504" text-anchor="middle">29</text>
+<rect class="p-th" x="394" y="488" width="23" height="23" rx="3"/>
+<rect class="hard" x="394" y="488" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="406" y="504" text-anchor="middle">30</text>
+<rect class="p-th" x="244" y="513" width="23" height="23" rx="3"/>
+<text class="d" x="256" y="529" text-anchor="middle">31</text>
+<text class="mname" x="470" y="366">JUNE 2027</text>
+<text class="dow" x="482" y="382" text-anchor="middle">M</text>
+<text class="dow" x="506" y="382" text-anchor="middle">T</text>
+<text class="dow" x="532" y="382" text-anchor="middle">W</text>
+<text class="dow" x="556" y="382" text-anchor="middle">T</text>
+<text class="dow" x="582" y="382" text-anchor="middle">F</text>
+<text class="dow" x="606" y="382" text-anchor="middle">S</text>
+<text class="dow" x="632" y="382" text-anchor="middle">S</text>
+<rect class="p-th" x="495" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="404" text-anchor="middle">1</text>
+<rect class="p-th" x="520" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="404" text-anchor="middle">2</text>
+<rect class="p-th" x="545" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="404" text-anchor="middle">3</text>
+<rect class="p-th" x="570" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="404" text-anchor="middle">4</text>
+<rect class="p-th" x="595" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="404" text-anchor="middle">5</text>
+<rect class="p-th" x="620" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="404" text-anchor="middle">6</text>
+<rect class="p-th" x="470" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="429" text-anchor="middle">7</text>
+<rect class="p-th" x="495" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="429" text-anchor="middle">8</text>
+<rect class="p-th" x="520" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="429" text-anchor="middle">9</text>
+<rect class="p-th" x="545" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="429" text-anchor="middle">10</text>
+<rect class="p-th" x="570" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="429" text-anchor="middle">11</text>
+<rect class="p-th" x="595" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="429" text-anchor="middle">12</text>
+<rect class="p-th" x="620" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="429" text-anchor="middle">13</text>
+<rect class="p-th" x="470" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="454" text-anchor="middle">14</text>
+<rect class="p-th" x="495" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="454" text-anchor="middle">15</text>
+<rect class="p-th" x="520" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="454" text-anchor="middle">16</text>
+<rect class="p-th" x="545" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="454" text-anchor="middle">17</text>
+<rect class="p-th" x="570" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="582" y="454" text-anchor="middle">18</text>
+<rect class="p-th" x="595" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="454" text-anchor="middle">19</text>
+<rect class="p-th" x="620" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="454" text-anchor="middle">20</text>
+<rect class="p-th" x="470" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="482" y="479" text-anchor="middle">21</text>
+<rect class="p-th" x="495" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="479" text-anchor="middle">22</text>
+<rect class="p-th" x="520" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="479" text-anchor="middle">23</text>
+<rect class="p-th" x="545" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="556" y="479" text-anchor="middle">24</text>
+<rect class="p-th" x="570" y="463" width="23" height="23" rx="3"/>
+<rect class="hard" x="570" y="463" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="582" y="479" text-anchor="middle">25</text>
+<rect class="p-th" x="595" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="606" y="479" text-anchor="middle">26</text>
+<rect class="p-th" x="620" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="632" y="479" text-anchor="middle">27</text>
+<rect class="p-th" x="470" y="488" width="23" height="23" rx="3"/>
+<rect class="hard" x="470" y="488" width="23" height="23" rx="3"/>
+<text class="dnum-hard" x="482" y="504" text-anchor="middle">28</text>
+<rect class="p-out" x="495" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="506" y="504" text-anchor="middle">29</text>
+<rect class="p-out" x="520" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="532" y="504" text-anchor="middle">30</text>
+<text class="mname" x="696" y="366">JULY 2027</text>
+<text class="dow" x="708" y="382" text-anchor="middle">M</text>
+<text class="dow" x="732" y="382" text-anchor="middle">T</text>
+<text class="dow" x="758" y="382" text-anchor="middle">W</text>
+<text class="dow" x="782" y="382" text-anchor="middle">T</text>
+<text class="dow" x="808" y="382" text-anchor="middle">F</text>
+<text class="dow" x="832" y="382" text-anchor="middle">S</text>
+<text class="dow" x="858" y="382" text-anchor="middle">S</text>
+<rect class="p-out" x="771" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="404" text-anchor="middle">1</text>
+<rect class="p-out" x="796" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="404" text-anchor="middle">2</text>
+<rect class="p-out" x="821" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="404" text-anchor="middle">3</text>
+<rect class="p-out" x="846" y="388" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="404" text-anchor="middle">4</text>
+<rect class="p-out" x="696" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="429" text-anchor="middle">5</text>
+<rect class="p-out" x="721" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="429" text-anchor="middle">6</text>
+<rect class="p-out" x="746" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="429" text-anchor="middle">7</text>
+<rect class="p-out" x="771" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="429" text-anchor="middle">8</text>
+<rect class="p-out" x="796" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="429" text-anchor="middle">9</text>
+<rect class="p-out" x="821" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="429" text-anchor="middle">10</text>
+<rect class="p-out" x="846" y="413" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="429" text-anchor="middle">11</text>
+<rect class="p-out" x="696" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="454" text-anchor="middle">12</text>
+<rect class="p-out" x="721" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="454" text-anchor="middle">13</text>
+<rect class="p-out" x="746" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="454" text-anchor="middle">14</text>
+<rect class="p-out" x="771" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="454" text-anchor="middle">15</text>
+<rect class="p-out" x="796" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="454" text-anchor="middle">16</text>
+<rect class="p-out" x="821" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="454" text-anchor="middle">17</text>
+<rect class="p-out" x="846" y="438" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="454" text-anchor="middle">18</text>
+<rect class="p-out" x="696" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="479" text-anchor="middle">19</text>
+<rect class="p-out" x="721" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="479" text-anchor="middle">20</text>
+<rect class="p-out" x="746" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="479" text-anchor="middle">21</text>
+<rect class="p-out" x="771" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="782" y="479" text-anchor="middle">22</text>
+<rect class="p-out" x="796" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="479" text-anchor="middle">23</text>
+<rect class="p-out" x="821" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="479" text-anchor="middle">24</text>
+<rect class="p-out" x="846" y="463" width="23" height="23" rx="3"/>
+<text class="d" x="858" y="479" text-anchor="middle">25</text>
+<rect class="p-out" x="696" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="708" y="504" text-anchor="middle">26</text>
+<rect class="p-out" x="721" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="732" y="504" text-anchor="middle">27</text>
+<rect class="p-out" x="746" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="758" y="504" text-anchor="middle">28</text>
+<rect class="p-out" x="771" y="488" width="23" height="23" rx="3"/>
+<rect class="soft" x="771.8" y="488.8" width="21.4" height="21.4" rx="3"/>
+<text class="d" x="782" y="504" text-anchor="middle">29</text>
+<rect class="p-out" x="796" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="808" y="504" text-anchor="middle">30</text>
+<rect class="p-out" x="821" y="488" width="23" height="23" rx="3"/>
+<text class="d" x="832" y="504" text-anchor="middle">31</text>
+<text class="keyh" x="18" y="540">KEY DATES</text>
+<rect class="hard" x="18" y="550" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="558">22 Aug — THB 500,000 consolidated. Seasoning clock starts.</text>
+<rect class="hard" x="18" y="565" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="573">31 Aug — cat's 2nd rabies dose AND titer draw, same visit (MAFF allows same day)</text>
+<rect class="soft" x="18.8" y="580.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="588">~14 Sep — fallback draw date; every day later slips Japan 1:1</text>
+<rect class="soft" x="18.8" y="595.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="603">19 Oct — DLD exam + R9 export licence. This is the export step.</text>
+<rect class="hard" x="18" y="610" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="618">21 Oct — depart BKK → ICN. 177 days in Thailand for 2026.</text>
+<rect class="soft" x="18.8" y="625.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="633">23 Oct — hard cutoff: exemption expires, 179-day tax line</text>
+<rect class="soft" x="18.8" y="640.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="648">early Nov — Korea → Da Nang (1–3 weeks in Korea)</text>
+<rect class="hard" x="18" y="655" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="663">22 Nov — DTV application, 3-month seasoning matures</text>
+<rect class="soft" x="18.8" y="670.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="678">~mid-Dec — DTV issued (5–15 business days, up to 4 weeks)</text>
+<rect class="soft" x="18.8" y="685.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="693">30 Dec — earliest tax-clear return (179 days exactly)</text>
+<rect class="hard" x="18" y="700" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="708">1 Jan — RESET. 2026 count closes at 177. New 179-day budget starts at zero.</text>
+<rect class="soft" x="18.8" y="715.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="723">early Jan — classes begin; 2027 day 1 of the new tax-year count</text>
+<rect class="soft" x="18.8" y="730.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="738">27 Feb — 🐱 earliest Japan entry: day 180 from a 31 Aug draw. Notify AQS 40 d ahead</text>
+<rect class="soft" x="18.8" y="745.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="753">31 Mar — day 90: Non-ED initial grant expires; 1st extension due</text>
+<rect class="hard" x="18" y="760" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="768">30 May — 2027 DAY 150: decide whether to pass 179 and accept tax residence</text>
+<rect class="hard" x="18" y="775" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="783">~25 Jun — 🐱 BOOST RABIES before leaving Thailand: covers Spain's 120-d EU window AND autumn Japan</text>
+<rect class="hard" x="18" y="790" width="9" height="9" rx="2"/>
+<text class="key" x="34" y="798">28 Jun — 2027 DAY 179: last non-tax-resident day. DTV grant ends 29 Jun</text>
+<rect class="soft" x="18.8" y="805.8" width="8" height="8" rx="2"/>
+<text class="key" x="34" y="813">29 Jul — where a 2nd Non-ED extension would reach, if you stay</text>
+<text class="keyh" x="448" y="540">WHERE HE IS</text>
+<rect class="p-th" x="448" y="549" width="13" height="11" rx="2"/>
+<text class="key" x="468" y="558">Thailand</text>
+<rect class="p-kr" x="448" y="566" width="13" height="11" rx="2"/>
+<text class="key" x="468" y="575">South Korea — 1–3 weeks</text>
+<rect class="p-vn" x="448" y="583" width="13" height="11" rx="2"/>
+<text class="key" x="468" y="592">Vietnam — Da Nang / Huế</text>
+<rect class="p-out" x="448" y="600" width="13" height="11" rx="2"/>
+<text class="key" x="468" y="609">Beyond 2027's 179 days — tax resident</text>
 </svg>

@@ -50,6 +50,8 @@ export const tasks = [
   t('done-status','done','2027-01-31','Outcome','You hold DTV or have a timely documented Non-ED/TM.87 application in progress.','','Outcome verified.',['visa'],['outcome']),
   t('done-study','done','2027-01-31','Outcome','Thai classes are enrolled and begun for their own value.','','Outcome verified.',['thai-study'],['outcome']),
   t('done-tax','done','2027-01-31','Outcome','The 2026 Thai day count remains below 180 and official evidence is retained.','','Outcome verified.',['travel-tax'],['outcome']),
+  t('rabies-booster-2027','done','2027-06-25','Before leaving Thailand — You · Thailand','Boost the cat’s rabies vaccination in Thailand in the days before the ~28 June departure, while the 31 Aug 2026 dose is still valid.','One appointment covers both later legs: it restores Spain’s full 120-day EU onward-movement window, and it carries the vaccination chain past an autumn Japan arrival. The 31 Aug 2026 dose expires 31 Aug 2027 — mid-Spain, where boosting costs more and an unnoticed expiry would void the titer and restart Japan’s 180-day wait.','Booster given and certificate dated before departure; chain unbroken.',['cat'],[]),
+  t('japan-aqs-notify','done','2027-08-15','40+ days before Japan arrival — You','Notify Japan’s Animal Quarantine Service at least 40 days before the cat’s arrival, and confirm with them whether day 180 or day 181 is the first permitted entry date.','MAFF counts the 180-day wait from the blood-sampling date (day 0) and requires arrival inside the vaccine’s validity. Japan falls in H2 2027, so eligibility is not the constraint — the booster above is.','AQS acknowledgement received and arrival date confirmed.',['cat'],[]),
 ];
 
 export const events = [
