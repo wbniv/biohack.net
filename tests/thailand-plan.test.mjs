@@ -125,10 +125,15 @@ test('border tasks contain the verified official requirements', () => {
 });
 
 test('tax filing task states the verified extension deadline and caveat', () => {
+  const ready = tasks.find(item => item.id === 'us-tax-internal-deadline');
+  assert.equal(ready.due, '2026-10-01');
+  assert.deepEqual(ready.events, ['us-tax-ready']);
+  assert.match(ready.action, /ready to file/i);
+  assert.match(ready.action, /Form 4868/);
+
   const tax = tasks.find(item => item.id === 'us-tax-filing');
   assert.equal(tax.due, '2026-10-15');
   assert.match(tax.action, /15 October 2026/);
-  assert.match(tax.action, /Form 4868/);
   assert.match(tax.action, /Form 2350/);
   assert.match(tax.why, /does not extend the tax-payment deadline/i);
 });

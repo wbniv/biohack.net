@@ -28,6 +28,11 @@ No IRS approval notice, Form 4868 acceptance, or Form 2350 approval was found in
 - filed-return acceptance;
 - payment confirmation and the date paid.
 
+## Planning deadlines
+
+- **1 October 2026 — internal:** locate the extension acceptance, establish which form controls, finish and review the return, and resolve any missing-document or payment issue.
+- **15 October 2026 — IRS:** file the return and retain its acceptance, unless a Form 2350 approval states a different controlling date.
+
 Official sources:
 
 - [IRS: U.S. citizens and resident aliens abroad](https://www.irs.gov/individuals/international-taxpayers/us-citizens-and-resident-aliens-abroad)
