@@ -1,11 +1,23 @@
 | Date | Change |
 |------|--------|
+| [2026-07-27](https://github.com/wbniv/biohack.net/commit/1813d0d) | docs: index the snes-package-migration plan |
+| [2026-07-26](https://github.com/wbniv/biohack.net/commit/dd09e0f) | docs: index homepage-snes-demo-count plan |
 | [2026-06-27](https://github.com/wbniv/biohack.net/commit/980d3d6) | docs(plans): add snes-demos-under-snes-prefix to README index |
 | [2026-06-27](https://github.com/wbniv/biohack.net/commit/353b652) | docs(plans): add #14 double-pendulum to plan index README |
 | [2026-06-27](https://github.com/wbniv/biohack.net/commit/b26e6ff) | docs(plans): verify snes-gallery plan — all 5 steps PASS; update plan index |
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+1813d0d	author	Will Norris
+1813d0d	added	2
+1813d0d	deleted	1
+1813d0d	files	1
+1813d0d	body	Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_011DEG8ouwAWtqeWtcvZSysz
+dd09e0f	author	Will Norris
+dd09e0f	added	2
+dd09e0f	deleted	1
+dd09e0f	files	1
+dd09e0f	body	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_012vYmuA6oKhbVWkZLecmxwb
 980d3d6	author	Will Norris
 980d3d6	added	2
 980d3d6	deleted	1
