@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/8679f35) | docs: index and verify sticky calendar plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/4457f5b) | docs: index Thailand visual redesign plan |
 | [2026-08-06](https://github.com/wbniv/biohack.net/commit/3d7217e) | docs: index Thailand publication plan |
 | [2026-07-27](https://github.com/wbniv/biohack.net/commit/1813d0d) | docs: index the snes-package-migration plan |
@@ -10,6 +11,10 @@
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+8679f35	author	Will Norris
+8679f35	added	2
+8679f35	deleted	1
+8679f35	files	1
 4457f5b	author	Will Norris
 4457f5b	added	2
 4457f5b	deleted	1

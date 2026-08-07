@@ -21,6 +21,7 @@ rows on commit.*
 | [Publish the Thailand master plan at `/thailand/`](2026-08-06-thailand-master-plan-page.md) | Publish the return-to-Thailand plan as a responsive Astro page with browser-persistent checklists, focused maps, and explicit privacy review | [`ead6e89`](https://github.com/wbniv/biohack.net/commit/ead6e89) | Feature |
 | [Thailand master plan — dark biohack.net visual redesign](2026-08-07-thailand-master-plan-visual-redesign.md) | Replace the imported document preview with a native dark Astro page matching biohack.net while preserving the plan and persistent checklist | [`ec76e71`](https://github.com/wbniv/biohack.net/commit/ec76e71) | Feature |
 | [Thailand checklist — sticky calendar dock](2026-08-07-thailand-sticky-calendar-dock.md) | Keep synchronized calendar context visible while working through checklist tasks with a desktop dock and mobile calendar sheet | [`19970c8`](https://github.com/wbniv/biohack.net/commit/19970c8) | Feature |
+| [Thailand master plan — operational checklist completion](2026-08-07-thailand-operational-checklist-completion.md) | Add the missing border, pet, transport, insurance, supplies, money, connectivity, shutdown, and Bangkok-arrival tasks with stable IDs and calendar gates | Planning | Feature |
 
 ---
 
