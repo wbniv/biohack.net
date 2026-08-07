@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/5c128ec) | Restore horizontal mobile Thailand calendar |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/333f678) | Redesign Thailand calendar for mobile |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/caef4fa) | Plan Thailand operational checklist completion |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8679f35) | docs: index and verify sticky calendar plan |
@@ -13,6 +14,10 @@
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+5c128ec	author	Will Norris
+5c128ec	added	1
+5c128ec	deleted	0
+5c128ec	files	1
 333f678	author	Will Norris
 333f678	added	1
 333f678	deleted	0
