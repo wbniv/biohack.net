@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/caef4fa) | Plan Thailand operational checklist completion |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/8679f35) | docs: index and verify sticky calendar plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/4457f5b) | docs: index Thailand visual redesign plan |
 | [2026-08-06](https://github.com/wbniv/biohack.net/commit/3d7217e) | docs: index Thailand publication plan |
@@ -11,6 +12,10 @@
 | [2026-06-26](https://github.com/wbniv/biohack.net/commit/e3fb483) | docs: add plan index (docs/plans/README.md) |
 
 <!--history-meta v1
+caef4fa	author	Will Norris
+caef4fa	added	1
+caef4fa	deleted	0
+caef4fa	files	1
 8679f35	author	Will Norris
 8679f35	added	2
 8679f35	deleted	1

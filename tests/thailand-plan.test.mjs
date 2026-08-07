@@ -48,6 +48,14 @@ test('global progress is persistent, display-only, and clears sticky layers', ()
   assert.match(page, /<dt>Thai study<\/dt><dd>Every visa route<\/dd>/);
 });
 
+test('mobile calendar uses one summary and one grouped full calendar', () => {
+  assert.match(page, /class="mobile-calendar-summary"/);
+  assert.match(page, /id="mobile-next-deadline"/);
+  assert.match(page, /class="calendar-sheet-body"/);
+  assert.match(page, /class="sheet-phases"/);
+  assert.doesNotMatch(page, /<div class="mobile-timeline" data-calendar>/);
+});
+
 test('route copy describes the active route without historical exclusions', () => {
   assert.doesNotMatch(page, /Malaysia is not part of this plan/);
 });
