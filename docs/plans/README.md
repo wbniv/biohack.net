@@ -19,6 +19,7 @@ rows on commit.*
 | [Homepage SNES demo count — derive at build time](2026-07-26-homepage-snes-demo-count.md) | Extract the gallery's demos array to a shared module so the homepage count (stale "eight" → 114) derives at build time, with a build-failing manifest cross-check | [`deca076`](https://github.com/wbniv/biohack.net/commit/deca076) | Fix |
 | [snes-package-migration — biohack.net consumes @wbniv/bsnes-jg-player](2026-07-27-snes-package-migration.md) | Vendor the SNES player engine from the @wbniv/bsnes-jg-player npm package and collapse the 114 hand-written demo pages into one [slug].astro route over a content collection, with CI drift + page-count gates | [`3aeb92d`](https://github.com/wbniv/biohack.net/commit/3aeb92d) | Platform |
 | [Publish the Thailand master plan at `/thailand/`](2026-08-06-thailand-master-plan-page.md) | Publish the return-to-Thailand plan as a responsive Astro page with browser-persistent checklists, focused maps, and explicit privacy review | [`ead6e89`](https://github.com/wbniv/biohack.net/commit/ead6e89) | Feature |
+| [Thailand master plan — dark biohack.net visual redesign](2026-08-07-thailand-master-plan-visual-redesign.md) | Replace the imported document preview with a native dark Astro page matching biohack.net while preserving the plan and persistent checklist | [`ec76e71`](https://github.com/wbniv/biohack.net/commit/ec76e71) | Feature |
 
 ---
 
@@ -27,4 +28,4 @@ rows on commit.*
 - **Order** = each plan's *creation* commit (oldest commit that touched the file), by committer date.
 - **Commit(s)** = the full `git log --follow` set per plan, oldest → newest.
 - **Summaries / categories** auto-generated from each plan's TL;DR (Sonnet, medium effort) — refine as needed.
-- **Generated** 2026-06-27 for 7 plan(s); last updated 2026-08-06 for 10 plan(s).
+- **Generated** 2026-06-27 for 7 plan(s); last updated 2026-08-07 for 11 plan(s).
