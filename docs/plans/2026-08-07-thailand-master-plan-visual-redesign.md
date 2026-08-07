@@ -49,6 +49,124 @@ IDs, and accessible interaction behavior specified below.
   persistence hooks, content invariants, and asset references.
 - Add `/thailand/` to the Lighthouse URL list in `Taskfile.yml`.
 
+## Next implementation phase
+
+These are required structural improvements, in priority order:
+
+### 1. Replace the generated export with native Astro
+
+Replace `public/thailand/index.html` with `src/pages/thailand.astro` and structured
+plan data. Remove all Markdown-preview artifacts: embedded renderer CSS,
+revision/history scripts, generated attribution spans, Mermaid export markup,
+and prose-hash task discovery. The build must produce exactly one
+`dist/thailand/index.html`, owned by Astro.
+
+### 2. Replace the tall flowchart with a compact decision panel
+
+Remove the disproportionately tall Mermaid graph. Render a compact responsive
+decision summary with three primary outcome columns:
+
+- **Issued:** return to Bangkok on the issued status.
+- **Pending:** remain in Viet Nam under the 90-day visa and wait.
+- **Refused:** return visa-exempt and activate the prepared TM.87 fallback.
+
+Keep the three candidate evidence routes and counsel-selection step as concise
+context above the outcomes, not another full-height flowchart. Stack the three
+outcomes on narrow screens.
+
+### 3. Add a live progress header
+
+At the top of the operational section, show:
+
+- completed count and total, for example **7 of 32 completed**;
+- a progress bar with an accessible text equivalent;
+- the current phase derived from today's date;
+- the next incomplete deadline;
+- a **Reset local progress** control with confirmation.
+
+Counts and next deadline update immediately when a task is checked. Conditional
+tasks remain in the total but are identified as conditional; do not claim they
+are overdue before their trigger occurs.
+
+### 4. Collapse task details for scanning
+
+Show each task's checkbox, due date, owner, and action by default. Put **Why**
+and **Done when** inside an accessible disclosure that is collapsed initially.
+The disclosure must use a native `<details>`/`<summary>` or an equivalent button
+with correct `aria-expanded` behavior. Checkbox toggling and disclosure toggling
+must not interfere with each other.
+
+### 5. Add task filters
+
+Add a keyboard-accessible filter bar with:
+
+- **Due soon**
+- **Visa**
+- **Cat**
+- **Thai study**
+- **Travel/tax**
+- **Completed**
+
+Default view shows all incomplete tasks plus any explicitly selected completed
+filter behavior. Filters may combine where useful, show the visible-result
+count, preserve checkbox state, and never alter the canonical task data. When a
+filter hides the task currently linked to a highlighted calendar milestone,
+clear that highlight.
+
+### 6. Show temporal context without interaction
+
+The calendar must answer “where am I now?” at a glance. Highlight the current
+month and the next actionable incomplete milestone on initial render. Include a
+small “Today” marker when today's date lies within the displayed range. If the
+plan is viewed before or after that range, state that clearly rather than
+pinning the marker misleadingly to an endpoint.
+
+The passive current/next treatment must remain distinguishable from the
+stronger temporary highlight created by task hover or focus.
+
+### 7. Replace prose-derived hashes with explicit stable IDs
+
+Give every task and calendar milestone an authored stable ID in shared plan
+data. Use those IDs for DOM identity, `localStorage`, task/calendar mappings,
+tests, URL fragments, and analytics-free interaction state. Editing visible
+wording must neither reset checkbox progress nor break a calendar association.
+
+Provide a deliberate one-time migration table from the existing hash keys where
+the mapping is reliable. Document any progress reset that cannot be migrated.
+
+### 8. Add reverse calendar interaction and navigation
+
+Hovering, focusing, or touch-selecting a calendar milestone must emphasize all
+of its mapped task cards. Provide an explicit **Jump to task** action for each
+mapped task; activating it clears incompatible filters, scrolls to the card,
+moves keyboard focus there, and briefly emphasizes it. Merely hovering never
+force-scrolls the page.
+
+### 9. Give mobile a purpose-built calendar view
+
+Do not shrink the 1200 px desktop SVG until its labels become unreadable. At
+mobile widths, provide either:
+
+- a horizontally pannable/zoomable calendar with obvious affordances and a
+  sensible initial viewport; or
+- a compact vertical chronological timeline using the same event data.
+
+Prefer the vertical timeline if it provides clearer labels and simpler keyboard
+navigation. Desktop and mobile views must share event IDs, task mappings,
+current-period state, and highlight behavior.
+
+### 10. Add a sticky section navigator
+
+Add a compact sticky navigator with links to:
+
+**Outcome · Decision · Calendar · August · September · October · Viet Nam ·
+January · Done**
+
+Indicate the active section as the user scrolls. Preserve visible keyboard
+focus, account for the sticky header in anchor positioning, allow horizontal
+scrolling on narrow screens, and avoid covering page content. Respect reduced
+motion for section scrolling.
+
 ## Visual direction
 
 ### Palette

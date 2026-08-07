@@ -1,11 +1,16 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/6c4c430) | docs: plan linked checklist calendar highlighting |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/41f9003) | fix: make Thailand decision graph legible in dark mode |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/5d56794) | fix: remove Thailand page history spine |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/329df0c) | feat: redesign Thailand plan in biohack dark theme |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+6c4c430	author	Will Norris
+6c4c430	added	51
+6c4c430	deleted	6
+6c4c430	files	1
 41f9003	author	Will Norris
 41f9003	added	3
 41f9003	deleted	0
