@@ -20,7 +20,7 @@ test('every calendar mapping resolves to a task and event', () => {
 
 test('native Astro page contains the planned interaction hooks', () => {
   assert.doesNotMatch(page, /\?raw|set:html|mermaid/i);
-  for (const marker of ['biohack.thailand.v2.','<details>','data-filter="due-soon"','calendar-dock','calendar-sheet','data-section-link','is-complete','is-partial','is-next']) assert.ok(page.includes(marker), marker);
+  for (const marker of ['biohack.thailand.v2.','<details>','data-filter="due-soon"','calendar-dock','mobile-inline-calendar','data-section-link','is-complete','is-partial','is-next']) assert.ok(page.includes(marker), marker);
   for (const outcome of ['Issued','Pending','Refused']) assert.ok(page.includes(outcome));
 });
 
@@ -48,20 +48,12 @@ test('global progress is persistent, display-only, and clears sticky layers', ()
   assert.match(page, /<dt>Thai study<\/dt><dd>Every visa route<\/dd>/);
 });
 
-test('mobile calendar uses one summary and one grouped full calendar', () => {
-  assert.match(page, /class="mobile-calendar-summary"/);
-  assert.match(page, /id="mobile-next-deadline"/);
-  assert.match(page, /class="calendar-sheet-body(?: [^"]+)?"/);
-  assert.match(page, /class="sheet-phases"/);
-  assert.doesNotMatch(page, /<div class="mobile-timeline" data-calendar>/);
-});
-
-test('mobile full calendar restores time to the horizontal axis', () => {
-  assert.match(page, /class="calendar-sheet-body mobile-horizontal-calendar"/);
-  assert.match(page, /grid-auto-flow:column/);
-  assert.match(page, /scroll-snap-type:x mandatory/);
-  assert.match(page, /scroll-snap-align:start/);
-  assert.match(page, /inline:'start'/);
+test('mobile calendar is complete, inline, and vertically grouped', () => {
+  assert.match(page, /class="mobile-inline-calendar" data-calendar/);
+  assert.match(page, /class="mobile-calendar-month"/);
+  assert.match(page, /grid-template-columns:54px minmax\(0,1fr\)/);
+  assert.match(page, /mobileDate\(e\.date, phase\.id\)/);
+  assert.doesNotMatch(page, /calendar-sheet|open-calendar|scroll-snap-type:x|mobile-horizontal-calendar/);
 });
 
 test('route copy describes the active route without historical exclusions', () => {

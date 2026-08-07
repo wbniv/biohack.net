@@ -1,7 +1,7 @@
-# Thailand master plan — mobile horizontal calendar
+# Thailand master plan — inline mobile milestone calendar
 
 **Date:** 2026-08-07  
-**Status:** Implemented and verified  
+**Status:** Revised, implemented, and verified
 **Target:** <https://biohack.net/thailand/>  
 **Builds on:** [Mobile calendar layout](2026-08-07-thailand-mobile-calendar-layout.md)
 
@@ -17,34 +17,31 @@ A conventional month-grid calendar would imply daily appointments and waste
 space on empty days. This plan is a milestone roadmap. Restore the horizontal
 time axis without shrinking desktop content until labels become illegible.
 
-## Decision
+## Revised decision
 
-Keep the compact inline summary. Replace the sheet's vertical grouped timeline
-with a horizontally pannable sequence of month/phase columns. Each column is
-roughly one phone viewport wide, scroll-snaps into place, and contains its full
-readable milestone stack.
+Remove the compact summary, open-calendar button, modal sheet, floating calendar
+button, and horizontal paging. Render the complete mobile milestone calendar
+directly in normal page flow as compact month sections. Scrolling the page is the
+only navigation required.
+
+This deliberately favors immediate visibility over preserving a literal x-axis
+on a narrow screen. Desktop retains its five-column left-to-right calendar.
 
 ## Mockup
 
 ```text
 ┌──────────────────────────────────────┐
-│ Plan calendar                 Close │
-│ [Aug] [Sep] [Oct] [Nov–Dec] [Jan]  │
-├──────────────────────────────────────┤
-│ AUGUST                         →     │
+│ AUGUST                              │
 │                                      │
 │ 15  Mission answers              ↘  │
 │ 15  Legal consult booked         ↘  │
 │ 22  Funds seasoned               ↘  │
 │ 31  Rabies #2                    ↘  │
-│                                      │
-│         swipe horizontally →         │
-└──────────────────────────────────────┘
-
-               horizontal scroll / snap
-
-┌──────────────────────────────────────┐
-│ OCTOBER                       ←  →  │
+├──────────────────────────────────────┤
+│ SEPTEMBER                           │
+│ …                                    │
+├──────────────────────────────────────┤
+│ OCTOBER                             │
 │ 1   Chula calendar              ↘  │
 │ 6   AQS confirmed               ↘  │
 │ …                                    │
@@ -53,60 +50,59 @@ readable milestone stack.
 
 ## Interaction
 
-- Time runs left to right; columns remain in chronological phase order.
+- Mobile time runs top to bottom in chronological phase order; the entire
+  calendar is visible inline without opening another surface.
 - Within a single-month column, milestone labels show the day only because the
   sticky column heading already supplies the month. Retain descriptive values
   such as `ASAP`, `Arrival`, `Within 48h`, and `Day 45`; use a month abbreviation
   only when a phase spans multiple months and omission would be ambiguous.
-- Column width is `min(82vw, 320px)` with a narrow visible glimpse of the next
-  column to advertise horizontal movement.
-- Use CSS `scroll-snap-type: x mandatory` and `scroll-snap-align: start`.
-- Opening the sheet positions the current phase at the leading edge.
-- Phase navigation moves horizontally inside the sheet without closing it.
+- Month sections use the full available width and dense two-column milestone
+  rows: a narrow date column and a flexible task label.
 - Milestones remain native task-opening buttons with completion, partial,
   current, next, and linked states from the shared event registry.
-- The calendar surface supports horizontal and vertical overflow independently;
-  no labels are scaled down to fit all months simultaneously.
-- Preserve reduced-motion behavior and keyboard-accessible phase links.
+- Do not introduce nested scrolling, dialogs, or disclosure controls.
+- Preserve keyboard-accessible task navigation from each milestone.
 
 ## Responsive rules
 
-- At 320–430px widths, show one primary column plus a glimpse of the next.
-- On landscape phones and small tablets, permit wider columns up to 320px and
-  show more than one when space allows.
+- At 320–430px widths, show every month as a full-width stacked section.
+- Keep rows compact, but allow long labels to wrap rather than clip.
 - Desktop continues using the five-column full calendar and sticky dock; the
   dialog implementation is mobile-only.
 - Keep safe-area padding and the fixed progress rail offsets.
 
 ## Verification
 
-1. At 320, 360, 390, and 430px widths, the sheet has horizontal overflow and
-   no milestone label is clipped horizontally.
-2. Phase columns are ordered August → September → October → Viet Nam → January.
-3. The sheet opens at the current phase and phase navigation changes horizontal
-   scroll position.
-4. Scroll snapping is enabled and each phase is a snap target.
+1. At 320, 360, 390, and 430px widths, the inline calendar has no horizontal
+   overflow and no milestone label is clipped.
+2. Month sections are ordered August → September → October → Viet Nam → January.
+3. No calendar-opening button, modal, floating action button, or horizontal
+   calendar scroll remains on mobile.
+4. The current phase and next actionable milestone remain visually distinct.
 5. Every event appears exactly once and retains its task mapping/state.
-6. Milestone activation closes the sheet and focuses the mapped task.
+6. Milestone activation focuses the mapped task directly.
 7. Keyboard, touch, 200% zoom, reduced motion, and contrast gates pass.
-8. The normal mobile page still contains only the compact calendar summary.
+8. The mobile calendar is present directly in the normal page flow.
 
 ## Definition of done
 
-- The full mobile calendar visibly reads as time moving left to right.
+- The full mobile calendar is visible immediately in normal page flow.
 - Labels remain readable without shrinking the entire desktop calendar.
-- Horizontal navigation is obvious, direct, and synchronized with task state.
+- Navigation is ordinary vertical page scrolling and remains synchronized with
+  task state.
 - Redundant month names do not consume milestone-card space.
 
 ## Implementation result
 
 - **PASS — 2026-08-07.**
-- The mobile sheet now presents August through January as chronological,
-  horizontally pannable phase columns with snap alignment.
-- Opening the sheet and using its phase navigation position the selected phase
-  at the leading edge while preserving readable milestone cards.
-- The compact in-page summary remains unchanged; desktop retains its full
-  five-column calendar and sticky calendar dock.
-- Verification passed: 22 unit/contract tests, production Astro build, all 214
+- The mobile page now presents August through January directly as five compact,
+  vertically stacked month sections.
+- The summary, modal sheet, floating calendar button, and horizontal snap
+  scrolling were removed.
+- Single-month sections render day-only dates; the two-month Viet Nam section
+  retains month context where needed.
+- Desktop retains its full five-column calendar and sticky calendar dock.
+- Verification passed: 21 unit/contract tests, production Astro build, all 214
   Thailand contrast surfaces at 6.01:1 or better, the full browser interaction
-  suite (including mobile event parity and task focus), and internal link checks.
+  suite (including mobile event parity, no horizontal overflow, and task-state
+  synchronization), and internal link checks.
