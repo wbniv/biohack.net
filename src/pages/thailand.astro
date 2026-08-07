@@ -31,9 +31,9 @@ const calendarMonth = event => event.id === 'road-fallback' ? 'september' : even
       <div class="candidate-context"><b>Candidate evidence routes</b><ol><li>DTV workcation</li><li>DTV cooking</li><li>Non-ED language</li></ol></div>
       <p>Prepare all three, obtain written answers, and let Integrity Legal compare practical approval likelihood. Learning Thai continues under every route.</p>
       <div class="decision-grid" role="list" aria-label="Application outcomes">
-        <article class="decision-card issued"><b>Issued</b><span>Return to Bangkok on the issued status.</span></article>
-        <article class="decision-card pending"><b>Pending</b><span>Stay in Viet Nam under the 90-day visa and wait.</span></article>
-        <article class="decision-card refused"><b>Refused</b><span>Return visa-exempt, then promptly execute prepared TM.87.</span></article>
+        <article class="decision-card issued" role="listitem"><b>Issued</b><span>Return to Bangkok on the issued status.</span></article>
+        <article class="decision-card pending" role="listitem"><b>Pending</b><span>Stay in Viet Nam under the 90-day visa and wait.</span></article>
+        <article class="decision-card refused" role="listitem"><b>Refused</b><span>Return visa-exempt, then promptly execute prepared TM.87.</span></article>
       </div>
     </section>
 
@@ -153,6 +153,8 @@ const calendarMonth = event => event.id === 'road-fallback' ? 'september' : even
   .closed-days li{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
   .closed-days b{font:600 .8rem var(--font-mono);color:#f19aa4;min-width:82px}
   .closed-days span{color:#aebdca;font-size:.88rem}
+  /* the inherited link colour lands at 3.22:1 on this surface — Lighthouse caught it */
+  .ladder-section .research-note a{color:#ff9c7e}
   /* hovering a rung lights the milestone it maps to, matching the legend behaviour */
   .rung[data-rung-event]{cursor:default}
   /* Hovering a rung lights the calendar milestone it maps to. CSS cannot correlate

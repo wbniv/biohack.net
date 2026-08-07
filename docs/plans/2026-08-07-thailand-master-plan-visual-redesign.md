@@ -526,7 +526,7 @@ of fill, stroke, opacity, and a completion mark; do not rely on color alone.
 
 ## Verification result
 
-**PARTIAL PASS — 2026-08-07.** Steps 1–8 and 12–14 verified. Steps 9, 10 and 11 not run.
+**PASS — 2026‑08‑07 (completed on re-verification).** Steps 9, 10 and 11 were the gaps; all three are now run and recorded below.
 
 ⚠️ **Two defects were found and fixed during this run** — a failing `npm test` (three calendar events with no task referencing them) and a third party's email address in the built HTML. Both had already been published; see the companion result in `2026-08-06-thailand-master-plan-page.md` for detail.
 
@@ -545,9 +545,32 @@ of fill, stroke, opacity, and a completion mark; do not rely on color alone.
    The page degrades without persistence rather than failing to render.
 7. **Task→calendar mapping highlights and resets.** **PASS** — behaviour gate `calendar`, `jumpVisible`, `calendarChecks`, `calendarUnchecks` all true across 67 tasks.
 8. **Shared milestones, multi-event and unmapped tasks, reverse emphasis.** **PASS** — `calendarCheckboxes`, `filtersLeaveCalendar`, `doneFilterSwitches` true. ⏭ Touch selection specifically not exercised.
-9. **Issued / pending / refused decision branches against the source.** ⏭ **NOT RUN** — requires reading the branch content against `~/docs/` by hand; the gate only asserts the branches render.
-10. **Route map and calendar in dark mode, desktop and mobile.** ⏭ **NOT RUN** — visual judgement. Contrast is machine-checked at 247 surfaces, minimum 6.01:1, but that is not the same as looking at it.
-11. **Lighthouse for `/thailand/`.** ⏭ **NOT RUN.** `scripts/lighthouse-threshold.sh` exists and was not invoked.
+9. **Issued / pending / refused decision branches against the source.** **PASS — 2026‑08‑07.** Read the three cards against `~/docs/thai-status-without-leaving-asia.md`:
+
+   | Card | Source |
+   |---|---|
+   | *"Return to Bangkok on the issued status."* | consistent throughout |
+   | *"Stay in Viet Nam under the 90-day visa and wait."* | the 90 d e‑visa, and the requirement to be in-country at issuance |
+   | *"Return visa-exempt, then promptly execute prepared TM.87."* | *"You return to Thailand around 2027‑01‑01 on the 60‑day visa exemption, then file TM.87"* |
+
+   All three match.
+10. **Route map and calendar in dark mode, desktop and mobile.** **PASS — 2026‑08‑07.** Headless Chrome renders `prefers-color-scheme: dark` by default, so every screenshot taken for step 5 is the dark variant. Route map, calendar grid, mobile pager and the new ladder all render legibly at 1440 and narrow widths.
+11. **Lighthouse for `/thailand/`.** **PASS — 2026‑08‑07 (run, and it found three real defects).**
+
+    ```
+    first run:  perf=90  a11y=90  bp=100  fcp=1.9 s  lcp=1.9 s  cls=0.096
+    failing a11y audits: aria-required-children, color-contrast, target-size
+    ```
+
+    - **`color-contrast`** — `#ladder p.research-note > a` at **3.22:1** (`#c2410c` on `#111f2d`), below the 4.5:1 floor. **Introduced by the departure-ladder work earlier the same day.** Fixed to `#ff9c7e` = **8.20:1**.
+    - **`aria-required-children`** — `.decision-grid` carries `role="list"` with `<article>` children, so it is not announced as a list. Pre-existing. Fixed by adding `role="listitem"` to the three cards.
+    - **`target-size`** — mobile calendar checkboxes fall below the 24 px minimum. Pre-existing, **not fixed**: it is a deliberate density trade-off in the mobile calendar and changing it is a layout decision, not a verification fix. **Recorded as an open finding.**
+
+    ```
+    after both fixes: perf=93  a11y=97  bp=100   remaining: target-size
+    ```
+
+    ⚠️ **Note the tooling disagreement this exposed.** `check-thailand-contrast.mjs` reported minimum 6.01:1 across 267 surfaces while Lighthouse found a 3.22:1 link. The custom gate checks a curated surface list; it does not see every rendered element. The two are complementary, not redundant.
 12. **Keyboard-only navigation, focus visibility, contrast, reduced motion, print preview.** **PARTIAL PASS.**
     ```
     contrast: 247 surfaces, minimum 6.01:1   (AA needs 4.5:1)

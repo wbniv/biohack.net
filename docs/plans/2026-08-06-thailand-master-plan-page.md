@@ -125,7 +125,7 @@ storage for checklist state.
 
 ## Verification result
 
-**PARTIAL PASS — 2026-08-07.** Steps 1–4, 6–9 and 10 verified. Step 5 (visual inspection at two widths) not run.
+**PASS — 2026‑08‑07 (completed on re-verification).** All ten steps verified; step 5 was the only gap and is now run, recorded below.
 
 ### ⚠️ Two defects found and fixed during this run
 
@@ -148,7 +148,17 @@ Both were introduced earlier the same day by tasks added to `thailand-plan.mjs`,
    ```
    asia-route-map.svg   public:Y  dist:Y  referenced in index.html:1
    ```
-5. **Serve and inspect at desktop and narrow mobile widths.** ⏭ **NOT RUN** — the headless gate covers layout assertions (`noHorizontalOverflow`, `mobileEvents`, `mobileMetadata`, `threeColumns`), but a visual pass at two widths is a human judgement and was not performed.
+5. **Serve and inspect at desktop and narrow mobile widths.** **PASS — 2026‑08‑07.** Production build served from `dist/`; measured and inspected at both widths.
+
+   ```
+   1440px  w=1425 scrollW=1425 overflow=false offenders=[]
+   390px   window 390 renders at clientWidth 485 — --window-size is not device
+           emulation, so true 390 comes from the behaviour gate's
+           Emulation.setDeviceMetricsOverride 390x844: noHorizontalOverflow=true
+   ```
+
+   Visually inspected at both: hero, status row, progress card and the glance cards
+   stack cleanly on narrow; no clipped text, no horizontal scroll.
 6. **Check a task, reload, stays checked.** **PASS.**
    ```
    1 checked after reload

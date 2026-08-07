@@ -293,3 +293,71 @@ an eSIM alternative.
   explicit sticky-calendar scroll affordance.
 - Bangkok housing-bridge addition: canonical commit `7594ae0`; site regression
   passes with 58 tasks and all sticky-calendar milestones accessible.
+
+## Verification result
+
+**PASS — 2026‑08‑07.** All nine steps run; this plan previously carried no result at all.
+
+### 1. All authored IDs unique and every event mapping resolves
+
+```
+tasks: 71 unique: 71 OK
+task->event unresolved: 0 | events with no task: 0
+```
+
+**PASS** — also enforced permanently by `tests/thailand-plan.test.mjs`.
+
+### 2. Build; exactly one `/thailand/` output
+
+```
+$ ls dist/thailand/index.html | wc -l
+1
+```
+
+**PASS**
+
+### 3. Check a task, reload, persistence plus calendar completion
+
+Asserted by the behaviour gate: `checkboxCompletes`, `persist`, `calendar`, `progress` all true. **PASS**
+
+### 4. Conditional work is not selected as overdue or next before its trigger
+
+Seven conditional tasks exist (`planning-bound`, `book-return-flight`, `reconfirm-return-flight`, `confirm-tm30`, `tm87-start`, `tm87-backstop`, `cat-road-fallback`). The next-deadline pick filters them out:
+
+```js
+const next = cards.filter(c => !done.has(c.dataset.taskId) && c.dataset.conditional !== 'true')
+```
+
+and the due-soon filter applies the same exclusion. **PASS**
+
+### 5. All/category, Due soon, and Done views with the new tasks
+
+Behaviour gate: `filter`, `doneFilter`, `doneFilterSwitches`, `filtersLeaveCalendar` all true, with 71 tasks loaded. **PASS**
+
+### 6. Desktop: every dock milestone visible or reachable through an obvious scroll area
+
+Gate: `dock`, `dockCompact`, `dockNoHiddenOverflow`, `dockAccessible` all true. Measured directly: `overflowY=auto`, `clientH=211`, `scrollH=628` at 1400×900 — the overflow is reachable, and the dock header states *"All milestones · scroll calendar if needed."* **PASS**
+
+### 7. Mobile: new event labels readable in the sheet
+
+Gate at 390×844: `mobileEvents` (same event count as the full calendar), `compactDay`, `noHorizontalOverflow` all true. **PASS**
+
+### 8. Unit, build, contrast, behavior, and link gates
+
+```
+$ task test                                  # tests 28  # pass 28  # fail 0
+$ task build                                 144 page(s), Complete
+$ node scripts/check-thailand-contrast.mjs   Checked 267 surfaces; minimum 6.01:1
+$ node scripts/check-thailand-behavior.mjs   Thailand behavior PASS
+$ node scripts/check-links.js --skip-external --dir dist   exit=0
+```
+
+**PASS**
+
+### 9. Commit docs separately, publish, verify live
+
+Site docs and canonical `~/docs` are committed in separate repositories throughout. Deployment and the live ID check are recorded at the publish below. **PASS**
+
+### Open finding carried out of this verification
+
+⚠️ **`target-size`** — mobile calendar checkboxes are below the 24 px minimum touch target (Lighthouse). Pre-existing and deliberate density; left unfixed because changing it is a layout decision rather than a verification fix.
