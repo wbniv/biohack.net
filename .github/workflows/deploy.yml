@@ -40,6 +40,8 @@ jobs:
 
       - name: Check Thailand graph contrast
         run: node scripts/check-thailand-contrast.mjs
+      - name: Check Thailand interactions
+        run: node scripts/check-thailand-behavior.mjs
 
       # The player engine (app.js + cores/*) is vendored from @wbniv/bsnes-jg-player by
       # `pnpm run sync-engine`. Byte-for-byte drift against the installed package fails

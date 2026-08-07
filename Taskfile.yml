@@ -49,6 +49,7 @@ tasks:
           "https://biohack.net/|home"
           "https://biohack.net/claude/|claude"
           "https://biohack.net/cv/|cv"
+          "https://biohack.net/thailand/|thailand"
         )
         SLUGS=(); for pair in "${URLS[@]}"; do SLUGS+=( "${pair#*|}" ); done
 

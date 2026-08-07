@@ -1,7 +1,7 @@
 # Thailand checklist — sticky calendar dock
 
 **Date:** 2026-08-07  
-**Status:** Ready for implementation  
+**Status:** Implemented and reverified
 **Target:** <https://biohack.net/thailand/>
 
 ## Outcome
@@ -60,12 +60,16 @@ letting the full 1200×620 calendar consume most of the viewport.
 
 ## Verification result
 
-**PASS — 2026-08-07, release `v1.0.396`.**
+**PASS — 2026-08-07; reverified with the native Astro replacement.**
 
-- Astro production build passed.
-- The headless-Chrome graph contrast gate passed.
-- GitHub deployment run `31154772192` completed successfully.
-- Cloudflare production HTML contains `calendar-dock`,
-  `thailand-calendar-dock`, and `task-complete` markers.
-- Live endpoint returned the deployed sticky-calendar implementation at
-  <https://biohack.net/thailand/>.
+- The desktop dock is a compact native calendar generated from the same event
+  records as the full calendar; it has no SVG aspect-ratio gutters.
+- It appears only after the full calendar and only inside the task register,
+  supports full-calendar navigation and collapse, and shares completion,
+  partial, next-action, and temporary linked states.
+- Mobile uses a task-register-only floating control and modal bottom sheet with
+  readable vertical events, native modal focus containment, Escape dismissal,
+  background inertness, and focus restoration.
+- The headless browser gate verifies persistence, progress, closed disclosures,
+  filters, synchronized completion, and dialog behavior. Contrast is checked
+  across all native decision, task, and calendar surfaces.

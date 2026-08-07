@@ -1,7 +1,7 @@
 # Thailand master plan — dark biohack.net visual redesign
 
 **Date:** 2026-08-07  
-**Status:** Ready for implementation  
+**Status:** Implemented and verified
 **Page:** <https://biohack.net/thailand/>  
 **Predecessor:** [Publish the Thailand master plan at `/thailand/`](2026-08-06-thailand-master-plan-page.md)
 
@@ -61,11 +61,9 @@ revision/history scripts, generated attribution spans, Mermaid export markup,
 and prose-hash task discovery. The build must produce exactly one
 `dist/thailand/index.html`, owned by Astro.
 
-**Implementation note (2026-08-07):** the route is now owned by
-`src/pages/thailand.astro`; the former public-path collision has been removed.
-The initial migration deliberately preserves the verified page body as imported
-HTML under `src/content/thailand/`. Follow-up work should progressively replace
-that compatibility source with typed Astro components and structured plan data.
+**Implemented 2026-08-07:** the route is wholly native Astro markup backed by
+`src/data/thailand-plan.mjs`. It no longer imports the compatibility HTML,
+discovers tasks from prose, or renders Mermaid. Astro owns the sole output.
 
 ### 2. Replace the tall flowchart with a compact decision panel
 
@@ -252,6 +250,26 @@ Preserve the existing browser-local model while improving clarity:
 If migration from the current prose-hash keys is practical and unambiguous,
 migrate once. Otherwise start the explicit-ID `v2` namespace cleanly and state
 that the redesign resets local progress.
+
+## Final implementation result
+
+**PASS — 2026-08-07.** All ten required phases are implemented:
+
+- native Astro/data ownership and one generated route;
+- compact Issued / Pending / Refused decision cards;
+- live progress, current phase, next deadline, and confirmed reset;
+- initially closed native task disclosures;
+- combinable task filters and visible count;
+- current-period, today-range, next-action, partial, and completed states;
+- explicit stable task/event IDs in the `biohack.thailand.v2` namespace;
+- bidirectional task/calendar emphasis and per-task jump links;
+- desktop calendar plus a shared-data mobile vertical timeline;
+- sticky active section navigation, desktop calendar dock, and mobile dialog.
+
+The old prose hashes were not reliably reversible, so v2 starts clean and the
+page says so. Automated data-integrity, structure, browser-interaction, contrast,
+build, and link gates cover the implementation. Desktop and mobile screenshots
+were inspected at 1440×1000 and 390×844.
 
 ### Checklist ↔ calendar highlighting
 
