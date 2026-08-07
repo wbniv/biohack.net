@@ -7,7 +7,9 @@ const chrome = process.env.CHROME || spawnSync('sh', ['-c', 'command -v google-c
 if (!chrome) throw new Error('No Chrome/Chromium executable found');
 const profile = await mkdtemp(join(tmpdir(), 'thailand-contrast-'));
 const port = 10000 + (process.pid % 4000);
-const page = process.env.THAILAND_TEST_URL || `file://${resolve('dist/thailand/index.html')}`;
+const serverPort = port + 4001;
+const server = process.env.THAILAND_TEST_URL ? null : spawn('python3',['-m','http.server',String(serverPort),'--bind','127.0.0.1'],{cwd:resolve('dist'),stdio:'ignore'});
+const page = process.env.THAILAND_TEST_URL || `http://127.0.0.1:${serverPort}/thailand/`;
 const child = spawn(chrome, ['--headless=new','--no-sandbox',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,page], {stdio:'ignore'});
 const pause = ms => new Promise(r => setTimeout(r, ms));
 try {
@@ -24,4 +26,4 @@ try {
   const bad=rows.filter(r=>!Number.isFinite(r.contrast)||r.contrast<4.5);
   if (rows.length < 10) throw new Error('Native Thailand controls not found; contrast test cannot pass vacuously');
   console.log(`Checked ${rows.length} native decision, task, and calendar surfaces; minimum ${Math.min(...rows.map(r=>r.contrast)).toFixed(2)}:1`); if(bad.length) throw new Error(`${bad.length} native surface(s) below 4.5:1 contrast`); ws.close();
-} finally { child.kill('SIGTERM'); }
+} finally { child.kill('SIGTERM'); server?.kill('SIGTERM'); }

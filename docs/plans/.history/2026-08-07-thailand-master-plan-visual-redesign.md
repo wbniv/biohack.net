@@ -1,5 +1,6 @@
 | Date | Change |
 |------|--------|
+| [2026-08-07](https://github.com/wbniv/biohack.net/commit/89bbbc4) | Finish native Thailand master plan |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/929d10f) | feat: collapse Thailand task details by default |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/479dde4) | feat: reflect task completion on Thailand calendar |
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/e73f639) | refactor: move Thailand page behind Astro route |
@@ -11,6 +12,10 @@
 | [2026-08-07](https://github.com/wbniv/biohack.net/commit/ec76e71) | docs: plan Thailand page visual redesign |
 
 <!--history-meta v1
+89bbbc4	author	Will Norris
+89bbbc4	added	24
+89bbbc4	deleted	6
+89bbbc4	files	1
 929d10f	author	Will Norris
 929d10f	added	3
 929d10f	deleted	0

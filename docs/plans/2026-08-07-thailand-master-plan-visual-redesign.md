@@ -271,6 +271,10 @@ page says so. Automated data-integrity, structure, browser-interaction, contrast
 build, and link gates cover the implementation. Desktop and mobile screenshots
 were inspected at 1440×1000 and 390×844.
 
+Both headless-browser gates serve the production build over a temporary local
+HTTP server, ensuring Astro's absolute CSS and asset paths are loaded exactly as
+they are in production; `file://` results are not accepted as visual evidence.
+
 ### Checklist ↔ calendar highlighting
 
 Checklist cards and calendar milestones are linked views of the same plan. When
