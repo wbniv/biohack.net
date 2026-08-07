@@ -34,8 +34,11 @@ New tasks, all October phase:
 | `vz-cabin-call` | 2026‑10‑06 | Call Thai Vietjet **+66 1900‑1886**: cabin pets on BKK–DAD, up to what weight, slots left (cap 3) |
 | `aqs-two-permits` | 2026‑10‑06 | Ask Suvarnabhumi AQS whether **one examination can yield two export permits** (Vietnam + Korea) |
 | `nong-khai-bridge` | 2026‑10‑06 | Confirm with **Nong Khai AQS** that Friendship Bridge I accepts pet imports — this is what makes Plan C exist |
-| `ke-pet-slot` | 2026‑10‑19 | Korean Air pet request — **≥ 48 h** ahead, so the fallback exists before it is needed |
 | `plan-a-attempt` | 2026‑10‑20 | Attempt the direct hop, with Wed and Thu still open for a corrected R9 |
+
+❌ **Dropped: a separate `ke-pet-slot` task.** The pet is reserved **at the moment the ticket is booked** — `book-bkk-icn` already does this and already carries the reason: *"A passenger ticket does not reserve the cat's limited in-cabin space."* A later standalone booking task would invite exactly the mistake that row exists to prevent.
+
+✅ **Changed instead: `reconfirm-bkk-icn` moves 2026‑10‑20 → 2026‑10‑16.** It was set for *"18 Oct and 20 Oct"*, roughly 72 h and 24 h out — but **18 October 2026 is a Sunday**, so the early touch landed on a dead day with the weekend behind it. A reconfirmation needs **business days of slack behind it**, not merely to precede departure: discovering a dropped SSR is only useful if someone can still fix it. Friday the 16th leaves Monday and Tuesday.
 
 Events gain a `contingency` field (`null` \| `'fallback'` \| `'dead-end'`) and an optional `fallbackOf` id, so the renderer can draw the ladder without hard-coding it.
 
