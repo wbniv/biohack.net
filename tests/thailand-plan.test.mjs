@@ -114,7 +114,7 @@ test('border tasks contain the verified official requirements', () => {
   assert.match(vietnam.action, /six months/);
 
   const koreaArrival = tasks.find(item => item.id === 'korea-e-arrival-card');
-  assert.equal(koreaArrival.due, '2026-10-18');
+  assert.equal(koreaArrival.due, '2026-10-12');   // moves with the 10-15 departure target
   assert.deepEqual(koreaArrival.events, ['korea-e-arrival']);
   assert.match(koreaArrival.action, /e-arrivalcard\.go\.kr/);
 

@@ -24,7 +24,7 @@ const calendarMonth = event => event.id === 'road-fallback' ? 'september' : even
       <p class="local-note">Saved only in this browser; the stable-ID redesign starts a clean v2 checklist.</p>
     </section>
 
-    <section class="glance section-block" aria-labelledby="glance-title"><p class="eyebrow">AT A GLANCE</p><h2 id="glance-title">Five workstreams, one outcome</h2><div><article><b>Status</b><span>Three truthful candidate routes</span></article><article><b>Thai study</b><span>Required under every route</span></article><article><b>Cat</b><span>Cabin route through ICN and DAD</span></article><article><b>Tax</b><span>Depart 21 Oct · 177 Thai days</span></article><article><b>Location</b><span>Thailand → Korea → Viet Nam</span></article></div></section>
+    <section class="glance section-block" aria-labelledby="glance-title"><p class="eyebrow">AT A GLANCE</p><h2 id="glance-title">Five workstreams, one outcome</h2><div><article><b>Status</b><span>Three truthful candidate routes</span></article><article><b>Thai study</b><span>Required under every route</span></article><article><b>Cat</b><span>Cabin route through ICN and DAD</span></article><article><b>Tax</b><span>Depart 15 Oct · 171 Thai days</span></article><article><b>Location</b><span>Thailand → Korea → Viet Nam</span></article></div></section>
 
     <section id="decision" class="section-block">
       <p class="eyebrow">DECISION</p><h2>Build three real cases. Submit the strongest.</h2>
@@ -46,7 +46,7 @@ const calendarMonth = event => event.id === 'road-fallback' ? 'september' : even
     </section>
 
     <section id="ladder" class="section-block ladder-section" aria-labelledby="ladder-title">
-      <div class="section-heading"><div><p class="eyebrow">DEPARTURE LADDER</p><h2 id="ladder-title">One plan, two fallbacks, one dead end</h2><p>Everything hangs off a single fixed point: out of Thailand before <b>Fri 23 Oct</b> — the 179-day tax line, and Chulalongkorn Day, when the AQS is shut.</p></div></div>
+      <div class="section-heading"><div><p class="eyebrow">DEPARTURE LADDER</p><h2 id="ladder-title">One plan, two fallbacks, one dead end</h2><p>Target: out of Thailand <b>Thu 15 Oct</b>, which buys the option of returning <b>24 Dec</b> — every day earlier in October buys one day earlier in December, 1:1. The hard line stays <b>Fri 23 Oct</b>, so a day of slippage costs a December day rather than tax residency; there are eight of them.</p></div></div>
 
       <ol class="ladder">{ladder.map(rung => <li class={`rung${rung.contingency ? ' is-' + rung.contingency : ''}`} data-rung={rung.id} data-rung-event={rung.event ?? undefined}>
         <div class="rung-mark" aria-hidden="true">{rung.rung}</div>
