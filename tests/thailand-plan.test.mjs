@@ -80,7 +80,7 @@ test('conditional work cannot be reported overdue', () => {
 test('operational checklist is complete and avoids physical SIM purchases', () => {
   const ids = [
     'verify-korea-entry', 'verify-vietnam-entry', 'cat-country-permissions',
-    'book-cat-ground-transport', 'reconfirm-bkk-icn', 'reconfirm-icn-dad',
+    'book-cat-ground-transport', 'reconfirm-vn626', 'reconfirm-icn-dad',
     'reconfirm-return-flight', 'bind-travel-insurance', 'cat-travel-kit',
     'duplicate-document-packets', 'verify-money-access', 'choose-asia-connectivity',
     'close-thailand-departure', 'prepare-bangkok-address', 'confirm-tm30',
