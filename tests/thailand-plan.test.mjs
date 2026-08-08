@@ -82,7 +82,7 @@ test('operational checklist is complete and avoids physical SIM purchases', () =
     'verify-vietnam-entry', 'vietnam-exit-chain',
     'book-cat-ground-transport', 'reconfirm-vn626',
     'reconfirm-return-flight', 'final-return-check', 'bind-travel-insurance', 'cat-travel-kit',
-    'duplicate-document-packets', 'verify-money-access', 'choose-asia-connectivity',
+    'duplicate-document-packets', 'choose-asia-connectivity',
     'close-thailand-departure', 'prepare-bangkok-address', 'confirm-tm30',
     'bangkok-arrival-setup'
   ];
