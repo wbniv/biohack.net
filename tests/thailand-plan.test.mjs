@@ -81,7 +81,7 @@ test('operational checklist is complete and avoids physical SIM purchases', () =
   const ids = [
     'verify-vietnam-entry', 'vietnam-exit-chain',
     'book-cat-ground-transport', 'reconfirm-vn626',
-    'reconfirm-return-flight', 'bind-travel-insurance', 'cat-travel-kit',
+    'reconfirm-return-flight', 'final-return-check', 'bind-travel-insurance', 'cat-travel-kit',
     'duplicate-document-packets', 'verify-money-access', 'choose-asia-connectivity',
     'close-thailand-departure', 'prepare-bangkok-address', 'confirm-tm30',
     'bangkok-arrival-setup'
@@ -149,8 +149,9 @@ test('eventSortKey parses dated labels and refuses relative ones', () => {
 
 test('the fixed December return milestones stay in order', () => {
   const vn = events.filter(e => e.phase === 'vietnam').map(e => e.date);
-  assert.ok(vn.indexOf('10 Dec') < vn.indexOf('23 Dec'), 'booking should precede reconfirmation');
-  assert.ok(vn.indexOf('23 Dec') < vn.indexOf('24 Dec'), 'reconfirmation should precede return');
+  assert.ok(vn.indexOf('10 Dec') < vn.indexOf('21 Dec'), 'booking should precede 72-hour check');
+  assert.ok(vn.indexOf('21 Dec') < vn.indexOf('23 Dec'), '72-hour check should precede 24-hour check');
+  assert.ok(vn.indexOf('23 Dec') < vn.indexOf('24 Dec'), '24-hour check should precede return');
 });
 
 test('the departure comparison contains the direct plan and optional Korea route', () => {
