@@ -79,8 +79,8 @@ test('conditional work cannot be reported overdue', () => {
 
 test('operational checklist is complete and avoids physical SIM purchases', () => {
   const ids = [
-    'verify-korea-entry', 'verify-vietnam-entry', 'cat-country-permissions',
-    'book-cat-ground-transport', 'reconfirm-vn626', 'reconfirm-icn-dad',
+    'verify-vietnam-entry', 'vietnam-exit-chain',
+    'book-cat-ground-transport', 'reconfirm-vn626',
     'reconfirm-return-flight', 'bind-travel-insurance', 'cat-travel-kit',
     'duplicate-document-packets', 'verify-money-access', 'choose-asia-connectivity',
     'close-thailand-departure', 'prepare-bangkok-address', 'confirm-tm30',
@@ -103,25 +103,16 @@ test('operational checklist is complete and avoids physical SIM purchases', () =
 });
 
 test('border tasks contain the verified official requirements', () => {
-  const korea = tasks.find(item => item.id === 'verify-korea-entry');
-  assert.match(korea.action, /visa-free tourist entry/i);
-  assert.match(korea.why, /31 December 2026/);
-
   const vietnam = tasks.find(item => item.id === 'verify-vietnam-entry');
   assert.match(vietnam.action, /evisa\.gov\.vn/);
   assert.match(vietnam.action, /90-day single-entry/);
   assert.match(vietnam.action, /Da Nang International Airport/);
   assert.match(vietnam.action, /six months/);
 
-  const koreaArrival = tasks.find(item => item.id === 'korea-e-arrival-card');
-  assert.equal(koreaArrival.due, '2026-10-12');   // moves with the 10-15 departure target
-  assert.deepEqual(koreaArrival.events, ['korea-e-arrival']);
-  assert.match(koreaArrival.action, /e-arrivalcard\.go\.kr/);
-
-  const vietnamArrival = tasks.find(item => item.id === 'vietnam-pre-arrival');
-  assert.equal(vietnamArrival.due, '2026-11-12');
-  assert.deepEqual(vietnamArrival.events, ['vietnam-pre-arrival']);
-  assert.match(vietnamArrival.action, /prearrival\.immigration\.gov\.vn/);
+  const quarantine = tasks.find(item => item.id === 'vietnam-exit-chain');
+  assert.match(quarantine.action, /RAHO IV/);
+  assert.match(quarantine.action, /19:45 arrival/);
+  assert.match(quarantine.action, /24 December/);
 });
 
 test('tax filing task states the verified extension deadline and caveat', () => {
@@ -156,14 +147,13 @@ test('eventSortKey parses dated labels and refuses relative ones', () => {
     assert.equal(eventSortKey(relative), null, relative);
 });
 
-test('a relative label stays pinned beside the date it qualifies', () => {
-  // "Decision" and "Trigger" must not drift to the end of their phase.
+test('the fixed December return milestones stay in order', () => {
   const vn = events.filter(e => e.phase === 'vietnam').map(e => e.date);
-  assert.ok(vn.indexOf('Decision') > vn.indexOf('20 Dec'), 'Decision should follow 20 Dec');
-  assert.ok(vn.indexOf('Decision') < vn.indexOf('30 Dec'), 'Decision should precede 30 Dec');
+  assert.ok(vn.indexOf('10 Dec') < vn.indexOf('23 Dec'), 'booking should precede reconfirmation');
+  assert.ok(vn.indexOf('23 Dec') < vn.indexOf('24 Dec'), 'reconfirmation should precede return');
 });
 
-test('the departure ladder is a single chain ending in a dead end', () => {
+test('the departure comparison contains the direct plan and optional Korea route', () => {
   const ids = new Set(ladder.map(r => r.id));
   const eventIds = new Set(events.map(e => e.id));
   for (const rung of ladder) {
@@ -171,11 +161,10 @@ test('the departure ladder is a single chain ending in a dead end', () => {
     if (rung.fallbackOf !== null) assert.ok(ids.has(rung.fallbackOf), `${rung.id} -> unknown rung ${rung.fallbackOf}`);
     if (rung.event) assert.ok(eventIds.has(rung.event), `${rung.id} -> unknown event ${rung.event}`);
   }
-  // exactly one head, exactly one dead end, and every other rung is somebody's fallback
-  assert.equal(ladder.filter(r => r.fallbackOf === null).length, 1);
-  assert.equal(ladder.filter(r => r.contingency === 'dead-end').length, 1);
-  const referenced = new Set(ladder.map(r => r.fallbackOf).filter(Boolean));
-  assert.equal(referenced.size, ladder.length - 1, 'the chain forks or breaks');
+  assert.deepEqual(ladder.map(r => r.id), ['direct-vietnam', 'korea-option']);
+  assert.equal(ladder[0].event, 'depart');
+  assert.equal(ladder[1].contingency, 'fallback');
+  assert.equal(ladder.some(r => r.contingency === 'dead-end'), false);
 });
 
 test('closed AQS days are real dates inside departure week', () => {
